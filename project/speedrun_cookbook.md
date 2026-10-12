@@ -54,6 +54,7 @@ This cookbook is a generic checklist for setting up an RC car for speedruns. It 
 * [ ] Use a precise, high-quality digital servo.
 * [ ] Use a remote control with high precision (e.g., with hall-effect sensors).
 * [ ] Adjust the dual rate (D/R) and the throttle and steering curves to the car and the track.
+* [ ] You need to install a Gyro. Carefully test the correct Gyro gain setting.
 
 ## Environment
 * [ ] Check that the track is dry and clean.
