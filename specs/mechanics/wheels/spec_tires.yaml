@@ -16,7 +16,7 @@ spec:
   properties:
     dimensions:
       diameter_mm: 64
-      width_front_mm: 26
+      width_front_mm: 30
       width_rear_mm: 30
     setup_instructions:
       ballooning_protection: Foam rubber tires physically do not expand at approx. 8,300 RPM (axle speed at 100 km/h). The aerodynamics of the ZooRacing Hellcat and the ride height remain constantly safe.
