@@ -1,0 +1,56 @@
+meta:
+  date: "2026-10-22T08:42:45+02:00"
+  description: "Carten T410R speedrun setup"
+  version: 3
+  top_speed_kmh: null
+properties:
+  suspension_and_geometry:
+    front_toe_deg: 0
+    rear_toe_deg: 2.5
+    front_camber_deg: 0
+    rear_camber_deg: 0
+    ride_height_front_mm: 10
+    ride_height_rear_mm: 15
+    spring_rate_stiffness: "hard"
+    shock_oil_wt: 1000
+    spring_preload_mm:
+      front_left: 5
+      front_right: 5
+      rear_left: 5
+      rear_right: 5
+    droop_screws: null
+    sway_bars: null
+    servo_saver: null
+    ackermann_angle_diff: "default"
+    tire_type: "foam rubber"
+    tire_hardness_shore: 35
+    tire_width_rear_mm: 30
+    tire_width_front_mm: 30
+  drivetrain:
+    front_diff: "spool"
+    rear_diff: "open"
+    pinion_gear_t: 43
+    spur_gear_t: 68
+    internal_gear_ratio: 2.47
+    final_drive_ratio: 3.91
+  electronics_and_control:
+    lipo_cells: 3
+    lipo_capacity_mah: 5000
+    max_discharge_c: 50
+    max_current_a: 250
+    motor_type: 3660
+    motor_kv: 3700
+    esc_a: 120
+    esc_punch_level: 1
+    bec_voltage_v: 6.0
+    steering_torque_nm: 0.69
+    steering_type: "digital"
+    dual_rate: 40
+    throttle_curve: -40
+    steering_curve: -30
+    steering_trim_right: 5
+    steering_base_trim_right: 15
+    steering_trim_left: 0
+    steering_base_trim_left: 0
+    gyro_gain: 40
+    
