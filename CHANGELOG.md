@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/kleinnconrad/small-scale-rc-speedrun/compare/v1.2.1...v1.3.0) (2026-10-22)
+
+
+### Features
+
+* add setup sheet version 3 ([d135781](https://github.com/kleinnconrad/small-scale-rc-speedrun/commit/d135781b8b5bf8addef1f25958ac55cbbc79dda6))
+* add setup sheet version 3 ([49869d5](https://github.com/kleinnconrad/small-scale-rc-speedrun/commit/49869d5b17308553108ce03040fd7b0f09854494))
+
 ## [1.2.1](https://github.com/kleinnconrad/small-scale-rc-speedrun/compare/v1.2.0...v1.2.1) (2026-10-09)
 
 
