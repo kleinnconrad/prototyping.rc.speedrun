@@ -1,9 +1,9 @@
 # Ideas for follow-up projects
 
-**Sensors/telemetry** [![GitHub repo](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/kleinnconrad/carten_telemetrie)
+**Sensors/telemetry** [![GitHub repo](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/kleinnconrad/embedded.rc.telemetry)
 * Microcontroller/sensor solution for measuring ESC and motor temperature and the speed at the driveshaft. 
 
-**IoT cloud data platform** [![GitHub repo](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/kleinnconrad/carten_telemetrie)
+**IoT cloud data platform** [![GitHub repo](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/kleinnconrad/embedded.rc.telemetry)
 * Setup of a real-time streaming pipeline (ESP32 via LTE) for GPS and ESC telemetry.
 * Implementation of a cloud infrastructure for scalable storage and processing of vehicle data.
 * Live dashboarding for real-time performance analysis during speedruns.

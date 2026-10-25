@@ -13,7 +13,7 @@ The following dashboard visualizes the physical limits of the **Carten T410R** i
 
 It shows the direct correlation between the chosen pinion size, the resulting mechanical load (wheel load in %) and the achievable axle speed.
 
-![Drivetrain dashboard with speed targets](https://github.com/kleinnconrad/RC100/blob/main/photos/1772373437236.png)
+![Drivetrain dashboard with speed targets](https://github.com/kleinnconrad/prototyping.rc.speedrun/blob/main/photos/1772373437236.png)
 
 ### Reading guide for the dashboard:
 * **The dashed lines (grayscale):** Mark the required axle speed for our milestones (100, 110, 120 and 130 km/h) with a tire diameter of 64 mm.

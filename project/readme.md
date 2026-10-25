@@ -1,1 +1,1 @@
-<img src="https://github.com/kleinnconrad/RC100/blob/main/photos/qr-code.png" alt="qr" width="25%">
+<img src="https://github.com/kleinnconrad/prototyping.rc.speedrun/blob/main/photos/qr-code.png" alt="qr" width="25%">

@@ -67,4 +67,4 @@ The fit of the motor in the Carten requires an inverse polarity compared to the 
 | 9 | LiPo cells* | **(auto)** | 2S | 3S | 4S | 5S | 6S | | | |
 | 10 | BEC voltage | **(6.0V)** | 7.4V | | | | | | | |
 
-![Program card ESC](https://github.com/kleinnconrad/RC100/blob/main/photos/PXL_20260319_093605867.jpg)
+![Program card ESC](https://github.com/kleinnconrad/prototyping.rc.speedrun/blob/main/photos/PXL_20260319_093605867.jpg)

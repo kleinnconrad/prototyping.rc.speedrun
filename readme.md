@@ -186,7 +186,7 @@ The bill of materials (`project/costs`) is maintained manually.
 ## Follow-up project: Telemetry system
 This project is followed by an independent project concerned with the development of a telemetry data system based on an ESP32 microcontroller. The goal is the sensory recording and transmission of driving dynamics parameters of the RC vehicle.
 
-[![GitHub repo](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/kleinnconrad/carten_telemetrie)
+[![GitHub repo](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/kleinnconrad/embedded.rc.telemetry)
 
 ## Licensing
 * The source code of the calculation models is subject to the MIT license.
