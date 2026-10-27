@@ -108,10 +108,10 @@ This section documents the findings from previous tests & speedruns in 1:10 scal
 |:---|---:|---:|
 | Driving operation & environment | 4 | 0 |
 | Suspension & geometry | 1 | 4 |
-| Drivetrain | 3 | 2 |
+| Drivetrain | 3 | 3 |
 | Electronics & control | 5 | 0 |
 | Chassis & assembly | 5 | 2 |
-| **Total** | **18** | **8** |
+| **Total** | **18** | **9** |
 
 <details>
 <summary><b>Driving operation & environment</b></summary>
@@ -148,6 +148,7 @@ This section documents the findings from previous tests & speedruns in 1:10 scal
 | ![modification][badge-modification] | Differential (front) | A front spool was installed. During straight-line running at maximum speed, diff-out must be absolutely avoided; speed compensation is not desired. |
 | ![learning][badge-learning] | Differential (rear) | Making the rear differential stiffer is not necessary. The front spool is sufficient. |
 | ![learning][badge-learning] | Thermal management | Problems with ESC and motor temperature have not occurred yet. The problem is apparently overrated. |
+| ![modification][badge-modification] | Motor cooling | The motor fan with cooling fins was removed. The motor does not heat up significantly during speedruns and drives the final drive ratio of 3.91 without problems. |
 
 </details>
 

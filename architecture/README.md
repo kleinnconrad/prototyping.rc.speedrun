@@ -12,7 +12,7 @@ This directory contains all fundamental architecture and hardware decisions for 
 | **ADR-004** | 2026-03-06 | Selection of the charger for 3S LiPo batteries | 🟢 decided | SkyRC S100neo |
 | **ADR-005** | 2026-08-20 | Selection of the remote control system for 100 km/h speedruns | 🟢 decided | Konect X9S Radio + Mini Waterproof 4-Channel Receiver RG4CHWP |
 | **ADR-006** | 2026-08-21 | Selection of the steering servo for precise high-speed control | 🟢 decided | Savöx SC-1252MG+ |
-| **ADR-007** | 2026-03-06 | Selection of active and passive motor cooling for 3S speedruns | 🟢 decided | Passive 36mm Alu Heat Sink combined with active 40x40mm High-Speed Alu Fan |
+| **ADR-007** | 2026-10-27 | Selection of motor cooling for 3S speedruns | 🟢 decided | No dedicated motor cooling (stock setup) |
 | **ADR-008** | 2026-10-05 | Selection of tires for 100 km/h speedruns | 🟢 decided | Team Corally C-14705-35 Attack Moosgummi Reifen - 1/10 GP Toerenwagen - 35 shore |
 | **ADR-009** | 2026-03-12 | Selection of the aerodynamic body for 100 km/h speedruns | 🟢 decided | ZooRacing Hellcat (190 mm, 0.7mm thickness) |
 | **ADR-010** | 2026-03-10 | Selection of the GPS measuring system to validate the 100 km/h mark | 🟢 decided | Ruddog GPS Performance Analyzer |
@@ -233,45 +233,24 @@ Test drives with the MVP servo (JX PDI-4409MG) showed that the required steering
 
 ---
 
-### ADR-007: Selection of active and passive motor cooling for 3S speedruns
-**Status:** decided | **Date:** 2026-03-06
+### ADR-007: Selection of motor cooling for 3S speedruns
+**Status:** decided | **Date:** 2026-10-27
 
 #### Context
-The targeted goal of 100 km/h requires the use of a 3700kV motor (Hobbywing QuicRun 3660SL G2) 
-on a 
-3S LiPo (11.1V), which leads to high speeds of approx. 41,000 rpm 
-and an enormous 
-tall gear load (43T pinion / 68T spur gear). Under these conditions, 
-massive waste heat is generated in the motor 
-within seconds. Without adequate 
-cooling, there is a risk of 
-demagnetization of the rotor (heat death) or melting 
-of the insulation. 
-Therefore, a strict thermal management system 
-is absolutely necessary.
+The targeted goal of 100 km/h requires the use of a 3700kV motor (Hobbywing QuicRun 3660SL G2) on a 3S LiPo (11.1V), which leads to motor speeds of approx. 41,000 rpm and a tall final drive ratio (43T pinion / 68T spur gear, FDR 3.91, wheel load 25.6 %). Under these conditions, a high thermal load of the motor was expected. Excessive motor temperatures can demagnetize the rotor or damage the winding insulation. The cooling concept must therefore match the thermal load observed in test drives.
 
 
 #### Decision
-> **Passive 36mm Alu Heat Sink combined with active 40x40mm High-Speed Alu Fan**
+> **No dedicated motor cooling (stock setup)**
 
 #### Rationale
-The decision is made in favor of a dual cooling system (active and passive). 
-The 36mm 
-aluminum clip-on heat sink fits perfectly on the Hobbywing 3660SL G2 motor. 
-The 40mm 
-high-speed fan with aluminum frame offers the necessary hurricane 
-due to speeds of up to 20,000 rpm 
-to blow the heat away. An aluminum frame 
-on the fan 
-also prevents it from deforming under heat buildup, and 
-serves as an additional 
-mini heat sink.
+Test drives showed that the motor does not heat up significantly during speedruns. The motor drives the final drive ratio of 3.91 (43T pinion / 68T spur gear) without problems. The active and passive cooling (Hobbywing fan with cooling fins, HW86080120) that was selected initially as a precaution proved to be obsolete and was removed. Thus, the decision was revised to operate the motor without dedicated cooling.
 
 
 #### Consequences
-- Power supply: The fan must be plugged into a free slot on the Konect RG4CHWP receiver (e.g. CH4; CH3 is used if the gyro gain is set remotely) to draw power from the ESC BEC.
-- Cable management: Due to the high suction of the high-speed fan, all cables (especially antenna and servo cables) must absolutely be secured with cable ties so that they do not get caught in the rotor blades.
-- Thermal paste: It is strongly recommended to apply a drop of PC thermal paste between the motor and the aluminum heat sink in order to minimize the thermal contact resistance.
+- Receiver slot: The receiver slot previously used for the fan power supply is available again.
+- Weight and wiring: The fan with cooling fins and its cable are omitted. This reduces the vehicle weight and the number of cables that must be secured in the chassis.
+- Re-evaluation: The decision applies to the current final drive ratio (3.91) on 3S. A taller gear ratio, a higher battery voltage or a different motor requires a re-evaluation of the motor cooling.
 
 
 ---

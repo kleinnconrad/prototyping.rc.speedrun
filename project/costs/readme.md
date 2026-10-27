@@ -17,7 +17,7 @@
 | 3 | **drive** | hobbywing combo WP10BL120G2 with 3660SL-3700KV-G2 | HW38030211 | monster hopups | 1 | 82,78 € |
 | 4 | **energy** | absima greenhorn vol.2 LiPo 3S 11.1V-50C 5000 HC (XT60) | AB-4140014 | monster hopups | 1 | 32,36 € |
 | 5 | **mechanics** | robinson-racing motor pinion hardened steel 5mm 48DP 43 teeth | RR-2043 | monster hopups | 1 | 9,18 € |
-| 6 | **cooling** | hobbywing fan with cooling fins for 36mm motor (60mm) | HW86080120 | monster hopups | 1 | 9,99 € |
+| 6 | **cooling** | hobbywing fan with cooling fins for 36mm motor (60mm) (old) | HW86080120 | monster hopups | 1 | 9,99 € |
 | 7 | **charging tech** | SkyRC S100 neo LiPo 1-6s 10A 100W AC | SK100202-01 | monster hopups | 1 | 44,95 € |
 | 8 | **steering** | amewi 4409MG AMX digital servo low-profile (old) | AW-28995 | tamico shop | 1 | 23,99 € |
 | 9 | **testing** | QWORK digital tachometer | - | amazon | 1 | 13,88 € |
@@ -40,6 +40,6 @@
 
 | Description | amount |
 |:---|---:|
-| **Pure vehicle costs:** | **662,48 €** |
-| Costs for tools, infrastructure & spare parts (pos. 2, 7, 8, 9, 11, 13, 14, 18): | 375,13 € |
+| **Pure vehicle costs:** | **652,49 €** |
+| Costs for tools, infrastructure & spare parts (pos. 2, 6, 7, 8, 9, 11, 13, 14, 18): | 385,12 € |
 | **Total costs:** | **1037,61 €** |
