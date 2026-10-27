@@ -10,12 +10,17 @@ The artefacts of this repository are:
 * Vehicle setup configurations in the `/setup_sheets` directory
 
 <table>
-  <tr>
-    <td>
-      <img src="photos/rc_car.jpg" alt="RC car with clear body" width="100%">
-      <img src="photos/rc_car_chassis.jpg" alt="RC car chassis without body, top view" width="100%">
-    </td>
-  </tr>
+  <tbody>
+    <tr>
+      <td colspan="2"><img src="photos/rc_car.jpg" alt="RC car with clear body" width="100%"></td>
+    </tr>
+  </tbody>
+  <tbody>
+    <tr>
+      <td><img src="photos/rc_car_chassis_front.jpg" alt="RC car chassis without body, front view" width="100%"></td>
+      <td><img src="photos/rc_car_chassis_rear.jpg" alt="RC car chassis without body, rear view" width="100%"></td>
+    </tr>
+  </tbody>
 </table>
 
 ## Table of contents
@@ -148,7 +153,7 @@ This section documents the findings from previous tests & speedruns in 1:10 scal
 | ![modification][badge-modification] | Differential (front) | A front spool was installed. During straight-line running at maximum speed, diff-out must be absolutely avoided; speed compensation is not desired. |
 | ![learning][badge-learning] | Differential (rear) | Making the rear differential stiffer is not necessary. The front spool is sufficient. |
 | ![learning][badge-learning] | Thermal management | Problems with ESC and motor temperature have not occurred yet. The problem is apparently overrated. |
-| ![modification][badge-modification] | Motor cooling | The motor fan with cooling fins was removed. The motor does not heat up significantly during speedruns and drives the final drive ratio of 3.91 without problems. |
+| ![modification][badge-modification] | Motor cooling | The motor cooling was removed. The motor does not heat up significantly during speedruns and drives the final drive ratio of 3.91 without problems. A fan is mounted for visual reasons only and is not required for cooling. |
 
 </details>
 

@@ -244,12 +244,13 @@ The targeted goal of 100 km/h requires the use of a 3700kV motor (Hobbywing Quic
 > **No dedicated motor cooling (stock setup)**
 
 #### Rationale
-Test drives showed that the motor does not heat up significantly during speedruns. The motor drives the final drive ratio of 3.91 (43T pinion / 68T spur gear) without problems. The active and passive cooling (Hobbywing fan with cooling fins, HW86080120) that was selected initially as a precaution proved to be obsolete and was removed. Thus, the decision was revised to operate the motor without dedicated cooling.
+Test drives showed that the motor does not heat up significantly during speedruns. The motor drives the final drive ratio of 3.91 (43T pinion / 68T spur gear) without problems. The active and passive cooling (Hobbywing fan with cooling fins, HW86080120) that was selected initially as a precaution proved to be obsolete and was removed. Thus, the decision was revised to operate the motor without dedicated cooling. A fan that is mounted on the motor for visual reasons is not part of the cooling concept.
 
 
 #### Consequences
-- Receiver slot: The receiver slot previously used for the fan power supply is available again.
-- Weight and wiring: The fan with cooling fins and its cable are omitted. This reduces the vehicle weight and the number of cables that must be secured in the chassis.
+- Receiver slot: The motor cooling does not require a receiver slot.
+- Weight and wiring: Without a fan, the vehicle weight and the number of cables that must be secured in the chassis are reduced.
+- Decorative fan: A fan is mounted on the motor for visual reasons only. It is not required for cooling and can be removed without consequences for the motor temperature.
 - Re-evaluation: The decision applies to the current final drive ratio (3.91) on 3S. A taller gear ratio, a higher battery voltage or a different motor requires a re-evaluation of the motor cooling.
 
 
