@@ -9,7 +9,14 @@ The artefacts of this repository are:
 * System specification in the `specs/full_spec.yaml` file
 * Vehicle setup configurations in the `/setup_sheets` directory
 
-<img src="photos/rc_car.jpg" alt="RC car with clear body" width="100%">
+<table>
+  <tr>
+    <td>
+      <img src="photos/rc_car.jpg" alt="RC car with clear body" width="100%">
+      <img src="photos/rc_car_chassis.jpg" alt="RC car chassis without body, top view" width="100%">
+    </td>
+  </tr>
+</table>
 
 ## Table of contents
 * [Repository structure](#repository-structure)
