@@ -10,12 +10,17 @@ The artefacts of this repository are:
 * Vehicle setup configurations in the `/setup_sheets` directory
 
 <table>
-  <tr>
-    <td>
-      <img src="photos/rc_car.jpg" alt="RC car with clear body" width="100%">
-      <img src="photos/rc_car_chassis.jpg" alt="RC car chassis without body, top view" width="100%">
-    </td>
-  </tr>
+  <tbody>
+    <tr>
+      <td colspan="2"><img src="photos/rc_car.jpg" alt="RC car with clear body" width="100%"></td>
+    </tr>
+  </tbody>
+  <tbody>
+    <tr>
+      <td><img src="photos/rc_car_chassis_front.jpg" alt="RC car chassis without body, front view" width="100%"></td>
+      <td><img src="photos/rc_car_chassis_rear.jpg" alt="RC car chassis without body, rear view" width="100%"></td>
+    </tr>
+  </tbody>
 </table>
 
 ## Table of contents
