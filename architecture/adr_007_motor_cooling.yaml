@@ -1,49 +1,34 @@
 adr:
   id: ADR-007
-  title: Selection of active and passive motor cooling for 3S speedruns
+  title: Selection of motor cooling for 3S speedruns
   status: decided
-  date: '2026-03-06'
-  context: "The targeted goal of 100 km/h requires the use of a 3700kV motor (Hobbywing QuicRun 3660SL G2) \non a \n3S LiPo (11.1V), which leads to high speeds of approx. 41,000 rpm \nand an enormous \ntall gear load (43T pinion / 68T spur gear). Under these conditions, \nmassive waste heat is generated in the motor \nwithin seconds. Without adequate \ncooling, there is a risk of \ndemagnetization of the rotor (heat death) or melting \nof the insulation. \nTherefore, a strict thermal management system \nis absolutely necessary.\n"
+  date: '2026-10-27'
+  context: "The targeted goal of 100 km/h requires the use of a 3700kV motor (Hobbywing QuicRun 3660SL G2) on a 3S LiPo (11.1V), which leads to motor speeds of approx. 41,000 rpm and a tall final drive ratio (43T pinion / 68T spur gear, FDR 3.91, wheel load 25.6 %). Under these conditions, a high thermal load of the motor was expected. Excessive motor temperatures can demagnetize the rotor or damage the winding insulation. The cooling concept must therefore match the thermal load observed in test drives.\n"
   considered_alternatives:
   - option_id: 1
-    name: No cooling (Stock Setup)
-    type: High-Risk
-    evaluation: Leads inevitably to the immediate
-      thermal destruction of the motor at 3S and the targeted gear ratio.
+    name: No dedicated motor cooling (stock setup)
+    type: Stock / No additional components
+    evaluation: Initially rated as high-risk, since thermal destruction of the motor
+      was expected at 3S and the targeted gear ratio. Test drives showed that the motor
+      does not heat up significantly during speedruns and drives the final drive ratio
+      without problems. No additional weight, wiring or receiver slot required.
   - option_id: 2
-    name: Passive heat sink only (Heatsink without fan)
-    type: Mid-Risk
-    evaluation: A simple aluminum heat sink increases the surface area,
-      but is not sufficient without an active airflow under the closed body during speedruns
-      to remove the massive heat buildup.
+    name: Passive heat sink only (heat sink without fan)
+    type: Passive
+    evaluation: A clip-on aluminum heat sink increases the surface area of the motor
+      housing. Not required, since the motor does not heat up significantly during speedruns.
   - option_id: 3
-    name: Passive Alu Heat Sink + Active 40mm High-Speed Fan
-    type: Safe / High-Performance
-    evaluation: The combination of heat-dissipating aluminum and a very fast
-      spinning fan (16,000+ rpm) forces a strong airflow directly at the motor housing
-      and keeps the temperatures in the safe range.
-  decision: Passive 36mm Alu Heat Sink combined with active 40x40mm High-Speed
-    Alu Fan
-  cooling_motor:
-    component: Hobbywing QuicRun 3660SL G2 (3700kV)
-    heatsink:
-      size: 36mm (Suitable for 36 mm motors incl. 3660)
-      material: Aluminum
-      mounting: Clip-on heat sink
-    fan_active:
-      size: 40x40mm High-Speed Fan
-      rpm: 16,000 - 20,000 rpm
-      frame_material: Aluminum (for better heat dissipation)
-      suggested_brands:
-      - Surpass Hobby (Rocket Series)
-      - Yeah Racing (Tornado)
-      - WTF (Wild Turbo Fan)
-  rationale: "The decision is made in favor of a dual cooling system (active and passive). \nThe 36mm \naluminum clip-on heat sink fits perfectly on the Hobbywing 3660SL G2 motor. \nThe 40mm \nhigh-speed fan with aluminum frame offers the necessary hurricane \ndue to speeds of up to 20,000 rpm \nto blow the heat away. An aluminum frame \non the fan \nalso prevents it from deforming under heat buildup, and \nserves as an additional \nmini heat sink.\n"
+    name: Passive aluminum heat sink + active 40mm high-speed fan
+    type: Active + passive
+    evaluation: Selected initially as a precaution and installed as a Hobbywing fan with
+      cooling fins for 36mm motors (HW86080120), powered via a free receiver slot. Test
+      drives showed that the cooling is obsolete. It was removed.
+  decision: No dedicated motor cooling (stock setup)
+  rationale: "Test drives showed that the motor does not heat up significantly during speedruns. The motor drives the final drive ratio of 3.91 (43T pinion / 68T spur gear) without problems. The active and passive cooling (Hobbywing fan with cooling fins, HW86080120) that was selected initially as a precaution proved to be obsolete and was removed. Thus, the decision was revised to operate the motor without dedicated cooling.\n"
   consequences:
-  - 'Power supply: The fan must be plugged into a free slot on the Konect RG4CHWP receiver
-    (e.g. CH4; CH3 is used if the gyro gain is set remotely) to draw power from the ESC BEC.'
-  - 'Cable management: Due to the high suction of the high-speed fan, all cables
-    (especially antenna and servo cables) must absolutely be secured with cable ties
-    so that they do not get caught in the rotor blades.'
-  - 'Thermal paste: It is strongly recommended to apply a drop of PC thermal paste
-    between the motor and the aluminum heat sink in order to minimize the thermal contact resistance.'
+  - 'Receiver slot: The receiver slot previously used for the fan power supply is available again.'
+  - 'Weight and wiring: The fan with cooling fins and its cable are omitted. This reduces the vehicle
+    weight and the number of cables that must be secured in the chassis.'
+  - 'Re-evaluation: The decision applies to the current final drive ratio (3.91) on 3S. A taller
+    gear ratio, a higher battery voltage or a different motor requires a re-evaluation of the
+    motor cooling.'

@@ -24,7 +24,7 @@ It shows the direct correlation between the chosen pinion size, the resulting me
   * 🟡 **sweet spot (22 % - 25 %):** optimal for speedruns, keep an eye on thermal limit.
   *  **Danger zone (> 25 %):** Acute risk of overheating, only for extreme short sprints.
 
-**Conclusion of the visualization (68T spur gear):** The primary project goal of **100 km/h** is achieved from a **34T pinion**. The wheel load is at this point (20.2 %) in the green zone. Within the 25 % limit, the setup offers mechanical reserves up to approx. 121 km/h (41T pinion). The current setup with a **43T pinion** is at **25.6 %** wheel load and therefore in the danger zone.
+**Conclusion of the visualization (68T spur gear):** The primary project goal of **100 km/h** is achieved from a **34T pinion**. The wheel load is at this point (20.2 %) in the green zone. Within the 25 % limit, the setup offers mechanical reserves up to approx. 121 km/h (41T pinion). The current setup with a **43T pinion** is at **25.6 %** wheel load and therefore in the danger zone. Test drives showed that the motor does not heat up significantly at this wheel load, even without dedicated motor cooling (ADR-007).
 
 
 ## The "wheel load %" formula

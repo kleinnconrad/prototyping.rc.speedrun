@@ -103,11 +103,6 @@ Brushless Combo:
         category: Drivetrain & Mechanics
         reference_link: https://www.ebay.com/itm/234242275376
         estimated_price_eur: 15.0
-    cooling:
-      motor_heatsink: Passive aluminum heat sink for 36mm motors
-      motor_fan: 40mm High-Speed Fan (Operation via free slot on the receiver)
-      shopping_item:
-        add_to_list: false
 Gps:
   meta:
     type: GNSS Performance Analyzer (GPS/GLONASS)
