@@ -204,3 +204,4 @@ This project is followed by an independent project concerned with the developmen
 ## Licensing
 * The source code of the calculation models is subject to the MIT license.
 * The hardware design, documentation, specifications, and test results are released under the Creative Commons attribution 4.0 international license. Own adaptations and commercial use are permitted, provided authorship is acknowledged.
+* Third-party files in the `specs/mechanics/cad` directory are subject to the licenses of their authors (see the readme in that directory).
