@@ -21,6 +21,11 @@ The artefacts of this repository are:
       <td><img src="photos/rc_car_chassis_rear.jpg" alt="RC car chassis without body, rear view" width="100%"></td>
     </tr>
   </tbody>
+  <tbody>
+    <tr>
+      <td colspan="2"><img src="photos/rc_car_chassis_diffuser.jpg" alt="RC car chassis without body and wheels with rear diffuser, top view" width="100%"></td>
+    </tr>
+  </tbody>
 </table>
 
 ## Table of contents
