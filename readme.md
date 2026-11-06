@@ -117,11 +117,11 @@ This section documents the findings from previous tests & speedruns in 1:10 scal
 | Area | Learnings | Modifications |
 |:---|---:|---:|
 | Driving operation & environment | 4 | 0 |
-| Suspension & geometry | 1 | 4 |
+| Suspension & geometry | 2 | 4 |
 | Drivetrain | 3 | 3 |
 | Electronics & control | 5 | 0 |
 | Chassis & assembly | 5 | 2 |
-| **Total** | **18** | **9** |
+| **Total** | **19** | **9** |
 
 <details>
 <summary><b>Driving operation & environment</b></summary>
@@ -145,6 +145,7 @@ This section documents the findings from previous tests & speedruns in 1:10 scal
 | ![modification][badge-modification] | Sway bars | The sway bars were removed. They are unnecessary for speedruns and pose a potential source of error. |
 | ![modification][badge-modification] | Droop screws | The droop screws were removed. Since the track is not manually cleaned, further lowering is not constructive. The screws are unnecessary for the regular 1:10 speedrun. |
 | ![learning][badge-learning] | Weight distribution | Care must be taken to ensure an even left/right weight distribution. Furthermore, the front must not be too light. |
+| ![learning][badge-learning] | Caster (front) | The caster on the front axle must be set correctly. Caster is important for stability when driving in a straight line. |
 
 </details>
 
