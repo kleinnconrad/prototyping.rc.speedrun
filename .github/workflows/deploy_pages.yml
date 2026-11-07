@@ -9,6 +9,9 @@ on:
       - 'setup_sheets/*_setup_sheet.yaml'
       - 'setup_sheets/*_setup_sheet.yml'
       - 'scripts/update_latest_setup.py'
+      - 'scripts/generate_setup_drawing.py'
+      - 'specs/mechanics/carten_t410r/spec_cartent410r.yaml'
+      - 'specs/mechanics/wheels/spec_tires.yaml'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -34,17 +37,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      # latest_setup.json is regenerated here instead of relying on the commit of
-      # update_dashboard.yml: pushes made with the GITHUB_TOKEN do not trigger workflows,
-      # so that commit never starts this deployment.
+      # latest_setup.json and latest_setup_drawing.svg are regenerated here instead of relying
+      # on the commits of update_dashboard.yml and build_setup_drawing.yml: pushes made with
+      # the GITHUB_TOKEN do not trigger workflows, so those commits never start this deployment.
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Generate latest_setup.json
+      - name: Generate latest_setup.json and latest_setup_drawing.svg
         run: |
           pip install pyyaml
           python scripts/update_latest_setup.py
+          python scripts/generate_setup_drawing.py --theme dark --output docs/latest_setup_drawing.svg
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

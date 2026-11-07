@@ -35,26 +35,29 @@ jobs:
       - name: Install Dependencies
         run: pip install pyyaml
 
-      # Only the generated drawing is committed, never other files of the workspace.
-      # If another workflow pushes to main in the meantime, the drawing is generated
+      # Only the generated drawings are committed, never other files of the workspace:
+      # the light drawing for the readme and the dark drawing for the setup dashboard.
+      # If another workflow pushes to main in the meantime, the drawings are generated
       # again from the new state of main before the next push attempt.
       - name: Generate, Commit and Push latest_setup_drawing.svg
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          drawings="photos/latest_setup_drawing.svg docs/latest_setup_drawing.svg"
 
           for attempt in 1 2 3; do
             git fetch origin main
             git reset --hard origin/main
             python scripts/generate_setup_drawing.py
+            python scripts/generate_setup_drawing.py --theme dark --output docs/latest_setup_drawing.svg
 
-            if [[ -z "$(git status --porcelain photos/latest_setup_drawing.svg)" ]]; then
-              echo "No changes to photos/latest_setup_drawing.svg detected."
+            if [[ -z "$(git status --porcelain $drawings)" ]]; then
+              echo "No changes to $drawings detected."
               exit 0
             fi
 
-            git add photos/latest_setup_drawing.svg
-            git commit -m "docs(drawing): auto-update setup drawing [skip ci]"
+            git add $drawings
+            git commit -m "docs(drawing): auto-update setup drawings [skip ci]"
             if git push origin HEAD:main; then
               exit 0
             fi
