@@ -29,6 +29,7 @@ This cookbook is a generic checklist for setting up an RC car for speedruns. It 
 ### Suspension geometry
 * [ ] Set approximately 2 degrees of toe-in at the rear.
 * [ ] Set 0 degrees of camber at the front and rear.
+* [ ] Set caster at the front. Caster improves the stability when driving in a straight line. Determine the required angle in test drives.
 
 ### Ride height and weight distribution
 * [ ] Lower the chassis as far as possible.
