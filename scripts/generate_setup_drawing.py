@@ -1155,12 +1155,19 @@ def derived_rows(car):
     rear = setup.number_value("suspension_and_geometry", "ride_height_rear_mm")
     rake = math.degrees(math.atan((rear - front) / car.wheelbase)) if front is not None and rear is not None else None
     rows.append(("Rake angle", f"{rake:.1f}°" if rake is not None else "n/a", False, False))
+    rows.append((None, "= arctan((ride height rear − ride height front) / wheelbase)", False, False))
+    if rake is not None:
+        rows.append((None, f"= arctan(({format_length(rear)} mm − {format_length(front)} mm) / "
+                           f"{format_length(car.wheelbase)} mm)", False, False))
     if final_drive:
         motor_rpm = 100000 / 60 / circumference * final_drive
         rows.append(("Motor speed at 100 km/h", f"{motor_rpm:,.0f} rpm".replace(",", " "), False, False))
     if final_drive and kv and cells:
-        speed = kv * cells * 3.7 / final_drive * circumference * 60 / 1000
-        rows.append(("No-load speed at 3.7 V/cell", f"{speed:.1f} km/h", False, False))
+        # Theoretical speed without load: motor kV x battery voltage, no voltage sag or drag
+        for label, cell_voltage in (("No-load speed, fully charged (4.2 V/cell)", 4.2),
+                                    ("No-load speed, nominal (3.7 V/cell)", 3.7)):
+            speed = kv * cells * cell_voltage / final_drive * circumference * 60 / 1000
+            rows.append((label, f"{speed:.1f} km/h", False, False))
     return rows
 
 
@@ -1180,9 +1187,11 @@ def draw_parameter_table(sheet, car, previous, top):
     blocks = parameter_blocks(car, previous)
     columns = layout_parameter_columns(blocks)
     x0, x1 = MARGIN, SHEET_WIDTH - MARGIN
-    header_height, row_height, block_gap = 30, 19.5, 26
+    header_height, row_height, note_height, block_gap = 30, 19.5, 16.5, 26
     column_width = (x1 - x0) / len(columns)
-    heights = [sum(block_gap + len(rows) * row_height for _, rows in column) for column in columns]
+    # Rows without label are explanations of the row above, e.g. a formula
+    heights = [sum(block_gap + sum(note_height if label is None else row_height for label, *_ in rows)
+                   for _, rows in column) for column in columns]
     height = header_height + max(heights) + 10
     sheet.line((x0, top), (x1, top), "grid")
     sheet.line((x0, top + height), (x1, top + height), "grid")
@@ -1199,6 +1208,10 @@ def draw_parameter_table(sheet, car, previous, top):
             sheet.text(cx + 12, y + 19, title, 13.5, weight=700)
             y += block_gap
             for label, value, from_sheet, changed in rows:
+                if label is None:
+                    sheet.text(cx + 24, y + 12, value, 11.5, fill=INK_SOFT)
+                    y += note_height
+                    continue
                 sheet.line((cx + 12, y), (cx + column_width - 12, y), "grid-faint")
                 sheet.text(cx + 12, y + 14, label, 13, fill=INK_SOFT)
                 sheet.text(cx + column_width - 34, y + 14, value, 13, "end", fill=ACCENT if from_sheet else INK,
