@@ -1,0 +1,65 @@
+name: Build Setup Drawing
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'setup_sheets/*_setup_sheet.yaml'
+      - 'setup_sheets/*_setup_sheet.yml'
+      - 'specs/mechanics/carten_t410r/spec_cartent410r.yaml'
+      - 'specs/mechanics/wheels/spec_tires.yaml'
+      - 'scripts/generate_setup_drawing.py'
+  workflow_dispatch:
+
+# Runs are processed one after another. Each run draws the latest state of main.
+concurrency:
+  group: build-setup-drawing
+  cancel-in-progress: false
+
+jobs:
+  build-drawing:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: pip install pyyaml
+
+      # Only the generated drawing is committed, never other files of the workspace.
+      # If another workflow pushes to main in the meantime, the drawing is generated
+      # again from the new state of main before the next push attempt.
+      - name: Generate, Commit and Push latest_setup_drawing.svg
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            python scripts/generate_setup_drawing.py
+
+            if [[ -z "$(git status --porcelain photos/latest_setup_drawing.svg)" ]]; then
+              echo "No changes to photos/latest_setup_drawing.svg detected."
+              exit 0
+            fi
+
+            git add photos/latest_setup_drawing.svg
+            git commit -m "docs(drawing): auto-update setup drawing [skip ci]"
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            sleep $((attempt * 5))
+          done
+
+          echo "Push failed after 3 attempts."
+          exit 1
