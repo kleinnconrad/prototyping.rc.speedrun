@@ -7,10 +7,11 @@ setup sheet in `setup_sheets/`. It contains a side view, a plan view, a front
 and a rear view, the parameter list, a revision table and a title block.
 
 The GitHub workflow `build_setup_drawing.yml` runs this script whenever a setup
-sheet changes and commits the result to `photos/latest_setup_drawing.svg`.
+sheet changes and commits the result to `photos/latest_setup_drawing.svg` (light
+theme, readme) and `docs/latest_setup_drawing.svg` (dark theme, dashboard).
 
 Usage:
-    python scripts/generate_setup_drawing.py [--output PATH]
+    python scripts/generate_setup_drawing.py [--output PATH] [--theme light|dark]
 """
 
 import argparse
@@ -41,7 +42,21 @@ INK_FAINT = "#9aa5b1"
 ACCENT = "#c2410c"
 PART = "#eef1f4"
 TIRE = "#cfd5dc"
+CARBON = "#c3cad2"
 FONT = "Arial, Helvetica, 'Liberation Sans', sans-serif"
+
+# The dark theme matches the setup dashboard. It replaces each color of the
+# light theme one to one in the finished drawing.
+DARK_THEME = {
+    PAPER: "#000000",
+    INK: "#e6e6e6",
+    INK_SOFT: "#aaaaaa",
+    INK_FAINT: "#5c5c5c",
+    ACCENT: "#ff8c42",
+    PART: "#161616",
+    TIRE: "#2e2e2e",
+    CARBON: "#2b2b2b",
+}
 
 # Schematic component layout in millimeters, estimated from photos of the car.
 # x: distance behind the front axle, y: lateral offset (positive = right side
@@ -532,7 +547,7 @@ class Sheet:
             '<pattern id="carbon" width="7" height="7" patternUnits="userSpaceOnUse" '
             'patternTransform="rotate(45)">'
             f'<rect width="7" height="7" fill="{PART}"/>'
-            f'<line x1="0" y1="0" x2="0" y2="7" stroke="#c3cad2" stroke-width="1"/></pattern>'
+            f'<line x1="0" y1="0" x2="0" y2="7" stroke="{CARBON}" stroke-width="1"/></pattern>'
         )
         header = (
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{SHEET_WIDTH}" height="{num(height)}" '
@@ -1318,16 +1333,25 @@ def build_drawing(sheets, vehicle):
     return sheet.render(height)
 
 
+def apply_theme(svg, theme):
+    """Replaces the colors of the light theme in a finished drawing."""
+    if theme == "light":
+        return svg
+    return re.sub(r"#[0-9a-f]{6}", lambda match: DARK_THEME.get(match.group(0), match.group(0)), svg)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT, help="path of the SVG file to write")
+    parser.add_argument("--theme", choices=("light", "dark"), default="light",
+                        help="light for the readme, dark for the setup dashboard")
     args = parser.parse_args()
 
     sheets = load_setup_sheets()
     if not sheets:
         print("No setup sheets found.")
         raise SystemExit(1)
-    svg = build_drawing(sheets, load_vehicle())
+    svg = apply_theme(build_drawing(sheets, load_vehicle()), args.theme)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(svg, encoding="utf-8")
     print(f"Wrote {args.output} from {sheets[-1].path.name}")

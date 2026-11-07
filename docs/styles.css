@@ -109,6 +109,24 @@ body {
     word-break: break-word;
 }
 
+.drawing-link {
+    display: block;
+    width: 100%;
+}
+
+.setup-drawing {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid #333333;
+}
+
+.drawing-hint {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+}
+
 .nested-group {
     padding-left: 1.5rem;
     margin-top: 0;

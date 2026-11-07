@@ -1,6 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
+    hideDrawingIfMissing();
     fetchData();
 });
+
+// Hides the drawing section if latest_setup_drawing.svg cannot be loaded.
+function hideDrawingIfMissing() {
+    const drawing = document.getElementById('setup-drawing');
+    const hide = () => {
+        document.getElementById('drawing-info').style.display = 'none';
+    };
+    drawing.addEventListener('error', hide);
+    if (drawing.complete && drawing.naturalWidth === 0) {
+        hide();
+    }
+}
 
 async function fetchData() {
     try {
