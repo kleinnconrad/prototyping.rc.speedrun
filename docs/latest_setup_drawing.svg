@@ -688,12 +688,17 @@
 <line x1="502" y1="1140.5" x2="938" y2="1140.5" class="grid-faint"/>
 <text x="502" y="1154.5" font-size="13" fill="#aaaaaa">Rake angle</text>
 <text x="916" y="1154.5" font-size="13" text-anchor="end" fill="#e6e6e6">1.1°</text>
-<line x1="502" y1="1160" x2="938" y2="1160" class="grid-faint"/>
-<text x="502" y="1174" font-size="13" fill="#aaaaaa">Motor speed at 100 km/h</text>
-<text x="916" y="1174" font-size="13" text-anchor="end" fill="#e6e6e6">32 411 rpm</text>
-<line x1="502" y1="1179.5" x2="938" y2="1179.5" class="grid-faint"/>
-<text x="502" y="1193.5" font-size="13" fill="#aaaaaa">No-load speed at 3.7 V/cell</text>
-<text x="916" y="1193.5" font-size="13" text-anchor="end" fill="#e6e6e6">126.7 km/h</text>
+<text x="514" y="1172" font-size="11.5" fill="#aaaaaa">= arctan((ride height rear − ride height front) / wheelbase)</text>
+<text x="514" y="1188.5" font-size="11.5" fill="#aaaaaa">= arctan((15 mm − 10 mm) / 258 mm)</text>
+<line x1="502" y1="1193" x2="938" y2="1193" class="grid-faint"/>
+<text x="502" y="1207" font-size="13" fill="#aaaaaa">Motor speed at 100 km/h</text>
+<text x="916" y="1207" font-size="13" text-anchor="end" fill="#e6e6e6">32 411 rpm</text>
+<line x1="502" y1="1212.5" x2="938" y2="1212.5" class="grid-faint"/>
+<text x="502" y="1226.5" font-size="13" fill="#aaaaaa">No-load speed, fully charged (4.2 V/cell)</text>
+<text x="916" y="1226.5" font-size="13" text-anchor="end" fill="#e6e6e6">143.8 km/h</text>
+<line x1="502" y1="1232" x2="938" y2="1232" class="grid-faint"/>
+<text x="502" y="1246" font-size="13" fill="#aaaaaa">No-load speed, nominal (3.7 V/cell)</text>
+<text x="916" y="1246" font-size="13" text-anchor="end" fill="#e6e6e6">126.7 km/h</text>
 <line x1="950" y1="952" x2="950" y2="1358.5" class="grid"/>
 <text x="962" y="971" font-size="13.5" fill="#e6e6e6" font-weight="700">Electronics and control</text>
 <line x1="962" y1="978" x2="1398" y2="978" class="grid-faint"/>
