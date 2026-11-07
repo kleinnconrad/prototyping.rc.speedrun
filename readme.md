@@ -207,7 +207,7 @@ This section documents the findings from previous tests & speedruns in 1:10 scal
 Maintaining the specifications, architecture decisions and setup sheets formatted as YAML files triggers automated processes:
 * **Aggregation of specifications**: Individual hardware specifications are merged into the central specification file `specs/full_spec.yaml`.
 * **Decision log**: Architecture decisions are automatically compiled into an overview sorted by ID (`architecture/README.md`).
-* **Setup dashboard**: The latest setup sheet is converted to `docs/latest_setup.json` and deployed to GitHub Pages.
+* **Setup dashboard**: The setup dashboard on GitHub Pages shows the dark variant of the setup drawing. The latest setup sheet is also published there as data file (`docs/latest_setup.json`).
 * **Setup drawing**: The latest setup sheet is converted to the technical drawing `photos/latest_setup_drawing.svg`, which is shown in this readme, and to a dark variant `docs/latest_setup_drawing.svg` for the setup dashboard.
 
 The bill of materials (`project/costs`) is maintained manually.
