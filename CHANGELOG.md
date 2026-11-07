@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.1](https://github.com/kleinnconrad/prototyping.rc.speedrun/compare/v1.4.0...v1.4.1) (2026-11-07)
+
+
+### Bug Fixes
+
+* clarify the derived values in the setup drawing ([df4521f](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/df4521f2677dbae680c1fd695c71939d8b486170))
+* clarify the derived values in the setup drawing ([54bfed2](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/54bfed26815c155911c4274d54f492c0fa895389))
+
 ## [1.4.0](https://github.com/kleinnconrad/prototyping.rc.speedrun/compare/v1.3.0...v1.4.0) (2026-11-07)
 
 
