@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.4.0](https://github.com/kleinnconrad/prototyping.rc.speedrun/compare/v1.3.0...v1.4.0) (2026-11-07)
+
+
+### Features
+
+* add generated technical drawing of the latest setup ([3904aeb](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/3904aebd378e608bcbc077e9f793e33cf6548360))
+* add generated technical drawing of the latest setup ([3abb687](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/3abb6875ad6a76e43a8e8a7108c56781610a97b1))
+* add setup sheet version 4 ([7bf4c90](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/7bf4c904ba22236cf77a92bda7acba22dcbd1a7e))
+* add setup sheet version 4 ([218e111](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/218e111f996fb2c5585b954c8a6c09301fe6d64f))
+* show only the setup drawing on the setup dashboard ([7a83c42](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/7a83c4214055d41df3a8aedeadbba6e3091cf629))
+* show only the setup drawing on the setup dashboard ([8f7469b](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/8f7469ba573be86c13d710fb559fe718f9d3c509))
+* show the setup drawing on the setup dashboard ([86efe89](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/86efe89183633eeedbf5870bb66e002189b56db7))
+* show the setup drawing on the setup dashboard ([3c4a817](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/3c4a817237e4cf35c16d28ed7af842827eedbe84))
+
 ## [1.3.0](https://github.com/kleinnconrad/prototyping.rc.speedrun/compare/v1.2.1...v1.3.0) (2026-10-22)
 
 
