@@ -18,7 +18,7 @@ The artefacts of this repository are:
   <tbody>
     <tr>
       <td width="37%"><img src="photos/rc_car_chassis_front_view.jpg" alt="RC car chassis without body, front view" width="100%"></td>
-      <td width="63%"><img src="photos/rc_car_chassis_top_view.jpg" alt="RC car chassis without body, top view" width="100%"></td>
+      <td width="63%"><img src="photos/rc_car_chassis_top_view_battery.jpg" alt="RC car chassis without body, top view" width="100%"></td>
     </tr>
   </tbody>
 </table>
