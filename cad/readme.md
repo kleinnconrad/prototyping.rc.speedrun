@@ -29,7 +29,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/top_brace`**: Top brace v2 (STEP, STL, DXF, OpenSCAD, PDF template, geometry data, hole table)
   * **`/test_print`**: STL files of the chassis plate and the top brace for a test print on a home 3D printer
   * **`/chassis_plate_speedrun_wide`**: Wide variant of the chassis plate for speedruns (STEP, STL, PDF template, geometry data)
-  * **`/chassis_plate_speedrun_wide_motor10`**: Wide variant with a longer motor window for a 3660 motor (STEP, STL, DXF, geometry data)
+  * **`/chassis_plate_speedrun_wide_motor10`**: Wide variant with a longer motor window for a 3660 motor (STEP, STL, DXF, PDF template, geometry data)
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are released under the licenses of this repository (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
@@ -138,15 +138,20 @@ The outline differs from the chassis plate v2 only between y = 55.3 mm and y = 2
 * The thickness of 2.0 mm is subject to the same open point as the chassis plate v2 (see [open points](#open-points)).
 
 ### Print template
-The file `chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf` is a 1:1 template of the speedrun chassis plate (wide) on two A4 pages in landscape format. It is used to check the hole positions against the actual part.
+Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape format. The templates are used to check the hole positions against the actual part.
+
+| File | Directory | Window (solid line) | Green dashed line |
+|:---|:---|:---|:---|
+| `chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf` | `/chassis_v2/chassis_plate_speedrun_wide` | Window 23.47 × 53.27 mm | Longer motor window (see [longer motor window for a 3660 motor](#longer-motor-window-for-a-3660-motor)) |
+| `chassis_plate_T410R_speedrun_wide_motor10_1to1_A4x2_print97.pdf` | `/chassis_v2/chassis_plate_speedrun_wide_motor10` | Longer motor window 23.47 × 63.27 mm | End of the previous window |
 
 * **Scale:** The drawing is pre-scaled to 103.09 % (100/97) for a PDF viewer that prints at 97 %. Printed at 97 %, the drawing is 1:1. Printed at 100 % ("actual size"), it is 3.1 % too large. This differs from the templates of the chassis plate v2, which are printed at 100 %.
 * **Scale check:** Each page has a 100 mm bar in x and a 100 mm bar in y. Both bars must measure 100 mm before the template is used. After joining the pages, the distance between the centres of the holes H11 and H23 is 145.82 mm.
 * **Joining:** Page 2 is laid over page 1 so that the two blue dashed lines of the 20 mm overlap zone coincide. The holes H16 to H20 are shown on both pages.
 * **Orientation:** The template shows the top view (side without countersinks). The part is placed with the countersinks facing down.
-* **Content:** Outline, window and slot (black), through holes Ø3.2 mm with centre cross (red), countersinks Ø6.2 mm on the bottom face (dashed), outline of the chassis plate v2 (grey, dashed) and the longer motor window for the 3660 motor (green, dashed, see [longer motor window for a 3660 motor](#longer-motor-window-for-a-3660-motor)).
-* The hole positions on the PDF were checked on a raster image with 600 dpi. All 36 holes deviate by less than 0.06 mm from the geometry data.
-* The template is generated with `scripts/cad/generate_print_template.py`. For a PDF viewer with another print scale, the option `--print-scale` generates a matching template (see [scripts](#scripts)).
+* **Content:** Outline, window and slot (black), through holes Ø3.2 mm with centre cross (red), countersinks Ø6.2 mm on the bottom face (dashed), outline of the chassis plate v2 (grey, dashed) and the other motor window (green, dashed, see table).
+* The positions on both PDF files were checked on raster images with 600 dpi. All 36 holes deviate by less than 0.06 mm from the geometry data. The window ends of the template with the longer motor window deviate by less than 0.05 mm.
+* The templates are generated with `scripts/cad/generate_print_template.py` (option `--plate wide` or `--plate motor10`). For a PDF viewer with another print scale, the option `--print-scale` generates a matching template (see [scripts](#scripts)).
 
 ### Longer motor window for a 3660 motor
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -166,7 +171,7 @@ The file `chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf` is a 1:1 temp
 * The window is extended only toward the end with the holes H34 to H36 (+y). The end edge at y = 65.63 mm is not moved.
 * The outline, the slot, the 36 holes with the countersinks and the thickness are identical to the speedrun chassis plate (wide).
 * The extension reduces the distance between the window and the countersink of hole H16 (Ø6.2 mm, bottom face) from 30.0 mm to 23.3 mm. The distances to the countersinks of the holes H07, H09, H10 and H13, which are closer to the window than H16, do not change.
-* The [print template](#print-template) of the speedrun chassis plate (wide) shows the longer window as a green dashed line.
+* The [print template](#print-template) of the speedrun chassis plate (wide) shows the longer window as a green dashed line. The print template of this variant shows the longer window as a solid line and the end of the previous window as a green dashed line.
 
 | File | Format | Use |
 |:---|:---|:---|
@@ -174,6 +179,7 @@ The file `chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf` is a 1:1 temp
 | `chassis_plate_T410R_speedrun_wide_motor10.stl` | STL (binary) | Complete part as triangle mesh |
 | `chassis_plate_T410R_speedrun_wide_motor10.dxf` | DXF | 2D drawing for CNC manufacturing with the same layers as `chassis_plate_T410R_v2.dxf` |
 | `chassis_plate_speedrun_wide_motor10_geometry.json` | JSON | Geometry data: outline, cutouts, holes, thickness and countersink parameters |
+| `chassis_plate_T410R_speedrun_wide_motor10_1to1_A4x2_print97.pdf` | PDF (A4, 2 pages) | 1:1 template for a PDF viewer that prints at 97 % (see [print template](#print-template)) |
 
 * All files are stored in the directory `/chassis_v2/chassis_plate_speedrun_wide_motor10`. The preview image above (`photos/cad_chassis_speedrun_wide_motor10_preview.png`) shows the previous window as a red dashed line. The STEP, STL and DXF files are generated from the geometry data. All files and the preview image can be regenerated with scripts (see [scripts](#scripts)).
 * The geometry data is the geometry data of the speedrun chassis plate (wide) (`chassis_plate_speedrun_wide_geometry.json`) with the longer window. That file combines the outline of `chassis_plate_T410R_speedrun_wide.step` with the holes, cutouts and countersink parameters of `chassis_plate_v2_geometry.json` and reproduces `chassis_plate_T410R_speedrun_wide.step` exactly.
@@ -190,7 +196,7 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `check_motor_window.py` | STEP files and geometry data of both speedrun chassis plates | Check results: solid, volume, section through the window, holes, distances to the countersinks | cadquery |
 | `generate_drawing.py` | Geometry data of the speedrun chassis plate (wide) and the chassis plate v2 | Drawing `photos/cad_chassis_speedrun_wide_drawing.png` | matplotlib |
 | `generate_window_preview.py` | Geometry data of both speedrun chassis plates | Preview image `photos/cad_chassis_speedrun_wide_motor10_preview.png` | matplotlib |
-| `generate_print_template.py` | Geometry data of both speedrun chassis plates and the chassis plate v2 | Print template of the speedrun chassis plate (wide). The option `--print-scale` sets the scale of the PDF viewer. | reportlab |
+| `generate_print_template.py` | Geometry data of both speedrun chassis plates and the chassis plate v2 | Print templates of both speedrun chassis plates (option `--plate wide` or `--plate motor10`). The option `--print-scale` sets the scale of the PDF viewer. | reportlab |
 
 ### Regenerating the files
 The following commands regenerate the files of the speedrun chassis plates in this order:
@@ -203,7 +209,8 @@ python scripts/cad/generate_dxf.py cad/chassis_v2/chassis_plate_speedrun_wide_mo
 python scripts/cad/check_motor_window.py
 python scripts/cad/generate_drawing.py
 python scripts/cad/generate_window_preview.py
-python scripts/cad/generate_print_template.py
+python scripts/cad/generate_print_template.py --plate wide
+python scripts/cad/generate_print_template.py --plate motor10
 ```
 
 * The regenerated geometry data, STL files and images are identical to the files in the repository. The STEP, DXF and PDF files differ only in header data such as the creation date and internal IDs.
