@@ -1,19 +1,26 @@
-"""Generate a 1:1 print template (PDF) of the speedrun chassis plate (wide).
+"""Generate a 1:1 print template (PDF) of a speedrun chassis plate.
 
 The template has two A4 pages in landscape format with a 20 mm overlap zone. It
 shows the outline, the cutouts, the through holes with centre cross, the
-countersinks (dashed), the outline of the chassis plate v2 (grey, dashed) and the
-longer motor window (green, dashed). Each page has a 100 mm bar in x and in y.
+countersinks (dashed), the outline of the chassis plate v2 (grey, dashed) and
+the part of a second motor window that differs from the window of the plate
+(green, dashed). Each page has a 100 mm bar in x and in y.
 
 The drawing is pre-scaled for a PDF viewer that prints at a fixed scale
 (default 97 %): the content is enlarged by 1/print_scale, so that the printed
 drawing is 1:1.
 
 Usage (from the root directory of the repository):
-    python scripts/cad/generate_print_template.py [--print-scale 0.97]
+    python scripts/cad/generate_print_template.py [--plate wide|motor10] [--print-scale 0.97]
 
-Without arguments, the script writes
-cad/chassis_v2/chassis_plate_speedrun_wide/chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf.
+--plate wide (default): speedrun chassis plate (wide). The green dashed line
+shows the longer motor window. Output:
+cad/chassis_v2/chassis_plate_speedrun_wide/chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf
+
+--plate motor10: speedrun chassis plate (wide) with the longer motor window. The
+green dashed line shows the end of the previous motor window. Output:
+cad/chassis_v2/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10_1to1_A4x2_print97.pdf
+
 Use --output for another print scale.
 
 Requires the package reportlab (pip install reportlab).
@@ -32,6 +39,28 @@ ZONE = (150.0, 170.0)            # overlap zone (plate y), no holes inside
 TOP = 329.1                      # upper end of page 2 (plate y)
 BOTTOM = -6.0                    # lower end of page 1 (plate y)
 RED, CSK, BLUE, GREY, GREEN = (0.85, 0, 0), (0.78, 0.2, 0.85), (0, 0.35, 0.8), (0.55, 0.55, 0.55), (0.1, 0.55, 0.3)
+TOL = 1e-6                       # mm, tolerance for identical points
+
+WIDE_JSON = f"{CAD}/chassis_plate_speedrun_wide/chassis_plate_speedrun_wide_geometry.json"
+MOTOR10_JSON = f"{CAD}/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
+PRESETS = {
+    "wide": {
+        "geometry": WIDE_JSON,
+        "window": MOTOR10_JSON,
+        "name": "Speedrun chassis plate (wide)",
+        "subtitle": "",
+        "window_label": "longer motor window (3660 motor)",
+        "output": f"{CAD}/chassis_plate_speedrun_wide/chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf",
+    },
+    "motor10": {
+        "geometry": MOTOR10_JSON,
+        "window": WIDE_JSON,
+        "name": "Speedrun chassis plate (wide) with longer motor window",
+        "subtitle": "with longer motor window (3660 motor)",
+        "window_label": "end of the previous motor window",
+        "output": f"{CAD}/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10_1to1_A4x2_print97.pdf",
+    },
+}
 
 
 def ang(c, p):
@@ -59,20 +88,60 @@ def contour_path(c, prims, closed=True):
     return p
 
 
-def window_extension(old_window, new_window):
-    """Part of the new window above the start of the old +y corner arcs."""
-    y_cut = max(p[k][1] for p in old_window for k in ("start", "end")) - \
-        [p["r"] for p in old_window if p["type"] == "arc"][0]
-    ext = []
-    for p in new_window:
-        if max(p["start"][1], p["end"][1]) <= y_cut + 1e-9:
+def same_point(a, b):
+    return math.hypot(a[0] - b[0], a[1] - b[1]) < TOL
+
+
+def same_prim(p, q):
+    """True if both primitives describe the same line or arc (in any direction)."""
+    if p["type"] != q["type"]:
+        return False
+    forward = same_point(p["start"], q["start"]) and same_point(p["end"], q["end"])
+    backward = same_point(p["start"], q["end"]) and same_point(p["end"], q["start"])
+    middle = p["type"] == "line" or same_point(p["mid"], q["mid"])
+    return (forward or backward) and middle
+
+
+def uncovered_parts(line, covers):
+    """Parts of a line that are not covered by collinear lines of another contour."""
+    (xs, ys), (xe, ye) = line["start"], line["end"]
+    dx, dy = xe - xs, ye - ys
+    length2 = dx * dx + dy * dy
+    parts = [((0.0, line["start"]), (1.0, line["end"]))]
+    for q in covers:
+        if q["type"] != "line":
             continue
-        if p["type"] == "line" and min(p["start"][1], p["end"][1]) < y_cut:
-            (xs, ys), (xe, ye) = p["start"], p["end"]
-            cut = [xs + (y_cut - ys) / (ye - ys) * (xe - xs), y_cut]
-            p = dict(p, start=cut) if ys < y_cut else dict(p, end=cut)
-        ext.append(p)
-    return ext
+        if any(abs((pt[0] - xs) * dy - (pt[1] - ys) * dx) / math.sqrt(length2) > TOL for pt in (q["start"], q["end"])):
+            continue                                   # not collinear
+        ends = sorted(((((pt[0] - xs) * dx + (pt[1] - ys) * dy) / length2), pt) for pt in (q["start"], q["end"]))
+        (ta, pa), (tb, pb) = ends
+        new_parts = []
+        for (ts, ps), (te, pe) in parts:
+            if tb <= ts or ta >= te:
+                new_parts.append(((ts, ps), (te, pe)))
+                continue
+            if ta > ts:
+                new_parts.append(((ts, ps), (ta, pa)))
+            if tb < te:
+                new_parts.append(((tb, pb), (te, pe)))
+        parts = new_parts
+    return [dict(line, start=ps, end=pe) for (ts, ps), (te, pe) in parts if not same_point(ps, pe)]
+
+
+def window_difference(plate_window, other_window):
+    """Parts of other_window that are not on plate_window, as contiguous open paths."""
+    prims = []
+    for p in other_window:
+        if any(same_prim(p, q) for q in plate_window):
+            continue
+        prims += uncovered_parts(p, plate_window) if p["type"] == "line" else [p]
+    paths = []
+    for p in prims:
+        if paths and same_point(paths[-1][-1]["end"], p["start"]):
+            paths[-1].append(p)
+        else:
+            paths.append([p])
+    return paths
 
 
 def text(c, x, y, s, size=2.2, color=(0, 0, 0), bold=False, anchor="l", rot=0):
@@ -102,13 +171,14 @@ def bar(c, x0, y0, horizontal, label):
         text(c, x0 + 3.2, y0 + 50, label, 2.4, anchor="c", rot=90)
 
 
-def notes(c, x, y, page, plate, print_scale):
+def notes(c, x, y, page, plate, print_scale, subtitle, window_label):
     hid = {h["id"]: h for h in plate["holes"]}
     d1123 = math.hypot(hid["H11"]["x"] - hid["H23"]["x"], hid["H11"]["y"] - hid["H23"]["y"])
     pct = f"{print_scale * 100:g}"
     k_, g_ = (0, 0, 0), (0.3, 0.3, 0.3)
     lines = [
         ("Carten T410R speedrun chassis plate (wide)", 3.0, True, k_),
+    ] + ([(subtitle, 2.6, True, k_)] if subtitle else []) + [
         ("1:1 template, A4 landscape, page %d of 2" % page, 2.6, True, k_),
         ("", 1.2, False, k_),
         (f"PRINT AT {pct} % (scale of your PDF viewer).", 2.3, True, k_),
@@ -123,7 +193,7 @@ def notes(c, x, y, page, plate, print_scale):
         ("Blue dashed: 20 mm overlap zone. Lay page 2 over", 2.2, False, BLUE),
         ("page 1 so that both pairs of lines coincide.", 2.2, False, BLUE),
         ("Grey dashed: outline of the chassis plate v2.", 2.2, False, g_),
-        ("Green dashed: longer motor window (3660 motor).", 2.2, False, g_),
+        (f"Green dashed: {window_label}.", 2.2, False, g_),
         ("After joining: H11 to H23 = %.2f mm (centres)." % d1123, 2.2, False, k_),
     ]
     for s, size, bold, col in lines:
@@ -132,15 +202,21 @@ def notes(c, x, y, page, plate, print_scale):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate the 1:1 print template of the speedrun chassis plate (wide).")
-    parser.add_argument("--geometry", default=f"{CAD}/chassis_plate_speedrun_wide/chassis_plate_speedrun_wide_geometry.json")
-    parser.add_argument("--reference", default=f"{CAD}/chassis_plate/chassis_plate_v2_geometry.json")
-    parser.add_argument("--window", default=f"{CAD}/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json")
+    parser = argparse.ArgumentParser(description="Generate the 1:1 print template of a speedrun chassis plate.")
+    parser.add_argument("--plate", choices=sorted(PRESETS), default="wide", help="plate variant (default wide)")
+    parser.add_argument("--geometry", help="geometry JSON of the plate (default from --plate)")
+    parser.add_argument("--reference", default=f"{CAD}/chassis_plate/chassis_plate_v2_geometry.json",
+                        help="geometry JSON of the grey dashed outline")
+    parser.add_argument("--window", help="geometry JSON of the green dashed window (default from --plate)")
     parser.add_argument("--print-scale", type=float, default=0.97, help="scale of the PDF viewer (default 0.97)")
-    parser.add_argument("--output", default=f"{CAD}/chassis_plate_speedrun_wide/chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf")
+    parser.add_argument("--output", help="PDF file to write (default from --plate)")
     args = parser.parse_args()
+    preset = PRESETS[args.plate]
+    for key in ("geometry", "window", "output"):
+        if getattr(args, key) is None:
+            setattr(args, key, preset[key])
 
-    plate, ref, m10 = (json.load(open(p, encoding="utf-8")) for p in (args.geometry, args.reference, args.window))
+    plate, ref, other = (json.load(open(p, encoding="utf-8")) for p in (args.geometry, args.reference, args.window))
     page_w, page_h = landscape(A4)                   # pt
     k = mm / args.print_scale                        # pt per printed mm
     pw, ph = page_w / k, page_h / k                  # page size in printed mm
@@ -151,13 +227,13 @@ def main():
         raise ValueError("the overlap zone is not on both pages")
     if any(ZONE[0] - plate["csk_d"] / 2 < h["y"] < ZONE[1] + plate["csk_d"] / 2 for h in plate["holes"]):
         raise ValueError("a hole lies in the overlap zone")
-    extension = window_extension(plate["cutouts"]["window"], m10["cutouts"]["window"])
+    window_paths = window_difference(plate["cutouts"]["window"], other["cutouts"]["window"])
     pct = f"{args.print_scale * 100:g}"
 
     c = canvas.Canvas(args.output, pagesize=landscape(A4))
-    c.setTitle(f"Speedrun chassis plate (wide) - 1:1 template for printing at {pct} %")
+    c.setTitle(f"{preset['name']} - 1:1 template for printing at {pct} %")
     c.setAuthor("prototyping.rc.speedrun")
-    c.setSubject("Carten T410R speedrun chassis plate (wide), 2 x A4 landscape")
+    c.setSubject(f"Carten T410R {preset['name'][0].lower() + preset['name'][1:]}, 2 x A4 landscape")
     for page, (y0, y1) in enumerate(tiles, start=1):
         c.saveState()
         c.scale(k, k)                                # 1 unit = 1 printed mm
@@ -179,7 +255,8 @@ def main():
         c.drawPath(contour_path(c, ref["outline"]), stroke=1, fill=0)
         c.setStrokeColorRGB(*GREEN)
         c.setDash([1.2, 0.8])
-        c.drawPath(contour_path(c, extension, closed=False), stroke=1, fill=0)
+        for path in window_paths:
+            c.drawPath(contour_path(c, path, closed=False), stroke=1, fill=0)
         # holes
         for h in plate["holes"]:
             x, y = h["x"], h["y"]
@@ -207,12 +284,13 @@ def main():
         if page == 1:
             bar(c, 36.0, 4.0, True, "100 mm (x)")
             bar(c, 128.0, 40.0, False, "100 mm (y)")
-            notes(c, -xmax + 1, 46.0, page, plate, args.print_scale)
+            notes(c, -xmax + 1, 46.0 + (2.6 * 1.45 if preset["subtitle"] else 0.0), page, plate,
+                  args.print_scale, preset["subtitle"], preset["window_label"])
             text(c, 0, -4.2, "End B (H01 to H04)", 2.4, anchor="c")
         else:
             bar(c, 36.0, 316.0, True, "100 mm (x)")
             bar(c, 128.0, 212.0, False, "100 mm (y)")
-            notes(c, -xmax + 1, 325.5, page, plate, args.print_scale)
+            notes(c, -xmax + 1, 325.5, page, plate, args.print_scale, preset["subtitle"], preset["window_label"])
             text(c, 30.0, 326.2, "End A (H34 to H36)", 2.4)
         c.restoreState()
         c.showPage()
