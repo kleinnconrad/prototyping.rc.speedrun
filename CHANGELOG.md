@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.5.0](https://github.com/kleinnconrad/prototyping.rc.speedrun/compare/v1.4.1...v1.5.0) (2026-11-10)
+
+
+### Features
+
+* add 1:1 print template of the plate with the longer motor window ([d44ecb1](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/d44ecb1aa7116d93d0960a273b0b25c47e6e0f31))
+* add 1:1 print template of the plate with the longer motor window ([e1f2759](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/e1f27595f73882e76f3c83f1fa17ad0b08b6590c))
+* add 1:1 print template of the wide speedrun chassis plate ([acf4a11](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/acf4a11e3fbadcfb430e64d1a8a34827677537cd))
+* add CAD files of the chassis plate and top brace ([964d7cf](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/964d7cfd726cbacd8d94e50867c12b6096bc8265))
+* add CAD files of the chassis plate and top brace ([0fe7028](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/0fe702859db786185e3a0e1609f97dda13c5352b))
+* add DXF and readme for the longer motor window ([b3b3ab2](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/b3b3ab23562a5eddf2242999959eb1aba6f6106f))
+* add DXF generation script and drawing of the wide chassis plate ([4481ae4](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/4481ae44680f8b20577516555f9fda9169370e59))
+* add the helper scripts of the speedrun chassis plates ([d07a0d2](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/d07a0d2bd451eb905fa8da7f966e2e4ad7424868))
+* add wide speedrun chassis plate CAD files ([6a9ed8d](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/6a9ed8da44d7e5213030b1aefa8aba103726bd72))
+* add wide speedrun chassis plate CAD files ([26ff155](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/26ff15549bb2e30b6cb567f3b6b5a0145cc8fa53))
+* add wide speedrun chassis plate with a longer motor window ([b107634](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/b107634f39807562bb609f333e26250093475771))
+* longer motor window for the wide speedrun chassis plate, print template and CAD scripts ([4e7e313](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/4e7e3130ac55e10464fc45bda307655f9e6acfbf))
+
 ## [1.4.1](https://github.com/kleinnconrad/prototyping.rc.speedrun/compare/v1.4.0...v1.4.1) (2026-11-07)
 
 
