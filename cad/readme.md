@@ -10,6 +10,7 @@
   * [Test print](#test-print)
   * [Open points](#open-points)
 * [Speedrun chassis plate (wide)](#speedrun-chassis-plate-wide)
+  * [Longer motor window for a 3660 motor](#longer-motor-window-for-a-3660-motor)
 * [3D printed parts](#3d-printed-parts)
   * [1. Motor fan mount (`fan_mount.stl`)](#1-motor-fan-mount-fan_mountstl)
   * [2. LiPo battery dummy (`lipo_mock.stl`)](#2-lipo-battery-dummy-lipo_mockstl)
@@ -19,10 +20,10 @@
 
 ## Overview
 This directory contains CAD data and 3D print files for the RC car **Carten T410R**:
-* **`/chassis_v2`**: CAD data of the chassis plate and the top brace, version 2, in several formats (STEP, STL, DXF, OpenSCAD, PDF templates), STL files for a test print on a home 3D printer and a wide variant of the chassis plate for speedruns (STEP, STL)
+* **`/chassis_v2`**: CAD data of the chassis plate and the top brace, version 2, in several formats (STEP, STL, DXF, OpenSCAD, PDF templates), STL files for a test print on a home 3D printer, a wide variant of the chassis plate for speedruns (STEP, STL) and a version of the wide variant with a longer motor window for a 3660 motor (STEP, STL, DXF)
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
-Own files are released under the licenses of this repository (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of the chassis plate and the top brace are stored in the `/photos` directory of the repository.
+Own files are released under the licenses of this repository (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of the chassis plate and the top brace are stored in the `/photos` directory of the repository. The preview image of the wide chassis plate with the longer motor window is stored in the directory `/chassis_v2`.
 
 ## Chassis plate and top brace v2
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -124,6 +125,36 @@ The outline differs from the chassis plate v2 only between y = 55.3 mm and y = 2
 * The values are taken from the STL file.
 * The wide section is 10 mm wider than the width over the tires (190 mm, `spec_cartent410r.yaml`) and the body width (190 mm, `spec_body.yaml`). It protrudes by 5 mm per side. The clearance to the wheels and to the body has to be checked before manufacturing.
 * The thickness of 2.0 mm is subject to the same open point as the chassis plate v2 (see [open points](#open-points)).
+
+### Longer motor window for a 3660 motor
+* **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
+* **Description:** Version of the speedrun chassis plate (wide) with a motor window that is 10 mm longer. The window is lengthened to fit a 3660 motor. The motor of the car (Hobbywing 3660SL G2) has a diameter of 36 mm and a length of 60 mm (`specs/electronics/brushless_combo/spec_brushless_combo.yaml`) and is 10 mm longer than a 3650 motor.
+* **Status:** Not yet verified. The fit of the motor has to be checked before manufacturing.
+
+![Top view of the wide chassis plate with the longer motor window and hole labels](chassis_v2/preview_speedrun_wide_motor10.png)
+
+| Property | Speedrun chassis plate (wide) | Longer motor window |
+|:---|:---|:---|
+| Motor window (width × length) | 23.47 × 53.27 mm | 23.47 × 63.27 mm |
+| Position of the window (x) | 16.59 to 40.06 mm | Identical |
+| Position of the window (y) | 65.63 to 118.90 mm | 65.63 to 128.90 mm |
+| Corner radius of the window | 3.0 mm | Identical |
+| Volume | 80.7 cm³ | 80.2 cm³ |
+
+* The window is extended only toward the end with the holes H34 to H36 (+y). The end edge at y = 65.63 mm is not moved.
+* The outline, the slot, the 36 holes with the countersinks and the thickness are identical to the speedrun chassis plate (wide).
+* The extension reduces the distance between the window and the countersink of hole H16 (Ø6.2 mm, bottom face) from 30.0 mm to 23.3 mm. The distances to the countersinks of the holes H07, H09, H10 and H13, which are closer to the window than H16, do not change.
+
+| File | Format | Use |
+|:---|:---|:---|
+| `chassis_plate_T410R_speedrun_wide_motor10.step` | STEP (AP214) | Solid model for CAD programs (one solid) |
+| `chassis_plate_T410R_speedrun_wide_motor10.stl` | STL (binary) | Complete part as triangle mesh |
+| `chassis_plate_T410R_speedrun_wide_motor10.dxf` | DXF | 2D drawing for CNC manufacturing with the same layers as `chassis_plate_T410R_v2.dxf` |
+| `chassis_plate_speedrun_wide_motor10_geometry.json` | JSON | Geometry data: outline, cutouts, holes, thickness and countersink parameters |
+| `preview_speedrun_wide_motor10.png` | PNG | Top view with hole labels, the previous window (red, dashed) and the longer window |
+
+* All files are stored in the directory `/chassis_v2`. The STEP, STL and DXF files are generated from the geometry data.
+* The geometry data combines the outline of `chassis_plate_T410R_speedrun_wide.step` with the holes, cutouts and countersink parameters of `chassis_plate_v2_geometry.json`. Without the longer window, it reproduces `chassis_plate_T410R_speedrun_wide.step` exactly.
 
 ## 3D printed parts
 
