@@ -9,6 +9,7 @@
   * [Measurement basis](#measurement-basis)
   * [Test print](#test-print)
   * [Open points](#open-points)
+* [Speedrun chassis plate (wide)](#speedrun-chassis-plate-wide)
 * [3D printed parts](#3d-printed-parts)
   * [1. Motor fan mount (`fan_mount.stl`)](#1-motor-fan-mount-fan_mountstl)
   * [2. LiPo battery dummy (`lipo_mock.stl`)](#2-lipo-battery-dummy-lipo_mockstl)
@@ -18,7 +19,7 @@
 
 ## Overview
 This directory contains CAD data and 3D print files for the RC car **Carten T410R**:
-* **`/chassis_v2`**: CAD data of the chassis plate and the top brace, version 2, in several formats (STEP, STL, DXF, OpenSCAD, PDF templates) and STL files for a test print on a home 3D printer
+* **`/chassis_v2`**: CAD data of the chassis plate and the top brace, version 2, in several formats (STEP, STL, DXF, OpenSCAD, PDF templates), STL files for a test print on a home 3D printer and a wide variant of the chassis plate for speedruns (STEP, STL)
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are released under the licenses of this repository (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of the chassis plate and the top brace are stored in the `/photos` directory of the repository.
@@ -97,6 +98,32 @@ Recommended procedure:
 ### Open points
 1. **Overall length:** With the caliper scaling, the chassis plate is 325.6 mm and the top brace 243.3 mm long. Measurements with a ruler resulted in 324 mm and 242 mm. If these values were taken with the plastic ruler visible in the photos, the ruler deviates by approx. 0.5 %, which would also explain the deviation of the photo scale. Check of the ruler: set the caliper to 150.00 mm and read the value on the ruler. The test print clarifies the length.
 2. **Thickness of the chassis plate:** The model uses 2.0 mm. The chassis specification lists 2.25 mm for the bottom plate (`specs/mechanics/carten_t410r/spec_cartent410r.yaml`). The thickness has to be measured before manufacturing. It can be changed with the parameter `thickness` in the OpenSCAD file.
+
+## Speedrun chassis plate (wide)
+* **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
+* **Description:** Variant of the chassis plate v2 for speedruns with a widened middle section. The hole pattern, the countersinks, the window, the slot and both narrow ends are identical to the chassis plate v2.
+* **Files:** `chassis_plate_T410R_speedrun_wide.step` (STEP AP214, one solid) and `chassis_plate_T410R_speedrun_wide.stl` (binary STL) in the directory `/chassis_v2`. This variant has no DXF, OpenSCAD, PDF or test print files and is not generated from the geometry data of version 2.
+
+| Property | Chassis plate v2 | Speedrun chassis plate (wide) |
+|:---|:---|:---|
+| Size (width × length × thickness) | 99.98 × 325.6 × 2.0 mm | 199.98 × 325.6 × 2.0 mm |
+| Holes | 36 through holes Ø3.2 mm, countersunk Ø6.2 mm × 90° on the bottom face | Identical |
+| Cutouts | Window and slot | Identical |
+| Volume | 49.4 cm³ | 80.7 cm³ |
+
+The outline differs from the chassis plate v2 only between y = 55.3 mm and y = 246.5 mm (coordinate system as for the chassis plate v2, see [coordinate system](#coordinate-system)):
+
+| Section | Position (y) | Width |
+|:---|:---|:---|
+| End with the 2 × 2 hole pattern | 0 to 55.3 mm | Identical to the chassis plate v2 |
+| Transition, 30.3° to the cross direction | 55.3 to 85.5 mm | Increases from 100 to 200 mm |
+| Wide section | 85.5 to 205.0 mm | 199.98 mm |
+| Transition, 38.4° to the cross direction | 205.0 to 246.5 mm | Decreases from 200 to 100 mm |
+| Opposite end | 246.5 to 325.6 mm | Identical to the chassis plate v2 |
+
+* The values are taken from the STL file.
+* The wide section is 10 mm wider than the width over the tires (190 mm, `spec_cartent410r.yaml`) and the body width (190 mm, `spec_body.yaml`). It protrudes by 5 mm per side. The clearance to the wheels and to the body has to be checked before manufacturing.
+* The thickness of 2.0 mm is subject to the same open point as the chassis plate v2 (see [open points](#open-points)).
 
 ## 3D printed parts
 
