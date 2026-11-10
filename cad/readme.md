@@ -11,6 +11,7 @@
   * [Open points](#open-points)
 * [Speedrun chassis plate (wide)](#speedrun-chassis-plate-wide)
   * [Longer motor window for a 3660 motor](#longer-motor-window-for-a-3660-motor)
+* [DXF generation](#dxf-generation)
 * [3D printed parts](#3d-printed-parts)
   * [1. Motor fan mount (`fan_mount.stl`)](#1-motor-fan-mount-fan_mountstl)
   * [2. LiPo battery dummy (`lipo_mock.stl`)](#2-lipo-battery-dummy-lipo_mockstl)
@@ -23,7 +24,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
 * **`/chassis_v2`**: CAD data of the chassis plate and the top brace, version 2, in several formats (STEP, STL, DXF, OpenSCAD, PDF templates), STL files for a test print on a home 3D printer, a wide variant of the chassis plate for speedruns (STEP, STL) and a version of the wide variant with a longer motor window for a 3660 motor (STEP, STL, DXF)
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
-Own files are released under the licenses of this repository (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of the chassis plate and the top brace are stored in the `/photos` directory of the repository. The preview image of the wide chassis plate with the longer motor window is stored in the directory `/chassis_v2`.
+Own files are released under the licenses of this repository (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of the chassis plate, the top brace and the speedrun chassis plate (wide) are stored in the `/photos` directory of the repository. The preview image of the wide chassis plate with the longer motor window is stored in the directory `/chassis_v2`.
 
 ## Chassis plate and top brace v2
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -43,7 +44,7 @@ Own files are released under the licenses of this repository (see the root readm
 * Sizes and volumes are taken from the STL files. The cutout sizes are approximate values from the geometry data.
 
 ### Files
-All files are stored in the directory `/chassis_v2`. The STEP, STL, DXF, OpenSCAD and PDF files and the hole tables are generated from the geometry data (`*_geometry.json`).
+All files are stored in the directory `/chassis_v2`. The STEP, STL, DXF, OpenSCAD and PDF files and the hole tables are generated from the geometry data (`*_geometry.json`). The DXF files can be regenerated with a script (see [DXF generation](#dxf-generation)).
 
 | File | Format | Use |
 |:---|:---|:---|
@@ -105,6 +106,8 @@ Recommended procedure:
 * **Description:** Variant of the chassis plate v2 for speedruns with a widened middle section. The hole pattern, the countersinks, the window, the slot and both narrow ends are identical to the chassis plate v2.
 * **Files:** `chassis_plate_T410R_speedrun_wide.step` (STEP AP214, one solid) and `chassis_plate_T410R_speedrun_wide.stl` (binary STL) in the directory `/chassis_v2`. This variant has no DXF, OpenSCAD, PDF or test print files and is not generated from the geometry data of version 2.
 
+![Top view of the speedrun chassis plate (wide) with hole labels and the outline of the chassis plate v2](../photos/cad_chassis_speedrun_wide_drawing.png)
+
 | Property | Chassis plate v2 | Speedrun chassis plate (wide) |
 |:---|:---|:---|
 | Size (width × length × thickness) | 99.98 × 325.6 × 2.0 mm | 199.98 × 325.6 × 2.0 mm |
@@ -153,8 +156,25 @@ The outline differs from the chassis plate v2 only between y = 55.3 mm and y = 2
 | `chassis_plate_speedrun_wide_motor10_geometry.json` | JSON | Geometry data: outline, cutouts, holes, thickness and countersink parameters |
 | `preview_speedrun_wide_motor10.png` | PNG | Top view with hole labels, the previous window (red, dashed) and the longer window |
 
-* All files are stored in the directory `/chassis_v2`. The STEP, STL and DXF files are generated from the geometry data.
+* All files are stored in the directory `/chassis_v2`. The STEP, STL and DXF files are generated from the geometry data. The DXF file can be regenerated with a script (see [DXF generation](#dxf-generation)).
 * The geometry data combines the outline of `chassis_plate_T410R_speedrun_wide.step` with the holes, cutouts and countersink parameters of `chassis_plate_v2_geometry.json`. Without the longer window, it reproduces `chassis_plate_T410R_speedrun_wide.step` exactly.
+
+## DXF generation
+The script `scripts/cad/generate_dxf.py` generates a DXF file for CNC manufacturing from the geometry data (`*_geometry.json`). It requires Python 3 and the package `ezdxf` (`pip install ezdxf`). The script is run from the root directory of the repository:
+
+```bash
+python scripts/cad/generate_dxf.py cad/chassis_v2/chassis_plate_speedrun_wide_motor10_geometry.json cad/chassis_v2/chassis_plate_T410R_speedrun_wide_motor10.dxf
+```
+
+| Geometry data | DXF file |
+|:---|:---|
+| `chassis_plate_v2_geometry.json` | `chassis_plate_T410R_v2.dxf` |
+| `top_brace_v2_geometry.json` | `top_brace_T410R_v2.dxf` |
+| `chassis_plate_speedrun_wide_motor10_geometry.json` | `chassis_plate_T410R_speedrun_wide_motor10.dxf` |
+
+* The DXF file contains the layers `OUTLINE` (outer contour), `CUTOUT` (window and slots), `HOLE_THROUGH` (through holes Ø3.2 mm), `CSK_BOTTOM_INFO` (countersink diameter Ø6.2 mm on the bottom face, for information only) and `NOTES` (empty). The top brace has no countersinks, so its layer `CSK_BOTTOM_INFO` is empty.
+* For the three files in the table, the generated geometry is identical to the DXF files in the directory `/chassis_v2`. Only the creation date and internal IDs of the files differ.
+* The speedrun chassis plate (wide) without the longer motor window has no geometry data and therefore no DXF file.
 
 ## 3D printed parts
 
