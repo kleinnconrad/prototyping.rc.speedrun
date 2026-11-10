@@ -10,6 +10,7 @@
   * [Test print](#test-print)
   * [Open points](#open-points)
 * [Speedrun chassis plate (wide)](#speedrun-chassis-plate-wide)
+  * [Print template](#print-template)
   * [Longer motor window for a 3660 motor](#longer-motor-window-for-a-3660-motor)
 * [DXF generation](#dxf-generation)
 * [3D printed parts](#3d-printed-parts)
@@ -21,7 +22,7 @@
 
 ## Overview
 This directory contains CAD data and 3D print files for the RC car **Carten T410R**:
-* **`/chassis_v2`**: CAD data of the chassis plate and the top brace, version 2, in several formats (STEP, STL, DXF, OpenSCAD, PDF templates), STL files for a test print on a home 3D printer, a wide variant of the chassis plate for speedruns (STEP, STL) and a version of the wide variant with a longer motor window for a 3660 motor (STEP, STL, DXF)
+* **`/chassis_v2`**: CAD data of the chassis plate and the top brace, version 2, in several formats (STEP, STL, DXF, OpenSCAD, PDF templates), STL files for a test print on a home 3D printer, a wide variant of the chassis plate for speedruns (STEP, STL, PDF template) and a version of the wide variant with a longer motor window for a 3660 motor (STEP, STL, DXF)
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are released under the licenses of this repository (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of the chassis plate, the top brace and the speedrun chassis plate (wide) are stored in the `/photos` directory of the repository. The preview image of the wide chassis plate with the longer motor window is stored in the directory `/chassis_v2`.
@@ -104,7 +105,7 @@ Recommended procedure:
 ## Speedrun chassis plate (wide)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Variant of the chassis plate v2 for speedruns with a widened middle section. The hole pattern, the countersinks, the window, the slot and both narrow ends are identical to the chassis plate v2.
-* **Files:** `chassis_plate_T410R_speedrun_wide.step` (STEP AP214, one solid) and `chassis_plate_T410R_speedrun_wide.stl` (binary STL) in the directory `/chassis_v2`. This variant has no DXF, OpenSCAD, PDF or test print files and is not generated from the geometry data of version 2.
+* **Files:** `chassis_plate_T410R_speedrun_wide.step` (STEP AP214, one solid), `chassis_plate_T410R_speedrun_wide.stl` (binary STL) and `chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf` (1:1 template, see [print template](#print-template)) in the directory `/chassis_v2`. This variant has no DXF, OpenSCAD or test print files and is not generated from the geometry data of version 2.
 
 ![Top view of the speedrun chassis plate (wide) with hole labels and the outline of the chassis plate v2](../photos/cad_chassis_speedrun_wide_drawing.png)
 
@@ -129,6 +130,16 @@ The outline differs from the chassis plate v2 only between y = 55.3 mm and y = 2
 * The wide section is 10 mm wider than the width over the tires (190 mm, `spec_cartent410r.yaml`) and the body width (190 mm, `spec_body.yaml`). It protrudes by 5 mm per side. The clearance to the wheels and to the body has to be checked before manufacturing.
 * The thickness of 2.0 mm is subject to the same open point as the chassis plate v2 (see [open points](#open-points)).
 
+### Print template
+The file `chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf` is a 1:1 template of the speedrun chassis plate (wide) on two A4 pages in landscape format. It is used to check the hole positions against the actual part.
+
+* **Scale:** The drawing is pre-scaled to 103.09 % (100/97) for a PDF viewer that prints at 97 %. Printed at 97 %, the drawing is 1:1. Printed at 100 % ("actual size"), it is 3.1 % too large. This differs from the templates of the chassis plate v2, which are printed at 100 %.
+* **Scale check:** Each page has a 100 mm bar in x and a 100 mm bar in y. Both bars must measure 100 mm before the template is used. After joining the pages, the distance between the centres of the holes H11 and H23 is 145.82 mm.
+* **Joining:** Page 2 is laid over page 1 so that the two blue dashed lines of the 20 mm overlap zone coincide. The holes H16 to H20 are shown on both pages.
+* **Orientation:** The template shows the top view (side without countersinks). The part is placed with the countersinks facing down.
+* **Content:** Outline, window and slot (black), through holes Ø3.2 mm with centre cross (red), countersinks Ø6.2 mm on the bottom face (dashed), outline of the chassis plate v2 (grey, dashed) and the longer motor window for the 3660 motor (green, dashed, see [longer motor window for a 3660 motor](#longer-motor-window-for-a-3660-motor)).
+* The hole positions on the PDF were checked on a raster image with 600 dpi. All 36 holes deviate by less than 0.06 mm from the geometry data.
+
 ### Longer motor window for a 3660 motor
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Version of the speedrun chassis plate (wide) with a motor window that is 10 mm longer. The window is lengthened to fit a 3660 motor. The motor of the car (Hobbywing 3660SL G2) has a diameter of 36 mm and a length of 60 mm (`specs/electronics/brushless_combo/spec_brushless_combo.yaml`) and is 10 mm longer than a 3650 motor.
@@ -147,6 +158,7 @@ The outline differs from the chassis plate v2 only between y = 55.3 mm and y = 2
 * The window is extended only toward the end with the holes H34 to H36 (+y). The end edge at y = 65.63 mm is not moved.
 * The outline, the slot, the 36 holes with the countersinks and the thickness are identical to the speedrun chassis plate (wide).
 * The extension reduces the distance between the window and the countersink of hole H16 (Ø6.2 mm, bottom face) from 30.0 mm to 23.3 mm. The distances to the countersinks of the holes H07, H09, H10 and H13, which are closer to the window than H16, do not change.
+* The [print template](#print-template) of the speedrun chassis plate (wide) shows the longer window as a green dashed line.
 
 | File | Format | Use |
 |:---|:---|:---|
