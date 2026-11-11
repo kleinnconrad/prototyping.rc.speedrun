@@ -108,9 +108,9 @@ Recommended procedure:
 * Check the fit on the car: if the holes at both ends of the parts align with the mounting points, the overall length is correct.
 
 ### Open points
-1. **Thickness of the chassis plate:** The model uses 2.0 mm. The chassis specification lists 2.25 mm for the bottom plate (`specs/mechanics/carten_t410r/spec_cartent410r.yaml`). The thickness has to be measured before manufacturing. It can be changed with the parameter `thickness` in the OpenSCAD file.
-
-The overall length was an open point until the test print. With the caliper scaling, the chassis plate is 325.6 mm and the top brace 243.3 mm long, while measurements with a ruler resulted in 324 mm and 242 mm. The test print confirms the lengths from the caliper scaling, so the ruler readings were too short.
+There are no open points for the chassis plate and the top brace v2. The following points were clarified:
+* **Overall length:** With the caliper scaling, the chassis plate is 325.6 mm and the top brace 243.3 mm long, while measurements with a ruler resulted in 324 mm and 242 mm. The test print confirms the lengths from the caliper scaling, so the ruler readings were too short.
+* **Thickness of the chassis plate:** The chassis specification listed 2.25 mm for the bottom plate. A measurement of the chassis plate of the car with a precise caliper resulted in 2.03 mm, so the value of the specification was wrong. It is corrected in `specs/mechanics/carten_t410r/spec_cartent410r.yaml`. The model uses 2.0 mm. For manufacturing, the thickness is determined by the carbon sheet that is used. The thickness of the model can be changed with the parameter `thickness` in the OpenSCAD file.
 
 ## Speedrun chassis plate (wide)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -138,7 +138,7 @@ The outline differs from the chassis plate v2 only between y = 55.3 mm and y = 2
 
 * The values are taken from the STL file.
 * The wide section is 10 mm wider than the width over the tires (190 mm, `spec_cartent410r.yaml`) and the body width (190 mm, `spec_body.yaml`). It protrudes by 5 mm per side. The clearance to the wheels and to the body has to be checked before manufacturing.
-* The thickness of 2.0 mm is subject to the same open point as the chassis plate v2 (see [open points](#open-points)).
+* The thickness of 2.0 mm is the same as for the chassis plate v2. The chassis plate of the car measures 2.03 mm (see [open points](#open-points)).
 * The hole pattern and both narrow ends are identical to the chassis plate v2 and are therefore confirmed by its [test print](#test-print). The widened section is not part of the test print.
 
 ### Print template

@@ -415,7 +415,8 @@ Cartent410R:
         track_width_mm: 190
         wheelbase_mm: 258
       chassis_and_structure:
-        bottom_plate: 2.25 mm Eco-Carbon (carbon fiber reinforced composite material)
+        bottom_plate: 2.03 mm Eco-Carbon (carbon fiber reinforced composite material,
+          measured with a caliper)
         upper_deck: 2.0 mm Eco-Carbon
         shock_towers: 3.0 mm Eco-Carbon (front & rear, various mounting points)
         motor_mount: CNC-machined aluminum
