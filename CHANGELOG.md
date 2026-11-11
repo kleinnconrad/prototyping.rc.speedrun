@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/kleinnconrad/prototyping.rc.speedrun/compare/v1.5.0...v1.5.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* correct the thickness of the chassis bottom plate to 2.03 mm ([3417141](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/34171412af4167c0d38b7223c1064af0c570ce3e))
+
 ## [1.5.0](https://github.com/kleinnconrad/prototyping.rc.speedrun/compare/v1.4.1...v1.5.0) (2026-11-10)
 
 
