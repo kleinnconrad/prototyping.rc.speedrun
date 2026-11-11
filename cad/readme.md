@@ -37,7 +37,7 @@ Own files are released under the licenses of this repository (see the root readm
 ## Chassis plate and top brace v2
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** CAD models of the chassis plate and the top brace of the Carten T410R. The geometry is derived from photos of the original parts and scaled to caliper measurements (see [measurement basis](#measurement-basis)). Version 2 replaces version 1, which is not part of this repository.
-* **Status:** Not yet verified. The test print is used to check the hole positions and the overall length (see [open points](#open-points)).
+* **Status:** Verified with a test print. The printed chassis plate and top brace fit the car, the hole positions and the overall lengths are correct (see [test print](#test-print)).
 
 ![Top view of the chassis plate and the top brace v2 with hole labels](../photos/cad_chassis_v2_drawing.png)
 
@@ -86,6 +86,8 @@ The outlines were taken from photos of the original parts and scaled to caliper 
 ### Test print
 The test print checks the hole positions and the overall length with a home 3D printer before the parts are manufactured. Both parts are split into two halves that are connected with dovetails. The files are stored in the directory `/chassis_v2/test_print`.
 
+**Result:** The test print of the chassis plate and the top brace fits the car. The holes at both ends of both parts align with the mounting points. This confirms the hole positions and the overall lengths of 325.6 mm (chassis plate) and 243.3 mm (top brace).
+
 ![Test print halves of the chassis plate and the top brace](../photos/cad_chassis_v2_test_print.png)
 
 | File | Size (width × length × thickness) | Split |
@@ -106,8 +108,9 @@ Recommended procedure:
 * Check the fit on the car: if the holes at both ends of the parts align with the mounting points, the overall length is correct.
 
 ### Open points
-1. **Overall length:** With the caliper scaling, the chassis plate is 325.6 mm and the top brace 243.3 mm long. Measurements with a ruler resulted in 324 mm and 242 mm. If these values were taken with the plastic ruler visible in the photos, the ruler deviates by approx. 0.5 %, which would also explain the deviation of the photo scale. Check of the ruler: set the caliper to 150.00 mm and read the value on the ruler. The test print clarifies the length.
-2. **Thickness of the chassis plate:** The model uses 2.0 mm. The chassis specification lists 2.25 mm for the bottom plate (`specs/mechanics/carten_t410r/spec_cartent410r.yaml`). The thickness has to be measured before manufacturing. It can be changed with the parameter `thickness` in the OpenSCAD file.
+1. **Thickness of the chassis plate:** The model uses 2.0 mm. The chassis specification lists 2.25 mm for the bottom plate (`specs/mechanics/carten_t410r/spec_cartent410r.yaml`). The thickness has to be measured before manufacturing. It can be changed with the parameter `thickness` in the OpenSCAD file.
+
+The overall length was an open point until the test print. With the caliper scaling, the chassis plate is 325.6 mm and the top brace 243.3 mm long, while measurements with a ruler resulted in 324 mm and 242 mm. The test print confirms the lengths from the caliper scaling, so the ruler readings were too short.
 
 ## Speedrun chassis plate (wide)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -136,6 +139,7 @@ The outline differs from the chassis plate v2 only between y = 55.3 mm and y = 2
 * The values are taken from the STL file.
 * The wide section is 10 mm wider than the width over the tires (190 mm, `spec_cartent410r.yaml`) and the body width (190 mm, `spec_body.yaml`). It protrudes by 5 mm per side. The clearance to the wheels and to the body has to be checked before manufacturing.
 * The thickness of 2.0 mm is subject to the same open point as the chassis plate v2 (see [open points](#open-points)).
+* The hole pattern and both narrow ends are identical to the chassis plate v2 and are therefore confirmed by its [test print](#test-print). The widened section is not part of the test print.
 
 ### Print template
 Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape format. The templates are used to check the hole positions against the actual part.
@@ -156,7 +160,7 @@ Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape fo
 ### Longer motor window for a 3660 motor
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Version of the speedrun chassis plate (wide) with a motor window that is 10 mm longer. The window is lengthened to fit a 3660 motor. The motor of the car (Hobbywing 3660SL G2) has a diameter of 36 mm and a length of 60 mm (`specs/electronics/brushless_combo/spec_brushless_combo.yaml`) and is 10 mm longer than a 3650 motor.
-* **Status:** Not yet verified. The fit of the motor has to be checked before manufacturing.
+* **Status:** Not yet verified. The fit of the motor has to be checked before manufacturing. The [test print](#test-print) of the chassis plate v2 confirms the hole pattern, but does not include the longer motor window.
 
 ![Top view of the wide chassis plate with the longer motor window and hole labels](../photos/cad_chassis_speedrun_wide_motor10_preview.png)
 
