@@ -63,7 +63,7 @@ DARK_THEME = {
 # of the car), z: height above ground.
 PLATE_X = (-48.0, 302.0)
 PLATE_HALF_WIDTH = 52.0
-PLATE_THICKNESS = 2.25  # bottom plate, see spec_cartent410r.yaml
+PLATE_THICKNESS = 2.03  # bottom plate, measured, see spec_cartent410r.yaml
 BATTERY = {"x": (70.0, 208.0), "y": (-54.0, -8.0), "height": 35.0}  # 138 x 46 x 35 mm
 ESC = {"x": (100.0, 147.0), "y": (10.0, 46.0)}
 SERVO = {"x": (34.0, 54.2), "y": (6.0, 46.8)}  # low profile servo 40.8 x 20.2 mm
