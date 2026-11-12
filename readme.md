@@ -52,7 +52,7 @@ The speedrun chassis is designed in this project for speeds over 100 km/h. It co
 | Lower bulkhead | 2 | Verified | 2 x 35 g (7075) |
 | Upper bulkhead | 2 | Not verified | 2 x 56 g (7075) |
 | Speedrun top brace | 1 | Verified | 14 g (carbon) |
-| **Total** | | | **410 g** |
+| **Total** | | | **411 g** |
 
 * The chassis plate, the lower bulkheads and the top brace are verified. The upper bulkhead is not verified yet. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
 * The assembly is available as a STEP file (`cad/assembly/speedrun_chassis_T410R.step`).
