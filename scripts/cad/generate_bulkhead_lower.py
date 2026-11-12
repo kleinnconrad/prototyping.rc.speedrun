@@ -74,14 +74,13 @@ def bulkhead_lower(p, test_print=False):
     body = plan.intersect(side)
 
     # stepped block under the pinion: wide and deep under the pinion pocket, narrow under the
-    # pinion seats; half cylinder over the outer pinion bearing beyond the end of the footprint
+    # pinion seats and beyond the end of the footprint (outer pinion bearing)
     yp_in = p["pinion_seat_y_inner"]
     yp_end = yp_in + p["pinion_seat_length"]
     k = p["pinion_pocket_r"] + p["pinion_pocket_wall"]
     kh = p["pinion_housing_r"]
-    body = body.union(cq.Workplane().add(box(-k, k, a, yp_in, zc - k, zc)))
-    body = body.union(cq.Workplane().add(box(-kh, kh, yp_in - 0.01, y1, zc - kh, zc)))
-    body = body.union(cq.Workplane().add(cyl_y(kh, y1 - 1.0, yp_end, 0.0, zc)))
+    body = body.union(cq.Workplane().add(box(-k, k, a, yp_in + p["pinion_pocket_wall"], zc - k, zc)))
+    body = body.union(cq.Workplane().add(box(-kh, kh, yp_in - 0.01, yp_end, zc - kh, zc)))
 
     # tabs for the sway bar mounts (top face in the parting face)
     tx, ty, tr, tt = p["swaybar_hole_x"], p["swaybar_hole_y"], p["swaybar_tab_r"], p["swaybar_tab_t"]
@@ -110,7 +109,7 @@ def bulkhead_lower(p, test_print=False):
 
     # gear cavity: diff case between the bearing seats, deepening for the ring gear on one side
     floor = box(-BIG, BIG, -BIG, BIG, p["floor_z"], BIG)
-    cav = cyl_x(p["case_cavity_r"], -xs - 0.01, xs + 0.01, yd, zc)
+    cav = cyl_x(p["case_cavity_r"], -xs, xs, yd, zc)
     s = 1 if p["ring_gear_side"] > 0 else -1
     xa, xb = sorted((s * p["ring_recess_x_inner"], s * min(p["ring_recess_x_outer"], xs)))
     cav = cav.fuse(cyl_x(p["ring_recess_r"], xa, xb, yd, zc))
@@ -131,15 +130,17 @@ def bulkhead_lower(p, test_print=False):
         xa, xb = sorted((sx * (xl - 0.01), sx * (w + 5)))
         body = body.cut(cq.Workplane().add(cyl_x(p["diff_lip_d"] / 2, xa, xb, yd, zc)))
 
-    # pinion pocket up to the inner end of the pinion seat (no shoulder in front of the bearings)
+    # pinion pocket up to the inner end of the pinion seat (no shoulder in front of the bearings).
+    # The pocket ends exactly at the end of the wide block below it: a pocket that runs past
+    # the block leaves a slit through the bottom.
     body = body.cut(cq.Workplane().add(cyl_y(p["pinion_pocket_r"], p["pinion_pocket_y_min"],
-                                             yp_in + 0.01, 0.0, zc)))
+                                             yp_in, 0.0, zc)))
     # pinion bearing seats: inner bearing, rib, outer bearing
     rp = (p["pinion_bearing"][1] + seat_add) / 2
     bp = p["pinion_bearing"][2]
     yr0 = yp_in + bp                           # rib between the two bearings
     yr1 = yr0 + p["pinion_rib_t"]
-    body = body.cut(cq.Workplane().add(cyl_y(rp, yp_in, yr0, 0.0, zc)))
+    body = body.cut(cq.Workplane().add(cyl_y(rp, yp_in - 0.01, yr0, 0.0, zc)))
     body = body.cut(cq.Workplane().add(cyl_y(p["pinion_rib_d"] / 2, yr0 - 0.01, yr1 + 0.01, 0.0, zc)))
     body = body.cut(cq.Workplane().add(cyl_y(rp, yr1, yp_end + 5, 0.0, zc)))
 
@@ -156,6 +157,63 @@ def bulkhead_lower(p, test_print=False):
     for sx in (-1, 1):
         body = body.cut(cq.Workplane().add(cyl_z(r, zc - tt - 1, zc + 1, sx * tx, ty)))
     return body
+
+
+def thin_gaps(solid, limit=0.25):
+    """Thin slits and thin walls: pairs of faces without a common edge or vertex that are
+    closer than limit (exact distance between the faces).
+
+    Returns (kind, distance, point) per pair: kind "slit" (no material between the closest
+    points, an unwanted opening or step) or "wall" (material between them, a thin wall).
+    """
+    from OCP.BRepExtrema import BRepExtrema_DistShapeShape
+    faces = solid.Faces()
+    boxes = [f.BoundingBox() for f in faces]
+    found = []
+    for a in range(len(faces)):
+        for b in range(a + 1, len(faces)):
+            ba, bb = boxes[a], boxes[b]
+            if (ba.xmin - bb.xmax > limit or bb.xmin - ba.xmax > limit or ba.ymin - bb.ymax > limit
+                    or bb.ymin - ba.ymax > limit or ba.zmin - bb.zmax > limit or bb.zmin - ba.zmax > limit):
+                continue
+            ext = BRepExtrema_DistShapeShape(faces[a].wrapped, faces[b].wrapped)
+            d = ext.Value()
+            if not 1e-4 < d < limit:
+                continue                     # touching faces (common edge or vertex) or far apart
+            p1, p2 = ext.PointOnShape1(1), ext.PointOnShape2(1)
+            mid = cq.Vector((p1.X() + p2.X()) / 2, (p1.Y() + p2.Y()) / 2, (p1.Z() + p2.Z()) / 2)
+            kind = "wall" if solid.isInside(mid) else "slit"
+            found.append((kind, round(d, 3), (round(mid.x, 2), round(mid.y, 2), round(mid.z, 2))))
+    return found
+
+
+def enclosure_lower(body, p):
+    """Close the intended openings of the lower part with plugs and return the volumes of the
+    enclosed voids. Intended openings: parting face, lip openings, pinion seat end, floor
+    opening below the ring gear. The gear cavity is closed if it is one of the voids (the
+    other voids are the screw holes, which the plug on the parting face closes)."""
+    zc, yd, w = p["axis_z"], p["diff_axis_y"], p["body_half_width"]
+    yp_end = p["pinion_seat_y_inner"] + p["pinion_seat_length"]
+    plugs = [box(-w - 1, w + 1, p["body_y_outer_end"] - 8, yp_end + 2, zc, zc + 0.5),
+             cyl_y(p["pinion_bearing"][1] / 2 + 0.2, yp_end - 0.5, yp_end + 1.0, 0.0, zc)]
+    for sx in (-1, 1):
+        xa, xb = sorted((sx * (p["diff_lip_inner_x"] + 0.5), sx * (w + 1)))
+        plugs.append(cyl_x(p["diff_lip_d"] / 2 + 0.2, xa, xb, yd, zc))
+    hl = p.get("ring_floor_opening_half_length", 0.0)
+    if hl > 0:
+        plugs.append(box(-w, w, yd - hl - 0.5, yd + hl + 0.5, -0.5, p["floor_z"] / 2))
+    return enclosed_voids(body, plugs)
+
+
+def enclosed_voids(body, plugs):
+    """Volumes of the voids that are enclosed after the plugs are added (inner shells)."""
+    solid = body.val() if hasattr(body, "val") else body
+    for plug in plugs:
+        solid = solid.fuse(plug)
+    solid = solid.clean()
+    shells = solid.Shells()
+    outer = max(shells, key=lambda sh: sh.BoundingBox().DiagonalLength)
+    return [round(abs(cq.Solid.makeSolid(sh).Volume()), 1) for sh in shells if not sh.isSame(outer)]
 
 
 def main():
@@ -184,6 +242,14 @@ def main():
           f"z {bb.zmin:.2f} to {bb.zmax:.2f}")
     print(f"  volume: {vol / 1000:.2f} cm3, mass 7075 (2.81 g/cm3): {vol / 1000 * 2.81:.1f} g, "
           f"PLA (1.24 g/cm3): {vol / 1000 * 1.24:.1f} g")
+    cavity = [v for v in enclosure_lower(s, p) if v > 1000.0]
+    print(f"  enclosure check (intended openings plugged): "
+          + (f"gear cavity closed ({cavity[0] / 1000:.2f} cm3)" if cavity
+             else "UNWANTED OPENING: the gear cavity is open to the outside"))
+    gaps = thin_gaps(s)
+    print(f"  check for thin slits and walls (faces closer than 0.25 mm): {len(gaps)} found")
+    for g in gaps:
+        print(f"    {g[0]}: {g[1]} mm at {g[2]}")
 
 
 if __name__ == "__main__":
