@@ -68,7 +68,7 @@ Own files are released under the licenses of this repository (see the root readm
 * Sizes and volumes are taken from the STL files. The cutout sizes are approximate values from the geometry data.
 
 ### Files
-The files of the chassis plate are stored in the directory `/chassis/chassis_plate`, the files of the top brace in `/chassis/top_brace` and the test print files in `/chassis/test_print`. The STEP, STL, DXF, OpenSCAD and PDF files and the hole tables are generated from the geometry data (`*_geometry.json`). The DXF files can be regenerated with a script (see [DXF generation](#dxf-generation)).
+The files of the chassis plate are stored in the directory `/chassis/chassis_plate`, the files of the top brace in `/chassis/top_brace` and the test print files in `/chassis/test_print`. The STEP, STL, DXF, OpenSCAD and PDF files and the hole tables are generated from the geometry data (`*_geometry.json`). The DXF files can be regenerated with a script (see [DXF generation](#dxf-generation)). The PDF templates and the drawing `photos/cad_chassis_drawing.png` are generated with the script `generate_chassis_templates.py` (see [scripts](#scripts)).
 
 | File | Format | Use |
 |:---|:---|:---|
@@ -79,12 +79,12 @@ The files of the chassis plate are stored in the directory `/chassis/chassis_pla
 | `chassis_plate_T410R.dxf`, `top_brace_T410R.dxf` | DXF | 2D drawings for CNC manufacturing with the layers `OUTLINE`, `CUTOUT`, `HOLE_THROUGH` and `CSK_BOTTOM_INFO` (countersinks, chassis plate only) |
 | `chassis_plate_T410R.scad`, `top_brace_T410R.scad` | OpenSCAD | Parametric models. The parameters `thickness`, `hole_d`, `csk_d` and `csk_angle` are defined at the top of the file. |
 | `chassis_plate_T410R_1to1_A3.pdf` | PDF (A3, 1 page) | 1:1 template of the chassis plate |
-| `chassis_plate_T410R_1to1_A4x2.pdf` | PDF (A4, 2 pages) | 1:1 template of the chassis plate on two A4 sheets |
+| `chassis_plate_T410R_1to1_A4x2.pdf` | PDF (A4, 2 pages) | 1:1 template of the chassis plate on two A4 sheets (portrait) with a 20 mm overlap zone |
 | `top_brace_T410R_1to1_A4.pdf` | PDF (A4, 1 page) | 1:1 template of the top brace |
 | `chassis_plate_hole_table.csv`, `top_brace_hole_table.csv` | CSV | Hole coordinates (x, y), through hole diameter and countersink diameter |
 | `chassis_plate_geometry.json`, `top_brace_geometry.json` | JSON | Geometry data: outline, cutouts, holes, thickness and countersink parameters |
 
-The PDF templates must be printed at 100 % scale. The 100 mm bar on the template is used to check the scale.
+The PDF templates must be printed at 100 % scale. The 100 mm bars on the template are used to check the scale. For a PDF viewer that prints at another fixed scale, the script `generate_chassis_templates.py` generates pre-scaled templates (options `--print-scale` and `--suffix`).
 
 ### Coordinate system
 * Units are millimeters. All coordinates refer to the top view.
@@ -379,7 +379,7 @@ The measurement sheet `bulkhead_upper_measurement_sheet.pdf` shows the interface
 * Mass: 55 g in 7075. Straight pockets are possible after the interfaces are confirmed.
 
 ## Scripts
-The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates, and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
+The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates (except `generate_chassis_templates.py`, which writes the templates of the chassis plate and the top brace), and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
 
 | Script | Input | Output | Package |
 |:---|:---|:---|:---|
@@ -391,6 +391,7 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_drawing.py` | Geometry data of the speedrun chassis plate (wide) and the chassis plate | Drawing `photos/cad_chassis_speedrun_wide_drawing.png` | matplotlib |
 | `generate_window_preview.py` | Geometry data of both speedrun chassis plates | Preview image `photos/cad_chassis_speedrun_wide_motor10_preview.png` | matplotlib |
 | `generate_print_template.py` | Geometry data of both speedrun chassis plates and the chassis plate | Print templates of both speedrun chassis plates (option `--plate wide` or `--plate motor10`). The option `--print-scale` sets the scale of the PDF viewer. | reportlab |
+| `generate_chassis_templates.py` | Geometry data of the chassis plate and the top brace | Print templates `chassis_plate_T410R_1to1_A3.pdf`, `chassis_plate_T410R_1to1_A4x2.pdf`, `top_brace_T410R_1to1_A4.pdf` and the drawing `photos/cad_chassis_drawing.png`. The option `--print-scale` sets the scale of the PDF viewer. | matplotlib, reportlab |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file | cadquery |
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
 | `generate_bulkhead_upper.py` | Parameter files of the upper and the lower bulkhead | STEP and STL file of the upper part, test print STL file, assembly STEP file, interference check | cadquery |
@@ -410,6 +411,12 @@ python scripts/cad/generate_drawing.py
 python scripts/cad/generate_window_preview.py
 python scripts/cad/generate_print_template.py --plate wide
 python scripts/cad/generate_print_template.py --plate motor10
+```
+
+The following command regenerates the print templates of the chassis plate and the top brace and the drawing `photos/cad_chassis_drawing.png` from their geometry data:
+
+```bash
+python scripts/cad/generate_chassis_templates.py
 ```
 
 * The regenerated geometry data, STL files and images are identical to the files in the repository. The STEP, DXF and PDF files differ only in header data such as the creation date and internal IDs.
