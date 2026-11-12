@@ -59,7 +59,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
 * **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads and top brace (STEP).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
-Own files are released under the licenses of this repository (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
+Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
 
 ## Speedrun chassis
 The speedrun chassis combines the parts that are designed in this project for speeds over 100 km/h. The parts share their interfaces: the bulkheads are mounted on the hole patterns of the chassis plate, the top brace on the contact faces of both upper bulkheads.
@@ -611,4 +611,4 @@ The RC maintenance stand (`stojan_3dprint_25.stl`) is not mine. The original fil
 The rear diffuser (`T410R_DIFFUSOR_V2_2.stl`) is not mine. The original file and all credits go to the original designer on Cults3D:
 
 * **Designer profile:** [3DMaxi on Cults3D](https://cults3d.com/en/users/3DMaxi/3d-models)
-* **License:** The license of the author covers private use only. The licenses of this repository (MIT, CC BY 4.0) do not apply to this file.
+* **License:** The license of the author covers private use only. The copyright notice of this repository does not apply to this file.
