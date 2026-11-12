@@ -212,6 +212,7 @@ Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape fo
 | Upper bulkhead | 2 button head screws M3x10 on the pinion side, 2 button head screws M3x8 on the outer side | 4 bosses 6 mm, 2 mm above the parting face, M3 holes (tap drill 2.5 mm, 7 mm deep) |
 | Diff | 2 bearings 10x15x4 (NBA299) | 2 half bores 15 mm, 4 mm wide, each with an outer lip (opening 13 mm) |
 | Pinion shaft | 2 bearings 5x10x4 (NBA298) | Half bore 10 mm, 8.2 mm long, with a shoulder (opening 7.5 mm) toward the pinion gear |
+| Ring gear (42T) and diff case | Gear diff NBA230 | Cavity with a radius of 12 mm for the diff case, deepening with a radius of 16 mm for the ring gear on the ring gear side |
 | Sway bar | 2 M3 screws | 2 tabs with M3 holes (tap drill 2.5 mm), spacing 16 mm |
 
 * The diff axis and the pinion axis lie in the parting face. The upper bulkhead holds the bearings from above.
@@ -232,8 +233,8 @@ All files are stored in the directory `/bulkhead`. The STEP and STL files and th
 | Property | Value |
 |:---|:---|
 | Size (x by y by z) | 35.5 x 59.9 x 19.5 mm (with the sway bar tabs and the pinion housing) |
-| Volume | 12.9 cm³ |
-| Mass | 36 g in 7075 (2.81 g/cm³), 16 g in PLA (1.24 g/cm³) |
+| Volume | 14.8 cm³ |
+| Mass | 42 g in 7075 (2.81 g/cm³), 18 g in PLA (1.24 g/cm³) |
 
 ### Coordinate system of the lower bulkhead
 * Units are millimeters.
@@ -248,8 +249,8 @@ Each parameter in `bulkhead_lower_v1_parameters.json` has a source code:
 |:---|:---|:---|
 | `plate` | Hole pattern of the chassis plate v2, confirmed by its test print | Spacing of the bottom holes |
 | `manual` | T410R instruction manual | Bearing sizes |
-| `user` | Information from the owner of the car | Screw sizes, function of the sway bar holes |
-| `photo` | Estimate from 9 photos of the stock part with rulers | Heights, positions of the bearing seats, bosses and tabs, outline, side profile |
+| `user` | Information from the owner of the car | Screw sizes, function of the sway bar holes, deepening for the ring gear |
+| `photo` | Estimate from 9 photos of the stock part with rulers | Heights, positions of the bearing seats, bosses and tabs, outline, side profile, side and position of the ring gear deepening |
 | `design` | Free design choice | Tap drill diameters, hole depths, gear cavity, floor thickness |
 
 * The camera was approx. 13 cm above the part. Because of the perspective, the scale of a photo depends on the height of each feature. The photo values are therefore estimates with an accuracy of approx. +-1 mm.
@@ -258,8 +259,8 @@ Each parameter in `bulkhead_lower_v1_parameters.json` has a source code:
 ### Caliper measurement sheet
 The measurement sheet `bulkhead_lower_v1_measurement_sheet.pdf` lists the dimensions that replace the photo estimates:
 * **Pages 1 to 3:** top view, bottom view, two sections, side view and end view with numbered dimensions.
-* **Page 4:** table of the 30 dimensions with the measuring method, the value of the model v1 and an empty field for the measured value.
-* **Priority A:** interfaces (holes, bearing seats, bosses, tabs, ring gear). **Priority B:** shape.
+* **Page 4:** table of the 37 dimensions with the measuring method, the value of the model v1 and an empty field for the measured value.
+* **Priority A:** interfaces (holes, bearing seats, bosses, tabs, clearance for the ring gear and the diff case). **Priority B:** shape.
 * Hole spacings are measured with the inside jaws from far edge to far edge minus the hole diameter. Heights are measured with the depth rod with the part on a flat surface.
 * The values 14 (spacing of the lips in the part) and 28 (width of the diff over both bearings) must be equal within a small end play. This checks the axial position of the diff bearings.
 
@@ -271,7 +272,9 @@ The measurement sheet `bulkhead_lower_v1_measurement_sheet.pdf` lists the dimens
 ### Design notes
 * The body is solid apart from the gear cavity. Pockets to reduce the mass are planned after the interfaces are confirmed.
 * The diff bearings are held by the outer lips. The gear cavity has no inner shoulder, so the diff with its shims sets the axial position of the bearings.
-* The gear cavity has a radius of 16 mm around the diff axis and a floor of 1.5 mm. It fits a ring gear with an outer diameter up to approx. 30 mm.
+* The gear cavity has two depths. Between the bearing seats, a cylinder with a radius of 12 mm around the diff axis holds the diff case (floor 5.5 mm thick). On the ring gear side, a deepening with a radius of 16 mm from x = 4.5 mm to x = 11.0 mm holds the 42T ring gear (floor 1.5 mm thick). The deepening fits a ring gear with an outer diameter up to approx. 30 mm. The stock part has the same arrangement: a deepening in the bottom on the ring gear side only.
+* The ring gear is on the +x side. Seen from the pinion housing, the deepening is on the left. The bulkhead is the same part at the front and at the rear and is rotated by 180 degrees. Both pinions point to the centre shaft, so the ring gear is on the same side of the bulkhead at both ends.
+* The outer end of the deepening is limited to x = 11.0 mm, so that the wall to the bottom holes is 1.8 mm thick.
 * The STEP file contains no threads. The M3 holes are modelled with the tap drill diameter of 2.5 mm. For CNC manufacturing, the threads are specified in the comment field of the order (M3, thread depth 6.5 mm for the bottom holes).
 
 ### Open points of the lower bulkhead

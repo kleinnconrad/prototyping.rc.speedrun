@@ -100,11 +100,13 @@ def bulkhead_lower(p, test_print=False):
     for (x, y) in bosses:
         body = body.union(cq.Workplane().add(cyl_z(br, p["top_boss_z_base"], ztop, x, y)))
 
-    # gear cavity: full radius in the middle, smaller radius toward the bearing seats
+    # gear cavity: diff case between the bearing seats, deepening for the ring gear on one side
     xs = p["diff_seat_inner_x"]
     floor = box(-BIG, BIG, -BIG, BIG, p["floor_z"], BIG)
-    cav = cyl_x(p["cavity_r"], -p["cavity_half_length"], p["cavity_half_length"], yd, zc)
-    cav = cav.fuse(cyl_x(p["cavity_hub_r"], -xs - 0.01, xs + 0.01, yd, zc))
+    cav = cyl_x(p["case_cavity_r"], -xs - 0.01, xs + 0.01, yd, zc)
+    s = 1 if p["ring_gear_side"] > 0 else -1
+    xa, xb = sorted((s * p["ring_recess_x_inner"], s * p["ring_recess_x_outer"]))
+    cav = cav.fuse(cyl_x(p["ring_recess_r"], xa, xb, yd, zc))
     cav = cav.intersect(floor)
     body = body.cut(cq.Workplane().add(cav))
 

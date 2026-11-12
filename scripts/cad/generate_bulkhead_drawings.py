@@ -70,6 +70,13 @@ def circles(ax, centers, d, sx=1.0):
         ax.add_patch(plt.Circle((sx * x, y), d / 2, fill=False, edgecolor="k", lw=0.6, zorder=4))
 
 
+def hdim(ax, x1, z1, x2, z2, zd, n, txt_shift=0.0):
+    """Horizontal dimension at the height zd between the points (x1, z1) and (x2, z2)."""
+    for x, z in ((x1, z1), (x2, z2)):
+        ax.plot([x, x], [z, zd + (0.8 if zd > z else -0.8)], color=DIM_COLOR, lw=0.5, zorder=5)
+    dim(ax, (x1, zd), (x2, zd), (0, 0), n, ext=False, txt_shift=txt_shift)
+
+
 def leader(ax, p, q, n):
     """Balloon at q with a leader line to the point p."""
     ax.plot([p[0], q[0]], [p[1], q[1]], color=DIM_COLOR, lw=0.6, zorder=5)
@@ -190,7 +197,6 @@ def sections_page(pdf, solid, p):
     draw_section(ax, tris, lines)
     dim(ax, (yin, zc), (yin + L, zc), (0, 4.5), 19)
     dim(ax, (yin - ts, zc - rp), (yin, zc - rp), (0, -8.5), 20, txt_shift=-4)
-    dim(ax, (yd, 0), (yd, p["floor_z"]), (-4, 0), 26, txt_shift=-4.5)
     dim(ax, (-p["base_half_length"], 0), (-p["base_half_length"], zc), (-14, 0), 4)
     ax.plot([yd, yd], [-2, zc + 6], color="#2c3e50", lw=0.6, ls="-.")
     ax.text(yd, zc + 7, "diff axis", ha="center", fontsize=7, color="#2c3e50")
@@ -203,16 +209,28 @@ def sections_page(pdf, solid, p):
     # seen from the pinion side: screen right = -x
     tris, lines = section(solid, (0, yd, 0), (0, 1, 0), (-1, 0, 0), (0, 0, 1))
     draw_section(ax, tris, lines)
+    # screen x = -x: the ring gear side (sign sg in x) is at screen -sg
+    sg = 1 if p["ring_gear_side"] > 0 else -1
+    zcase = zc - p["case_cavity_r"]
+    fz = p["floor_z"]
+    a_out, a_in = -sg * p["ring_recess_x_outer"], -sg * p["ring_recess_x_inner"]
+    xm = (a_out + a_in) / 2
     dim(ax, (-w, 0), (w, 0), (0, -4), 10)
-    dim(ax, (-(xs + b), zc - rs), (xs + b, zc - rs), (0, -6.5), 14)
-    leader(ax, (xs + b / 2, zc - rs), (8, 25), 11)
-    leader(ax, (xs + b + 0.5, zc - lip), (22, 26), 12)
-    dim(ax, (-(xs + b), zc - lip), (-w, zc - lip), (0, 3), 13, txt_shift=4.5)
-    leader(ax, (xs, zc - p["cavity_hub_r"]), (-5, 10), 15)
+    hdim(ax, -(xs + b), zc - rs, xs + b, zc - rs, 14.5, 14, txt_shift=-sg * 4)
+    leader(ax, (sg * (xs + b / 2), zc - rs), (sg * 8, 25), 11)
+    leader(ax, (sg * (xs + b + 0.5), zc - lip), (sg * 22, 26), 12)
+    hdim(ax, sg * (xs + b), zc - lip, sg * w, zc - lip, 12.5, 13, txt_shift=sg * 4.5)
+    leader(ax, (sg * xs, zcase + 2), (sg * 9, 2.8), 15)
+    hdim(ax, -sg * w, zc - lip, a_out, zcase, 20.5, 31)
+    hdim(ax, -sg * w, zc - lip, a_in, zcase, 23.5, 32)
+    dim(ax, (xm, fz), (xm, zc), (0, 0), 33, ext=False)
+    dim(ax, (sg * 6, zcase), (sg * 6, zc), (0, 0), 34, ext=False)
+    leader(ax, (xm, fz / 2), (-sg * 21.5, 4), 26)
+    ax.text(-sg * 12, -9.5, "ring gear side", ha="center", fontsize=7.5, color="#2c3e50")
     ax.plot([-24, 24], [zc, zc], color="#2c3e50", lw=0.6, ls="-.")
     ax.text(-23.5, zc + 0.8, "parting face", fontsize=7, color="#2c3e50")
     axis_marks(ax, (19, -9), ((-1, 0, "x"), (0, 1, "z")), length=5)
-    frame(ax, (-24, -12), (24, 28), pad=(0, 0, 0, 0), title="Section B-B (diff axis)")
+    frame(ax, (-24, -12), (24, 28), pad=(0, 0, 0, 0), title="Section B-B (diff axis, seen from the pinion side)")
     pdf.savefig(fig, dpi=250)
     plt.close(fig)
 
@@ -282,20 +300,30 @@ ROWS = [
     (24, "A", "Sway bar hole to the outer top boss hole, along (y)", "inside jaws, far edges, minus diameters / 2",
      "7.7"),
     (25, "B", "Sway bar tabs: thickness / top face below the parting face", "outside jaws / depth rod", "2.5 / 0"),
-    (26, "B", "Floor thickness of the cavity (no. 4 minus depth from the parting face to the floor)",
-     "depth rod", "1.5"),
+    (26, "B", "Floor thickness below the ring gear deepening (no. 4 minus no. 33)", "calculated", "1.5"),
     (27, "A", "Diff: outer diameter of the ring gear", "outside jaws on the diff", "max. 30.0"),
     (28, "A", "Diff with both bearings: distance over the outer faces of the bearings (compare no. 14)",
      "outside jaws on the diff", "33.5"),
     (29, "B", "Pinion gear (17T): outer diameter", "outside jaws", "max. 13.0"),
     (30, "B", "4 small holes on the outer end face: function, diameter, positions", "photo with ruler", "not modelled"),
+    (31, "A", "Ring gear deepening: outer face of the diff wall (ring gear side) to the outer end", "depth rod",
+     "6.75"),
+    (32, "A", "Ring gear deepening: outer face of the diff wall (ring gear side) to the inner end", "depth rod",
+     "13.25"),
+    (33, "A", "Ring gear deepening: depth below the parting face", "depth rod", "16.0"),
+    (34, "B", "Floor below the diff case: depth below the parting face", "depth rod", "12.0"),
+    (35, "A", "Diff: largest outer diameter of the diff case (without the ring gear)", "outside jaws on the diff",
+     "max. 22.0"),
+    (36, "A", "Diff: back face of the ring gear to the outer face of the bearing on the ring gear side",
+     "depth rod on the diff", "min. 6.3"),
+    (37, "A", "Ring gear side: seen from the pinion housing, is the deepening on the left?", "look", "left"),
 ]
 
 
 def table_page(pdf, rows):
     fig = plt.figure(figsize=A4_LANDSCAPE)
     page_header(fig, "Measurement sheet - lower bulkhead v1 - page 4: values",
-                "Priority A: interfaces (holes, bearing seats, screw bosses). Priority B: shape. "
+                "Priority A: interfaces (holes, bearing seats, screw bosses, gear clearance). Priority B: shape. "
                 "Model values are estimates from photos unless the parameter file states otherwise. "
                 "All values in mm.")
     ax = fig.add_axes([0.03, 0.05, 0.94, 0.85])
