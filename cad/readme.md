@@ -69,10 +69,10 @@ The speedrun chassis combines the parts that are designed in this project for sp
 ### Parts of the speedrun chassis
 | Part | Quantity | Directory | Status | Material | Mass |
 |:---|---:|:---|:---|:---|---:|
-| [Speedrun chassis plate (wide) with longer motor window](#longer-motor-window-for-a-3660-motor) | 1 | `/chassis/chassis_plate_speedrun_wide_motor10` | Hole pattern confirmed by the test print of the chassis plate, motor window not verified | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
-| [Lower bulkhead](#lower-bulkhead) | 2 | `/bulkhead` | Two test prints, new shape not test printed | 7075 | 2 x 35 g |
+| [Speedrun chassis plate (wide) with longer motor window](#longer-motor-window-for-a-3660-motor) | 1 | `/chassis/chassis_plate_speedrun_wide_motor10` | Verified | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
+| [Lower bulkhead](#lower-bulkhead) | 2 | `/bulkhead` | Verified | 7075 | 2 x 35 g |
 | [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | Not verified, U5, U6 and U11 open | 7075 | 2 x 56 g |
-| [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | Not verified | Carbon or 7075 | 14 g (carbon), 24 g (7075) |
+| [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | Verified | Carbon or 7075 | 14 g (carbon), 24 g (7075) |
 | **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace carbon | **410 g** |
 
 * The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³). Screws, bearings and the other parts of the car are not included.
@@ -188,7 +188,7 @@ The outline differs from the chassis plate only between y = 55.3 mm and y = 246.
 | Opposite end | 246.5 to 325.6 mm | Identical to the chassis plate |
 
 * The values are taken from the STL file.
-* The wide section is 10 mm wider than the width over the tires (190 mm, `spec_cartent410r.yaml`) and the body width (190 mm, `spec_body.yaml`). It protrudes by 5 mm per side. The clearance to the wheels and to the body has to be checked before manufacturing.
+* The wide section is 10 mm wider than the width over the tires (190 mm, `spec_cartent410r.yaml`) and the body width (190 mm, `spec_body.yaml`). It protrudes by 5 mm per side. The speedrun chassis plate with the longer motor window is verified (see [longer motor window for a 3660 motor](#longer-motor-window-for-a-3660-motor)).
 * The thickness of 2.0 mm is the same as for the chassis plate. The chassis plate of the car measures 2.03 mm (see [open points](#open-points)).
 * The hole pattern and both narrow ends are identical to the chassis plate and are therefore confirmed by its [test print](#test-print). The widened section is not part of the test print.
 
@@ -211,7 +211,7 @@ Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape fo
 ### Longer motor window for a 3660 motor
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Variant of the speedrun chassis plate (wide) with a motor window that is 10 mm longer. The window is lengthened to fit a 3660 motor. The motor of the car (Hobbywing 3660SL G2) has a diameter of 36 mm and a length of 60 mm (`specs/electronics/brushless_combo/spec_brushless_combo.yaml`) and is 10 mm longer than a 3650 motor.
-* **Status:** Not yet verified. The fit of the motor has to be checked before manufacturing. The [test print](#test-print) of the chassis plate confirms the hole pattern, but does not include the longer motor window.
+* **Status:** Verified. The hole pattern is also confirmed by the [test print](#test-print) of the chassis plate.
 
 ![Top view of the wide chassis plate with the longer motor window and hole labels](../photos/cad_chassis_speedrun_wide_motor10_preview.png)
 
@@ -242,7 +242,7 @@ Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape fo
 ## Speedrun top brace
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** New design of the top brace for the bulkheads of this project, in the same style as the bulkheads: straight lines and radii only. The original top brace (see [chassis plate and top brace](#chassis-plate-and-top-brace)) is kept unchanged.
-* **Status:** Not verified. The holes are taken from the original top brace, which is confirmed by its test print. The fit to the new bulkheads is checked in the CAD model (see [fit to the bulkheads](#fit-to-the-bulkheads)).
+* **Status:** Verified. The holes are taken from the original top brace, which is confirmed by its test print. The fit to the new bulkheads is also checked in the CAD model (see [fit to the bulkheads](#fit-to-the-bulkheads)).
 
 ![Top view of the speedrun top brace with the outline of the original top brace](../photos/cad_top_brace_speedrun_drawing.png)
 
@@ -298,14 +298,13 @@ All files are stored in the directory `/chassis/top_brace_speedrun`. They are ge
 * The design values (bar width, corner radii, angle of the transitions, window) are defined at the top of the script.
 
 ### Open points of the speedrun top brace
-* **Spacing B01 to B02:** 26.10 mm in the geometry data of the original top brace, 25.65 mm between B14 and B15 and 25.6 mm between the top brace screws of the stock upper bulkhead (U7). Both bulkheads are the same part, so both ends of the top brace should have the same spacing. With a hole of 3.2 mm, a screw M3 has approx. 0.1 mm radial clearance, so an offset of 0.25 mm per side can block the screws. The spacing B01 to B02 on the carbon top brace is to be measured before manufacturing.
+* **Spacing B01 to B02:** 26.10 mm in the geometry data of the original top brace, 25.65 mm between B14 and B15 and 25.6 mm between the top brace screws of the stock upper bulkhead (U7). Both bulkheads are the same part, so both ends of the top brace should have the same spacing. With a hole of 3.2 mm, a screw M3 has approx. 0.1 mm radial clearance, so an offset of 0.25 mm per side can block the screws. The verification of the speedrun top brace shows that the screws fit. A measurement of the spacing B01 to B02 on the carbon top brace can still confirm the value of the geometry data.
 * Function of the part NHA410 (manual step 25) in the middle part of the original top brace.
-* Test print with the new bulkheads.
 
 ## Lower bulkhead
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** CAD model of the lower half of the gear box (bulkhead) of the Carten T410R. The stock part is the plastic part NBA249 ("Gear box"), which is used at the front and at the rear. The model is the basis for a CNC part made of 7075-T6. The interfaces to the chassis plate, the bearings, the gears, the upper bulkhead and the sway bar follow the stock part. The shape is designed to match the [upper bulkhead](#upper-bulkhead-new-design) (see [design of the lower bulkhead](#design-of-the-lower-bulkhead)).
-* **Status:** Two test prints done (see [test print of the lower bulkhead](#test-print-of-the-lower-bulkhead)). The new shape is not test printed yet. The interfaces are based on caliper measurements of the stock part. Some positions are taken from photos (accuracy approx. +-0.5 mm) or derived from the caliper values (see [measurement basis of the lower bulkhead](#measurement-basis-of-the-lower-bulkhead)).
+* **Status:** Verified (test prints: see [test print of the lower bulkhead](#test-print-of-the-lower-bulkhead)). The interfaces are based on caliper measurements of the stock part. Some positions are taken from photos (accuracy approx. +-0.5 mm) or derived from the caliper values (see [measurement basis of the lower bulkhead](#measurement-basis-of-the-lower-bulkhead)).
 
 ![Views of the lower bulkhead](../photos/cad_bulkhead_lower_preview.png)
 
@@ -412,7 +411,7 @@ The lower part has the same design as the upper part: the footprint of the upper
   * below the pinion: 82 mm³ in the corners beside the previous round shell (|x| up to 9.75 mm). The lowest point is unchanged at 7.45 mm above the bottom face.
   * corners of the footprint on the pinion side: 13 mm³ (corner radius 6 mm instead of 7 mm), more than 11 mm above the bottom face.
   * outer side: 2 mm³.
-* The clearance to the pivot blocks is to be checked with the test print.
+* The clearance to the pivot blocks is confirmed by the verification of the lower bulkhead.
 * The interfaces (holes, bearing seats, cavities, floor opening, bosses, tabs) are not changed by the new shape.
 * Correction after the first model of the new shape: the wide block below the pinion pocket ended at the end of the pocket. Below the pinion seat, the narrow block and the chamfer start only 10.15 mm above the bottom face, the pocket reaches down to 8.95 mm. The end face of the pocket therefore had a window of approx. 8.6 x 1.2 mm to the outside. The wide block now ends 1.5 mm behind the pocket.
 
