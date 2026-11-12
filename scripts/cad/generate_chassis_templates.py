@@ -110,7 +110,9 @@ def print_lines(print_scale):
     if print_scale == 1.0:
         return [('PRINT AT 100 % ("actual size"), no fit to page.', 2.3, True, (0, 0, 0))]
     return [(f"PRINT AT {pct} % (scale of your PDF viewer).", 2.3, True, (0, 0, 0)),
-            (f"The drawing is pre-scaled to {100 / print_scale:.2f} % (100/{pct}).", 2.2, False, (0, 0, 0))]
+            (f"The drawing is pre-scaled to {100 / print_scale:.2f} % (100/{pct}).", 2.2, False, (0, 0, 0)),
+            (f'Printed at 100 % ("actual size") it is {(1 / print_scale - 1) * 100:.1f} % too large.', 2.2, False,
+             (0, 0, 0))]
 
 
 def plate_lines(g, title, print_scale):
@@ -143,9 +145,9 @@ def plate_a3(path, g, print_scale):
     c.saveState()
     c.scale(k, k)
     write_notes(c, 12, ph - 12, plate_lines(g, "Carten T410R chassis plate - 1:1 template, A3", print_scale))
-    bar(c, 12, 18, True, "100 mm (x)")
+    bar(c, 12, 14, True, "100 mm (x)")
     bar(c, 30, 40, False, "100 mm (y)")
-    c.translate(pw / 2, 40)                              # plate coordinates
+    c.translate(pw / 2, 30)                              # plate coordinates
     draw_part(c, g)
     text(c, 0, -5, "End B (H01 to H04)", 2.4, anchor="c")
     text(c, 0, extent(g)[3] + 4, "End A (H34 to H36)", 2.4, anchor="c")

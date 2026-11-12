@@ -81,10 +81,11 @@ The files of the chassis plate are stored in the directory `/chassis/chassis_pla
 | `chassis_plate_T410R_1to1_A3.pdf` | PDF (A3, 1 page) | 1:1 template of the chassis plate |
 | `chassis_plate_T410R_1to1_A4x2.pdf` | PDF (A4, 2 pages) | 1:1 template of the chassis plate on two A4 sheets (portrait) with a 20 mm overlap zone |
 | `top_brace_T410R_1to1_A4.pdf` | PDF (A4, 1 page) | 1:1 template of the top brace |
+| `chassis_plate_T410R_1to1_A3_print97.pdf`, `chassis_plate_T410R_1to1_A4x2_print97.pdf`, `top_brace_T410R_1to1_A4_print97.pdf` | PDF | The same templates pre-scaled to 103.09 % for a PDF viewer that prints at 97 % |
 | `chassis_plate_hole_table.csv`, `top_brace_hole_table.csv` | CSV | Hole coordinates (x, y), through hole diameter and countersink diameter |
 | `chassis_plate_geometry.json`, `top_brace_geometry.json` | JSON | Geometry data: outline, cutouts, holes, thickness and countersink parameters |
 
-The PDF templates must be printed at 100 % scale. The 100 mm bars on the template are used to check the scale. For a PDF viewer that prints at another fixed scale, the script `generate_chassis_templates.py` generates pre-scaled templates (options `--print-scale` and `--suffix`).
+The PDF templates without suffix must be printed at 100 % scale. The templates with the suffix `_print97` are pre-scaled to 103.09 % (100/97) and must be printed at 97 %: printed at 97 %, the drawing is 1:1. The 100 mm bars on each page are used to check the scale. For a PDF viewer with another fixed print scale, the script `generate_chassis_templates.py` generates matching templates (options `--print-scale` and `--suffix`).
 
 ### Coordinate system
 * Units are millimeters. All coordinates refer to the top view.
@@ -391,7 +392,7 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_drawing.py` | Geometry data of the speedrun chassis plate (wide) and the chassis plate | Drawing `photos/cad_chassis_speedrun_wide_drawing.png` | matplotlib |
 | `generate_window_preview.py` | Geometry data of both speedrun chassis plates | Preview image `photos/cad_chassis_speedrun_wide_motor10_preview.png` | matplotlib |
 | `generate_print_template.py` | Geometry data of both speedrun chassis plates and the chassis plate | Print templates of both speedrun chassis plates (option `--plate wide` or `--plate motor10`). The option `--print-scale` sets the scale of the PDF viewer. | reportlab |
-| `generate_chassis_templates.py` | Geometry data of the chassis plate and the top brace | Print templates `chassis_plate_T410R_1to1_A3.pdf`, `chassis_plate_T410R_1to1_A4x2.pdf`, `top_brace_T410R_1to1_A4.pdf` and the drawing `photos/cad_chassis_drawing.png`. The option `--print-scale` sets the scale of the PDF viewer. | matplotlib, reportlab |
+| `generate_chassis_templates.py` | Geometry data of the chassis plate and the top brace | Print templates `chassis_plate_T410R_1to1_A3.pdf`, `chassis_plate_T410R_1to1_A4x2.pdf`, `top_brace_T410R_1to1_A4.pdf` and the drawing `photos/cad_chassis_drawing.png`. The options `--print-scale` and `--suffix` generate pre-scaled templates (for example `_print97`). | matplotlib, reportlab |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file | cadquery |
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
 | `generate_bulkhead_upper.py` | Parameter files of the upper and the lower bulkhead | STEP and STL file of the upper part, test print STL file, assembly STEP file, interference check | cadquery |
@@ -417,6 +418,7 @@ The following command regenerates the print templates of the chassis plate and t
 
 ```bash
 python scripts/cad/generate_chassis_templates.py
+python scripts/cad/generate_chassis_templates.py --print-scale 0.97 --suffix _print97
 ```
 
 * The regenerated geometry data, STL files and images are identical to the files in the repository. The STEP, DXF and PDF files differ only in header data such as the creation date and internal IDs.
