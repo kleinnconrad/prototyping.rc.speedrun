@@ -98,7 +98,7 @@ def draw_mesh(ax, tris, view, light=(-0.35, 0.55, 0.75), color=(0.55, 0.6, 0.66)
     cols = np.clip(np.outer(shade, color) + 0.08, 0, 1)
     pts = np.stack([tris @ r, tris @ u], axis=-1)
     pc = PolyCollection(pts, facecolors=cols, edgecolors=cols if not edge else "k",
-                        linewidths=0.4, antialiased=True)
+                        linewidths=0.8, antialiased=True)
     pc.set_rasterized(rasterized)   # raster image inside vector files (PDF size)
     ax.add_collection(pc)
     lo, hi = pts.reshape(-1, 2).min(0), pts.reshape(-1, 2).max(0)

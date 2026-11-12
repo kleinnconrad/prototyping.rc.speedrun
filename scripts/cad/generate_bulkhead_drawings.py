@@ -8,8 +8,8 @@ Usage (from the root directory of the repository):
     python scripts/cad/generate_bulkhead_drawings.py
 
 Outputs:
-    photos/cad_bulkhead_lower_v1_preview.png
-    cad/bulkhead/bulkhead_lower_v1_measurement_sheet.pdf
+    photos/cad_bulkhead_lower_v2_preview.png
+    cad/bulkhead/bulkhead_lower_v2_measurement_sheet.pdf
 
 Requires the packages cadquery and matplotlib.
 """
@@ -77,6 +77,20 @@ def hdim(ax, x1, z1, x2, z2, zd, n, txt_shift=0.0):
     dim(ax, (x1, zd), (x2, zd), (0, 0), n, ext=False, txt_shift=txt_shift)
 
 
+def vdim(ax, x1, y1, x2, y2, xd, n, txt_shift=0.0):
+    """Vertical dimension at the screen x position xd between the points (x1, y1) and (x2, y2)."""
+    for x, y in ((x1, y1), (x2, y2)):
+        ax.plot([x, xd + (0.8 if xd > x else -0.8)], [y, y], color=DIM_COLOR, lw=0.5, zorder=5)
+    dim(ax, (xd, y1), (xd, y2), (0, 0), n, ext=False, txt_shift=txt_shift)
+
+
+def seat_x(p):
+    """Inner face of the outer lip, inner end of the seat, inner face of the inner shoulder (|x|)."""
+    xl = p["diff_lip_inner_x"]
+    xs = xl - p["diff_seat_width"]
+    return xl, xs, xs - p["diff_shoulder_t"]
+
+
 def leader(ax, p, q, n):
     """Balloon at q with a leader line to the point p."""
     ax.plot([p[0], q[0]], [p[1], q[1]], color=DIM_COLOR, lw=0.6, zorder=5)
@@ -131,36 +145,37 @@ def axis_marks(ax, origin, labels, length=6):
 def page_header(fig, title, subtitle):
     fig.text(0.04, 0.955, title, fontsize=14, fontweight="bold")
     fig.text(0.04, 0.925, subtitle, fontsize=8.5, color="#444")
-    fig.text(0.96, 0.02, "Carten T410R - lower bulkhead v1 - measurement sheet", fontsize=7,
+    fig.text(0.96, 0.02, "Carten T410R - lower bulkhead v2 - measurement sheet", fontsize=7,
              ha="right", color="#666")
 
 
 def views_page(pdf, tris, p):
     yd, w, zc = p["diff_axis_y"], p["body_half_width"], p["axis_z"]
     hx, hy = p["bottom_hole_dx"] / 2, p["bottom_hole_dy"] / 2
-    bx, byp, byo = p["top_boss_x"], p["top_boss_y_pinion"], p["top_boss_y_outer"]
+    bxp, bxo = p["top_boss_x_pinion"], p["top_boss_x_outer"]
+    byp, byo = p["top_boss_y_pinion"], p["top_boss_y_outer"]
     sx, sy = p["swaybar_hole_x"], p["swaybar_hole_y"]
     y0 = p["body_y_outer_end"]
     yend = p["pinion_seat_y_inner"] + p["pinion_seat_length"]
-    lip = p["diff_lip_d"] / 2
+    rs = p["diff_bearing"][1] / 2
 
     fig = plt.figure(figsize=A4_LANDSCAPE)
-    page_header(fig, "Measurement sheet - lower bulkhead v1 - page 1: top and bottom view",
+    page_header(fig, "Measurement sheet - lower bulkhead v2 - page 1: top and bottom view",
                 "Top view: part standing on its bottom face, looking at the parting face. "
                 "Bottom view: part upside down, looking at the face that sits on the chassis plate.")
     ax = fig.add_axes([0.03, 0.06, 0.5, 0.84])
     lo, hi = draw_mesh(ax, tris, "top")
-    bosses = [(s * bx, y) for y in (byp, byo) for s in (-1, 1)]
+    bosses = [(s * bxp, byp) for s in (-1, 1)] + [(s * bxo, byo) for s in (-1, 1)]
     circles(ax, bosses, p["top_hole_d"])
     circles(ax, [(-sx, sy), (sx, sy)], p["swaybar_hole_d"])
-    dim(ax, (-bx, byp), (bx, byp), (0, 31.5 - byp), 7)
-    dim(ax, (-bx, byo), (bx, byo), (0, -40 - byo), 8)
-    dim(ax, (bx, byo), (bx, byp), (27.5 - bx, 0), 9)
-    dim(ax, (sx, sy), (sx, byo), (22.5 - sx, 0), 24)
+    dim(ax, (-bxp, byp), (bxp, byp), (0, 31.5 - byp), 7)
+    dim(ax, (-bxo, byo), (bxo, byo), (0, -40 - byo), 8)
+    vdim(ax, bxo, byo, bxp, byp, 27.5, 9)
+    vdim(ax, sx, sy, bxo, byo, 22.5, 24)
     dim(ax, (-sx, sy), (sx, sy), (0, -35.5 - sy), 23)
     dim(ax, (-w, y0), (-w, yend), (-29 + w, 0), 21)
-    dim(ax, (-w, y0), (-w, yd - lip), (-23.5 + w, 0), 16)
-    dim(ax, (-w, yd + lip), (-w, yend), (-23.5 + w, 0), 17)
+    dim(ax, (-w, y0), (-w, yd - rs), (-23.5 + w, 0), 16)
+    dim(ax, (-w, yd + rs), (-w, yend), (-23.5 + w, 0), 17)
     axis_marks(ax, (30, -38), ((1, 0, "x"), (0, 1, "y")))
     ax.text(0, 36.5, "pinion side (centre shaft)", ha="center", fontsize=8, color="#2c3e50")
     ax.text(30, -43.5, "outer side", ha="center", fontsize=8, color="#2c3e50")
@@ -174,6 +189,7 @@ def views_page(pdf, tris, p):
     dim(ax, (-hx, -hy), (hx, -hy), (0, -19 + hy), 1)
     dim(ax, (-hx, -hy), (-hx, hy), (-22 + hx, 0), 2)
     leader(ax, (hx, hy), (22, 18), 3)
+    vdim(ax, -sx, sy, -hx, -hy, -24, 39)
     dim(ax, (hx + 3.5, -p["base_half_length"]), (hx + 3.5, p["base_half_length"]), (25 - hx - 3.5, 0), 22)
     axis_marks(ax, (24, -38), ((-1, 0, "x"), (0, 1, "y")))
     frame(ax, (-33, -46), (33, 38), pad=(0, 0, 0, 0))
@@ -183,13 +199,14 @@ def views_page(pdf, tris, p):
 
 def sections_page(pdf, solid, p):
     yd, w, zc = p["diff_axis_y"], p["body_half_width"], p["axis_z"]
-    xs, b = p["diff_seat_inner_x"], p["diff_bearing"][2]
+    xl, xs, xi = seat_x(p)
     rs, lip = p["diff_bearing"][1] / 2, p["diff_lip_d"] / 2
+    rsh = p["diff_shoulder_d"] / 2
     yin, L, ts = p["pinion_seat_y_inner"], p["pinion_seat_length"], p["pinion_shoulder_t"]
     rp = p["pinion_bearing"][1] / 2
 
     fig = plt.figure(figsize=A4_LANDSCAPE)
-    page_header(fig, "Measurement sheet - lower bulkhead v1 - page 2: sections",
+    page_header(fig, "Measurement sheet - lower bulkhead v2 - page 2: sections",
                 "Section A-A along the pinion axis (x = 0), seen from the side. "
                 "Section B-B through the diff axis, seen from the pinion side.")
     ax = fig.add_axes([0.03, 0.08, 0.52, 0.8])
@@ -197,6 +214,8 @@ def sections_page(pdf, solid, p):
     draw_section(ax, tris, lines)
     dim(ax, (yin, zc), (yin + L, zc), (0, 4.5), 19)
     dim(ax, (yin - ts, zc - rp), (yin, zc - rp), (0, -8.5), 20, txt_shift=-4)
+    yr = yin + p["pinion_bearing"][2] + p["pinion_rib_t"] / 2
+    leader(ax, (yr, zc - p["pinion_rib_d"] / 2 - 0.3), (yr + 4, 24), 38)
     dim(ax, (-p["base_half_length"], 0), (-p["base_half_length"], zc), (-14, 0), 4)
     ax.plot([yd, yd], [-2, zc + 6], color="#2c3e50", lw=0.6, ls="-.")
     ax.text(yd, zc + 7, "diff axis", ha="center", fontsize=7, color="#2c3e50")
@@ -213,14 +232,15 @@ def sections_page(pdf, solid, p):
     sg = 1 if p["ring_gear_side"] > 0 else -1
     zcase = zc - p["case_cavity_r"]
     fz = p["floor_z"]
-    a_out, a_in = -sg * p["ring_recess_x_outer"], -sg * p["ring_recess_x_inner"]
+    a_out = -sg * min(p["ring_recess_x_outer"], xi)
+    a_in = -sg * p["ring_recess_x_inner"]
     xm = (a_out + a_in) / 2
     dim(ax, (-w, 0), (w, 0), (0, -4), 10)
-    hdim(ax, -(xs + b), zc - rs, xs + b, zc - rs, 14.5, 14, txt_shift=-sg * 4)
-    leader(ax, (sg * (xs + b / 2), zc - rs), (sg * 8, 25), 11)
-    leader(ax, (sg * (xs + b + 0.5), zc - lip), (sg * 22, 26), 12)
-    hdim(ax, sg * (xs + b), zc - lip, sg * w, zc - lip, 12.5, 13, txt_shift=sg * 4.5)
-    leader(ax, (sg * xs, zcase + 2), (sg * 9, 2.8), 15)
+    hdim(ax, -xl, zc - rs, xl, zc - rs, 14.5, 14, txt_shift=-sg * 4)
+    leader(ax, (sg * (xl - 2), zc - rs), (sg * 8, 25), 11)
+    leader(ax, (sg * (xl + 0.5), zc - lip), (sg * 22, 26), 12)
+    hdim(ax, sg * xl, zc - lip, sg * w, zc - lip, 12.5, 13, txt_shift=sg * 4.5)
+    hdim(ax, sg * xi, zc - rsh, sg * xs, zc - rsh, 1.5, 15, txt_shift=-sg * 4)
     hdim(ax, -sg * w, zc - lip, a_out, zcase, 20.5, 31)
     hdim(ax, -sg * w, zc - lip, a_in, zcase, 23.5, 32)
     dim(ax, (xm, fz), (xm, zc), (0, 0), 33, ext=False)
@@ -238,13 +258,13 @@ def sections_page(pdf, solid, p):
 def side_page(pdf, tris, p):
     zc = p["axis_z"]
     ztop = zc + p["top_boss_protrusion"]
-    bx, byp = p["top_boss_x"], p["top_boss_y_pinion"]
+    bx = p["top_boss_x_pinion"]
     tt, sy = p["swaybar_tab_t"], p["swaybar_hole_y"]
     rp = p["pinion_bearing"][1] / 2
     br = p["top_boss_d"] / 2
 
     fig = plt.figure(figsize=A4_LANDSCAPE)
-    page_header(fig, "Measurement sheet - lower bulkhead v1 - page 3: side and end view",
+    page_header(fig, "Measurement sheet - lower bulkhead v2 - page 3: side and end view",
                 "Side view: looking at a diff bearing wall. End view: looking at the pinion housing.")
     ax = fig.add_axes([0.03, 0.08, 0.55, 0.8])
     draw_mesh(ax, tris, "side")
@@ -269,79 +289,85 @@ def side_page(pdf, tris, p):
 
 
 ROWS = [
-    # (no, priority, feature, how to measure, model value)
-    (1, "A", "Bottom holes: spacing across (x)", "inside jaws, far edge to far edge, minus hole diameter", "28.17"),
-    (2, "A", "Bottom holes: spacing along (y)", "as no. 1", "20.22"),
-    (3, "B", "Bottom holes: diameter / depth", "inside jaws / depth rod", "2.5 / 8.0"),
-    (4, "A", "Height: bottom face to parting face", "part on a flat surface, depth rod or outside jaws", "17.5"),
-    (5, "A", "Height: bottom face to top of the bosses (pinion side / outer side)", "as no. 4", "19.5 / 19.5"),
-    (6, "B", "Top bosses: outer diameter", "outside jaws", "6.0"),
-    (7, "A", "Top boss holes: spacing across, pinion side (M3x10)", "as no. 1", "23.0"),
-    (8, "A", "Top boss holes: spacing across, outer side (M3x8)", "as no. 1", "23.0"),
-    (9, "A", "Top boss holes: spacing along (y)", "as no. 1", "42.5"),
-    (10, "B", "Width over the outer faces of the diff bearing walls", "outside jaws", "35.5"),
-    (11, "A", "Diff bearing seat: diameter (width of the half bore at the parting face)", "inside jaws", "15.0"),
-    (12, "A", "Diff bearing lip: opening diameter", "inside jaws at the outer face", "13.0"),
-    (13, "A", "Diff bearing lip: thickness", "outside jaws or depth rod", "1.0"),
-    (14, "A", "Spacing of the inner faces of the two lips (= outer faces of the diff bearings)",
-     "inside jaws across the cavity", "33.5"),
-    (15, "B", "Inner shoulder of the diff seats: present? If yes, spacing of the shoulders", "inside jaws",
-     "none"),
-    (16, "A", "Outer end face to the near edge of the diff half bore (lip opening)",
-     "depth rod along the parting face", "22.7"),
-    (17, "A", "Pinion housing end face to the near edge of the diff half bore (lip opening)", "as no. 16",
-     "20.4"),
-    (18, "A", "Pinion bearing seat: diameter", "inside jaws at the parting face", "10.0"),
-    (19, "A", "Pinion bearing seat: length (shoulder face to housing end face)", "depth rod", "8.2"),
-    (20, "A", "Pinion shoulder: thickness / opening diameter", "outside / inside jaws", "1.5 / 7.5"),
-    (21, "B", "Overall length at the parting face (outer end to pinion housing end)", "outside jaws", "56.1"),
-    (22, "B", "Narrow lower section: length (y) / height", "outside jaws", "26.2 / 5.8"),
-    (23, "A", "Sway bar holes: spacing", "as no. 1", "16.0"),
-    (24, "A", "Sway bar hole to the outer top boss hole, along (y)", "inside jaws, far edges, minus diameters / 2",
-     "7.7"),
-    (25, "B", "Sway bar tabs: thickness / top face below the parting face", "outside jaws / depth rod", "2.5 / 0"),
-    (26, "B", "Floor thickness below the ring gear deepening (no. 4 minus no. 33)", "calculated", "1.5"),
-    (27, "A", "Diff: outer diameter of the ring gear", "outside jaws on the diff", "max. 30.0"),
-    (28, "A", "Diff with both bearings: distance over the outer faces of the bearings (compare no. 14)",
-     "outside jaws on the diff", "33.5"),
-    (29, "B", "Pinion gear (17T): outer diameter", "outside jaws", "max. 13.0"),
-    (30, "B", "4 small holes on the outer end face: function, diameter, positions", "photo with ruler", "not modelled"),
+    # (no, priority, feature, how to measure, model v2, caliper value)
+    (1, "A", "Bottom holes: spacing across (x)", "inside jaws, far edge to far edge, minus hole diameter", "28.0", "28.0"),
+    (2, "A", "Bottom holes: spacing along (y)", "as no. 1", "20.0", "20.0"),
+    (3, "B", "Bottom holes: diameter / depth", "inside jaws / depth rod", "M3: 2.5 / 8.0", "3.2 / 6.25"),
+    (4, "A", "Height: bottom face to parting face", "part on a flat surface, depth rod", "17.2", "17.2"),
+    (5, "A", "Height: bottom face to top of the bosses", "as no. 4", "19.62", "19.62"),
+    (6, "B", "Top bosses: outer diameter", "outside jaws", "4.86", "4.86"),
+    (7, "A", "Top boss holes: spacing across, pinion side (M3x10)", "as no. 1", "18.7", "18.7"),
+    (8, "A", "Top boss holes: spacing across, outer side (M3x8)", "as no. 1", "21.6", "21.6"),
+    (9, "A", "Top boss holes: spacing along (y)", "as no. 1", "42.6", "42.6"),
+    (10, "B", "Width over the outer faces of the diff bearing walls", "outside jaws", "34.2", "34.2"),
+    (11, "A", "Diff bearing seat: width of the half bore at the parting face", "inside jaws", "15.0 (fit)", "15.6"),
+    (12, "A", "Diff bearing lip: opening diameter", "inside jaws at the outer face", "12.28", "12.28"),
+    (13, "A", "Diff bearing lip: thickness", "outside jaws or depth rod", "1.75", "1.89"),
+    (14, "A", "Spacing of the inner faces of the two lips", "inside jaws across the cavity", "30.7", "30.7"),
+    (15, "A", "Inner shoulder of the diff seats: thickness", "depth rod", "1.89", "1.89"),
+    (16, "A", "Outer end face to the near edge of the diff half bore at the parting face", "depth rod",
+     "21.42", "21.12"),
+    (17, "A", "Pinion housing end face to the near edge of the diff half bore", "as no. 16", "19.9", "19.6"),
+    (18, "A", "Pinion bearing seat: width of the half bore at the parting face", "inside jaws", "10.0 (fit)",
+     "10.5"),
+    (19, "A", "Pinion bearing seat: length (shoulder face to housing end face)", "depth rod", "9.25", "9.25"),
+    (20, "A", "Pinion shoulder: thickness / opening diameter", "outside / inside jaws", "1.5 / 7.5", ""),
+    (21, "B", "Overall length at the parting face (outer end to pinion housing end)", "outside jaws", "56.3", ""),
+    (22, "B", "Narrow lower section: length (y) / height", "outside jaws", "24.8 / 5.0", "- / 5.0"),
+    (23, "A", "Sway bar holes: spacing", "as no. 1", "16.2", "16.2"),
+    (24, "A", "Sway bar hole to the outer top boss hole, along (y)", "inside jaws, far edges, minus diameters",
+     "7.4", "7.4"),
+    (25, "B", "Sway bar tabs: thickness", "outside jaws", "4.35", "4.35"),
+    (26, "B", "Floor thickness below the ring gear deepening (no. 4 minus no. 33)", "calculated", "0.8", ""),
+    (27, "A", "Diff: outer diameter of the ring gear", "outside jaws on the diff", "max. 31.9", "31.93"),
+    (28, "A", "Diff with both bearings: distance over the outer faces of the bearings", "outside jaws on the diff",
+     "30.0", "30.0"),
+    (29, "A", "Pinion gear (17T): outer diameter", "outside jaws", "max. 14.1", "14.1"),
+    (30, "B", "4 small holes on the outer end face: function, diameter, positions", "photo with ruler",
+     "not modelled", ""),
     (31, "A", "Ring gear deepening: outer face of the diff wall (ring gear side) to the outer end", "depth rod",
-     "6.75"),
+     "7.64", ""),
     (32, "A", "Ring gear deepening: outer face of the diff wall (ring gear side) to the inner end", "depth rod",
-     "13.25"),
-    (33, "A", "Ring gear deepening: depth below the parting face", "depth rod", "16.0"),
-    (34, "B", "Floor below the diff case: depth below the parting face", "depth rod", "12.0"),
+     "12.6", ""),
+    (33, "A", "Ring gear deepening: depth below the parting face", "depth rod", "16.4", ""),
+    (34, "B", "Floor below the diff case: depth below the parting face", "depth rod", "12.5", ""),
     (35, "A", "Diff: largest outer diameter of the diff case (without the ring gear)", "outside jaws on the diff",
-     "max. 22.0"),
-    (36, "A", "Diff: back face of the ring gear to the outer face of the bearing on the ring gear side",
-     "depth rod on the diff", "min. 6.3"),
-    (37, "A", "Ring gear side: seen from the pinion housing, is the deepening on the left?", "look", "left"),
+     "max. 24.0", ""),
+    (36, "A", "Diff: back face of the ring gear to the outer face of the bearing on that side", "depth rod",
+     "min. 5.9", ""),
+    (37, "A", "Ring gear side: seen from the pinion housing, is the deepening on the left?", "look", "left",
+     "left (photo)"),
+    (38, "A", "Pinion seat: rib between the two bearings: width / opening diameter", "depth rod / inside jaws",
+     "1.25 / 8.5", ""),
+    (39, "A", "Bottom side: sway bar hole to the nearest bottom hole, along (y)", "as no. 24", "18.7", ""),
+    (40, "A", "Parting face: outer top boss hole to the near edge of the diff half bore, along (y)",
+     "depth rod or inside jaws", "14.3", ""),
+    (41, "B", "Sway bar tabs: top face below the parting face", "depth rod", "0", ""),
 ]
 
 
 def table_page(pdf, rows):
     fig = plt.figure(figsize=A4_LANDSCAPE)
-    page_header(fig, "Measurement sheet - lower bulkhead v1 - page 4: values",
-                "Priority A: interfaces (holes, bearing seats, screw bosses, gear clearance). Priority B: shape. "
-                "Model values are estimates from photos unless the parameter file states otherwise. "
-                "All values in mm.")
+    page_header(fig, "Measurement sheet - lower bulkhead v2 - page 4: values",
+                "Priority A: interfaces. Priority B: shape. Rows without a caliper value are open. "
+                "Nos. 16 and 17 refer to the edge of the seat (15.6 at the parting face). Values in mm.")
     ax = fig.add_axes([0.03, 0.05, 0.94, 0.85])
     ax.axis("off")
-    cols = [0.0, 0.035, 0.07, 0.56, 0.84, 0.92]
-    heads = ["No.", "Prio", "Feature", "How to measure", "Model v1", "Measured"]
+    cols = [0.0, 0.033, 0.065, 0.53, 0.775, 0.865]
+    heads = ["No.", "Prio", "Feature", "How to measure", "Model v2", "Caliper value"]
     ytop = 0.98
     for c, h in zip(cols, heads):
         ax.text(c, ytop, h, fontsize=8.5, fontweight="bold", va="center", transform=ax.transAxes)
     dy = 0.93 / (len(rows) + 1)
-    for i, (n, pr, feat, how, val) in enumerate(rows):
+    for i, (n, pr, feat, how, val, meas) in enumerate(rows):
         y = ytop - (i + 1) * dy
         if i % 2 == 0:
             ax.add_patch(plt.Rectangle((0, y - dy / 2), 1, dy, transform=ax.transAxes,
                                        color="#eef2f6", zorder=0))
-        for c, t in zip(cols, (str(n), pr, feat, how, val)):
-            ax.text(c, y, t, fontsize=7.4, va="center", transform=ax.transAxes)
-        ax.plot([cols[5], 0.995], [y - dy * 0.3, y - dy * 0.3], color="#888", lw=0.5, transform=ax.transAxes)
+        for c, t in zip(cols, (str(n), pr, feat, how, val, meas)):
+            ax.text(c, y, t, fontsize=6.9, va="center", transform=ax.transAxes)
+        if not meas:
+            ax.plot([cols[5], 0.995], [y - dy * 0.3, y - dy * 0.3], color="#888", lw=0.5, transform=ax.transAxes)
     pdf.savefig(fig, dpi=250)
     plt.close(fig)
 
@@ -357,7 +383,7 @@ def preview(path, tris):
         ax = fig.add_axes(rect)
         lo, hi = draw_mesh(ax, tris, view)
         frame(ax, lo, hi, pad=(2, 2, 2, 2), title=title)
-    fig.suptitle("Carten T410R lower bulkhead v1 (model from photos, interfaces to be confirmed)",
+    fig.suptitle("Carten T410R lower bulkhead v2 (caliper values and photos, not yet test printed)",
                  fontsize=13, y=0.985)
     fig.savefig(path, dpi=110)
     plt.close(fig)
@@ -365,10 +391,10 @@ def preview(path, tris):
 
 def main():
     parser = argparse.ArgumentParser(description="Preview and measurement sheet of the lower bulkhead.")
-    parser.add_argument("--params", default="cad/bulkhead/bulkhead_lower_v1_parameters.json")
-    parser.add_argument("--stem", default="cad/bulkhead/bulkhead_lower_T410R_v1")
-    parser.add_argument("--sheet", default="cad/bulkhead/bulkhead_lower_v1_measurement_sheet.pdf")
-    parser.add_argument("--preview", default="photos/cad_bulkhead_lower_v1_preview.png")
+    parser.add_argument("--params", default="cad/bulkhead/bulkhead_lower_v2_parameters.json")
+    parser.add_argument("--stem", default="cad/bulkhead/bulkhead_lower_T410R_v2")
+    parser.add_argument("--sheet", default="cad/bulkhead/bulkhead_lower_v2_measurement_sheet.pdf")
+    parser.add_argument("--preview", default="photos/cad_bulkhead_lower_v2_preview.png")
     args = parser.parse_args()
 
     _, p = load(args.params)
@@ -382,7 +408,7 @@ def main():
         side_page(pdf, tris, p)
         table_page(pdf, ROWS)
         d = pdf.infodict()
-        d["Title"] = "T410R lower bulkhead v1 - measurement sheet"
+        d["Title"] = "T410R lower bulkhead v2 - measurement sheet"
     print(f"Wrote {args.preview} and {args.sheet}")
 
 

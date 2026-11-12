@@ -93,39 +93,51 @@ def bulkhead_lower(p, test_print=False):
     # remove everything above the parting face
     body = body.cut(cq.Workplane().add(box(-BIG, BIG, -BIG, BIG, zc, BIG)))
 
-    # bosses for the screws of the upper bulkhead
-    bx, br = p["top_boss_x"], p["top_boss_d"] / 2
+    # bosses for the screws of the upper bulkhead (the two pairs have different spacings)
+    br = p["top_boss_d"] / 2
     ztop = zc + p["top_boss_protrusion"]
-    bosses = [(sx * bx, y) for y in (p["top_boss_y_pinion"], p["top_boss_y_outer"]) for sx in (-1, 1)]
+    bosses = [(sx * p["top_boss_x_pinion"], p["top_boss_y_pinion"]) for sx in (-1, 1)]
+    bosses += [(sx * p["top_boss_x_outer"], p["top_boss_y_outer"]) for sx in (-1, 1)]
     for (x, y) in bosses:
         body = body.union(cq.Workplane().add(cyl_z(br, p["top_boss_z_base"], ztop, x, y)))
 
-    # gear cavity: diff case between the bearing seats, deepening for the ring gear on one side
-    xs = p["diff_seat_inner_x"]
+    # diff bearing seats: outer lip, seat for the bearing, inner shoulder (from outside to inside)
+    xl = p["diff_lip_inner_x"]                 # inner face of the outer lip
+    xs = xl - p["diff_seat_width"]             # inner end of the seat, start of the inner shoulder
+    xi = xs - p["diff_shoulder_t"]             # inner face of the inner shoulder
+    d_out = p["diff_bearing"][1]
+    rs = (d_out + seat_add) / 2
+
+    # gear cavity: diff case between the inner shoulders, deepening for the ring gear on one side
     floor = box(-BIG, BIG, -BIG, BIG, p["floor_z"], BIG)
-    cav = cyl_x(p["case_cavity_r"], -xs - 0.01, xs + 0.01, yd, zc)
+    cav = cyl_x(p["case_cavity_r"], -xi, xi, yd, zc)
     s = 1 if p["ring_gear_side"] > 0 else -1
-    xa, xb = sorted((s * p["ring_recess_x_inner"], s * p["ring_recess_x_outer"]))
+    xa, xb = sorted((s * p["ring_recess_x_inner"], s * min(p["ring_recess_x_outer"], xi)))
     cav = cav.fuse(cyl_x(p["ring_recess_r"], xa, xb, yd, zc))
     cav = cav.intersect(floor)
     body = body.cut(cq.Workplane().add(cav))
 
-    # diff bearing seats and outer lips
-    d_out, b = p["diff_bearing"][1], p["diff_bearing"][2]
-    rs = (d_out + seat_add) / 2
     for sx in (-1, 1):
-        xa, xb = sorted((sx * xs, sx * (xs + b)))
+        xa, xb = sorted((sx * xs, sx * xl))
         body = body.cut(cq.Workplane().add(cyl_x(rs, xa, xb, yd, zc)))
-        xa, xb = sorted((sx * (xs + b - 0.01), sx * (w + 5)))
+        xa, xb = sorted((sx * (xl - 0.01), sx * (w + 5)))
         body = body.cut(cq.Workplane().add(cyl_x(p["diff_lip_d"] / 2, xa, xb, yd, zc)))
+        xa, xb = sorted((sx * (xi - 0.01), sx * (xs + 0.01)))
+        body = body.cut(cq.Workplane().add(cyl_x(p["diff_shoulder_d"] / 2, xa, xb, yd, zc)))
 
     # pinion pocket, shoulder opening and bearing seat
     body = body.cut(cq.Workplane().add(cyl_y(p["pinion_pocket_r"], p["pinion_pocket_y_min"],
                                              yp_in - p["pinion_shoulder_t"], 0.0, zc)))
     body = body.cut(cq.Workplane().add(cyl_y(p["pinion_shoulder_d"] / 2,
                                              yp_in - p["pinion_shoulder_t"] - 0.01, yp_in + 0.01, 0.0, zc)))
+    # pinion bearing seats: inner bearing, rib, outer bearing
     rp = (p["pinion_bearing"][1] + seat_add) / 2
-    body = body.cut(cq.Workplane().add(cyl_y(rp, yp_in, yp_end + 5, 0.0, zc)))
+    bp = p["pinion_bearing"][2]
+    yr0 = yp_in + bp                           # rib between the two bearings
+    yr1 = yr0 + p["pinion_rib_t"]
+    body = body.cut(cq.Workplane().add(cyl_y(rp, yp_in, yr0, 0.0, zc)))
+    body = body.cut(cq.Workplane().add(cyl_y(p["pinion_rib_d"] / 2, yr0 - 0.01, yr1 + 0.01, 0.0, zc)))
+    body = body.cut(cq.Workplane().add(cyl_y(rp, yr1, yp_end + 5, 0.0, zc)))
 
     # M3 holes
     hx, hy = p["bottom_hole_dx"] / 2, p["bottom_hole_dy"] / 2
@@ -142,17 +154,12 @@ def bulkhead_lower(p, test_print=False):
     return body
 
 
-def report(path):
-    solids = cq.importers.importStep(path).solids().vals() if path.endswith(".step") else None
-    return solids
-
-
 def main():
     parser = argparse.ArgumentParser(description="Generate the lower bulkhead of the T410R.")
-    parser.add_argument("--params", default="cad/bulkhead/bulkhead_lower_v1_parameters.json")
-    parser.add_argument("--out", default="cad/bulkhead/bulkhead_lower_T410R_v1",
+    parser.add_argument("--params", default="cad/bulkhead/bulkhead_lower_v2_parameters.json")
+    parser.add_argument("--out", default="cad/bulkhead/bulkhead_lower_T410R_v2",
                         help="output path without extension (STEP and STL)")
-    parser.add_argument("--testprint", default="cad/bulkhead/testprint_bulkhead_lower_v1.stl",
+    parser.add_argument("--testprint", default="cad/bulkhead/testprint_bulkhead_lower_v2.stl",
                         help="output path of the test print STL")
     args = parser.parse_args()
 

@@ -12,7 +12,7 @@
 * [Speedrun chassis plate (wide)](#speedrun-chassis-plate-wide)
   * [Print template](#print-template)
   * [Longer motor window for a 3660 motor](#longer-motor-window-for-a-3660-motor)
-* [Lower bulkhead v1](#lower-bulkhead-v1)
+* [Lower bulkhead v2](#lower-bulkhead-v2)
   * [Interfaces](#interfaces)
   * [Files of the lower bulkhead](#files-of-the-lower-bulkhead)
   * [Coordinate system of the lower bulkhead](#coordinate-system-of-the-lower-bulkhead)
@@ -39,7 +39,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/test_print`**: STL files of the chassis plate and the top brace for a test print on a home 3D printer
   * **`/chassis_plate_speedrun_wide`**: Wide variant of the chassis plate for speedruns (STEP, STL, PDF template, geometry data)
   * **`/chassis_plate_speedrun_wide_motor10`**: Wide variant with a longer motor window for a 3660 motor (STEP, STL, DXF, PDF template, geometry data)
-* **`/bulkhead`**: CAD data of the bulkheads (gear boxes). Version 1 contains the lower bulkhead (STEP, STL, test print STL, parameter file, measurement sheet).
+* **`/bulkhead`**: CAD data of the bulkheads (gear boxes). Version 2 of the lower bulkhead (STEP, STL, test print STL, parameter file, measurement sheet).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are released under the licenses of this repository (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
@@ -198,24 +198,27 @@ Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape fo
 * All files are stored in the directory `/chassis_v2/chassis_plate_speedrun_wide_motor10`. The preview image above (`photos/cad_chassis_speedrun_wide_motor10_preview.png`) shows the previous window as a red dashed line. The STEP, STL and DXF files are generated from the geometry data. All files and the preview image can be regenerated with scripts (see [scripts](#scripts)).
 * The geometry data is the geometry data of the speedrun chassis plate (wide) (`chassis_plate_speedrun_wide_geometry.json`) with the longer window. That file combines the outline of `chassis_plate_T410R_speedrun_wide.step` with the holes, cutouts and countersink parameters of `chassis_plate_v2_geometry.json` and reproduces `chassis_plate_T410R_speedrun_wide.step` exactly.
 
-## Lower bulkhead v1
+## Lower bulkhead v2
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** CAD model of the lower half of the gear box (bulkhead) of the Carten T410R. The stock part is the plastic part NBA249 ("Gear box"), which is used at the front and at the rear. The model is the basis for a CNC part made of 7075-T6. The interfaces to the chassis plate, the bearings, the upper bulkhead and the sway bar are modelled. The remaining shape is simplified and can be changed.
-* **Status:** Version 1, not verified. Most dimensions are estimates from photos of the stock part with an accuracy of approx. +-1 mm. The values of the [caliper measurement sheet](#caliper-measurement-sheet) are required before the bearing seats and the gear mesh can be checked with a test print.
+* **Description:** CAD model of the lower half of the gear box (bulkhead) of the Carten T410R. The stock part is the plastic part NBA249 ("Gear box"), which is used at the front and at the rear. The model is the basis for a CNC part made of 7075-T6. The interfaces to the chassis plate, the bearings, the gears, the upper bulkhead and the sway bar are modelled. The remaining shape is simplified and can be changed.
+* **Status:** Version 2, not verified by a test print. The interfaces are based on caliper measurements of the stock part. Some positions are taken from photos (accuracy approx. +-0.5 mm) or derived from the caliper values (see [measurement basis of the lower bulkhead](#measurement-basis-of-the-lower-bulkhead)).
+* **History:** Version 1 was a model from photos with estimated dimensions. Version 2 uses 27 caliper values (measurement sheet v1) and a second set of photos with rulers at the height of the part.
 
-![Views of the lower bulkhead v1](../photos/cad_bulkhead_lower_v1_preview.png)
+![Views of the lower bulkhead v2](../photos/cad_bulkhead_lower_v2_preview.png)
 
 ### Interfaces
-| Interface | Stock parts | Model v1 |
+| Interface | Stock parts | Model v2 |
 |:---|:---|:---|
-| Chassis plate | 4 countersunk screws M3x8 from below through the 2 mm chassis plate | 4 M3 holes (tap drill 2.5 mm, 8 mm deep), spacing 28.17 x 20.22 mm |
-| Upper bulkhead | 2 button head screws M3x10 on the pinion side, 2 button head screws M3x8 on the outer side | 4 bosses 6 mm, 2 mm above the parting face, M3 holes (tap drill 2.5 mm, 7 mm deep) |
-| Diff | 2 bearings 10x15x4 (NBA299) | 2 half bores 15 mm, 4 mm wide, each with an outer lip (opening 13 mm) |
-| Pinion shaft | 2 bearings 5x10x4 (NBA298) | Half bore 10 mm, 8.2 mm long, with a shoulder (opening 7.5 mm) toward the pinion gear |
-| Ring gear (42T) and diff case | Gear diff NBA230 | Cavity with a radius of 12 mm for the diff case, deepening with a radius of 16 mm for the ring gear on the ring gear side |
-| Sway bar | 2 M3 screws | 2 tabs with M3 holes (tap drill 2.5 mm), spacing 16 mm |
+| Chassis plate | 4 countersunk screws M3x8 from below through the 2 mm chassis plate | 4 M3 holes (tap drill 2.5 mm, 8 mm deep), spacing 28.0 x 20.0 mm |
+| Upper bulkhead | 2 button head screws M3x10 on the pinion side, 2 button head screws M3x8 on the outer side | 4 bosses 4.86 mm, 2.42 mm above the parting face, M3 holes (tap drill 2.5 mm, 7 mm deep). Spacing across 18.7 mm (pinion side) and 21.6 mm (outer side), spacing along 42.6 mm |
+| Diff | 2 bearings 10x15x4 (NBA299) | Per side: outer lip (opening 12.28 mm), seat 15 x 4 mm, inner shoulder 1.89 mm. Inner faces of the lips 30.7 mm apart |
+| Pinion shaft | 2 bearings 5x10x4 (NBA298) | Seat 10 mm, 9.25 mm long, with a shoulder (opening 7.5 mm) toward the pinion gear and a rib of 1.25 mm between the bearings |
+| Ring gear (42T, 31.93 mm) and diff case | Gear diff NBA230 | Cavity with a radius of 12.5 mm for the diff case, deepening with a radius of 16.4 mm for the ring gear on the ring gear side |
+| Pinion gear (17T, 14.1 mm) | Pinion NBA207 | Pocket with a radius of 7.75 mm |
+| Sway bar | 2 M3 screws | 2 tabs, 4.35 mm thick, with M3 holes (tap drill 2.5 mm), spacing 16.2 mm |
 
-* The diff axis and the pinion axis lie in the parting face. The upper bulkhead holds the bearings from above.
+* The diff axis and the pinion axis lie in the parting face, 17.2 mm above the bottom face. The upper bulkhead holds the bearings from above.
+* The ring gear and the pinion have a module of 0.75 (calculated from the outer diameters 31.93 mm and 14.1 mm). The pitch circle of the pinion is 15.75 mm from the diff axis.
 * The chassis plate holes are H03 to H06 for the rear bulkhead (End B) and H28 to H31 for the front bulkhead (End A). The bulkhead is rotated by 180 degrees between the ends, so that the pinion points to the centre shaft at both ends.
 * The source of the screw sizes is the manual (steps 9, 11 and 12) and the owner of the car. The source of the bearing sizes is the manual (steps 1 and 5).
 
@@ -224,67 +227,73 @@ All files are stored in the directory `/bulkhead`. The STEP and STL files and th
 
 | File | Format | Use |
 |:---|:---|:---|
-| `bulkhead_lower_T410R_v1.step` | STEP (AP214) | Solid model with nominal dimensions for CNC manufacturing (one solid) |
-| `bulkhead_lower_T410R_v1.stl` | STL (binary) | Triangle mesh of the solid model |
-| `testprint_bulkhead_lower_v1.stl` | STL (binary) | Test print variant (see [test print of the lower bulkhead](#test-print-of-the-lower-bulkhead)) |
-| `bulkhead_lower_v1_parameters.json` | JSON | All dimensions of the model, each with its source and a note |
-| `bulkhead_lower_v1_measurement_sheet.pdf` | PDF (A4, 4 pages) | Caliper measurement sheet (see [caliper measurement sheet](#caliper-measurement-sheet)) |
+| `bulkhead_lower_T410R_v2.step` | STEP (AP214) | Solid model with nominal dimensions for CNC manufacturing (one solid) |
+| `bulkhead_lower_T410R_v2.stl` | STL (binary) | Triangle mesh of the solid model |
+| `testprint_bulkhead_lower_v2.stl` | STL (binary) | Test print variant (see [test print of the lower bulkhead](#test-print-of-the-lower-bulkhead)) |
+| `bulkhead_lower_v2_parameters.json` | JSON | All dimensions of the model, each with its source and a note |
+| `bulkhead_lower_v2_measurement_sheet.pdf` | PDF (A4, 4 pages) | Caliper measurement sheet with the caliper values of version 1 and the open values (see [caliper measurement sheet](#caliper-measurement-sheet)) |
 
 | Property | Value |
 |:---|:---|
-| Size (x by y by z) | 35.5 x 59.9 x 19.5 mm (with the sway bar tabs and the pinion housing) |
-| Volume | 14.8 cm³ |
-| Mass | 42 g in 7075 (2.81 g/cm³), 18 g in PLA (1.24 g/cm³) |
+| Size (x by y by z) | 34.2 x 59.4 x 19.62 mm (with the sway bar tabs and the pinion housing) |
+| Volume | 14.6 cm³ |
+| Mass | 41 g in 7075 (2.81 g/cm³), 18 g in PLA (1.24 g/cm³) |
 
 ### Coordinate system of the lower bulkhead
 * Units are millimeters.
 * The origin is the centre of the 4 bottom holes on the bottom face.
 * x runs along the diff axis (across the car). y runs along the pinion axis, +y points to the pinion and the centre shaft. z = 0 is the bottom face, which sits on the chassis plate, +z points up.
+* The diff axis is at y = 0.5 mm (photo).
 * In the coordinate system of the chassis plate, the origin of the rear bulkhead is at x = 0, y = 21.53 mm (centre of H03 to H06) and the origin of the front bulkhead at x = 0, y = 287.36 mm (centre of H28 to H31).
 
 ### Measurement basis of the lower bulkhead
-Each parameter in `bulkhead_lower_v1_parameters.json` has a source code:
+Each parameter in `bulkhead_lower_v2_parameters.json` has a source code:
 
 | Source code | Meaning | Parameters |
 |:---|:---|:---|
-| `plate` | Hole pattern of the chassis plate v2, confirmed by its test print | Spacing of the bottom holes |
+| `caliper` | Caliper measurement of the stock part (number of the measurement sheet in the note) | Hole spacings, heights, widths, lips, shoulders, seat lengths, boss and tab sizes |
+| `derived` | Calculated from caliper values and part sizes | Positions along y, deepening, floor thickness, pocket radii |
 | `manual` | T410R instruction manual | Bearing sizes |
 | `user` | Information from the owner of the car | Screw sizes, function of the sway bar holes, deepening for the ring gear |
-| `photo` | Estimate from 9 photos of the stock part with rulers | Heights, positions of the bearing seats, bosses and tabs, outline, side profile, side and position of the ring gear deepening |
-| `design` | Free design choice | Tap drill diameters, hole depths, gear cavity, floor thickness |
+| `photo` | Estimate from photos with rulers at the height of the part | Position of the diff axis, outline, side profile, ring gear position and side |
+| `design` | Free design choice | Tap drill diameters, hole depths, openings that were not measured |
 
-* The camera was approx. 13 cm above the part. Because of the perspective, the scale of a photo depends on the height of each feature. The photo values are therefore estimates with an accuracy of approx. +-1 mm.
-* The bottom holes on a photo of the bottom face have the same aspect ratio as the hole pattern of the chassis plate within approx. 2 %.
+* The caliper values 7, 8 and 9 (top boss holes) agree with the top view photo within 0.3 mm. The ratio of the bottom hole spacings (28.0 / 20.0) agrees with the bottom view photo within 0.3 %.
+* The stock part measures 15.6 mm (diff) and 10.5 mm (pinion) across the half bores at the parting face. The model uses the bearing diameters 15.0 mm and 10.0 mm for the bearing fit.
+* The positions along y are calculated from the caliper values 16, 17 and 19 with the seat edge (15.6 mm) as the reference. With this reference, the inner pinion bearing is 18.15 mm from the diff axis. The photo with the diff installed shows approx. 18.3 mm.
+* The photo with the diff installed shows the ring gear between 5.0 and 9.4 mm from the diff centre. The back face of the ring gear is approx. 1.9 mm from the inner face of the bearing, which matches the inner shoulder of 1.89 mm.
 
 ### Caliper measurement sheet
-The measurement sheet `bulkhead_lower_v1_measurement_sheet.pdf` lists the dimensions that replace the photo estimates:
+The measurement sheet `bulkhead_lower_v2_measurement_sheet.pdf` documents the caliper values and lists the open dimensions:
 * **Pages 1 to 3:** top view, bottom view, two sections, side view and end view with numbered dimensions.
-* **Page 4:** table of the 37 dimensions with the measuring method, the value of the model v1 and an empty field for the measured value.
-* **Priority A:** interfaces (holes, bearing seats, bosses, tabs, clearance for the ring gear and the diff case). **Priority B:** shape.
+* **Page 4:** table of 41 dimensions with the measuring method, the value of the model v2 and the caliper value. Rows without a caliper value are open.
+* **Priority A:** interfaces (holes, bearing seats, bosses, tabs, clearance for the gears). **Priority B:** shape.
 * Hole spacings are measured with the inside jaws from far edge to far edge minus the hole diameter. Heights are measured with the depth rod with the part on a flat surface.
-* The values 14 (spacing of the lips in the part) and 28 (width of the diff over both bearings) must be equal within a small end play. This checks the axial position of the diff bearings.
+* The new values 38 to 41 cover the rib between the pinion bearings, the position of the diff axis relative to the bottom holes (39 and 40) and the height of the sway bar tabs.
 
 ### Test print of the lower bulkhead
-* `testprint_bulkhead_lower_v1.stl` differs from the solid model in two points: the bearing seats are 0.2 mm larger in diameter (15.2 mm and 10.2 mm), and all M3 holes have a diameter of 2.7 mm for self-tapping screws.
+* `testprint_bulkhead_lower_v2.stl` differs from the solid model in two points: the bearing seats are 0.2 mm larger in diameter (15.2 mm and 10.2 mm), and all M3 holes have a diameter of 2.7 mm for self-tapping screws.
 * Print orientation: bottom face on the print bed. The boss columns below the wings and the sway bar tabs need supports.
+* The floor below the ring gear deepening is 0.8 mm thick (4 layers of 0.2 mm).
 * Checks: the 4 bottom holes on the chassis plate, the diff and the pinion shaft with their bearings in the seats, the mesh of the gears, the fit of the stock upper bulkhead and the clearance to the suspension arms and pivot blocks.
 
 ### Design notes
-* The body is solid apart from the gear cavity. Pockets to reduce the mass are planned after the interfaces are confirmed.
-* The diff bearings are held by the outer lips. The gear cavity has no inner shoulder, so the diff with its shims sets the axial position of the bearings.
-* The gear cavity has two depths. Between the bearing seats, a cylinder with a radius of 12 mm around the diff axis holds the diff case (floor 5.5 mm thick). On the ring gear side, a deepening with a radius of 16 mm from x = 4.5 mm to x = 11.0 mm holds the 42T ring gear (floor 1.5 mm thick). The deepening fits a ring gear with an outer diameter up to approx. 30 mm. The stock part has the same arrangement: a deepening in the bottom on the ring gear side only.
+* The body is solid apart from the gear cavity. Pockets to reduce the mass are planned after the test print.
+* The diff bearings are held between the outer lip and the inner shoulder. The diff with both bearings measures 30.0 mm, the lips are 30.7 mm apart: the diff has 0.7 mm axial play, as on the stock part.
+* The gear cavity has two depths. Between the inner shoulders, a cylinder with a radius of 12.5 mm holds the diff case (floor 4.7 mm thick). On the ring gear side, a deepening with a radius of 16.4 mm from x = 4.5 mm to the inner shoulder (x = 9.46 mm) holds the ring gear (floor 0.8 mm thick, clearance 0.43 mm).
 * The ring gear is on the +x side. Seen from the pinion housing, the deepening is on the left. The bulkhead is the same part at the front and at the rear and is rotated by 180 degrees. Both pinions point to the centre shaft, so the ring gear is on the same side of the bulkhead at both ends.
-* The outer end of the deepening is limited to x = 11.0 mm, so that the wall to the bottom holes is 1.8 mm thick.
 * The STEP file contains no threads. The M3 holes are modelled with the tap drill diameter of 2.5 mm. For CNC manufacturing, the threads are specified in the comment field of the order (M3, thread depth 6.5 mm for the bottom holes).
 
 ### Open points of the lower bulkhead
-* Caliper values of the measurement sheet, in particular the priority A values.
-* The outer end face of the stock part has 4 small holes. Their function is unknown, so they are not modelled.
+* **Chassis plate:** the bottom holes of the stock bulkhead are 28.0 x 20.0 mm apart. The chassis plate v2 and the speedrun chassis plates have 28.17 x 20.22 mm (H03 to H06) and 28.13 x 20.19 mm (H28 to H31). Countersunk screws center themselves in the countersinks, so the difference of approx. 0.1 mm per hole is not compensated by clearance. The hole spacings of the carbon chassis plate are to be measured before the aluminium plate is ordered.
+* Open caliper values of the measurement sheet (nos. 20, 21, 26, 30 to 36, 38 to 41).
+* The value 15 (1.89 mm) is interpreted as the thickness of the inner shoulder, the value 22 (5 mm) as the height of the narrow lower section, and the value 25 (4.35 mm) as the thickness of the sway bar tabs with the top face in the parting face.
+* The outer end face of the stock part has small holes. Their function is unknown, so they are not modelled.
 * Upper bulkhead: not modelled yet.
 * Front and rear: End A of the chassis plate is assumed to be the front (bumper holes H34 to H36), End B the rear (motor window).
 
 ## Scripts
-The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the lower bulkhead. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates, and the scripts of the bulkhead read and write the files of the lower bulkhead v1. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
+The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the lower bulkhead. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates, and the scripts of the bulkhead read and write the files of the lower bulkhead v2. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
 
 | Script | Input | Output | Package |
 |:---|:---|:---|:---|
@@ -297,7 +306,7 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_window_preview.py` | Geometry data of both speedrun chassis plates | Preview image `photos/cad_chassis_speedrun_wide_motor10_preview.png` | matplotlib |
 | `generate_print_template.py` | Geometry data of both speedrun chassis plates and the chassis plate v2 | Print templates of both speedrun chassis plates (option `--plate wide` or `--plate motor10`). The option `--print-scale` sets the scale of the PDF viewer. | reportlab |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file | cadquery |
-| `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_v1_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
+| `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_v2_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
 | `mesh_views.py` | None | Helper module: shaded views of STL files, used by `generate_bulkhead_drawings.py` | matplotlib |
 
 ### Regenerating the files
