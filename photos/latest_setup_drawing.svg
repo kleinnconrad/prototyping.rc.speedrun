@@ -820,8 +820,8 @@
 <text x="1160" y="1548.5" font-size="10.5" fill="#52606d">Projection</text>
 <text x="1160" y="1565.5" font-size="13.5" fill="#1f2933">first angle</text>
 <line x1="1280" y1="1534.5" x2="1280" y2="1572.5" class="grid"/>
-<text x="1290" y="1548.5" font-size="10.5" fill="#52606d">License</text>
-<text x="1290" y="1565.5" font-size="13.5" fill="#1f2933">CC BY 4.0</text>
+<text x="1290" y="1548.5" font-size="10.5" fill="#52606d">Copyright</text>
+<text x="1290" y="1565.5" font-size="13.5" fill="#1f2933">All rights reserved</text>
 <line x1="890" y1="1572.5" x2="1410" y2="1572.5" class="grid"/>
 <text x="900" y="1586.5" font-size="10.5" fill="#52606d">Source</text>
 <text x="900" y="1603.5" font-size="13.5" fill="#1f2933">setup_sheets/4_setup_sheet.yaml</text>

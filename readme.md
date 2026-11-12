@@ -32,7 +32,7 @@ The artefacts of this repository are:
 * [Learnings & modifications](#learnings--modifications)
 * [Repository automation](#repository-automation)
 * [Follow-up project: Telemetry system](#follow-up-project-telemetry-system)
-* [Licensing](#licensing)
+* [Copyright](#copyright)
 
 ## Latest setup drawing
 The technical drawing shows the configuration of the latest setup sheet in a side view, a plan view and views of the front and rear axle. It also contains all setup parameters, values derived from them and the changes between the setup sheet versions. Values in orange are taken from the setup sheet, the chassis dimensions from the Carten T410R specification. Component positions are schematic.
@@ -234,7 +234,7 @@ This project is followed by an independent project concerned with the developmen
 
 [![GitHub repo](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/kleinnconrad/embedded.rc.telemetry)
 
-## Licensing
-* The source code of the calculation models is subject to the MIT license.
-* The hardware design, documentation, specifications, and test results are released under the Creative Commons attribution 4.0 international license. Own adaptations and commercial use are permitted, provided authorship is acknowledged.
+## Copyright
+* Copyright (c) 2026 Conrad Kleinn. All rights reserved.
+* The designs, CAD files, source code, documentation, specifications and test results in this repository are not licensed for use by others. Using, copying, modifying or distributing them requires the written permission of the author.
 * Third-party files in the `cad` directory are subject to the licenses of their authors (see the readme in that directory).

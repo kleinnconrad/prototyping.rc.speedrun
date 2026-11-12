@@ -1281,7 +1281,7 @@ def draw_title_block(sheet, setup, x0, bottom, x1):
     rows = [
         [("Date", setup.date), ("Version", str(setup.version)),
          ("Top speed", f"{format_length(speed)} km/h" if speed else "n/a"), ("Sheet", "1 of 1")],
-        [("Scale", "1:2"), ("Units", "mm, °"), ("Projection", "first angle"), ("License", "CC BY 4.0")],
+        [("Scale", "1:2"), ("Units", "mm, °"), ("Projection", "first angle"), ("Copyright", "All rights reserved")],
         [("Source", source), ("Repository", "prototyping.rc.speedrun")],
     ]
     row_height = (height - title_height) / len(rows)
