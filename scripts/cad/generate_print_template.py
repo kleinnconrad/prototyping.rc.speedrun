@@ -2,7 +2,7 @@
 
 The template has two A4 pages in landscape format with a 20 mm overlap zone. It
 shows the outline, the cutouts, the through holes with centre cross, the
-countersinks (dashed), the outline of the chassis plate v2 (grey, dashed) and
+countersinks (dashed), the outline of the chassis plate (grey, dashed) and
 the part of a second motor window that differs from the window of the plate
 (green, dashed). Each page has a 100 mm bar in x and in y.
 
@@ -15,11 +15,11 @@ Usage (from the root directory of the repository):
 
 --plate wide (default): speedrun chassis plate (wide). The green dashed line
 shows the longer motor window. Output:
-cad/chassis_v2/chassis_plate_speedrun_wide/chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf
+cad/chassis/chassis_plate_speedrun_wide/chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf
 
 --plate motor10: speedrun chassis plate (wide) with the longer motor window. The
 green dashed line shows the end of the previous motor window. Output:
-cad/chassis_v2/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10_1to1_A4x2_print97.pdf
+cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10_1to1_A4x2_print97.pdf
 
 Use --output for another print scale.
 
@@ -33,7 +33,7 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
 
-CAD = "cad/chassis_v2"
+CAD = "cad/chassis"
 MARGIN = 5.0                     # printed mm between page edge and drawing area
 ZONE = (150.0, 170.0)            # overlap zone (plate y), no holes inside
 TOP = 329.1                      # upper end of page 2 (plate y)
@@ -192,7 +192,7 @@ def notes(c, x, y, page, plate, print_scale, subtitle, window_label):
         (f"Dashed circles: countersinks Ø{plate['csk_d']:g} mm (bottom face).", 2.2, False, k_),
         ("Blue dashed: 20 mm overlap zone. Lay page 2 over", 2.2, False, BLUE),
         ("page 1 so that both pairs of lines coincide.", 2.2, False, BLUE),
-        ("Grey dashed: outline of the chassis plate v2.", 2.2, False, g_),
+        ("Grey dashed: outline of the chassis plate.", 2.2, False, g_),
         (f"Green dashed: {window_label}.", 2.2, False, g_),
         ("After joining: H11 to H23 = %.2f mm (centres)." % d1123, 2.2, False, k_),
     ]
@@ -205,7 +205,7 @@ def main():
     parser = argparse.ArgumentParser(description="Generate the 1:1 print template of a speedrun chassis plate.")
     parser.add_argument("--plate", choices=sorted(PRESETS), default="wide", help="plate variant (default wide)")
     parser.add_argument("--geometry", help="geometry JSON of the plate (default from --plate)")
-    parser.add_argument("--reference", default=f"{CAD}/chassis_plate/chassis_plate_v2_geometry.json",
+    parser.add_argument("--reference", default=f"{CAD}/chassis_plate/chassis_plate_geometry.json",
                         help="geometry JSON of the grey dashed outline")
     parser.add_argument("--window", help="geometry JSON of the green dashed window (default from --plate)")
     parser.add_argument("--print-scale", type=float, default=0.97, help="scale of the PDF viewer (default 0.97)")

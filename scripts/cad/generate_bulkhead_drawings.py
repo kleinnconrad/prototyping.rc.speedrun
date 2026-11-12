@@ -1,4 +1,4 @@
-"""Preview image and caliper measurement sheet of the lower bulkhead (version 1).
+"""Preview image and caliper measurement sheet of the lower bulkhead.
 
 The views are rendered from the STL file of the part, the sections are cut from
 the STEP file. The numbered dimensions of the measurement sheet refer to the
@@ -8,8 +8,8 @@ Usage (from the root directory of the repository):
     python scripts/cad/generate_bulkhead_drawings.py
 
 Outputs:
-    photos/cad_bulkhead_lower_v2_preview.png
-    cad/bulkhead/bulkhead_lower_v2_measurement_sheet.pdf
+    photos/cad_bulkhead_lower_preview.png
+    cad/bulkhead/bulkhead_lower_measurement_sheet.pdf
 
 Requires the packages cadquery and matplotlib.
 """
@@ -144,7 +144,7 @@ def axis_marks(ax, origin, labels, length=6):
 def page_header(fig, title, subtitle):
     fig.text(0.04, 0.955, title, fontsize=14, fontweight="bold")
     fig.text(0.04, 0.925, subtitle, fontsize=8.5, color="#444")
-    fig.text(0.96, 0.02, "Carten T410R - lower bulkhead v2 - measurement sheet", fontsize=7,
+    fig.text(0.96, 0.02, "Carten T410R - lower bulkhead - measurement sheet", fontsize=7,
              ha="right", color="#666")
 
 
@@ -159,7 +159,7 @@ def views_page(pdf, tris, p):
     rs = p["diff_bearing"][1] / 2
 
     fig = plt.figure(figsize=A4_LANDSCAPE)
-    page_header(fig, "Measurement sheet - lower bulkhead v2 - page 1: top and bottom view",
+    page_header(fig, "Measurement sheet - lower bulkhead - page 1: top and bottom view",
                 "Top view: part standing on its bottom face, looking at the parting face. "
                 "Bottom view: part upside down, looking at the face that sits on the chassis plate.")
     ax = fig.add_axes([0.03, 0.06, 0.5, 0.84])
@@ -204,7 +204,7 @@ def sections_page(pdf, solid, p):
     rp = p["pinion_bearing"][1] / 2
 
     fig = plt.figure(figsize=A4_LANDSCAPE)
-    page_header(fig, "Measurement sheet - lower bulkhead v2 - page 2: sections",
+    page_header(fig, "Measurement sheet - lower bulkhead - page 2: sections",
                 "Section A-A along the pinion axis (x = 0), seen from the side. "
                 "Section B-B through the diff axis, seen from the pinion side.")
     ax = fig.add_axes([0.03, 0.08, 0.52, 0.8])
@@ -262,7 +262,7 @@ def side_page(pdf, tris, p):
     br = p["top_boss_d"] / 2
 
     fig = plt.figure(figsize=A4_LANDSCAPE)
-    page_header(fig, "Measurement sheet - lower bulkhead v2 - page 3: side and end view",
+    page_header(fig, "Measurement sheet - lower bulkhead - page 3: side and end view",
                 "Side view: looking at a diff bearing wall. End view: looking at the pinion housing.")
     ax = fig.add_axes([0.03, 0.08, 0.55, 0.8])
     draw_mesh(ax, tris, "side")
@@ -287,7 +287,7 @@ def side_page(pdf, tris, p):
 
 
 ROWS = [
-    # (no, priority, feature, how to measure, model v2, caliper value)
+    # (no, priority, feature, how to measure, model, caliper value)
     (1, "A", "Bottom holes: spacing across (x)", "inside jaws, far edge to far edge, minus hole diameter", "28.0", "28.0"),
     (2, "A", "Bottom holes: spacing along (y)", "as no. 1", "20.0", "20.0"),
     (3, "B", "Bottom holes: diameter / depth", "inside jaws / depth rod", "M3: 2.5 / 8.0", "3.2 / 6.25"),
@@ -348,13 +348,13 @@ ROWS = [
 
 def table_page(pdf, rows):
     fig = plt.figure(figsize=A4_LANDSCAPE)
-    page_header(fig, "Measurement sheet - lower bulkhead v2 - page 4: values",
+    page_header(fig, "Measurement sheet - lower bulkhead - page 4: values",
                 "Priority A: interfaces. Priority B: shape. Rows without a caliper value are open. "
                 "Nos. 16 and 17 refer to the edge of the seat (15.6 at the parting face). Values in mm.")
     ax = fig.add_axes([0.03, 0.05, 0.94, 0.85])
     ax.axis("off")
     cols = [0.0, 0.033, 0.065, 0.53, 0.775, 0.865]
-    heads = ["No.", "Prio", "Feature", "How to measure", "Model v2", "Caliper value"]
+    heads = ["No.", "Prio", "Feature", "How to measure", "Model", "Caliper value"]
     ytop = 0.98
     for c, h in zip(cols, heads):
         ax.text(c, ytop, h, fontsize=8.5, fontweight="bold", va="center", transform=ax.transAxes)
@@ -383,7 +383,7 @@ def preview(path, tris):
         ax = fig.add_axes(rect)
         lo, hi = draw_mesh(ax, tris, view)
         frame(ax, lo, hi, pad=(2, 2, 2, 2), title=title)
-    fig.suptitle("Carten T410R lower bulkhead v2 (caliper values and photos, not yet test printed)",
+    fig.suptitle("Carten T410R lower bulkhead (caliper values, photos and first test print)",
                  fontsize=13, y=0.985)
     fig.savefig(path, dpi=110)
     plt.close(fig)
@@ -391,10 +391,10 @@ def preview(path, tris):
 
 def main():
     parser = argparse.ArgumentParser(description="Preview and measurement sheet of the lower bulkhead.")
-    parser.add_argument("--params", default="cad/bulkhead/bulkhead_lower_v2_parameters.json")
-    parser.add_argument("--stem", default="cad/bulkhead/bulkhead_lower_T410R_v2")
-    parser.add_argument("--sheet", default="cad/bulkhead/bulkhead_lower_v2_measurement_sheet.pdf")
-    parser.add_argument("--preview", default="photos/cad_bulkhead_lower_v2_preview.png")
+    parser.add_argument("--params", default="cad/bulkhead/bulkhead_lower_parameters.json")
+    parser.add_argument("--stem", default="cad/bulkhead/bulkhead_lower_T410R")
+    parser.add_argument("--sheet", default="cad/bulkhead/bulkhead_lower_measurement_sheet.pdf")
+    parser.add_argument("--preview", default="photos/cad_bulkhead_lower_preview.png")
     args = parser.parse_args()
 
     _, p = load(args.params)
@@ -408,7 +408,7 @@ def main():
         side_page(pdf, tris, p)
         table_page(pdf, ROWS)
         d = pdf.infodict()
-        d["Title"] = "T410R lower bulkhead v2 - measurement sheet"
+        d["Title"] = "T410R lower bulkhead - measurement sheet"
     print(f"Wrote {args.preview} and {args.sheet}")
 
 

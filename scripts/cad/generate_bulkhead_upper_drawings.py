@@ -1,4 +1,4 @@
-"""Preview image and measurement sheet of the upper bulkhead (new design, version 1).
+"""Preview image and measurement sheet of the upper bulkhead (new design).
 
 The preview shows the upper part alone, the assembly with the lower part and two sections of
 the assembly with the bearings, the gears, the shock tower plate and the end of the top brace
@@ -9,8 +9,8 @@ Usage (from the root directory of the repository):
     python scripts/cad/generate_bulkhead_upper_drawings.py
 
 Outputs:
-    photos/cad_bulkhead_upper_v1_preview.png
-    cad/bulkhead/bulkhead_upper_v1_measurement_sheet.pdf
+    photos/cad_bulkhead_upper_preview.png
+    cad/bulkhead/bulkhead_upper_measurement_sheet.pdf
 
 Requires the packages cadquery and matplotlib.
 """
@@ -103,7 +103,7 @@ def draw_sections(ax, items, origin, normal, right, up_dir):
 def preview(path, lp, up, lower, upper):
     zc, yd = lp["axis_z"], lp["diff_axis_y"]
     fig = plt.figure(figsize=(15, 10))
-    fig.suptitle("Carten T410R upper bulkhead v1, new design (shock tower holes and top brace height measured, "
+    fig.suptitle("Carten T410R upper bulkhead, new design (shock tower holes and top brace height measured, "
                  "contact face and top brace position not yet measured)", fontsize=12, y=0.985)
     for rect, view, title in (([0.0, 0.5, 0.33, 0.44], iso_basis(-55, 30), "Upper part, view from the outer side"),
                               ([0.33, 0.5, 0.33, 0.44], iso_basis(125, 30), "Upper part, view from the pinion side"),
@@ -160,7 +160,7 @@ def photo_ax(fig, rect, path, title):
 
 
 ROWS = [
-    # (no, priority, feature, how to measure, model v1, caliper value)
+    # (no, priority, feature, how to measure, model, caliper value)
     ("U1", "A", "Shock tower holes: spacing across (x)", "inside jaws, far edge to far edge, minus hole diameter",
      "19.1", "19.1"),
     ("U2", "A", "Shock tower holes: spacing up/down (one ear)", "as U1", "6.1", "6.1"),
@@ -240,7 +240,7 @@ def sheet(path, photos):
                  "the top brace (step 25)."]
         for i, t in enumerate(notes):
             fig.text(0.77, 0.83 - i * 0.025, t, fontsize=7.6)
-        fig.text(0.96, 0.02, "Carten T410R - upper bulkhead v1 - measurement sheet", fontsize=7, ha="right",
+        fig.text(0.96, 0.02, "Carten T410R - upper bulkhead - measurement sheet", fontsize=7, ha="right",
                  color="#666")
         pdf.savefig(fig, dpi=200)
         plt.close(fig)
@@ -253,7 +253,7 @@ def sheet(path, photos):
         ax = fig.add_axes([0.03, 0.08, 0.94, 0.82])
         ax.axis("off")
         cols = [0.0, 0.045, 0.085, 0.53, 0.8, 0.885]
-        heads = ["No.", "Prio", "Feature", "How to measure", "Model v1", "Caliper value"]
+        heads = ["No.", "Prio", "Feature", "How to measure", "Model", "Caliper value"]
         ytop = 0.98
         for c, t in zip(cols, heads):
             ax.text(c, ytop, t, fontsize=8.5, fontweight="bold", va="center", transform=ax.transAxes)
@@ -268,19 +268,19 @@ def sheet(path, photos):
             if not row[5]:
                 ax.plot([cols[5], 0.995], [y - dy * 0.3, y - dy * 0.3], color="#888", lw=0.5,
                         transform=ax.transAxes)
-        fig.text(0.96, 0.02, "Carten T410R - upper bulkhead v1 - measurement sheet", fontsize=7, ha="right",
+        fig.text(0.96, 0.02, "Carten T410R - upper bulkhead - measurement sheet", fontsize=7, ha="right",
                  color="#666")
         pdf.savefig(fig, dpi=200)
         plt.close(fig)
-        pdf.infodict()["Title"] = "T410R upper bulkhead v1 - measurement sheet"
+        pdf.infodict()["Title"] = "T410R upper bulkhead - measurement sheet"
 
 
 def main():
     parser = argparse.ArgumentParser(description="Preview and measurement sheet of the upper bulkhead.")
-    parser.add_argument("--lower-params", default="cad/bulkhead/bulkhead_lower_v2_parameters.json")
-    parser.add_argument("--params", default="cad/bulkhead/bulkhead_upper_v1_parameters.json")
-    parser.add_argument("--preview", default="photos/cad_bulkhead_upper_v1_preview.png")
-    parser.add_argument("--sheet", default="cad/bulkhead/bulkhead_upper_v1_measurement_sheet.pdf")
+    parser.add_argument("--lower-params", default="cad/bulkhead/bulkhead_lower_parameters.json")
+    parser.add_argument("--params", default="cad/bulkhead/bulkhead_upper_parameters.json")
+    parser.add_argument("--preview", default="photos/cad_bulkhead_upper_preview.png")
+    parser.add_argument("--sheet", default="cad/bulkhead/bulkhead_upper_measurement_sheet.pdf")
     args = parser.parse_args()
 
     lp = load_params(args.lower_params)

@@ -1,15 +1,15 @@
 {
-  "part": "Upper bulkhead (gear box upper half) of the Carten T410R, new design, model version 1",
+  "part": "Upper bulkhead (gear box upper half) of the Carten T410R, new design",
   "units": "mm",
   "coordinate_system": "Same as the lower bulkhead: origin at the centre of the 4 bottom holes of the lower part on its bottom face, x along the diff axis, +y toward the pinion and the centre shaft, +z up. The upper part sits on the parting face (z = axis_z of the lower part). Heights named h_... are measured from the parting face.",
-  "shared_parameters": "cad/bulkhead/bulkhead_lower_v2_parameters.json: parting face height, diff axis, bearing seats and lips, gear cavities, pinion seat, positions and sizes of the 4 screw bosses of the lower part.",
+  "shared_parameters": "cad/bulkhead/bulkhead_lower_parameters.json: parting face height, diff axis, bearing seats and lips, gear cavities, pinion seat, positions and sizes of the 4 screw bosses of the lower part.",
   "design": "Prismatic part: the footprint of the lower part, extruded to 4 flat levels along y (flange, gear block, shock tower wall, top brace face). All outer faces are flat; the only curved faces are the bores and the cavities, which follow the lower part.",
   "source_codes": {
     "caliper": "Caliper measurement of the stock upper part by the owner of the car (measurement sheet of the upper part, number in the note)",
     "manual": "T410R instruction manual (screw sizes, steps 11, 12, 19, 20, 25)",
     "user": "Information from the owner of the car",
     "spec": "Specification files of the repository",
-    "brace": "Geometry data of the top brace v2 (cad/chassis_v2/top_brace/top_brace_v2_geometry.json)",
+    "brace": "Geometry data of the top brace (cad/chassis/top_brace/top_brace_geometry.json)",
     "photo": "Estimate from photos of the stock upper part (second set, rulers in the views), accuracy approx. +-1.5 mm. To be replaced by caliper values (measurement sheet of the upper part).",
     "derived": "Calculated from other parameters",
     "design": "Design choice of the new part, free"

@@ -23,7 +23,7 @@ from collections import Counter
 import cadquery as cq
 from OCP.BRepAdaptor import BRepAdaptor_Surface
 
-CAD = "cad/chassis_v2"
+CAD = "cad/chassis"
 WIDE = f"{CAD}/chassis_plate_speedrun_wide"
 MOTOR10 = f"{CAD}/chassis_plate_speedrun_wide_motor10"
 

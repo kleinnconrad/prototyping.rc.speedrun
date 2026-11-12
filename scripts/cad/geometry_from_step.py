@@ -3,14 +3,14 @@
 The outer outline is read from the top face of the STEP solid. The holes, the
 cutouts, the thickness and the countersink parameters are copied from a
 reference geometry file. This is used for the speedrun chassis plate (wide):
-its outline differs from the chassis plate v2, all other features are
+its outline differs from the chassis plate, all other features are
 identical.
 
 Usage (from the root directory of the repository):
     python scripts/cad/geometry_from_step.py [--check]
 
 Without arguments, the script reads the STEP file of the speedrun chassis plate
-(wide) and the geometry data of the chassis plate v2 and writes
+(wide) and the geometry data of the chassis plate and writes
 chassis_plate_speedrun_wide_geometry.json. With --check, it rebuilds the solid
 from the new geometry data and compares it with the STEP file.
 
@@ -27,9 +27,9 @@ import cadquery as cq
 from OCP.BRepAdaptor import BRepAdaptor_Curve
 from OCP.GeomAbs import GeomAbs_Circle, GeomAbs_Line
 
-CAD = "cad/chassis_v2"
+CAD = "cad/chassis"
 DEFAULT_STEP = f"{CAD}/chassis_plate_speedrun_wide/chassis_plate_T410R_speedrun_wide.step"
-DEFAULT_REFERENCE = f"{CAD}/chassis_plate/chassis_plate_v2_geometry.json"
+DEFAULT_REFERENCE = f"{CAD}/chassis_plate/chassis_plate_geometry.json"
 DEFAULT_OUTPUT = f"{CAD}/chassis_plate_speedrun_wide/chassis_plate_speedrun_wide_geometry.json"
 TOL = 1e-5  # mm, tolerance for connecting the edges of the outline
 
@@ -99,8 +99,8 @@ def main():
         reference = json.load(f)
     geometry = copy.deepcopy(reference)
     geometry["outline"] = outline_from_step(args.step, reference["thickness"], reference["outline"])
-    geometry["version"] = ("speedrun wide (outline from " + os.path.basename(args.step)
-                           + "; holes, cutouts and thickness from " + reference["version"] + ")")
+    geometry["basis"] = ("speedrun wide (outline from " + os.path.basename(args.step)
+                         + "; holes, cutouts and thickness from the chassis plate, " + reference["basis"] + ")")
     with open(args.output, "w", encoding="utf-8") as f:
         json.dump(geometry, f, indent=1)
     print(f"Wrote {args.output}: outline with {len(geometry['outline'])} edges")

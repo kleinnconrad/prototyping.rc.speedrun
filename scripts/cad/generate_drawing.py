@@ -1,6 +1,6 @@
 """Generate a top view drawing (PNG) of a chassis plate.
 
-The drawing shows the plate in the style of photos/cad_chassis_v2_drawing.png:
+The drawing shows the plate in the style of photos/cad_chassis_drawing.png:
 filled outline, cutouts, through holes, dashed countersinks and hole labels.
 The outline of a reference plate can be added as a dashed line.
 
@@ -8,7 +8,7 @@ Usage (from the root directory of the repository):
     python scripts/cad/generate_drawing.py
 
 Without arguments, the script draws the speedrun chassis plate (wide) with the
-outline of the chassis plate v2 and writes
+outline of the chassis plate and writes
 photos/cad_chassis_speedrun_wide_drawing.png.
 
 Requires the packages matplotlib and numpy.
@@ -24,7 +24,7 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Circle
 from matplotlib.patches import Polygon as MPoly
 
-CAD = "cad/chassis_v2"
+CAD = "cad/chassis"
 FILL, EDGE, CSK, LABEL = "#3c4046", "#1b1b1b", "#c77dff", "#ff8c00"
 
 
@@ -51,9 +51,9 @@ def contour_points(prims, n=40):
 def main():
     parser = argparse.ArgumentParser(description="Generate a top view drawing of a chassis plate.")
     parser.add_argument("--geometry", default=f"{CAD}/chassis_plate_speedrun_wide/chassis_plate_speedrun_wide_geometry.json")
-    parser.add_argument("--reference", default=f"{CAD}/chassis_plate/chassis_plate_v2_geometry.json",
+    parser.add_argument("--reference", default=f"{CAD}/chassis_plate/chassis_plate_geometry.json",
                         help="geometry JSON of the reference outline, empty string for none")
-    parser.add_argument("--reference-label", default="Outline of the chassis plate v2")
+    parser.add_argument("--reference-label", default="Outline of the chassis plate")
     parser.add_argument("--title", default="Speedrun chassis plate (wide) - top view")
     parser.add_argument("--output", default="photos/cad_chassis_speedrun_wide_drawing.png")
     args = parser.parse_args()

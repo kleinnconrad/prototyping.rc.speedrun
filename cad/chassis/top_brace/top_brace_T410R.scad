@@ -1,4 +1,4 @@
-// Carten T410R top brace v2 (caliper-corrected)
+// Carten T410R top brace (caliper-corrected)
 // Generated from photos. Units: mm. Origin: centreline (x=0), rear end edge (y=0). View from TOP side.
 // Countersinks are on the BOTTOM face (z=0). Edit parameters below.
 thickness = 2.00;

@@ -1,15 +1,15 @@
 {
-  "part": "Lower bulkhead (gear box lower half) of the Carten T410R, stock part NBA249, model version 2",
+  "part": "Lower bulkhead (gear box lower half) of the Carten T410R, stock part NBA249",
   "units": "mm",
   "coordinate_system": "Origin at the centre of the 4 bottom holes on the bottom face. x along the diff axis (across the car), y along the pinion axis, +y toward the pinion and the centre shaft, z = 0 bottom face (contact face to the chassis plate), +z up.",
   "source_codes": {
-    "caliper": "Caliper measurement of the stock part by the owner of the car (measurement sheet v1, number in the note)",
+    "caliper": "Caliper measurement of the stock part by the owner of the car (measurement sheet, number in the note)",
     "manual": "T410R instruction manual (bearing sizes, screw sizes)",
     "user": "Information from the owner of the car",
     "photo": "Estimate from photos of the stock part with rulers at the height of the part, accuracy approx. +-0.5 mm",
     "derived": "Calculated from caliper values and part sizes",
     "design": "Design choice of the model, free",
-    "test": "Result of the test print of the lower part v2 (fit of the stock diff and pinion)"
+    "test": "Result of the first test print of the lower part (fit of the stock diff and pinion)"
   },
   "parameters": {
     "bottom_hole_dx": {"value": 28.0, "source": "caliper", "note": "No. 1: 31.2 - 3.2. The photo of the bottom face confirms the ratio 28.0 / 20.0 within 0.3 %. The chassis plate CAD has 28.17 (H03 to H06, H28 to H31)."},

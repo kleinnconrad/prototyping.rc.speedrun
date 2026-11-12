@@ -145,12 +145,12 @@ def bulkhead_upper(lp, up, test_print=False):
 
 def main():
     parser = argparse.ArgumentParser(description="Generate the upper bulkhead of the T410R (new design).")
-    parser.add_argument("--lower-params", default="cad/bulkhead/bulkhead_lower_v2_parameters.json")
-    parser.add_argument("--params", default="cad/bulkhead/bulkhead_upper_v1_parameters.json")
-    parser.add_argument("--out", default="cad/bulkhead/bulkhead_upper_T410R_v1",
+    parser.add_argument("--lower-params", default="cad/bulkhead/bulkhead_lower_parameters.json")
+    parser.add_argument("--params", default="cad/bulkhead/bulkhead_upper_parameters.json")
+    parser.add_argument("--out", default="cad/bulkhead/bulkhead_upper_T410R",
                         help="output path without extension (STEP and STL)")
-    parser.add_argument("--testprint", default="cad/bulkhead/testprint_bulkhead_upper_v1.stl")
-    parser.add_argument("--assembly", default="cad/bulkhead/bulkhead_assembly_T410R_v1.step")
+    parser.add_argument("--testprint", default="cad/bulkhead/testprint_bulkhead_upper.stl")
+    parser.add_argument("--assembly", default="cad/bulkhead/bulkhead_assembly_T410R.step")
     args = parser.parse_args()
 
     lp = load_params(args.lower_params)

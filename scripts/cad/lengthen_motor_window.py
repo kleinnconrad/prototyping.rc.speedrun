@@ -16,7 +16,7 @@ import argparse
 import copy
 import json
 
-CAD = "cad/chassis_v2"
+CAD = "cad/chassis"
 DEFAULT_INPUT = f"{CAD}/chassis_plate_speedrun_wide/chassis_plate_speedrun_wide_geometry.json"
 DEFAULT_OUTPUT = f"{CAD}/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
 
@@ -33,7 +33,7 @@ def lengthen(geometry, length, cutout="window"):
             if k in p and p[k][1] > y_mid:
                 p[k][1] += length
                 moved += 1
-    result["version"] = geometry["version"] + f" + motor window +{length:g} mm toward End A"
+    result["basis"] = geometry["basis"] + f" + motor window +{length:g} mm toward End A"
     return result, y_mid, moved
 
 

@@ -11,8 +11,8 @@ Usage (from the root directory of the repository):
 The script writes <output_stem>.step and <output_stem>.stl (STL tolerance
 0.01 mm, angular tolerance 0.1 rad). Example:
     python scripts/cad/generate_solid.py \\
-        cad/chassis_v2/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json \\
-        cad/chassis_v2/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10
+        cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json \\
+        cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10
 
 Requires the package cadquery (pip install cadquery).
 """
