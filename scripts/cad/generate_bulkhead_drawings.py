@@ -318,7 +318,7 @@ ROWS = [
     (24, "A", "Sway bar hole to the outer top boss hole, along (y)", "inside jaws, far edges, minus diameters",
      "7.4", "7.4"),
     (25, "B", "Sway bar tabs: thickness", "outside jaws", "4.35", "4.35"),
-    (26, "B", "Floor thickness below the ring gear deepening (no. 4 minus no. 33)", "calculated", "0.8", ""),
+    (26, "B", "Floor below the ring gear deepening", "-", "open 6.85 x 5", "open (test print)"),
     (27, "A", "Diff: outer diameter of the ring gear", "outside jaws on the diff", "max. 31.9", "31.93"),
     (28, "A", "Diff with both bearings: distance over the outer faces of the bearings", "outside jaws on the diff",
      "30.0", "30.0"),

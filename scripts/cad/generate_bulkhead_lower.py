@@ -116,6 +116,14 @@ def bulkhead_lower(p, test_print=False):
     cav = cav.intersect(floor)
     body = body.cut(cq.Workplane().add(cav))
 
+    # through opening in the floor below the ring gear deepening (closed by the chassis plate)
+    hl = p.get("ring_floor_opening_half_length", 0.0)
+    if hl > 0:
+        xa, xb = sorted((s * p["ring_recess_x_inner"], s * min(p["ring_recess_x_outer"], xs)))
+        window = (cq.Workplane("XY").box(xb - xa, 2 * hl, p["floor_z"] + 4.0, centered=False)
+                  .translate((xa, yd - hl, -1.0)).edges("|Z").fillet(p["ring_floor_opening_r"]))
+        body = body.cut(window)
+
     for sx in (-1, 1):
         xa, xb = sorted((sx * (xs - 0.01), sx * xl))
         body = body.cut(cq.Workplane().add(cyl_x(rs, xa, xb, yd, zc)))
