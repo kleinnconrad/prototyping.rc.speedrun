@@ -8,7 +8,8 @@
     "user": "Information from the owner of the car",
     "photo": "Estimate from photos of the stock part with rulers at the height of the part, accuracy approx. +-0.5 mm",
     "derived": "Calculated from caliper values and part sizes",
-    "design": "Design choice of the model, free"
+    "design": "Design choice of the model, free",
+    "test": "Result of the test print of the lower part v2 (fit of the stock diff and pinion)"
   },
   "parameters": {
     "bottom_hole_dx": {"value": 28.0, "source": "caliper", "note": "No. 1: 31.2 - 3.2. The photo of the bottom face confirms the ratio 28.0 / 20.0 within 0.3 %. The chassis plate CAD has 28.17 (H03 to H06, H28 to H31)."},
@@ -26,7 +27,7 @@
     "base_height_outer_side": {"value": 5.0, "source": "caliper", "note": "No. 22."},
     "wing_pinion_side": {"value": [[12.4, 5.0], [14.69, 6.71], [19.12, 9.39], [25.41, 12.44], [26.7, 17.2]], "source": "photo", "note": "Side profile of the flared wing on the pinion side, points (y, z). Shape from the side view, scaled to the caliper values."},
     "wing_outer_side": {"value": [[-12.4, 5.0], [-15.28, 7.56], [-20.57, 10.73], [-25.86, 14.27], [-28.42, 17.2]], "source": "photo", "note": "Side profile of the flared wing on the outer side, points (y, z)."},
-    "case_cavity_r": {"value": 12.5, "source": "photo", "note": "Radius of the cavity around the diff axis for the diff case (photo with the diff installed: case approx. 23 mm), between the two bearing seats. Bottom at axis_z - 12.5 = 4.7 mm."},
+    "case_cavity_r": {"value": 13.5, "source": "test", "note": "Radius of the cavity around the diff axis for the diff case, between the two bearing seats. Test print with 12.5: the diff case touched the wall on the outer side (opposite the pinion). Increased by 1.0. Bottom at axis_z - 13.5 = 3.7 mm."},
     "ring_gear_side": {"value": 1, "source": "photo", "note": "Side of the 42T ring gear: +1 = +x side. Confirmed by the photo with the diff installed: seen from above with the pinion pointing to the viewer, the ring gear is on the left. The ring gear is on the same side of the bulkhead at the front and at the rear."},
     "ring_recess_r": {"value": 16.4, "source": "derived", "note": "Radius of the deepening for the 42T ring gear: ring gear outer diameter 31.93 (no. 27) / 2 + 0.43 clearance."},
     "ring_recess_x_inner": {"value": 4.5, "source": "photo", "note": "Inner end of the deepening (|x|). Photo with the diff installed: tooth tips of the ring gear approx. 5.0 from the diff centre."},

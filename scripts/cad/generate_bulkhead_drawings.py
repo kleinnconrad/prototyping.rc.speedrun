@@ -330,7 +330,7 @@ ROWS = [
     (32, "A", "Ring gear deepening: outer face of the diff wall (ring gear side) to the inner end", "depth rod",
      "12.74", ""),
     (33, "A", "Ring gear deepening: depth below the parting face", "depth rod", "16.4", ""),
-    (34, "B", "Floor below the diff case: depth below the parting face", "depth rod", "12.5", ""),
+    (34, "B", "Floor below the diff case: depth below the parting face", "depth rod", "13.5", "test print"),
     (35, "A", "Diff: largest outer diameter of the diff case (without the ring gear)", "outside jaws on the diff",
      "max. 24.0", ""),
     (36, "A", "Diff: back face of the ring gear to the outer face of the bearing on that side", "depth rod",

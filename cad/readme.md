@@ -207,7 +207,7 @@ Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape fo
 ## Lower bulkhead v2
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** CAD model of the lower half of the gear box (bulkhead) of the Carten T410R. The stock part is the plastic part NBA249 ("Gear box"), which is used at the front and at the rear. The model is the basis for a CNC part made of 7075-T6. The interfaces to the chassis plate, the bearings, the gears, the upper bulkhead and the sway bar are modelled. The remaining shape is simplified and can be changed.
-* **Status:** Version 2, not verified by a test print. The interfaces are based on caliper measurements of the stock part. Some positions are taken from photos (accuracy approx. +-0.5 mm) or derived from the caliper values (see [measurement basis of the lower bulkhead](#measurement-basis-of-the-lower-bulkhead)).
+* **Status:** Version 2, first test print done (see [test print of the lower bulkhead](#test-print-of-the-lower-bulkhead)). The interfaces are based on caliper measurements of the stock part. Some positions are taken from photos (accuracy approx. +-0.5 mm) or derived from the caliper values (see [measurement basis of the lower bulkhead](#measurement-basis-of-the-lower-bulkhead)).
 * **History:** Version 1 was a model from photos with estimated dimensions. Version 2 uses 27 caliper values (measurement sheet v1) and a second set of photos with rulers at the height of the part.
 
 ![Views of the lower bulkhead v2](../photos/cad_bulkhead_lower_v2_preview.png)
@@ -219,7 +219,7 @@ Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape fo
 | Upper bulkhead | 2 button head screws M3x10 on the pinion side, 2 button head screws M3x8 on the outer side | 4 bosses 4.86 mm, 2.42 mm above the parting face, M3 holes (tap drill 2.5 mm, 7 mm deep). Spacing across 18.7 mm (pinion side) and 21.6 mm (outer side), spacing along 42.6 mm |
 | Diff | 2 bearings 10x15x4 (NBA299) | Per side: outer lip 1.89 mm thick (opening 12.28 mm) and seat 15 x 4 mm, open toward the gear cavity. Inner faces of the lips 30.7 mm apart |
 | Pinion shaft | 2 bearings 5x10x4 (NBA298) | Seat 10 mm, 9.25 mm long: 2 seats of 4 mm with a rib of 1.25 mm between the bearings. The rib is the only axial stop: no shoulder at the inner end, open at the housing end face |
-| Ring gear (42T, 31.93 mm) and diff case | Gear diff NBA230 | Cavity with a radius of 12.5 mm for the diff case, deepening with a radius of 16.4 mm for the ring gear on the ring gear side |
+| Ring gear (42T, 31.93 mm) and diff case | Gear diff NBA230 | Cavity with a radius of 13.5 mm for the diff case (test print), deepening with a radius of 16.4 mm for the ring gear on the ring gear side |
 | Pinion gear (17T, 14.1 mm) | Pinion NBA207 | Pocket with a radius of 7.75 mm |
 | Sway bar | 2 M3 screws | 2 tabs, 4.35 mm thick, with M3 holes (tap drill 2.5 mm), spacing 16.2 mm |
 
@@ -242,8 +242,8 @@ All files are stored in the directory `/bulkhead`. The STEP and STL files and th
 | Property | Value |
 |:---|:---|
 | Size (x by y by z) | 34.48 x 59.4 x 19.62 mm (with the sway bar tabs and the pinion housing) |
-| Volume | 13.8 cm³ |
-| Mass | 39 g in 7075 (2.81 g/cm³), 17 g in PLA (1.24 g/cm³) |
+| Volume | 13.1 cm³ |
+| Mass | 37 g in 7075 (2.81 g/cm³), 16 g in PLA (1.24 g/cm³) |
 
 ### Coordinate system of the lower bulkhead
 * Units are millimeters.
@@ -285,10 +285,17 @@ The measurement sheet `bulkhead_lower_v2_measurement_sheet.pdf` documents the ca
 * The floor below the ring gear deepening is 0.8 mm thick (4 layers of 0.2 mm).
 * Checks: the 4 bottom holes on the chassis plate, the diff and the pinion shaft with their bearings in the seats, the mesh of the gears, the fit of the stock upper bulkhead and the clearance to the suspension arms and pivot blocks.
 
+Result of the first test print (diff with ring gear and pinion shaft installed):
+
+| Observation | Change |
+|:---|:---|
+| The diff case touches the wall of the cavity on the outer side (opposite the pinion). | Radius of the diff case cavity 12.5 mm -> 13.5 mm, in the lower and the upper part. |
+| The ring gear does not rotate freely in its deepening. Estimate of the owner: approx. 2 mm more depth required. | Open: the floor below the deepening is 0.8 mm thick, so 2 mm more depth toward the bottom face is not possible. The contact point is to be located (floor, inner end or outer end of the deepening). |
+
 ### Design notes
 * The body is solid apart from the gear cavity. Pockets to reduce the mass are planned after the test print.
 * Each diff bearing seat is limited only by the outer lip. The half bore of 15 mm runs 4.0 mm inward from the lip and then opens into the gear cavity. On the inner side, the diff holds the bearings. The diff with both bearings measures 30.0 mm, the lips are 30.7 mm apart: the diff has 0.7 mm axial play, as on the stock part.
-* The gear cavity has two depths. Between the bearing seats, a cylinder with a radius of 12.5 mm holds the diff case (floor 4.7 mm thick). On the ring gear side, a deepening with a radius of 16.4 mm from x = 4.5 mm to the inner end of the bearing seat (x = 11.35 mm) holds the ring gear (floor 0.8 mm thick, clearance 0.43 mm). The wall between the deepening and the bottom holes is 1.4 mm thick.
+* The gear cavity has two depths. Between the bearing seats, a cylinder with a radius of 13.5 mm holds the diff case (floor 3.7 mm thick). The test print with a radius of 12.5 mm showed that the diff case touches the wall on the outer side. On the ring gear side, a deepening with a radius of 16.4 mm from x = 4.5 mm to the inner end of the bearing seat (x = 11.35 mm) holds the ring gear (floor 0.8 mm thick, clearance 0.43 mm). The wall between the deepening and the bottom holes is 1.4 mm thick.
 * The ring gear is on the +x side. Seen from the pinion housing, the deepening is on the left. The bulkhead is the same part at the front and at the rear and is rotated by 180 degrees. Both pinions point to the centre shaft, so the ring gear is on the same side of the bulkhead at both ends.
 * The STEP file contains no threads. The M3 holes are modelled with the tap drill diameter of 2.5 mm. For CNC manufacturing, the threads are specified in the comment field of the order (M3, thread depth 6.5 mm for the bottom holes).
 
@@ -317,7 +324,7 @@ The preview shows the upper part, the assembly with the lower part v2 and two se
 | Screws to the lower part | 2 button head screws M3x8 on the outer side, 2 button head screws M3x10 on the pinion side | Clearance holes 3.2 mm. Head seats 4.92 mm (outer side, on the flange) and 6.92 mm (pinion side, counterbore 6.5 mm) above the parting face: 5.5 mm thread engagement in the lower part | User, lower part v2 |
 | Diff bearings (10x15x4) | Clamped between the two halves | Upper half bores 15 x 4 mm, limited only by the outer lips (opening 12.28 mm, 1.89 mm thick) | Lower part v2 |
 | Pinion bearings (5x10x4) | Clamped between the two halves | Upper half bores 10 mm with the rib of 1.25 mm between the bearings as the only axial stop, open toward the pinion pocket and at the housing end face | Lower part v2, user |
-| Gears | Ring gear 42T (31.93 mm), pinion 17T (14.1 mm) | Same cavities as the lower part: diff case radius 12.5 mm, ring gear radius 16.4 mm on the ring gear side, pinion pocket radius 7.75 mm | Lower part v2 |
+| Gears | Ring gear 42T (31.93 mm), pinion 17T (14.1 mm) | Same cavities as the lower part: diff case radius 13.5 mm, ring gear radius 16.4 mm on the ring gear side, pinion pocket radius 7.75 mm | Lower part v2 |
 | Shock tower | 3 mm carbon, 4 button head screws M3x8 (manual steps 19 and 20). Stock holes 2.9 mm, through the 5.8 mm ears | Flat contact face facing the outer side at y = -5.3 mm, 4 tapped holes M3 (through the 6 mm wall) at x = +-9.55 mm and 22.5 / 28.6 mm above the parting face. In front of the face, no material above 17.8 mm | Caliper (holes), photo (contact face) |
 | Top brace (NHA432) | 2 button head screws M3x8 per bulkhead (manual step 25) into 2 raised bosses | Flat contact face 15.4 mm above the parting face, from y = 10.5 mm to the pinion end, 2 tapped holes M3 at x = +-12.8 mm, y = 14.36 mm | Caliper (height, spacing), photo and top brace v2 (y) |
 | Sway bar holders | M3x6 from above onto the tabs of the lower part (manual step 23) | The upper part ends at y = -25.5 mm, 3.2 mm before the sway bar holes | Photo |
@@ -338,7 +345,7 @@ The upper part is a prismatic block: the footprint of the lower part (34.48 mm w
 | 26.7 to 27.9 mm | Half cylinder, radius 6.6 mm | Cover of the outer pinion bearing beyond the footprint (as on the lower part) |
 
 * The interference check of the assembly (lower part v2 and upper part v1) gives 0 mm³.
-* Size 34.48 x 53.4 x 31.5 mm, volume 20.3 cm³, mass 57 g in 7075 (2.81 g/cm³), 25 g in PLA.
+* Size 34.48 x 53.4 x 31.5 mm, volume 19.7 cm³, mass 55 g in 7075 (2.81 g/cm³), 24 g in PLA.
 * The wall is 6 mm thick: the screws M3x8 through the 3 mm shock tower have 5 mm thread engagement. The material above the thread of the upper holes is 1.4 mm (wall top at the height of the stock ears, U10).
 * The block over the ring gear is 17.8 mm high, equal to the zone kept free for the shock tower plate in front of the wall. The cover over the ring gear cavity is 1.4 mm directly behind the wall and 2.5 mm at the contact face.
 * The mass is higher than with shells that follow the gears. Straight pockets in the flat faces can reduce it, if required.
@@ -369,7 +376,7 @@ The measurement sheet `bulkhead_upper_v1_measurement_sheet.pdf` shows the interf
 * Open caliper values of the stock upper part: U5, U6 (position of the shock tower contact face), U8 (position of the top brace screws along y), U11 (lowest edge of the shock towers), U12 to U14.
 * Lowest edge of the shock tower plates: the block in front of the wall is 17.8 mm high. If a shock tower plate reaches lower, the block in front of the wall is to be lowered (the ring gear cavity requires at least 15.3 mm plus the wall at the contact face).
 * Top brace: the end of the top brace is assumed at y = 11.0 mm. The shape of its end (hexagon and slot) is not checked against the block.
-* Mass: 57 g in 7075. Straight pockets are possible after the interfaces are confirmed.
+* Mass: 55 g in 7075. Straight pockets are possible after the interfaces are confirmed.
 
 ## Scripts
 The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates, and the scripts of the bulkhead read and write the files of the lower bulkhead v2 and the upper bulkhead v1. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
