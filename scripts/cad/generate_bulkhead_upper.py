@@ -29,7 +29,8 @@ import argparse
 import cadquery as cq
 from cadquery.occ_impl.exporters.assembly import exportAssembly
 
-from generate_bulkhead_lower import BIG, box, bulkhead_lower, cyl_x, cyl_y, cyl_z, load_params
+from generate_bulkhead_lower import (BIG, box, bulkhead_lower, cyl_x, cyl_y, cyl_z, enclosed_voids, load_params,
+                                     thin_gaps)
 
 
 def screw_positions(lp):
@@ -82,10 +83,11 @@ def bulkhead_upper(lp, up, test_print=False):
     body = cut(body, box(-BIG, BIG, fy + wt, yg1, zg, BIG))           # gear block behind the wall
     body = cut(body, box(-BIG, BIG, yg1, BIG, h(up["deck_h"]), BIG))  # top brace face
 
-    # half cylinder over the outer pinion bearing beyond the end of the footprint
+    # block over the outer pinion bearing beyond the end of the footprint
     yp_in = lp["pinion_seat_y_inner"]
     yp_end = yp_in + lp["pinion_seat_length"]
-    body = add(body, cyl_y(up["pinion_end_r"], y1 - 1.0, yp_end, 0.0, zc))
+    e = up["pinion_end_r"]
+    body = add(body, box(-e, e, y1 - 1.0, yp_end, zc, zc + e))
 
     # keep only the material above the parting face
     body = cut(body, box(-BIG, BIG, -BIG, BIG, -BIG, zc))
@@ -97,8 +99,8 @@ def bulkhead_upper(lp, up, test_print=False):
     xs = xl - lp["diff_seat_width"]
     s = 1 if lp["ring_gear_side"] > 0 else -1
     # gear cavity: diff case between the bearing seats, ring gear on one side (as the lower part)
-    cav = cyl_x(lp["case_cavity_r"], -xs - 0.01, xs + 0.01, yd, zc)
-    xa, xb = sorted((s * lp["ring_recess_x_inner"], s * xs))
+    cav = cyl_x(lp["case_cavity_r"], -xs, xs, yd, zc)
+    xa, xb = sorted((s * lp["ring_recess_x_inner"], s * min(up["ring_dome_x_outer"], xs)))
     cav = cav.fuse(cyl_x(lp["ring_recess_r"], xa, xb, yd, zc))
     body = cut(body, cav)
 
@@ -112,11 +114,11 @@ def bulkhead_upper(lp, up, test_print=False):
 
     # pinion pocket up to the bearing seats, two bearing seats with the rib between them
     # (the rib is the only axial stop, as on the lower part)
-    body = cut(body, cyl_y(lp["pinion_pocket_r"], lp["pinion_pocket_y_min"], yp_in + 0.01, 0.0, zc))
+    body = cut(body, cyl_y(lp["pinion_pocket_r"], lp["pinion_pocket_y_min"], yp_in, 0.0, zc))
     rp = (lp["pinion_bearing"][1] + seat_add) / 2
     yr0 = yp_in + lp["pinion_bearing"][2]
     yr1 = yr0 + lp["pinion_rib_t"]
-    body = cut(body, cyl_y(rp, yp_in, yr0, 0.0, zc))
+    body = cut(body, cyl_y(rp, yp_in - 0.01, yr0, 0.0, zc))
     body = cut(body, cyl_y(lp["pinion_rib_d"] / 2, yr0 - 0.01, yr1 + 0.01, 0.0, zc))
     body = cut(body, cyl_y(rp, yr1, yp_end + 5, 0.0, zc))
 
@@ -141,6 +143,19 @@ def bulkhead_upper(lp, up, test_print=False):
         for hz in (up["tower_hole_h_lower"], up["tower_hole_h_upper"]):
             body = cut(body, cyl_y(r, fy - 1, fy + wt, sx * up["tower_hole_x"], h(hz)))
     return body
+
+
+def enclosure_upper(body, lp):
+    """Close the intended openings of the upper part (parting face, lip openings, pinion seat
+    end) with plugs and return the volumes of the enclosed voids (see enclosure_lower)."""
+    zc, yd, w = lp["axis_z"], lp["diff_axis_y"], lp["body_half_width"]
+    yp_end = lp["pinion_seat_y_inner"] + lp["pinion_seat_length"]
+    plugs = [box(-w - 1, w + 1, -40, yp_end + 2, zc - 0.5, zc),
+             cyl_y(lp["pinion_bearing"][1] / 2 + 0.2, yp_end - 0.5, yp_end + 1.0, 0.0, zc)]
+    for sx in (-1, 1):
+        xa, xb = sorted((sx * (lp["diff_lip_inner_x"] + 0.5), sx * (w + 1)))
+        plugs.append(cyl_x(lp["diff_lip_d"] / 2 + 0.2, xa, xb, yd, zc))
+    return enclosed_voids(body, plugs)
 
 
 def main():
@@ -178,6 +193,14 @@ def main():
     print(f"  volume: {vol / 1000:.2f} cm3, mass 7075 (2.81 g/cm3): {vol / 1000 * 2.81:.1f} g, "
           f"PLA (1.24 g/cm3): {vol / 1000 * 1.24:.1f} g")
 
+    cavity = [v for v in enclosure_upper(s[0], lp) if v > 1000.0]
+    print(f"  enclosure check (intended openings plugged): "
+          + (f"gear cavity closed ({cavity[0] / 1000:.2f} cm3)" if cavity
+             else "UNWANTED OPENING: the gear cavity is open to the outside"))
+    gaps = thin_gaps(s[0])
+    print(f"  check for thin slits and walls (faces closer than 0.25 mm): {len(gaps)} found")
+    for g in gaps:
+        print(f"    {g[0]}: {g[1]} mm at {g[2]}")
     inter = lower.val().intersect(upper.val())
     print(f"  interference with the lower part: {inter.Volume():.4f} mm3")
     z_out, z_pin = head_heights(lp, up)

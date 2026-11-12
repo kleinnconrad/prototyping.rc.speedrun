@@ -267,7 +267,7 @@ def side_page(pdf, tris, p):
     ax = fig.add_axes([0.03, 0.08, 0.55, 0.8])
     draw_mesh(ax, tris, "side")
     dim(ax, (-33, 0), (-33, ztop), (-3, 0), 5)
-    dim(ax, (p["base_half_length"], 0), (p["base_half_length"], p["base_height_pinion_side"]), (5, 0), 22,
+    dim(ax, (p["base_half_length"], 0), (p["base_half_length"], p["base_height"]), (5, 0), 22,
         txt_shift=0)
     dim(ax, (sy - 2.8, zc - tt), (sy - 2.8, zc), (-6, 0), 25, txt_shift=0)
     axis_marks(ax, (24, -6), ((1, 0, "y"), (0, 1, "z")))
@@ -305,15 +305,16 @@ ROWS = [
     (15, "A", "Diff bearing seat: length from the lip inward / inner shoulder", "depth rod", "4.0 / none",
      "4.0 / none"),
     (16, "A", "Outer end face to the near edge of the diff half bore at the parting face", "depth rod",
-     "21.42", "21.12"),
-    (17, "A", "Pinion housing end face to the near edge of the diff half bore", "as no. 16", "19.9", "19.6"),
+     "18.2 (design)", "21.12"),
+    (17, "A", "Pinion housing end face to the near edge of the diff half bore", "as no. 16", "19.6", "19.6"),
     (18, "A", "Pinion bearing seat: width of the half bore at the parting face", "inside jaws", "10.0 (fit)",
      "10.5"),
     (19, "A", "Pinion bearing seat: length (inner end of the seat to housing end face)", "depth rod", "9.25",
      "9.25"),
     (20, "A", "Pinion bearing seat: shoulder at the inner end", "look", "none", "none"),
-    (21, "B", "Overall length at the parting face (outer end to pinion housing end)", "outside jaws", "56.3", ""),
-    (22, "B", "Narrow lower section: length (y) / height", "outside jaws", "24.8 / 5.0", "- / 5.0"),
+    (21, "B", "Overall length at the parting face (outer end to pinion housing end)", "outside jaws", "53.4 (design)", ""),
+    (22, "B", "Contact block on the chassis plate: length (y) / height of the end faces", "outside jaws",
+     "24.8 / 5.0", "- / 5.0"),
     (23, "A", "Sway bar holes: spacing", "as no. 1", "16.2", "16.2"),
     (24, "A", "Sway bar hole to the outer top boss hole, along (y)", "inside jaws, far edges, minus diameters",
      "7.4", "7.4"),
@@ -338,7 +339,7 @@ ROWS = [
     (37, "A", "Ring gear side: seen from the pinion housing, is the deepening on the left?", "look", "left",
      "left (photo)"),
     (38, "A", "Pinion seat: rib between the two bearings: width / opening diameter", "depth rod / inside jaws",
-     "1.25 / 8.5", ""),
+     "0.9 / 9.4", "test print"),
     (39, "A", "Bottom side: sway bar hole to the nearest bottom hole, along (y)", "as no. 24", "18.7", ""),
     (40, "A", "Parting face: outer top boss hole to the near edge of the diff half bore, along (y)",
      "depth rod or inside jaws", "14.3", ""),
@@ -383,7 +384,7 @@ def preview(path, tris):
         ax = fig.add_axes(rect)
         lo, hi = draw_mesh(ax, tris, view)
         frame(ax, lo, hi, pad=(2, 2, 2, 2), title=title)
-    fig.suptitle("Carten T410R lower bulkhead (caliper values, photos and first test print)",
+    fig.suptitle("Carten T410R lower bulkhead, design matching the upper part (after two test prints)",
                  fontsize=13, y=0.985)
     fig.savefig(path, dpi=110)
     plt.close(fig)
