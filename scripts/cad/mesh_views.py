@@ -74,18 +74,24 @@ def iso_basis(azim_deg=-55.0, elev_deg=30.0):
 
 
 def draw_mesh(ax, tris, view, light=(-0.35, 0.55, 0.75), color=(0.55, 0.6, 0.66), edge=False,
-              depth_cue=0.45, rasterized=True):
-    """Draw the shaded mesh on a 2D axes. view: name in VIEWS or a basis tuple."""
+              depth_cue=0.45, rasterized=True, tri_colors=None):
+    """Draw the shaded mesh on a 2D axes. view: name in VIEWS or a basis tuple.
+
+    tri_colors: optional base colour per triangle (n, 3), for example to show an assembly
+    of several parts in one view with a common depth order.
+    """
+    base = np.tile(np.asarray(color, float), (len(tris), 1)) if tri_colors is None \
+        else np.asarray(tri_colors, float)
     d, r, u = basis(*VIEWS[view]) if isinstance(view, str) else view
     n = np.cross(tris[:, 1] - tris[:, 0], tris[:, 2] - tris[:, 0])
     ln = np.linalg.norm(n, axis=1)
     keep = ln > 1e-12
-    tris, n = tris[keep], n[keep] / ln[keep][:, None]
+    tris, n, base = tris[keep], n[keep] / ln[keep][:, None], base[keep]
     facing = n @ d < 0                      # back faces are hidden by front faces
-    tris, n = tris[facing], n[facing]
+    tris, n, base = tris[facing], n[facing], base[facing]
     depth = (tris.mean(axis=1) @ d)
     order = np.argsort(-depth)              # far triangles first
-    tris, n = tris[order], n[order]
+    tris, n, base = tris[order], n[order], base[order]
     lv = np.asarray(light, float)
     # light relative to the viewer: rotate the light vector into the view basis
     lw = lv[0] * r + lv[1] * u - lv[2] * d
@@ -95,7 +101,7 @@ def draw_mesh(ax, tris, view, light=(-0.35, 0.55, 0.75), color=(0.55, 0.6, 0.66)
     depth = depth[order]
     span = max(depth.max() - depth.min(), 1e-9)
     shade = shade * (1.0 - depth_cue * (depth - depth.min()) / span)
-    cols = np.clip(np.outer(shade, color) + 0.08, 0, 1)
+    cols = np.clip(shade[:, None] * base + 0.08, 0, 1)
     pts = np.stack([tris @ r, tris @ u], axis=-1)
     pc = PolyCollection(pts, facecolors=cols, edgecolors=cols if not edge else "k",
                         linewidths=0.8, antialiased=True)

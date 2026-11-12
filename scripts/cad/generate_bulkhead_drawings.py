@@ -200,7 +200,7 @@ def sections_page(pdf, solid, p):
     yd, w, zc = p["diff_axis_y"], p["body_half_width"], p["axis_z"]
     xl, xs = seat_x(p)
     rs, lip = p["diff_bearing"][1] / 2, p["diff_lip_d"] / 2
-    yin, L, ts = p["pinion_seat_y_inner"], p["pinion_seat_length"], p["pinion_shoulder_t"]
+    yin, L = p["pinion_seat_y_inner"], p["pinion_seat_length"]
     rp = p["pinion_bearing"][1] / 2
 
     fig = plt.figure(figsize=A4_LANDSCAPE)
@@ -211,7 +211,7 @@ def sections_page(pdf, solid, p):
     tris, lines = section(solid, (0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1))
     draw_section(ax, tris, lines)
     dim(ax, (yin, zc), (yin + L, zc), (0, 4.5), 19)
-    dim(ax, (yin - ts, zc - rp), (yin, zc - rp), (0, -8.5), 20, txt_shift=-4)
+    leader(ax, (yin, zc - rp), (yin - 5, zc - rp - 6), 20)
     yr = yin + p["pinion_bearing"][2] + p["pinion_rib_t"] / 2
     leader(ax, (yr, zc - p["pinion_rib_d"] / 2 - 0.3), (yr + 4, 24), 38)
     dim(ax, (-p["base_half_length"], 0), (-p["base_half_length"], zc), (-14, 0), 4)
@@ -309,8 +309,9 @@ ROWS = [
     (17, "A", "Pinion housing end face to the near edge of the diff half bore", "as no. 16", "19.9", "19.6"),
     (18, "A", "Pinion bearing seat: width of the half bore at the parting face", "inside jaws", "10.0 (fit)",
      "10.5"),
-    (19, "A", "Pinion bearing seat: length (shoulder face to housing end face)", "depth rod", "9.25", "9.25"),
-    (20, "A", "Pinion shoulder: thickness / opening diameter", "outside / inside jaws", "1.5 / 7.5", ""),
+    (19, "A", "Pinion bearing seat: length (inner end of the seat to housing end face)", "depth rod", "9.25",
+     "9.25"),
+    (20, "A", "Pinion bearing seat: shoulder at the inner end", "look", "none", "none"),
     (21, "B", "Overall length at the parting face (outer end to pinion housing end)", "outside jaws", "56.3", ""),
     (22, "B", "Narrow lower section: length (y) / height", "outside jaws", "24.8 / 5.0", "- / 5.0"),
     (23, "A", "Sway bar holes: spacing", "as no. 1", "16.2", "16.2"),

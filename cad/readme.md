@@ -21,6 +21,12 @@
   * [Test print of the lower bulkhead](#test-print-of-the-lower-bulkhead)
   * [Design notes](#design-notes)
   * [Open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)
+* [Upper bulkhead v1 (new design)](#upper-bulkhead-v1-new-design)
+  * [Interfaces of the upper bulkhead](#interfaces-of-the-upper-bulkhead)
+  * [Design of the upper bulkhead](#design-of-the-upper-bulkhead)
+  * [Files of the upper bulkhead](#files-of-the-upper-bulkhead)
+  * [Measurement sheet of the stock upper bulkhead](#measurement-sheet-of-the-stock-upper-bulkhead)
+  * [Open points of the upper bulkhead](#open-points-of-the-upper-bulkhead)
 * [Scripts](#scripts)
   * [Regenerating the files](#regenerating-the-files)
   * [DXF generation](#dxf-generation)
@@ -39,7 +45,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/test_print`**: STL files of the chassis plate and the top brace for a test print on a home 3D printer
   * **`/chassis_plate_speedrun_wide`**: Wide variant of the chassis plate for speedruns (STEP, STL, PDF template, geometry data)
   * **`/chassis_plate_speedrun_wide_motor10`**: Wide variant with a longer motor window for a 3660 motor (STEP, STL, DXF, PDF template, geometry data)
-* **`/bulkhead`**: CAD data of the bulkheads (gear boxes). Version 2 of the lower bulkhead (STEP, STL, test print STL, parameter file, measurement sheet).
+* **`/bulkhead`**: CAD data of the bulkheads (gear boxes): version 2 of the lower bulkhead, version 1 of the upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are released under the licenses of this repository (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
@@ -212,7 +218,7 @@ Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape fo
 | Chassis plate | 4 countersunk screws M3x8 from below through the 2 mm chassis plate | 4 M3 holes (tap drill 2.5 mm, 8 mm deep), spacing 28.0 x 20.0 mm |
 | Upper bulkhead | 2 button head screws M3x10 on the pinion side, 2 button head screws M3x8 on the outer side | 4 bosses 4.86 mm, 2.42 mm above the parting face, M3 holes (tap drill 2.5 mm, 7 mm deep). Spacing across 18.7 mm (pinion side) and 21.6 mm (outer side), spacing along 42.6 mm |
 | Diff | 2 bearings 10x15x4 (NBA299) | Per side: outer lip 1.89 mm thick (opening 12.28 mm) and seat 15 x 4 mm, open toward the gear cavity. Inner faces of the lips 30.7 mm apart |
-| Pinion shaft | 2 bearings 5x10x4 (NBA298) | Seat 10 mm, 9.25 mm long, with a shoulder (opening 7.5 mm) toward the pinion gear and a rib of 1.25 mm between the bearings |
+| Pinion shaft | 2 bearings 5x10x4 (NBA298) | Seat 10 mm, 9.25 mm long: 2 seats of 4 mm with a rib of 1.25 mm between the bearings. The rib is the only axial stop: no shoulder at the inner end, open at the housing end face |
 | Ring gear (42T, 31.93 mm) and diff case | Gear diff NBA230 | Cavity with a radius of 12.5 mm for the diff case, deepening with a radius of 16.4 mm for the ring gear on the ring gear side |
 | Pinion gear (17T, 14.1 mm) | Pinion NBA207 | Pocket with a radius of 7.75 mm |
 | Sway bar | 2 M3 screws | 2 tabs, 4.35 mm thick, with M3 holes (tap drill 2.5 mm), spacing 16.2 mm |
@@ -288,15 +294,83 @@ The measurement sheet `bulkhead_lower_v2_measurement_sheet.pdf` documents the ca
 
 ### Open points of the lower bulkhead
 * **Chassis plate:** the bottom holes of the stock bulkhead are 28.0 x 20.0 mm apart. The chassis plate v2 and the speedrun chassis plates have 28.17 x 20.22 mm (H03 to H06) and 28.13 x 20.19 mm (H28 to H31). Countersunk screws center themselves in the countersinks, so the difference of approx. 0.1 mm per hole is not compensated by clearance. The hole spacings of the carbon chassis plate are to be measured before the aluminium plate is ordered.
-* Open caliper values of the measurement sheet (nos. 20, 21, 26, 30 to 36, 38 to 41).
+* Open caliper values of the measurement sheet (nos. 21, 26, 30 to 36, 38 to 41).
 * The value 22 (5 mm) is interpreted as the height of the narrow lower section, and the value 25 (4.35 mm) as the thickness of the sway bar tabs with the top face in the parting face.
 * Width over the outer faces of the diff bearing walls: 34.48 mm in the model, 34.2 mm measured (no. 10).
 * The outer end face of the stock part has small holes. Their function is unknown, so they are not modelled.
-* Upper bulkhead: not modelled yet.
+* Upper bulkhead: see [upper bulkhead v1 (new design)](#upper-bulkhead-v1-new-design).
 * Front and rear: End A of the chassis plate is assumed to be the front (bumper holes H34 to H36), End B the rear (motor window).
 
+## Upper bulkhead v1 (new design)
+* **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
+* **Description:** CAD model of a new upper half of the gear box (bulkhead) of the Carten T410R for CNC manufacturing from 7075-T6. The shape is a new design. The interfaces follow the stock part: the lower bulkhead v2, the diff and pinion bearings, the shock tower and the top brace.
+* **Status:** Version 1, not verified. The interfaces to the lower part and the bearings are taken from the parameter file of the lower bulkhead v2. The interfaces to the shock tower and the top brace are estimates from photos (accuracy approx. +-1.5 mm) and are to be replaced by the values of the [measurement sheet of the stock upper bulkhead](#measurement-sheet-of-the-stock-upper-bulkhead). The test print is useful only after these values are known.
+
+![Views and sections of the upper bulkhead v1](../photos/cad_bulkhead_upper_v1_preview.png)
+
+The preview shows the upper part, the assembly with the lower part v2 and two sections of the assembly. The bearings (light grey), the gears (yellow), the diff case, the shock tower plate and the end of the top brace (dark grey) are simplified bodies that show the positions only.
+
+### Interfaces of the upper bulkhead
+| Interface | Stock parts | Model v1 | Source |
+|:---|:---|:---|:---|
+| Lower bulkhead | Parting face, 4 bosses of the lower part (4.86 mm, 2.42 mm high) | Flat underside, 4 recesses 5.06 x 2.52 mm for the bosses (locating the two halves) | Lower part v2 |
+| Screws to the lower part | 2 button head screws M3x8 on the outer side, 2 button head screws M3x10 on the pinion side | Clearance holes 3.2 mm. Head seats 4.92 mm (outer side, on the flange) and 6.92 mm (pinion side, counterbore 6.5 mm) above the parting face: 5.5 mm thread engagement in the lower part | User, lower part v2 |
+| Diff bearings (10x15x4) | Clamped between the two halves | Upper half bores 15 x 4 mm, limited only by the outer lips (opening 12.28 mm, 1.89 mm thick) | Lower part v2 |
+| Pinion bearings (5x10x4) | Clamped between the two halves | Upper half bores 10 mm with the rib of 1.25 mm between the bearings as the only axial stop, open toward the pinion pocket and at the housing end face | Lower part v2, user |
+| Gears | Ring gear 42T (31.93 mm), pinion 17T (14.1 mm) | Same cavities as the lower part: diff case radius 12.5 mm, ring gear radius 16.4 mm on the ring gear side, pinion pocket radius 7.75 mm | Lower part v2 |
+| Shock tower | 3 mm carbon, 4 button head screws M3x8 (manual steps 19 and 20) | Flat contact face facing the outer side at y = -5.3 mm, 4 tapped holes M3 (through the 8 mm wall) at x = +-10.0 mm and 22.7 / 28.3 mm above the parting face. In front of the face, no material above 18.0 mm | Photo |
+| Top brace (NHA432) | 2 button head screws M3x8 per bulkhead (manual step 25) into 2 raised bosses | Flat contact face 16.8 mm above the parting face, from y = 10.5 mm to the pinion end, 2 tapped holes M3 at x = +-12.85 mm, y = 14.36 mm | Photo, top brace v2 |
+| Sway bar holders | M3x6 from above onto the tabs of the lower part (manual step 23) | The upper part ends at y = -25.5 mm, 3.2 mm before the sway bar holes | Photo |
+
+* The pinion side screws (M3x10) sit below the top brace. The top brace has access holes above them (B03/B04 and B12/B13, spacing 19.1 mm, 6.94 mm from the top brace screws).
+* The upper part is the same at the front and at the rear, like the lower part. The front and the rear shock tower use the same 4 holes.
+
+### Design of the upper bulkhead
+The upper part is a prismatic block: the footprint of the lower part (34.48 mm wide, corner radius 6 mm) is extruded to 4 flat levels along y. All outer faces are flat. The only curved faces are the bores and the cavities, which follow the lower part.
+
+| Section (y) | Level above the parting face | Function |
+|:---|:---|:---|
+| -25.5 to -17.9 mm | 4.92 mm | Flange: seat of the heads of the outer screws |
+| -17.9 to -5.3 mm | 18.0 mm | Block over the diff and the ring gear (2 mm in front of the ring gear cavity) |
+| -5.3 to 2.7 mm | 31.6 mm | Shock tower wall over the full width, 8 mm thick, flat contact face |
+| 2.7 to 10.5 mm | 18.0 mm | Block over the diff and the ring gear |
+| 10.5 to 26.7 mm | 16.8 mm | Flat contact face of the top brace over the pinion, counterbores of the pinion side screws |
+| 26.7 to 27.9 mm | Half cylinder, radius 6.6 mm | Cover of the outer pinion bearing beyond the footprint (as on the lower part) |
+
+* The interference check of the assembly (lower part v2 and upper part v1) gives 0 mm³.
+* Size 34.48 x 53.4 x 31.6 mm, volume 22.0 cm³, mass 62 g in 7075 (2.81 g/cm³), 27 g in PLA.
+* The mass is higher than with shells that follow the gears. Straight pockets in the flat faces can reduce it, if required.
+* Manufacturing: 3 setups on a 3-axis machine (underside with the bores and cavities, top with the levels and the vertical holes, outer side with the 4 shock tower holes). The STEP file contains no threads: the tapped holes are modelled with the tap drill diameter of 2.5 mm.
+
+### Files of the upper bulkhead
+All files are stored in the directory `/bulkhead`. The files are generated from the parameter files of the upper and the lower part (see [scripts](#scripts)).
+
+| File | Format | Use |
+|:---|:---|:---|
+| `bulkhead_upper_T410R_v1.step` | STEP (AP214) | Solid model with nominal dimensions (one solid) |
+| `bulkhead_upper_T410R_v1.stl` | STL (binary) | Triangle mesh of the solid model |
+| `testprint_bulkhead_upper_v1.stl` | STL (binary) | Test print variant: bearing seats 0.2 mm larger, tapped holes 2.7 mm for self-tapping screws. Print with the parting face on the print bed. |
+| `bulkhead_assembly_T410R_v1.step` | STEP (AP214) | Assembly of the lower part v2 and the upper part v1 |
+| `bulkhead_upper_v1_parameters.json` | JSON | Dimensions of the upper part, each with its source and a note. The shared dimensions are read from `bulkhead_lower_v2_parameters.json`. |
+| `bulkhead_upper_v1_measurement_sheet.pdf` | PDF (A4, 2 pages) | Measurement sheet of the stock upper part (see below) |
+
+### Measurement sheet of the stock upper bulkhead
+The measurement sheet `bulkhead_upper_v1_measurement_sheet.pdf` shows the interfaces of the stock upper part on 3 photos (end view, side view, top view) with the numbers U1 to U14 and lists the estimates of the model:
+* **U1 to U6, U11, U13:** shock tower: hole pattern, height of the holes, position of the contact face, lowest edge of the shock tower plates.
+* **U7 to U9:** top brace: hole spacing, position along y, height of the contact face.
+* **U10, U12:** height of the ears, outer end of the stock part.
+* **U14:** use of the 2 screws M3x18 with the block NBA201 at the rear end of the top brace (manual step 25).
+* A scan of both shock towers on the flatbed scanner (U13) is the most accurate source for the hole pattern.
+* The photos are stored as `photos/bulkhead_upper_stock_end_view.jpg`, `photos/bulkhead_upper_stock_side_view.jpg` and `photos/bulkhead_upper_stock_top_view.jpg`.
+
+### Open points of the upper bulkhead
+* Caliper values U1 to U14 of the stock upper part.
+* Lowest edge of the shock tower plates: the block in front of the wall is 18.0 mm high. If a shock tower plate reaches lower, the block in front of the wall is to be lowered (the ring gear cavity requires at least 15.3 mm plus the wall at the contact face).
+* Top brace: the end of the top brace is assumed at y = 11.0 mm. The shape of its end (hexagon and slot) is not checked against the block.
+* Mass: 62 g in 7075. Straight pockets are possible after the interfaces are confirmed.
+
 ## Scripts
-The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the lower bulkhead. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates, and the scripts of the bulkhead read and write the files of the lower bulkhead v2. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
+The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates, and the scripts of the bulkhead read and write the files of the lower bulkhead v2 and the upper bulkhead v1. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
 
 | Script | Input | Output | Package |
 |:---|:---|:---|:---|
@@ -310,7 +384,9 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_print_template.py` | Geometry data of both speedrun chassis plates and the chassis plate v2 | Print templates of both speedrun chassis plates (option `--plate wide` or `--plate motor10`). The option `--print-scale` sets the scale of the PDF viewer. | reportlab |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file | cadquery |
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_v2_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
-| `mesh_views.py` | None | Helper module: shaded views of STL files, used by `generate_bulkhead_drawings.py` | matplotlib |
+| `generate_bulkhead_upper.py` | Parameter files of the upper and the lower bulkhead | STEP and STL file of the upper part, test print STL file, assembly STEP file, interference check | cadquery |
+| `generate_bulkhead_upper_drawings.py` | Parameter files, photos of the stock upper part | Preview image `photos/cad_bulkhead_upper_v1_preview.png` and measurement sheet of the stock upper part (PDF) | cadquery, matplotlib |
+| `mesh_views.py` | None | Helper module: shaded views of STL files and assemblies, used by the drawing scripts of the bulkheads | matplotlib |
 
 ### Regenerating the files
 The following commands regenerate the files of the speedrun chassis plates in this order:
@@ -330,11 +406,13 @@ python scripts/cad/generate_print_template.py --plate motor10
 * The regenerated geometry data, STL files and images are identical to the files in the repository. The STEP, DXF and PDF files differ only in header data such as the creation date and internal IDs.
 * The STEP and STL files of the speedrun chassis plate (wide) are the source data and are not regenerated.
 
-The following commands regenerate the files of the lower bulkhead from the parameter file:
+The following commands regenerate the files of the bulkheads from the parameter files (lower part first):
 
 ```bash
 python scripts/cad/generate_bulkhead_lower.py
 python scripts/cad/generate_bulkhead_drawings.py
+python scripts/cad/generate_bulkhead_upper.py
+python scripts/cad/generate_bulkhead_upper_drawings.py
 ```
 
 ### DXF generation

@@ -122,11 +122,9 @@ def bulkhead_lower(p, test_print=False):
         xa, xb = sorted((sx * (xl - 0.01), sx * (w + 5)))
         body = body.cut(cq.Workplane().add(cyl_x(p["diff_lip_d"] / 2, xa, xb, yd, zc)))
 
-    # pinion pocket, shoulder opening and bearing seat
+    # pinion pocket up to the inner end of the pinion seat (no shoulder in front of the bearings)
     body = body.cut(cq.Workplane().add(cyl_y(p["pinion_pocket_r"], p["pinion_pocket_y_min"],
-                                             yp_in - p["pinion_shoulder_t"], 0.0, zc)))
-    body = body.cut(cq.Workplane().add(cyl_y(p["pinion_shoulder_d"] / 2,
-                                             yp_in - p["pinion_shoulder_t"] - 0.01, yp_in + 0.01, 0.0, zc)))
+                                             yp_in + 0.01, 0.0, zc)))
     # pinion bearing seats: inner bearing, rib, outer bearing
     rp = (p["pinion_bearing"][1] + seat_add) / 2
     bp = p["pinion_bearing"][2]
