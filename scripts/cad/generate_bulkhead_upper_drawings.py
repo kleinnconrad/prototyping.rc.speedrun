@@ -103,8 +103,8 @@ def draw_sections(ax, items, origin, normal, right, up_dir):
 def preview(path, lp, up, lower, upper):
     zc, yd = lp["axis_z"], lp["diff_axis_y"]
     fig = plt.figure(figsize=(15, 10))
-    fig.suptitle("Carten T410R upper bulkhead v1, new design (interfaces to the shock tower and the top "
-                 "brace from photos, not yet measured)", fontsize=12, y=0.985)
+    fig.suptitle("Carten T410R upper bulkhead v1, new design (shock tower holes and top brace height measured, "
+                 "contact face and top brace position not yet measured)", fontsize=12, y=0.985)
     for rect, view, title in (([0.0, 0.5, 0.33, 0.44], iso_basis(-55, 30), "Upper part, view from the outer side"),
                               ([0.33, 0.5, 0.33, 0.44], iso_basis(125, 30), "Upper part, view from the pinion side"),
                               ([0.02, 0.03, 0.3, 0.42], iso_basis(-120, -40), "Upper part, underside")):
@@ -160,27 +160,30 @@ def photo_ax(fig, rect, path, title):
 
 
 ROWS = [
-    # (no, priority, feature, how to measure, model v1)
-    ("U1", "A", "Shock tower holes: spacing across (x)", "inside jaws, far edge to far edge, minus hole diameter", "20.0"),
-    ("U2", "A", "Shock tower holes: spacing up/down (one ear)", "as U1", "5.6"),
+    # (no, priority, feature, how to measure, model v1, caliper value)
+    ("U1", "A", "Shock tower holes: spacing across (x)", "inside jaws, far edge to far edge, minus hole diameter",
+     "19.1", "19.1"),
+    ("U2", "A", "Shock tower holes: spacing up/down (one ear)", "as U1", "6.1", "6.1"),
     ("U3", "A", "Lower shock tower holes: height of the centre above the parting face",
-     "depth rod to the lower hole edge, plus d/2", "22.7"),
-    ("U4", "B", "Shock tower holes: diameter / through or blind", "inside jaws / look", "2.5 / through"),
+     "depth rod to the lower hole edge, plus d/2", "22.5", "22.5"),
+    ("U4", "B", "Shock tower holes: diameter / length (through)", "inside jaws / depth rod", "M3: 2.5 / 6.0",
+     "2.9 / 5.8"),
     ("U5", "A", "Contact face of the shock tower to the outer edge of the lip opening at the parting face (y)",
-     "square against the contact face, depth rod", "face 0.3 inside"),
-    ("U6", "A", "Contact face of the shock tower to the outer end face (y)", "square against the face, depth rod", "20.2"),
-    ("U7", "A", "Top brace holes: spacing across (x)", "as U1", "25.7"),
-    ("U8", "A", "Top brace hole to the screw hole on the pinion side (y)", "as U1", "6.94"),
+     "square against the contact face, depth rod", "face 0.3 inside", ""),
+    ("U6", "A", "Contact face of the shock tower to the outer end face (y)", "square against the face, depth rod",
+     "20.2", ""),
+    ("U7", "A", "Top brace holes: spacing across (x)", "as U1", "25.6", "25.6"),
+    ("U8", "A", "Top brace hole to the screw hole on the pinion side (y)", "as U1", "6.94", ""),
     ("U9", "A", "Top brace contact face (top of the 2 raised bosses): height above the parting face",
-     "part on its parting face, depth rod", "16.8"),
-    ("U10", "B", "Ear tops: height above the parting face", "as U9", "31.6"),
+     "part on its parting face, depth rod", "15.4", "15.4"),
+    ("U10", "B", "Ear tops: height above the parting face", "as U9", "31.5", "31.5"),
     ("U11", "A", "Shock towers (front and rear): lower hole centre to the lowest edge of the tower",
-     "on the shock tower, depth rod", "4.7"),
-    ("U12", "B", "Outer end face to the centre of the outer screw holes (y)", "depth rod, plus d/2", "4.2"),
+     "on the shock tower, depth rod", "4.7", ""),
+    ("U12", "B", "Outer end face to the centre of the outer screw holes (y)", "depth rod, plus d/2", "4.2", ""),
     ("U13", "A", "Scan of both shock towers with a ruler on the glass (gives U1, U2 and U11 directly)",
-     "flatbed scanner, 600 to 1200 dpi", "-"),
+     "flatbed scanner, 600 to 1200 dpi", "-", ""),
     ("U14", "A", "Rear end of the top brace: where do the 2 screws M3x18 with the block NBA201 go?",
-     "look (manual step 25)", "open"),
+     "look (manual step 25)", "open", ""),
 ]
 
 
@@ -246,7 +249,7 @@ def sheet(path, photos):
         fig.text(0.04, 0.955, "Measurement sheet - stock upper bulkhead - page 2: values", fontsize=14,
                  fontweight="bold")
         fig.text(0.04, 0.925, "Priority A: interfaces of the new design. Priority B: shape and checks. "
-                 "Model v1 values are estimates from photos. Values in mm.", fontsize=8.5, color="#444")
+                 "Rows without a caliper value are open, their model values are estimates from photos. Values in mm.", fontsize=8.5, color="#444")
         ax = fig.add_axes([0.03, 0.08, 0.94, 0.82])
         ax.axis("off")
         cols = [0.0, 0.045, 0.085, 0.53, 0.8, 0.885]
@@ -262,7 +265,9 @@ def sheet(path, photos):
                                            zorder=0))
             for c, t in zip(cols, row):
                 ax.text(c, y, t, fontsize=7.6, va="center", transform=ax.transAxes)
-            ax.plot([cols[5], 0.995], [y - dy * 0.3, y - dy * 0.3], color="#888", lw=0.5, transform=ax.transAxes)
+            if not row[5]:
+                ax.plot([cols[5], 0.995], [y - dy * 0.3, y - dy * 0.3], color="#888", lw=0.5,
+                        transform=ax.transAxes)
         fig.text(0.96, 0.02, "Carten T410R - upper bulkhead v1 - measurement sheet", fontsize=7, ha="right",
                  color="#666")
         pdf.savefig(fig, dpi=200)

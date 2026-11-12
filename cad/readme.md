@@ -304,7 +304,7 @@ The measurement sheet `bulkhead_lower_v2_measurement_sheet.pdf` documents the ca
 ## Upper bulkhead v1 (new design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** CAD model of a new upper half of the gear box (bulkhead) of the Carten T410R for CNC manufacturing from 7075-T6. The shape is a new design. The interfaces follow the stock part: the lower bulkhead v2, the diff and pinion bearings, the shock tower and the top brace.
-* **Status:** Version 1, not verified. The interfaces to the lower part and the bearings are taken from the parameter file of the lower bulkhead v2. The interfaces to the shock tower and the top brace are estimates from photos (accuracy approx. +-1.5 mm) and are to be replaced by the values of the [measurement sheet of the stock upper bulkhead](#measurement-sheet-of-the-stock-upper-bulkhead). The test print is useful only after these values are known.
+* **Status:** Version 1, not verified. The interfaces to the lower part and the bearings are taken from the parameter file of the lower bulkhead v2. The shock tower hole pattern and its height, the spacing of the top brace screws and the height of the top brace face are caliper values (U1 to U4, U7, U9, U10). The position of the shock tower contact face and of the top brace screws along y are estimates from photos (accuracy approx. +-1.5 mm, U5, U6, U8 open). The test print is useful only after these values are known (see [measurement sheet of the stock upper bulkhead](#measurement-sheet-of-the-stock-upper-bulkhead)).
 
 ![Views and sections of the upper bulkhead v1](../photos/cad_bulkhead_upper_v1_preview.png)
 
@@ -318,8 +318,8 @@ The preview shows the upper part, the assembly with the lower part v2 and two se
 | Diff bearings (10x15x4) | Clamped between the two halves | Upper half bores 15 x 4 mm, limited only by the outer lips (opening 12.28 mm, 1.89 mm thick) | Lower part v2 |
 | Pinion bearings (5x10x4) | Clamped between the two halves | Upper half bores 10 mm with the rib of 1.25 mm between the bearings as the only axial stop, open toward the pinion pocket and at the housing end face | Lower part v2, user |
 | Gears | Ring gear 42T (31.93 mm), pinion 17T (14.1 mm) | Same cavities as the lower part: diff case radius 12.5 mm, ring gear radius 16.4 mm on the ring gear side, pinion pocket radius 7.75 mm | Lower part v2 |
-| Shock tower | 3 mm carbon, 4 button head screws M3x8 (manual steps 19 and 20) | Flat contact face facing the outer side at y = -5.3 mm, 4 tapped holes M3 (through the 8 mm wall) at x = +-10.0 mm and 22.7 / 28.3 mm above the parting face. In front of the face, no material above 18.0 mm | Photo |
-| Top brace (NHA432) | 2 button head screws M3x8 per bulkhead (manual step 25) into 2 raised bosses | Flat contact face 16.8 mm above the parting face, from y = 10.5 mm to the pinion end, 2 tapped holes M3 at x = +-12.85 mm, y = 14.36 mm | Photo, top brace v2 |
+| Shock tower | 3 mm carbon, 4 button head screws M3x8 (manual steps 19 and 20). Stock holes 2.9 mm, through the 5.8 mm ears | Flat contact face facing the outer side at y = -5.3 mm, 4 tapped holes M3 (through the 6 mm wall) at x = +-9.55 mm and 22.5 / 28.6 mm above the parting face. In front of the face, no material above 17.8 mm | Caliper (holes), photo (contact face) |
+| Top brace (NHA432) | 2 button head screws M3x8 per bulkhead (manual step 25) into 2 raised bosses | Flat contact face 15.4 mm above the parting face, from y = 10.5 mm to the pinion end, 2 tapped holes M3 at x = +-12.8 mm, y = 14.36 mm | Caliper (height, spacing), photo and top brace v2 (y) |
 | Sway bar holders | M3x6 from above onto the tabs of the lower part (manual step 23) | The upper part ends at y = -25.5 mm, 3.2 mm before the sway bar holes | Photo |
 
 * The pinion side screws (M3x10) sit below the top brace. The top brace has access holes above them (B03/B04 and B12/B13, spacing 19.1 mm, 6.94 mm from the top brace screws).
@@ -331,14 +331,16 @@ The upper part is a prismatic block: the footprint of the lower part (34.48 mm w
 | Section (y) | Level above the parting face | Function |
 |:---|:---|:---|
 | -25.5 to -17.9 mm | 4.92 mm | Flange: seat of the heads of the outer screws |
-| -17.9 to -5.3 mm | 18.0 mm | Block over the diff and the ring gear (2 mm in front of the ring gear cavity) |
-| -5.3 to 2.7 mm | 31.6 mm | Shock tower wall over the full width, 8 mm thick, flat contact face |
-| 2.7 to 10.5 mm | 18.0 mm | Block over the diff and the ring gear |
-| 10.5 to 26.7 mm | 16.8 mm | Flat contact face of the top brace over the pinion, counterbores of the pinion side screws |
+| -17.9 to -5.3 mm | 17.8 mm | Block over the diff and the ring gear (2 mm in front of the ring gear cavity) |
+| -5.3 to 0.7 mm | 31.5 mm | Shock tower wall over the full width, 6 mm thick, flat contact face |
+| 0.7 to 10.5 mm | 17.8 mm | Block over the diff and the ring gear |
+| 10.5 to 26.7 mm | 15.4 mm | Flat contact face of the top brace over the pinion, counterbores of the pinion side screws |
 | 26.7 to 27.9 mm | Half cylinder, radius 6.6 mm | Cover of the outer pinion bearing beyond the footprint (as on the lower part) |
 
 * The interference check of the assembly (lower part v2 and upper part v1) gives 0 mm³.
-* Size 34.48 x 53.4 x 31.6 mm, volume 22.0 cm³, mass 62 g in 7075 (2.81 g/cm³), 27 g in PLA.
+* Size 34.48 x 53.4 x 31.5 mm, volume 20.3 cm³, mass 57 g in 7075 (2.81 g/cm³), 25 g in PLA.
+* The wall is 6 mm thick: the screws M3x8 through the 3 mm shock tower have 5 mm thread engagement. The material above the thread of the upper holes is 1.4 mm (wall top at the height of the stock ears, U10).
+* The block over the ring gear is 17.8 mm high, equal to the zone kept free for the shock tower plate in front of the wall. The cover over the ring gear cavity is 1.4 mm directly behind the wall and 2.5 mm at the contact face.
 * The mass is higher than with shells that follow the gears. Straight pockets in the flat faces can reduce it, if required.
 * Manufacturing: 3 setups on a 3-axis machine (underside with the bores and cavities, top with the levels and the vertical holes, outer side with the 4 shock tower holes). The STEP file contains no threads: the tapped holes are modelled with the tap drill diameter of 2.5 mm.
 
@@ -355,7 +357,7 @@ All files are stored in the directory `/bulkhead`. The files are generated from 
 | `bulkhead_upper_v1_measurement_sheet.pdf` | PDF (A4, 2 pages) | Measurement sheet of the stock upper part (see below) |
 
 ### Measurement sheet of the stock upper bulkhead
-The measurement sheet `bulkhead_upper_v1_measurement_sheet.pdf` shows the interfaces of the stock upper part on 3 photos (end view, side view, top view) with the numbers U1 to U14 and lists the estimates of the model:
+The measurement sheet `bulkhead_upper_v1_measurement_sheet.pdf` shows the interfaces of the stock upper part on 3 photos (end view, side view, top view) with the numbers U1 to U14. Page 2 lists the values of the model and the caliper values (U1 to U4, U7, U9, U10 measured):
 * **U1 to U6, U11, U13:** shock tower: hole pattern, height of the holes, position of the contact face, lowest edge of the shock tower plates.
 * **U7 to U9:** top brace: hole spacing, position along y, height of the contact face.
 * **U10, U12:** height of the ears, outer end of the stock part.
@@ -364,10 +366,10 @@ The measurement sheet `bulkhead_upper_v1_measurement_sheet.pdf` shows the interf
 * The photos are stored as `photos/bulkhead_upper_stock_end_view.jpg`, `photos/bulkhead_upper_stock_side_view.jpg` and `photos/bulkhead_upper_stock_top_view.jpg`.
 
 ### Open points of the upper bulkhead
-* Caliper values U1 to U14 of the stock upper part.
-* Lowest edge of the shock tower plates: the block in front of the wall is 18.0 mm high. If a shock tower plate reaches lower, the block in front of the wall is to be lowered (the ring gear cavity requires at least 15.3 mm plus the wall at the contact face).
+* Open caliper values of the stock upper part: U5, U6 (position of the shock tower contact face), U8 (position of the top brace screws along y), U11 (lowest edge of the shock towers), U12 to U14.
+* Lowest edge of the shock tower plates: the block in front of the wall is 17.8 mm high. If a shock tower plate reaches lower, the block in front of the wall is to be lowered (the ring gear cavity requires at least 15.3 mm plus the wall at the contact face).
 * Top brace: the end of the top brace is assumed at y = 11.0 mm. The shape of its end (hexagon and slot) is not checked against the block.
-* Mass: 62 g in 7075. Straight pockets are possible after the interfaces are confirmed.
+* Mass: 57 g in 7075. Straight pockets are possible after the interfaces are confirmed.
 
 ## Scripts
 The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates, and the scripts of the bulkhead read and write the files of the lower bulkhead v2 and the upper bulkhead v1. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
