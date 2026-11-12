@@ -12,7 +12,7 @@ Design (in the style of the bulkheads): straight lines and radii only.
   of this project has a flat contact face there.
 * Solid bar of the original width (15.09 mm) between the end sections.
 * Transitions at 30 degrees to the y axis on both ends, fillets 3 mm.
-* Rectangular window instead of the hexagon cutout (it contains the hexagon).
+* End with B01 to B04 solid: the hexagon cutout of the original top brace is obsolete and closed.
 
 Outputs in cad/chassis/top_brace_speedrun: geometry data, STEP, STL, DXF, hole table, 1:1
 templates (100 % and 97 %) and two test print halves with a dovetail. Image: drawing with the
@@ -60,7 +60,6 @@ DESIGN = {
     "chamfer_deg": 30.0,           # angle of the transitions to the y axis
     "front_bar_start": 29.6,       # end of the transition at the end with B01 to B04
     "rear_bar_end": 196.6,         # start of the transition at the end with B07 to B15
-    "window": (4.5, 12.8, 30.05, 2.0),   # half width, y0, y1, corner radius (contains the hexagon)
     "closed_holes": ("B05", "B06"),
     "split_y": 121.65,             # test print halves
 }
@@ -114,8 +113,6 @@ def build_geometry(orig, half_width):
     pts = [(-W, 0), (W, 0), (W, ya), (w, d["front_bar_start"]), (w, d["rear_bar_end"]), (W, yc), (W, L),
            (-W, L), (-W, yc), (-w, d["rear_bar_end"]), (-w, d["front_bar_start"]), (-W, ya)]
     radii = [rc, rc, rf, rf, rf, rf, rc, rc, rf, rf, rf, rf]
-    hw, y0, y1, rw = d["window"]
-    window = filleted_polygon([(-hw, y0), (hw, y0), (hw, y1), (-hw, y1)], [rw] * 4)
     return {
         "units": "mm",
         "thickness": orig["thickness"],
@@ -124,9 +121,9 @@ def build_geometry(orig, half_width):
         "csk_angle": orig["csk_angle"],
         "csk_side": "none",
         "basis": "speedrun top brace: holes from top_brace_geometry.json without B05 and B06, outline and "
-                 "window new (generate_top_brace_speedrun.py), obround unchanged",
+                 "no cutout at the end with B01 to B04 (generate_top_brace_speedrun.py), obround unchanged",
         "outline": filleted_polygon(pts, radii),
-        "cutouts": {"window": window, "obround": orig["cutouts"]["obround"]},
+        "cutouts": {"obround": orig["cutouts"]["obround"]},
         "holes": [h for h in orig["holes"] if h["id"] not in d["closed_holes"]],
     }
 
@@ -146,10 +143,6 @@ def check_outline(g, orig, faces):
     for y0, y1, hw in faces:
         outside = outside.cut(cq.Solid.makeBox(2 * hw, y1 - y0, 3, cq.Vector(-hw, y0, -1)))
     print(f"  of which outside the contact faces of the bulkheads: {outside.Volume():.3f} mm2")
-    for name in orig["cutouts"]:
-        if name == "hexagon":
-            hexa = outline_solid(orig["cutouts"]["hexagon"])
-            print(f"  hexagon of the original outside the new window: {hexa.cut(outline_solid(g['cutouts']['window'])).Volume():.3f} mm2")
     return outside
 
 

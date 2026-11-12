@@ -72,8 +72,8 @@ The speedrun chassis combines the parts that are designed in this project for sp
 | [Speedrun chassis plate (wide) with longer motor window](#longer-motor-window-for-a-3660-motor) | 1 | `/chassis/chassis_plate_speedrun_wide_motor10` | Verified | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
 | [Lower bulkhead](#lower-bulkhead) | 2 | `/bulkhead` | Verified | 7075 | 2 x 35 g |
 | [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | Not verified, U5, U6 and U11 open | 7075 | 2 x 56 g |
-| [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | Verified | Carbon or 7075 | 14 g (carbon), 24 g (7075) |
-| **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace carbon | **410 g** |
+| [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | Verified | Carbon or 7075 | 14 g (carbon), 25 g (7075) |
+| **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace carbon | **411 g** |
 
 * The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³). Screws, bearings and the other parts of the car are not included.
 * The bulkheads are the same parts at both ends. At End A, they are rotated by 180 degrees, so that both pinions point to the middle of the car.
@@ -242,7 +242,7 @@ Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape fo
 ## Speedrun top brace
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** New design of the top brace for the bulkheads of this project, in the same style as the bulkheads: straight lines and radii only. The original top brace (see [chassis plate and top brace](#chassis-plate-and-top-brace)) is kept unchanged.
-* **Status:** Verified. The holes are taken from the original top brace, which is confirmed by its test print. The fit to the new bulkheads is also checked in the CAD model (see [fit to the bulkheads](#fit-to-the-bulkheads)).
+* **Status:** Verified. The holes are taken from the original top brace, which is confirmed by its test print. The fit to the new bulkheads is also checked in the CAD model (see [fit to the bulkheads](#fit-to-the-bulkheads)). After the verification, the obsolete window at the end with B01 to B04 was closed. The holes, the outline and the fit to the bulkheads are not changed by this.
 
 ![Top view of the speedrun top brace with the outline of the original top brace](../photos/cad_top_brace_speedrun_drawing.png)
 
@@ -255,14 +255,14 @@ The assembly with the chassis plate and the bulkheads is shown in the section [s
 | Ends | 32.7 to 38.0 mm wide, with a notch in the middle of each end | 34.48 mm wide (same as the bulkheads, flush with their sides), flat end edges, corner radius 4 mm |
 | Middle part | Bar 15.09 mm wide with a short slot (3.2 x 17.5 mm) and a long slot (3.2 x 88.2 mm) | Solid bar 15.09 mm wide |
 | Transitions | Approx. 42 degrees (end with B01 to B04) and 29 degrees (end with B07 to B15) to the y axis | 30 degrees on both ends, fillets 3 mm |
-| Cutout at the end with B01 to B04 | Hexagon | Rectangular window 9.0 x 17.25 mm, corner radius 2 mm (contains the hexagon) |
+| Cutout at the end with B01 to B04 | Hexagon | None: the cutout is obsolete and closed |
 | Cutout at the end with B07 to B15 | Obround 27.0 x 9.3 mm | Unchanged |
 | Size | 38.0 x 243.3 x 2.0 mm | 34.48 x 243.3 x 2.0 mm |
-| Volume | 7.84 cm³ | 8.64 cm³ |
-| Mass | 12.5 g in carbon (1.6 g/cm³) | 13.8 g in carbon, 24.3 g in 7075 (2.81 g/cm³) |
+| Volume | 7.84 cm³ | 8.94 cm³ |
+| Mass | 12.5 g in carbon (1.6 g/cm³) | 14.3 g in carbon, 25.1 g in 7075 (2.81 g/cm³) |
 
 * The notches at the ends of the original top brace most likely clear the raised rib on top of the stock upper bulkhead. The upper bulkhead of this project has a flat contact face there. The speedrun top brace therefore fits only the bulkheads of this project. With the stock bulkheads, the original top brace is used.
-* The new outline lies within the outline of the original top brace, except at the ends: the closed notches and the wider ends (222 mm² in total) lie on the contact faces of the bulkheads. Outside the contact faces, the new outline does not exceed the original outline (0 mm², checked by the script). The window contains the hexagon completely.
+* The new outline lies within the outline of the original top brace, except at the ends: the closed notches and the wider ends (222 mm² in total) lie on the contact faces of the bulkheads. Outside the contact faces, the new outline does not exceed the original outline (0 mm², checked by the script).
 * The obround is kept unchanged, because it lies in the area of the spur gear.
 * The closed holes and slots make the middle part stiffer. The manual (step 25) shows a part NHA410 with a screw M3x6 in the middle part of the top brace. It has no mounting hole on the speedrun top brace.
 
@@ -295,7 +295,7 @@ All files are stored in the directory `/chassis/top_brace_speedrun`. They are ge
 | `top_brace_speedrun_hole_table.csv` | CSV | Hole coordinates (x, y) and diameter |
 
 * The coordinate system is the same as for the original top brace: x = 0 centre line, y = 0 end edge with B01 to B04.
-* The design values (bar width, corner radii, angle of the transitions, window) are defined at the top of the script.
+* The design values (bar width, corner radii, angle of the transitions) are defined at the top of the script.
 
 ### Open points of the speedrun top brace
 * **Spacing B01 to B02:** 26.10 mm in the geometry data of the original top brace, 25.65 mm between B14 and B15 and 25.6 mm between the top brace screws of the stock upper bulkhead (U7). Both bulkheads are the same part, so both ends of the top brace should have the same spacing. With a hole of 3.2 mm, a screw M3 has approx. 0.1 mm radial clearance, so an offset of 0.25 mm per side can block the screws. The verification of the speedrun top brace shows that the screws fit. A measurement of the spacing B01 to B02 on the carbon top brace can still confirm the value of the geometry data.

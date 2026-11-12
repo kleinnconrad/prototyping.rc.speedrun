@@ -5,7 +5,7 @@
  "csk_d": 0.0,
  "csk_angle": 90.0,
  "csk_side": "none",
- "basis": "speedrun top brace: holes from top_brace_geometry.json without B05 and B06, outline and window new (generate_top_brace_speedrun.py), obround unchanged",
+ "basis": "speedrun top brace: holes from top_brace_geometry.json without B05 and B06, outline and no cutout at the end with B01 to B04 (generate_top_brace_speedrun.py), obround unchanged",
  "outline": [
   {
    "type": "arc",
@@ -381,132 +381,6 @@
   }
  ],
  "cutouts": {
-  "window": [
-   {
-    "type": "arc",
-    "start": [
-     -4.5,
-     14.8
-    ],
-    "mid": [
-     -3.914214,
-     13.385786
-    ],
-    "end": [
-     -2.5,
-     12.8
-    ],
-    "center": [
-     -2.5,
-     14.8
-    ],
-    "r": 2.0
-   },
-   {
-    "type": "line",
-    "start": [
-     -2.5,
-     12.8
-    ],
-    "end": [
-     2.5,
-     12.8
-    ]
-   },
-   {
-    "type": "arc",
-    "start": [
-     2.5,
-     12.8
-    ],
-    "mid": [
-     3.914214,
-     13.385786
-    ],
-    "end": [
-     4.5,
-     14.8
-    ],
-    "center": [
-     2.5,
-     14.8
-    ],
-    "r": 2.0
-   },
-   {
-    "type": "line",
-    "start": [
-     4.5,
-     14.8
-    ],
-    "end": [
-     4.5,
-     28.05
-    ]
-   },
-   {
-    "type": "arc",
-    "start": [
-     4.5,
-     28.05
-    ],
-    "mid": [
-     3.914214,
-     29.464214
-    ],
-    "end": [
-     2.5,
-     30.05
-    ],
-    "center": [
-     2.5,
-     28.05
-    ],
-    "r": 2.0
-   },
-   {
-    "type": "line",
-    "start": [
-     2.5,
-     30.05
-    ],
-    "end": [
-     -2.5,
-     30.05
-    ]
-   },
-   {
-    "type": "arc",
-    "start": [
-     -2.5,
-     30.05
-    ],
-    "mid": [
-     -3.914214,
-     29.464214
-    ],
-    "end": [
-     -4.5,
-     28.05
-    ],
-    "center": [
-     -2.5,
-     28.05
-    ],
-    "r": 2.0
-   },
-   {
-    "type": "line",
-    "start": [
-     -4.5,
-     28.05
-    ],
-    "end": [
-     -4.5,
-     14.8
-    ]
-   }
-  ],
   "obround": [
    {
     "type": "arc",
