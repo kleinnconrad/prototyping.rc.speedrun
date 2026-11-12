@@ -2,6 +2,9 @@
 
 ## Table of contents
 * [Overview](#overview)
+* [Speedrun chassis](#speedrun-chassis)
+  * [Parts of the speedrun chassis](#parts-of-the-speedrun-chassis)
+  * [Assembly file](#assembly-file)
 * [Chassis plate and top brace](#chassis-plate-and-top-brace)
   * [Parts](#parts)
   * [Files](#files)
@@ -53,9 +56,33 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/chassis_plate_speedrun_wide_motor10`**: Wide variant with a longer motor window for a 3660 motor (STEP, STL, DXF, PDF template, geometry data)
   * **`/top_brace_speedrun`**: New design of the top brace that matches the bulkheads of this project (STEP, STL, DXF, PDF templates, geometry data, hole table, test print STL files)
 * **`/bulkhead`**: CAD data of the bulkheads (gear boxes): lower bulkhead, upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets).
+* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads and top brace (STEP).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are released under the licenses of this repository (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
+
+## Speedrun chassis
+The speedrun chassis combines the parts that are designed in this project for speeds over 100 km/h. The parts share their interfaces: the bulkheads are mounted on the hole patterns of the chassis plate, the top brace on the contact faces of both upper bulkheads.
+
+![Speedrun chassis: chassis plate, bulkheads and top brace](../photos/cad_speedrun_chassis_assembly.png)
+
+### Parts of the speedrun chassis
+| Part | Quantity | Directory | Status | Material | Mass |
+|:---|---:|:---|:---|:---|---:|
+| [Speedrun chassis plate (wide) with longer motor window](#longer-motor-window-for-a-3660-motor) | 1 | `/chassis/chassis_plate_speedrun_wide_motor10` | Hole pattern confirmed by the test print of the chassis plate, motor window not verified | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
+| [Lower bulkhead](#lower-bulkhead) | 2 | `/bulkhead` | Two test prints, new shape not test printed | 7075 | 2 x 35 g |
+| [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | Not verified, U5, U6 and U11 open | 7075 | 2 x 56 g |
+| [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | Not verified | Carbon or 7075 | 14 g (carbon), 24 g (7075) |
+| **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace carbon | **410 g** |
+
+* The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³). Screws, bearings and the other parts of the car are not included.
+* The bulkheads are the same parts at both ends. At End A, they are rotated by 180 degrees, so that both pinions point to the middle of the car.
+* The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
+
+### Assembly file
+* `assembly/speedrun_chassis_T410R.step`: assembly of all 6 parts in the coordinate system of the chassis plate (STEP AP214, one solid per part).
+* The interference check of all pairs of parts gives 0 mm³.
+* The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
 
 ## Chassis plate and top brace
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -219,7 +246,7 @@ Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape fo
 
 ![Top view of the speedrun top brace with the outline of the original top brace](../photos/cad_top_brace_speedrun_drawing.png)
 
-![Speedrun top brace on the new bulkheads and the speedrun chassis plate](../photos/cad_top_brace_speedrun_assembly.png)
+The assembly with the chassis plate and the bulkheads is shown in the section [speedrun chassis](#speedrun-chassis).
 
 ### Design of the speedrun top brace
 | Feature | Original top brace | Speedrun top brace |
@@ -490,7 +517,8 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_window_preview.py` | Geometry data of both speedrun chassis plates | Preview image `photos/cad_chassis_speedrun_wide_motor10_preview.png` | matplotlib |
 | `generate_print_template.py` | Geometry data of both speedrun chassis plates and the chassis plate | Print templates of both speedrun chassis plates (option `--plate wide` or `--plate motor10`). The option `--print-scale` sets the scale of the PDF viewer. | reportlab |
 | `generate_chassis_templates.py` | Geometry data of the chassis plate and the top brace | Print templates `chassis_plate_T410R_1to1_A3.pdf`, `chassis_plate_T410R_1to1_A4x2.pdf`, `top_brace_T410R_1to1_A4.pdf` and the drawing `photos/cad_chassis_drawing.png`. The options `--print-scale` and `--suffix` generate pre-scaled templates (for example `_print97`). | matplotlib, reportlab |
-| `generate_top_brace_speedrun.py` | Geometry data of the original top brace, parameter files of the bulkheads, STL file of the speedrun chassis plate | All files of the speedrun top brace, drawing `photos/cad_top_brace_speedrun_drawing.png`, assembly image `photos/cad_top_brace_speedrun_assembly.png`, checks of the outline and of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
+| `generate_top_brace_speedrun.py` | Geometry data of the original top brace, parameter files of the bulkheads | All files of the speedrun top brace, drawing `photos/cad_top_brace_speedrun_drawing.png`, checks of the outline and of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
+| `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file, geometry checks | cadquery |
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
 | `generate_bulkhead_upper.py` | Parameter files of the upper and the lower bulkhead | STEP and STL file of the upper part, test print STL file, assembly STEP file, interference check, geometry checks | cadquery |
@@ -527,7 +555,7 @@ Both generators of the bulkheads check the solid after each run:
 * **Thin slits and walls:** faces without a common edge that are closer than 0.25 mm (exact distance between the faces).
 * **Interference** of the lower and the upper part (upper generator).
 
-The following commands regenerate the files of the bulkheads from the parameter files (lower part first) and the files of the speedrun top brace:
+The following commands regenerate the files of the bulkheads from the parameter files (lower part first) and the files of the speedrun top brace and the assembly of the speedrun chassis:
 
 ```bash
 python scripts/cad/generate_bulkhead_lower.py
@@ -535,6 +563,7 @@ python scripts/cad/generate_bulkhead_drawings.py
 python scripts/cad/generate_bulkhead_upper.py
 python scripts/cad/generate_bulkhead_upper_drawings.py
 python scripts/cad/generate_top_brace_speedrun.py
+python scripts/cad/generate_speedrun_assembly.py
 ```
 
 ### DXF generation

@@ -15,8 +15,9 @@ Design (in the style of the bulkheads): straight lines and radii only.
 * Rectangular window instead of the hexagon cutout (it contains the hexagon).
 
 Outputs in cad/chassis/top_brace_speedrun: geometry data, STEP, STL, DXF, hole table, 1:1
-templates (100 % and 97 %) and two test print halves with a dovetail. Images: drawing with the
-outline of the original top brace, assembly with the chassis plate and the bulkheads.
+templates (100 % and 97 %) and two test print halves with a dovetail. Image: drawing with the
+outline of the original top brace. The assembly with the chassis plate and the bulkheads is
+generated with generate_speedrun_assembly.py.
 
 Checks: the new outline lies within the outline of the original top brace; position of the
 holes relative to the bulkhead screws (top brace screws, access holes for the M3x10 screws);
@@ -40,7 +41,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_solid import plate_solid, wire_from_prims  # noqa: E402
 from generate_dxf import build_dxf  # noqa: E402
 from generate_drawing import contour_points  # noqa: E402
-from generate_bulkhead_lower import bulkhead_lower, load_params  # noqa: E402
+from generate_bulkhead_lower import load_params  # noqa: E402
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 
 CAD = "cad/chassis"
@@ -50,8 +51,6 @@ STEM = f"{OUT}/top_brace_T410R_speedrun"
 GEOM = f"{OUT}/top_brace_speedrun_geometry.json"
 LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
 UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
-PLATE_STL = f"{CAD}/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.stl"
-PLATE_T = 2.0
 BULKHEAD_Y = {"front": 287.36, "rear": 21.53}     # centres of H28 to H31 and H03 to H06 (chassis plate)
 
 DESIGN = {
@@ -253,58 +252,6 @@ def drawing(g, orig, path):
     plt.close(fig)
 
 
-def transformed(tris, rot180, dx, dy, dz):
-    """Triangles rotated by 180 degrees about z (optional) and moved."""
-    t = tris.copy()
-    if rot180:
-        t[..., 0] *= -1
-        t[..., 1] *= -1
-    t[..., 0] += dx
-    t[..., 1] += dy
-    t[..., 2] += dz
-    return t
-
-
-def assembly_image(lower, upper, brace, c, lp, path):
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    from mesh_views import load_stl, subdivide, draw_mesh, iso_basis
-    from generate_bulkhead_upper_drawings import tess, COL
-
-    def mesh(shape, sub=1.5):
-        return subdivide(tess(shape, 0.05), sub)
-    zb = PLATE_T                                   # bottom face of the bulkheads on the plate
-    zbrace = PLATE_T + lp["axis_z"] + load_params(UPPER)["deck_h"]
-    parts = [(subdivide(load_stl(PLATE_STL), 6.0), (0.25, 0.25, 0.27))]
-    lo, upm = mesh(lower.val()), mesh(upper.val())
-    for end, yb in BULKHEAD_Y.items():
-        rot = end == "front"
-        parts.append((transformed(lo, rot, 0, yb, zb), COL["lower"]))
-        parts.append((transformed(upm, rot, 0, yb, zb), COL["upper"]))
-    br = mesh(brace, 3.0)
-    br = br.copy()
-    br[..., 0] *= -1
-    br[..., 1] = c - br[..., 1]
-    br[..., 2] += zbrace
-    parts.append((br, (0.55, 0.62, 0.72)))
-    tris = np.concatenate([p for p, _ in parts])
-    cols = np.concatenate([np.tile(col, (len(p), 1)) for p, col in parts])
-    fig = plt.figure(figsize=(15, 8.5))
-    for rect, view, title in (([0.0, 0.0, 0.62, 0.95], iso_basis(-35, 28), "Assembly on the chassis plate"),
-                              ([0.6, 0.0, 0.4, 0.95], iso_basis(-90, 22), "View along the car")):
-        ax = fig.add_axes(rect)
-        lo2, hi2 = draw_mesh(ax, tris, view, tri_colors=cols, depth_cue=0.3)
-        ax.set_xlim(lo2[0] - 2, hi2[0] + 2)
-        ax.set_ylim(lo2[1] - 2, hi2[1] + 2)
-        ax.set_aspect("equal")
-        ax.axis("off")
-        ax.set_title(title, fontsize=10, loc="left")
-    fig.suptitle("Speedrun top brace (blue grey) on the new bulkheads and the speedrun chassis plate", fontsize=12)
-    fig.savefig(path, dpi=100)
-    plt.close(fig)
-
-
 def main():
     from generate_chassis_templates import brace_a4
     lp, up = load_params(LOWER), load_params(UPPER)
@@ -345,7 +292,7 @@ def main():
     check_outline(g, orig, faces)
     print(f"  top brace on the contact faces: end with B01 to B04 {faces[0][1] - 0.01:.2f} mm long, "
           f"end with B07 to B15 {L - faces[1][0] - 0.01:.2f} mm long")
-    lower, upper = bulkhead_lower(lp), bulkhead_upper(lp, up)
+    upper = bulkhead_upper(lp, up)
     zbrace = lp["axis_z"] + up["deck_h"]
     inter = 0.0
     for end, yb in BULKHEAD_Y.items():
@@ -356,8 +303,6 @@ def main():
             b = b.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180)
         inter += b.intersect(upper.val()).Volume()
     print(f"  interference of the top brace with both upper bulkheads: {inter:.4f} mm3")
-    assembly_image(lower, upper, solid, c, lp, "photos/cad_top_brace_speedrun_assembly.png")
-    print("Wrote photos/cad_top_brace_speedrun_assembly.png")
 
 
 if __name__ == "__main__":
