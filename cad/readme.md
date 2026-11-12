@@ -12,6 +12,15 @@
 * [Speedrun chassis plate (wide)](#speedrun-chassis-plate-wide)
   * [Print template](#print-template)
   * [Longer motor window for a 3660 motor](#longer-motor-window-for-a-3660-motor)
+* [Lower bulkhead v1](#lower-bulkhead-v1)
+  * [Interfaces](#interfaces)
+  * [Files of the lower bulkhead](#files-of-the-lower-bulkhead)
+  * [Coordinate system of the lower bulkhead](#coordinate-system-of-the-lower-bulkhead)
+  * [Measurement basis of the lower bulkhead](#measurement-basis-of-the-lower-bulkhead)
+  * [Caliper measurement sheet](#caliper-measurement-sheet)
+  * [Test print of the lower bulkhead](#test-print-of-the-lower-bulkhead)
+  * [Design notes](#design-notes)
+  * [Open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)
 * [Scripts](#scripts)
   * [Regenerating the files](#regenerating-the-files)
   * [DXF generation](#dxf-generation)
@@ -30,6 +39,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/test_print`**: STL files of the chassis plate and the top brace for a test print on a home 3D printer
   * **`/chassis_plate_speedrun_wide`**: Wide variant of the chassis plate for speedruns (STEP, STL, PDF template, geometry data)
   * **`/chassis_plate_speedrun_wide_motor10`**: Wide variant with a longer motor window for a 3660 motor (STEP, STL, DXF, PDF template, geometry data)
+* **`/bulkhead`**: CAD data of the bulkheads (gear boxes). Version 1 contains the lower bulkhead (STEP, STL, test print STL, parameter file, measurement sheet).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are released under the licenses of this repository (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
@@ -188,8 +198,90 @@ Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape fo
 * All files are stored in the directory `/chassis_v2/chassis_plate_speedrun_wide_motor10`. The preview image above (`photos/cad_chassis_speedrun_wide_motor10_preview.png`) shows the previous window as a red dashed line. The STEP, STL and DXF files are generated from the geometry data. All files and the preview image can be regenerated with scripts (see [scripts](#scripts)).
 * The geometry data is the geometry data of the speedrun chassis plate (wide) (`chassis_plate_speedrun_wide_geometry.json`) with the longer window. That file combines the outline of `chassis_plate_T410R_speedrun_wide.step` with the holes, cutouts and countersink parameters of `chassis_plate_v2_geometry.json` and reproduces `chassis_plate_T410R_speedrun_wide.step` exactly.
 
+## Lower bulkhead v1
+* **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
+* **Description:** CAD model of the lower half of the gear box (bulkhead) of the Carten T410R. The stock part is the plastic part NBA249 ("Gear box"), which is used at the front and at the rear. The model is the basis for a CNC part made of 7075-T6. The interfaces to the chassis plate, the bearings, the upper bulkhead and the sway bar are modelled. The remaining shape is simplified and can be changed.
+* **Status:** Version 1, not verified. Most dimensions are estimates from photos of the stock part with an accuracy of approx. +-1 mm. The values of the [caliper measurement sheet](#caliper-measurement-sheet) are required before the bearing seats and the gear mesh can be checked with a test print.
+
+![Views of the lower bulkhead v1](../photos/cad_bulkhead_lower_v1_preview.png)
+
+### Interfaces
+| Interface | Stock parts | Model v1 |
+|:---|:---|:---|
+| Chassis plate | 4 countersunk screws M3x8 from below through the 2 mm chassis plate | 4 M3 holes (tap drill 2.5 mm, 8 mm deep), spacing 28.17 x 20.22 mm |
+| Upper bulkhead | 2 button head screws M3x10 on the pinion side, 2 button head screws M3x8 on the outer side | 4 bosses 6 mm, 2 mm above the parting face, M3 holes (tap drill 2.5 mm, 7 mm deep) |
+| Diff | 2 bearings 10x15x4 (NBA299) | 2 half bores 15 mm, 4 mm wide, each with an outer lip (opening 13 mm) |
+| Pinion shaft | 2 bearings 5x10x4 (NBA298) | Half bore 10 mm, 8.2 mm long, with a shoulder (opening 7.5 mm) toward the pinion gear |
+| Sway bar | 2 M3 screws | 2 tabs with M3 holes (tap drill 2.5 mm), spacing 16 mm |
+
+* The diff axis and the pinion axis lie in the parting face. The upper bulkhead holds the bearings from above.
+* The chassis plate holes are H03 to H06 for the rear bulkhead (End B) and H28 to H31 for the front bulkhead (End A). The bulkhead is rotated by 180 degrees between the ends, so that the pinion points to the centre shaft at both ends.
+* The source of the screw sizes is the manual (steps 9, 11 and 12) and the owner of the car. The source of the bearing sizes is the manual (steps 1 and 5).
+
+### Files of the lower bulkhead
+All files are stored in the directory `/bulkhead`. The STEP and STL files and the measurement sheet are generated from the parameter file (see [scripts](#scripts)).
+
+| File | Format | Use |
+|:---|:---|:---|
+| `bulkhead_lower_T410R_v1.step` | STEP (AP214) | Solid model with nominal dimensions for CNC manufacturing (one solid) |
+| `bulkhead_lower_T410R_v1.stl` | STL (binary) | Triangle mesh of the solid model |
+| `testprint_bulkhead_lower_v1.stl` | STL (binary) | Test print variant (see [test print of the lower bulkhead](#test-print-of-the-lower-bulkhead)) |
+| `bulkhead_lower_v1_parameters.json` | JSON | All dimensions of the model, each with its source and a note |
+| `bulkhead_lower_v1_measurement_sheet.pdf` | PDF (A4, 4 pages) | Caliper measurement sheet (see [caliper measurement sheet](#caliper-measurement-sheet)) |
+
+| Property | Value |
+|:---|:---|
+| Size (x by y by z) | 35.5 x 59.9 x 19.5 mm (with the sway bar tabs and the pinion housing) |
+| Volume | 12.9 cm³ |
+| Mass | 36 g in 7075 (2.81 g/cm³), 16 g in PLA (1.24 g/cm³) |
+
+### Coordinate system of the lower bulkhead
+* Units are millimeters.
+* The origin is the centre of the 4 bottom holes on the bottom face.
+* x runs along the diff axis (across the car). y runs along the pinion axis, +y points to the pinion and the centre shaft. z = 0 is the bottom face, which sits on the chassis plate, +z points up.
+* In the coordinate system of the chassis plate, the origin of the rear bulkhead is at x = 0, y = 21.53 mm (centre of H03 to H06) and the origin of the front bulkhead at x = 0, y = 287.36 mm (centre of H28 to H31).
+
+### Measurement basis of the lower bulkhead
+Each parameter in `bulkhead_lower_v1_parameters.json` has a source code:
+
+| Source code | Meaning | Parameters |
+|:---|:---|:---|
+| `plate` | Hole pattern of the chassis plate v2, confirmed by its test print | Spacing of the bottom holes |
+| `manual` | T410R instruction manual | Bearing sizes |
+| `user` | Information from the owner of the car | Screw sizes, function of the sway bar holes |
+| `photo` | Estimate from 9 photos of the stock part with rulers | Heights, positions of the bearing seats, bosses and tabs, outline, side profile |
+| `design` | Free design choice | Tap drill diameters, hole depths, gear cavity, floor thickness |
+
+* The camera was approx. 13 cm above the part. Because of the perspective, the scale of a photo depends on the height of each feature. The photo values are therefore estimates with an accuracy of approx. +-1 mm.
+* The bottom holes on a photo of the bottom face have the same aspect ratio as the hole pattern of the chassis plate within approx. 2 %.
+
+### Caliper measurement sheet
+The measurement sheet `bulkhead_lower_v1_measurement_sheet.pdf` lists the dimensions that replace the photo estimates:
+* **Pages 1 to 3:** top view, bottom view, two sections, side view and end view with numbered dimensions.
+* **Page 4:** table of the 30 dimensions with the measuring method, the value of the model v1 and an empty field for the measured value.
+* **Priority A:** interfaces (holes, bearing seats, bosses, tabs, ring gear). **Priority B:** shape.
+* Hole spacings are measured with the inside jaws from far edge to far edge minus the hole diameter. Heights are measured with the depth rod with the part on a flat surface.
+* The values 14 (spacing of the lips in the part) and 28 (width of the diff over both bearings) must be equal within a small end play. This checks the axial position of the diff bearings.
+
+### Test print of the lower bulkhead
+* `testprint_bulkhead_lower_v1.stl` differs from the solid model in two points: the bearing seats are 0.2 mm larger in diameter (15.2 mm and 10.2 mm), and all M3 holes have a diameter of 2.7 mm for self-tapping screws.
+* Print orientation: bottom face on the print bed. The boss columns below the wings and the sway bar tabs need supports.
+* Checks: the 4 bottom holes on the chassis plate, the diff and the pinion shaft with their bearings in the seats, the mesh of the gears, the fit of the stock upper bulkhead and the clearance to the suspension arms and pivot blocks.
+
+### Design notes
+* The body is solid apart from the gear cavity. Pockets to reduce the mass are planned after the interfaces are confirmed.
+* The diff bearings are held by the outer lips. The gear cavity has no inner shoulder, so the diff with its shims sets the axial position of the bearings.
+* The gear cavity has a radius of 16 mm around the diff axis and a floor of 1.5 mm. It fits a ring gear with an outer diameter up to approx. 30 mm.
+* The STEP file contains no threads. The M3 holes are modelled with the tap drill diameter of 2.5 mm. For CNC manufacturing, the threads are specified in the comment field of the order (M3, thread depth 6.5 mm for the bottom holes).
+
+### Open points of the lower bulkhead
+* Caliper values of the measurement sheet, in particular the priority A values.
+* The outer end face of the stock part has 4 small holes. Their function is unknown, so they are not modelled.
+* Upper bulkhead: not modelled yet.
+* Front and rear: End A of the chassis plate is assumed to be the front (bumper holes H34 to H36), End B the rear (motor window).
+
 ## Scripts
-The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates. The scripts are run from the root directory of the repository. Without arguments, they read and write the files of the speedrun chassis plates. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
+The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the lower bulkhead. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates, and the scripts of the bulkhead read and write the files of the lower bulkhead v1. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
 
 | Script | Input | Output | Package |
 |:---|:---|:---|:---|
@@ -201,6 +293,9 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_drawing.py` | Geometry data of the speedrun chassis plate (wide) and the chassis plate v2 | Drawing `photos/cad_chassis_speedrun_wide_drawing.png` | matplotlib |
 | `generate_window_preview.py` | Geometry data of both speedrun chassis plates | Preview image `photos/cad_chassis_speedrun_wide_motor10_preview.png` | matplotlib |
 | `generate_print_template.py` | Geometry data of both speedrun chassis plates and the chassis plate v2 | Print templates of both speedrun chassis plates (option `--plate wide` or `--plate motor10`). The option `--print-scale` sets the scale of the PDF viewer. | reportlab |
+| `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file | cadquery |
+| `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_v1_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
+| `mesh_views.py` | None | Helper module: shaded views of STL files, used by `generate_bulkhead_drawings.py` | matplotlib |
 
 ### Regenerating the files
 The following commands regenerate the files of the speedrun chassis plates in this order:
@@ -219,6 +314,13 @@ python scripts/cad/generate_print_template.py --plate motor10
 
 * The regenerated geometry data, STL files and images are identical to the files in the repository. The STEP, DXF and PDF files differ only in header data such as the creation date and internal IDs.
 * The STEP and STL files of the speedrun chassis plate (wide) are the source data and are not regenerated.
+
+The following commands regenerate the files of the lower bulkhead from the parameter file:
+
+```bash
+python scripts/cad/generate_bulkhead_lower.py
+python scripts/cad/generate_bulkhead_drawings.py
+```
 
 ### DXF generation
 The script `scripts/cad/generate_dxf.py` generates a DXF file for CNC manufacturing from the geometry data (`*_geometry.json`). The geometry data and the DXF file of each part are stored in the same directory:

@@ -1,0 +1,362 @@
+"""Preview image and caliper measurement sheet of the lower bulkhead (version 1).
+
+The views are rendered from the STL file of the part, the sections are cut from
+the STEP file. The numbered dimensions of the measurement sheet refer to the
+parameter file of the part.
+
+Usage (from the root directory of the repository):
+    python scripts/cad/generate_bulkhead_drawings.py
+
+Outputs:
+    photos/cad_bulkhead_lower_v1_preview.png
+    cad/bulkhead/bulkhead_lower_v1_measurement_sheet.pdf
+
+Requires the packages cadquery and matplotlib.
+"""
+import argparse
+import json
+import os
+import sys
+
+import numpy as np
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt  # noqa: E402
+from matplotlib.backends.backend_pdf import PdfPages  # noqa: E402
+from matplotlib.collections import PolyCollection  # noqa: E402
+import cadquery as cq  # noqa: E402
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from mesh_views import load_stl, subdivide, draw_mesh, iso_basis  # noqa: E402
+
+A4_LANDSCAPE = (11.69, 8.27)
+DIM_COLOR = "#c0392b"
+SEC_COLOR = (0.62, 0.68, 0.75)
+
+
+def load(path):
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    return data, {k: v["value"] for k, v in data["parameters"].items()}
+
+
+# ---------------------------------------------------------------- dimensions
+def balloon(ax, x, y, n, r=2.3):
+    ax.add_patch(plt.Circle((x, y), r, facecolor="white", edgecolor=DIM_COLOR, lw=1.0, zorder=6))
+    ax.text(x, y, str(n), ha="center", va="center", fontsize=7.5, color=DIM_COLOR,
+            fontweight="bold", zorder=7)
+
+
+def dim(ax, p1, p2, offset, n, side="mid", ext=True, txt_shift=0.0):
+    """Linear dimension between p1 and p2, dimension line shifted by offset (vector)."""
+    p1, p2, off = np.asarray(p1, float), np.asarray(p2, float), np.asarray(offset, float)
+    a, b = p1 + off, p2 + off
+    if ext and np.linalg.norm(off) > 0:
+        u = off / np.linalg.norm(off)
+        for p, q in ((p1, a), (p2, b)):
+            ax.plot([p[0], q[0] + 0.8 * u[0]], [p[1], q[1] + 0.8 * u[1]], color=DIM_COLOR, lw=0.5, zorder=5)
+    ax.annotate("", xy=a, xytext=b, arrowprops=dict(arrowstyle="<|-|>", color=DIM_COLOR, lw=0.8,
+                                                    shrinkA=0, shrinkB=0, mutation_scale=7), zorder=5)
+    t = (a + b) / 2
+    d = (b - a) / max(np.linalg.norm(b - a), 1e-9)
+    t = t + d * txt_shift
+    balloon(ax, t[0], t[1], n)
+
+
+def circles(ax, centers, d, sx=1.0):
+    """Outlines of holes (diameter d) at the centres (x, y); sx = -1 mirrors x."""
+    for (x, y) in centers:
+        ax.add_patch(plt.Circle((sx * x, y), d / 2, fill=False, edgecolor="k", lw=0.6, zorder=4))
+
+
+def leader(ax, p, q, n):
+    """Balloon at q with a leader line to the point p."""
+    ax.plot([p[0], q[0]], [p[1], q[1]], color=DIM_COLOR, lw=0.6, zorder=5)
+    ax.plot([p[0]], [p[1]], "o", color=DIM_COLOR, ms=2, zorder=5)
+    balloon(ax, q[0], q[1], n)
+
+
+# ---------------------------------------------------------------- sections
+def section(solid, origin, normal, right, up):
+    """2D triangles and boundary polylines of the section of the solid with a plane."""
+    face = cq.Face.makePlane(400, 400, basePnt=cq.Vector(*origin), dir=cq.Vector(*normal))
+    sec = solid.intersect(face)
+    r, u = np.asarray(right, float), np.asarray(up, float)
+    tris, lines = [], []
+    for f in sec.Faces():
+        verts, idx = f.tessellate(0.01, 0.1)
+        v = np.array([[p.x, p.y, p.z] for p in verts])
+        for t in idx:
+            tris.append(np.stack([v[list(t)] @ r, v[list(t)] @ u], axis=1))
+        for e in f.Edges():
+            pts = np.array([[p.x, p.y, p.z] for p in e.sample(60)[0]])
+            lines.append(np.stack([pts @ r, pts @ u], axis=1))
+    return tris, lines
+
+
+def draw_section(ax, tris, lines):
+    ax.add_collection(PolyCollection(tris, facecolors=[SEC_COLOR], edgecolors=[SEC_COLOR], lw=0.3))
+    # hatch lines clipped visually by drawing over the section only
+    for ln in lines:
+        ax.plot(ln[:, 0], ln[:, 1], color="k", lw=0.8)
+
+
+def frame(ax, lo, hi, pad=(4, 4, 4, 4), title=None):
+    ax.set_xlim(lo[0] - pad[0], hi[0] + pad[1])
+    ax.set_ylim(lo[1] - pad[2], hi[1] + pad[3])
+    ax.set_aspect("equal")
+    ax.axis("off")
+    if title:
+        ax.set_title(title, fontsize=10, loc="left")
+
+
+def axis_marks(ax, origin, labels, length=6):
+    """Small coordinate arrows: labels = ((dx, dy, text), ...) in screen directions."""
+    for dx, dy, t in labels:
+        ax.annotate("", xy=(origin[0] + dx * length, origin[1] + dy * length), xytext=origin,
+                    arrowprops=dict(arrowstyle="-|>", color="#2c3e50", lw=0.8, mutation_scale=7))
+        ax.text(origin[0] + dx * (length + 1.5), origin[1] + dy * (length + 1.5), t, fontsize=7,
+                ha="center", va="center", color="#2c3e50")
+
+
+# ---------------------------------------------------------------- pages
+def page_header(fig, title, subtitle):
+    fig.text(0.04, 0.955, title, fontsize=14, fontweight="bold")
+    fig.text(0.04, 0.925, subtitle, fontsize=8.5, color="#444")
+    fig.text(0.96, 0.02, "Carten T410R - lower bulkhead v1 - measurement sheet", fontsize=7,
+             ha="right", color="#666")
+
+
+def views_page(pdf, tris, p):
+    yd, w, zc = p["diff_axis_y"], p["body_half_width"], p["axis_z"]
+    hx, hy = p["bottom_hole_dx"] / 2, p["bottom_hole_dy"] / 2
+    bx, byp, byo = p["top_boss_x"], p["top_boss_y_pinion"], p["top_boss_y_outer"]
+    sx, sy = p["swaybar_hole_x"], p["swaybar_hole_y"]
+    y0 = p["body_y_outer_end"]
+    yend = p["pinion_seat_y_inner"] + p["pinion_seat_length"]
+    lip = p["diff_lip_d"] / 2
+
+    fig = plt.figure(figsize=A4_LANDSCAPE)
+    page_header(fig, "Measurement sheet - lower bulkhead v1 - page 1: top and bottom view",
+                "Top view: part standing on its bottom face, looking at the parting face. "
+                "Bottom view: part upside down, looking at the face that sits on the chassis plate.")
+    ax = fig.add_axes([0.03, 0.06, 0.5, 0.84])
+    lo, hi = draw_mesh(ax, tris, "top")
+    bosses = [(s * bx, y) for y in (byp, byo) for s in (-1, 1)]
+    circles(ax, bosses, p["top_hole_d"])
+    circles(ax, [(-sx, sy), (sx, sy)], p["swaybar_hole_d"])
+    dim(ax, (-bx, byp), (bx, byp), (0, 31.5 - byp), 7)
+    dim(ax, (-bx, byo), (bx, byo), (0, -40 - byo), 8)
+    dim(ax, (bx, byo), (bx, byp), (27.5 - bx, 0), 9)
+    dim(ax, (sx, sy), (sx, byo), (22.5 - sx, 0), 24)
+    dim(ax, (-sx, sy), (sx, sy), (0, -35.5 - sy), 23)
+    dim(ax, (-w, y0), (-w, yend), (-29 + w, 0), 21)
+    dim(ax, (-w, y0), (-w, yd - lip), (-23.5 + w, 0), 16)
+    dim(ax, (-w, yd + lip), (-w, yend), (-23.5 + w, 0), 17)
+    axis_marks(ax, (30, -38), ((1, 0, "x"), (0, 1, "y")))
+    ax.text(0, 36.5, "pinion side (centre shaft)", ha="center", fontsize=8, color="#2c3e50")
+    ax.text(30, -43.5, "outer side", ha="center", fontsize=8, color="#2c3e50")
+    frame(ax, (-33, -46), (36, 38), pad=(0, 0, 0, 0))
+
+    ax = fig.add_axes([0.53, 0.06, 0.45, 0.84])
+    draw_mesh(ax, tris, "bottom")
+    # bottom view: screen x = -x, screen y = y
+    circles(ax, [(a * hx, b * hy) for a in (-1, 1) for b in (-1, 1)], p["bottom_hole_d"], sx=-1)
+    circles(ax, [(-sx, sy), (sx, sy)], p["swaybar_hole_d"], sx=-1)
+    dim(ax, (-hx, -hy), (hx, -hy), (0, -19 + hy), 1)
+    dim(ax, (-hx, -hy), (-hx, hy), (-22 + hx, 0), 2)
+    leader(ax, (hx, hy), (22, 18), 3)
+    dim(ax, (hx + 3.5, -p["base_half_length"]), (hx + 3.5, p["base_half_length"]), (25 - hx - 3.5, 0), 22)
+    axis_marks(ax, (24, -38), ((-1, 0, "x"), (0, 1, "y")))
+    frame(ax, (-33, -46), (33, 38), pad=(0, 0, 0, 0))
+    pdf.savefig(fig, dpi=250)
+    plt.close(fig)
+
+
+def sections_page(pdf, solid, p):
+    yd, w, zc = p["diff_axis_y"], p["body_half_width"], p["axis_z"]
+    xs, b = p["diff_seat_inner_x"], p["diff_bearing"][2]
+    rs, lip = p["diff_bearing"][1] / 2, p["diff_lip_d"] / 2
+    yin, L, ts = p["pinion_seat_y_inner"], p["pinion_seat_length"], p["pinion_shoulder_t"]
+    rp = p["pinion_bearing"][1] / 2
+
+    fig = plt.figure(figsize=A4_LANDSCAPE)
+    page_header(fig, "Measurement sheet - lower bulkhead v1 - page 2: sections",
+                "Section A-A along the pinion axis (x = 0), seen from the side. "
+                "Section B-B through the diff axis, seen from the pinion side.")
+    ax = fig.add_axes([0.03, 0.08, 0.52, 0.8])
+    tris, lines = section(solid, (0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1))
+    draw_section(ax, tris, lines)
+    dim(ax, (yin, zc), (yin + L, zc), (0, 4.5), 19)
+    dim(ax, (yin - ts, zc - rp), (yin, zc - rp), (0, -8.5), 20, txt_shift=-4)
+    dim(ax, (yd, 0), (yd, p["floor_z"]), (-4, 0), 26, txt_shift=-4.5)
+    dim(ax, (-p["base_half_length"], 0), (-p["base_half_length"], zc), (-14, 0), 4)
+    ax.plot([yd, yd], [-2, zc + 6], color="#2c3e50", lw=0.6, ls="-.")
+    ax.text(yd, zc + 7, "diff axis", ha="center", fontsize=7, color="#2c3e50")
+    ax.plot([-34, 32], [zc, zc], color="#2c3e50", lw=0.6, ls="-.")
+    ax.text(-34, zc + 0.8, "parting face", fontsize=7, color="#2c3e50")
+    axis_marks(ax, (-30, -6), ((1, 0, "y"), (0, 1, "z")))
+    frame(ax, (-36, -12), (34, 28), pad=(0, 0, 0, 0), title="Section A-A (x = 0)")
+
+    ax = fig.add_axes([0.55, 0.08, 0.43, 0.8])
+    # seen from the pinion side: screen right = -x
+    tris, lines = section(solid, (0, yd, 0), (0, 1, 0), (-1, 0, 0), (0, 0, 1))
+    draw_section(ax, tris, lines)
+    dim(ax, (-w, 0), (w, 0), (0, -4), 10)
+    dim(ax, (-(xs + b), zc - rs), (xs + b, zc - rs), (0, -6.5), 14)
+    leader(ax, (xs + b / 2, zc - rs), (8, 25), 11)
+    leader(ax, (xs + b + 0.5, zc - lip), (22, 26), 12)
+    dim(ax, (-(xs + b), zc - lip), (-w, zc - lip), (0, 3), 13, txt_shift=4.5)
+    leader(ax, (xs, zc - p["cavity_hub_r"]), (-5, 10), 15)
+    ax.plot([-24, 24], [zc, zc], color="#2c3e50", lw=0.6, ls="-.")
+    ax.text(-23.5, zc + 0.8, "parting face", fontsize=7, color="#2c3e50")
+    axis_marks(ax, (19, -9), ((-1, 0, "x"), (0, 1, "z")), length=5)
+    frame(ax, (-24, -12), (24, 28), pad=(0, 0, 0, 0), title="Section B-B (diff axis)")
+    pdf.savefig(fig, dpi=250)
+    plt.close(fig)
+
+
+def side_page(pdf, tris, p):
+    zc = p["axis_z"]
+    ztop = zc + p["top_boss_protrusion"]
+    bx, byp = p["top_boss_x"], p["top_boss_y_pinion"]
+    tt, sy = p["swaybar_tab_t"], p["swaybar_hole_y"]
+    rp = p["pinion_bearing"][1] / 2
+    br = p["top_boss_d"] / 2
+
+    fig = plt.figure(figsize=A4_LANDSCAPE)
+    page_header(fig, "Measurement sheet - lower bulkhead v1 - page 3: side and end view",
+                "Side view: looking at a diff bearing wall. End view: looking at the pinion housing.")
+    ax = fig.add_axes([0.03, 0.08, 0.55, 0.8])
+    draw_mesh(ax, tris, "side")
+    dim(ax, (-33, 0), (-33, ztop), (-3, 0), 5)
+    dim(ax, (p["base_half_length"], 0), (p["base_half_length"], p["base_height_pinion_side"]), (5, 0), 22,
+        txt_shift=0)
+    dim(ax, (sy - 2.8, zc - tt), (sy - 2.8, zc), (-6, 0), 25, txt_shift=0)
+    axis_marks(ax, (24, -6), ((1, 0, "y"), (0, 1, "z")))
+    ax.text(28, 22, "pinion side", ha="right", fontsize=8, color="#2c3e50")
+    ax.text(-32, 22, "outer side", ha="left", fontsize=8, color="#2c3e50")
+    frame(ax, (-42, -12), (32, 26), pad=(0, 0, 0, 0), title="Side view")
+
+    ax = fig.add_axes([0.6, 0.08, 0.38, 0.8])
+    draw_mesh(ax, tris, "end_pinion")
+    # end view from the pinion side: screen x = -x
+    dim(ax, (-rp, zc), (rp, zc), (0, 5.5), 18)
+    dim(ax, (bx - br, ztop), (bx + br, ztop), (0, 3.5), 6)
+    axis_marks(ax, (19, -9), ((-1, 0, "x"), (0, 1, "z")), length=5)
+    frame(ax, (-22, -12), (22, 26), pad=(0, 0, 0, 0), title="End view (pinion side)")
+    pdf.savefig(fig, dpi=250)
+    plt.close(fig)
+
+
+ROWS = [
+    # (no, priority, feature, how to measure, model value)
+    (1, "A", "Bottom holes: spacing across (x)", "inside jaws, far edge to far edge, minus hole diameter", "28.17"),
+    (2, "A", "Bottom holes: spacing along (y)", "as no. 1", "20.22"),
+    (3, "B", "Bottom holes: diameter / depth", "inside jaws / depth rod", "2.5 / 8.0"),
+    (4, "A", "Height: bottom face to parting face", "part on a flat surface, depth rod or outside jaws", "17.5"),
+    (5, "A", "Height: bottom face to top of the bosses (pinion side / outer side)", "as no. 4", "19.5 / 19.5"),
+    (6, "B", "Top bosses: outer diameter", "outside jaws", "6.0"),
+    (7, "A", "Top boss holes: spacing across, pinion side (M3x10)", "as no. 1", "23.0"),
+    (8, "A", "Top boss holes: spacing across, outer side (M3x8)", "as no. 1", "23.0"),
+    (9, "A", "Top boss holes: spacing along (y)", "as no. 1", "42.5"),
+    (10, "B", "Width over the outer faces of the diff bearing walls", "outside jaws", "35.5"),
+    (11, "A", "Diff bearing seat: diameter (width of the half bore at the parting face)", "inside jaws", "15.0"),
+    (12, "A", "Diff bearing lip: opening diameter", "inside jaws at the outer face", "13.0"),
+    (13, "A", "Diff bearing lip: thickness", "outside jaws or depth rod", "1.0"),
+    (14, "A", "Spacing of the inner faces of the two lips (= outer faces of the diff bearings)",
+     "inside jaws across the cavity", "33.5"),
+    (15, "B", "Inner shoulder of the diff seats: present? If yes, spacing of the shoulders", "inside jaws",
+     "none"),
+    (16, "A", "Outer end face to the near edge of the diff half bore (lip opening)",
+     "depth rod along the parting face", "22.7"),
+    (17, "A", "Pinion housing end face to the near edge of the diff half bore (lip opening)", "as no. 16",
+     "20.4"),
+    (18, "A", "Pinion bearing seat: diameter", "inside jaws at the parting face", "10.0"),
+    (19, "A", "Pinion bearing seat: length (shoulder face to housing end face)", "depth rod", "8.2"),
+    (20, "A", "Pinion shoulder: thickness / opening diameter", "outside / inside jaws", "1.5 / 7.5"),
+    (21, "B", "Overall length at the parting face (outer end to pinion housing end)", "outside jaws", "56.1"),
+    (22, "B", "Narrow lower section: length (y) / height", "outside jaws", "26.2 / 5.8"),
+    (23, "A", "Sway bar holes: spacing", "as no. 1", "16.0"),
+    (24, "A", "Sway bar hole to the outer top boss hole, along (y)", "inside jaws, far edges, minus diameters / 2",
+     "7.7"),
+    (25, "B", "Sway bar tabs: thickness / top face below the parting face", "outside jaws / depth rod", "2.5 / 0"),
+    (26, "B", "Floor thickness of the cavity (no. 4 minus depth from the parting face to the floor)",
+     "depth rod", "1.5"),
+    (27, "A", "Diff: outer diameter of the ring gear", "outside jaws on the diff", "max. 30.0"),
+    (28, "A", "Diff with both bearings: distance over the outer faces of the bearings (compare no. 14)",
+     "outside jaws on the diff", "33.5"),
+    (29, "B", "Pinion gear (17T): outer diameter", "outside jaws", "max. 13.0"),
+    (30, "B", "4 small holes on the outer end face: function, diameter, positions", "photo with ruler", "not modelled"),
+]
+
+
+def table_page(pdf, rows):
+    fig = plt.figure(figsize=A4_LANDSCAPE)
+    page_header(fig, "Measurement sheet - lower bulkhead v1 - page 4: values",
+                "Priority A: interfaces (holes, bearing seats, screw bosses). Priority B: shape. "
+                "Model values are estimates from photos unless the parameter file states otherwise. "
+                "All values in mm.")
+    ax = fig.add_axes([0.03, 0.05, 0.94, 0.85])
+    ax.axis("off")
+    cols = [0.0, 0.035, 0.07, 0.56, 0.84, 0.92]
+    heads = ["No.", "Prio", "Feature", "How to measure", "Model v1", "Measured"]
+    ytop = 0.98
+    for c, h in zip(cols, heads):
+        ax.text(c, ytop, h, fontsize=8.5, fontweight="bold", va="center", transform=ax.transAxes)
+    dy = 0.93 / (len(rows) + 1)
+    for i, (n, pr, feat, how, val) in enumerate(rows):
+        y = ytop - (i + 1) * dy
+        if i % 2 == 0:
+            ax.add_patch(plt.Rectangle((0, y - dy / 2), 1, dy, transform=ax.transAxes,
+                                       color="#eef2f6", zorder=0))
+        for c, t in zip(cols, (str(n), pr, feat, how, val)):
+            ax.text(c, y, t, fontsize=7.4, va="center", transform=ax.transAxes)
+        ax.plot([cols[5], 0.995], [y - dy * 0.3, y - dy * 0.3], color="#888", lw=0.5, transform=ax.transAxes)
+    pdf.savefig(fig, dpi=250)
+    plt.close(fig)
+
+
+def preview(path, tris):
+    fig = plt.figure(figsize=(14, 9.5))
+    specs = [([0.0, 0.48, 0.5, 0.44], iso_basis(-55, 32), "View from the outer side"),
+             ([0.5, 0.48, 0.5, 0.44], iso_basis(125, 32), "View from the pinion side"),
+             ([0.02, 0.02, 0.3, 0.44], "top", "Top view"),
+             ([0.34, 0.02, 0.3, 0.44], "bottom", "Bottom view"),
+             ([0.66, 0.02, 0.33, 0.44], "side", "Side view")]
+    for rect, view, title in specs:
+        ax = fig.add_axes(rect)
+        lo, hi = draw_mesh(ax, tris, view)
+        frame(ax, lo, hi, pad=(2, 2, 2, 2), title=title)
+    fig.suptitle("Carten T410R lower bulkhead v1 (model from photos, interfaces to be confirmed)",
+                 fontsize=13, y=0.985)
+    fig.savefig(path, dpi=110)
+    plt.close(fig)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Preview and measurement sheet of the lower bulkhead.")
+    parser.add_argument("--params", default="cad/bulkhead/bulkhead_lower_v1_parameters.json")
+    parser.add_argument("--stem", default="cad/bulkhead/bulkhead_lower_T410R_v1")
+    parser.add_argument("--sheet", default="cad/bulkhead/bulkhead_lower_v1_measurement_sheet.pdf")
+    parser.add_argument("--preview", default="photos/cad_bulkhead_lower_v1_preview.png")
+    args = parser.parse_args()
+
+    _, p = load(args.params)
+    tris = subdivide(load_stl(args.stem + ".stl"), max_edge=1.0)
+    solid = cq.importers.importStep(args.stem + ".step").val()
+
+    preview(args.preview, tris)
+    with PdfPages(args.sheet) as pdf:
+        views_page(pdf, tris, p)
+        sections_page(pdf, solid, p)
+        side_page(pdf, tris, p)
+        table_page(pdf, ROWS)
+        d = pdf.infodict()
+        d["Title"] = "T410R lower bulkhead v1 - measurement sheet"
+    print(f"Wrote {args.preview} and {args.sheet}")
+
+
+if __name__ == "__main__":
+    main()
