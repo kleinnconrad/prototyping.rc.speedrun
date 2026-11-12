@@ -1,8 +1,10 @@
 """Generate the lower bulkhead (gear box lower half) of the Carten T410R.
 
 The solid is built from the parameter file of the part. The body is the
-intersection of the top view outline (extruded in z) and the side profile with
-the flared wings (extruded in x). The pinion housing, the bosses for the upper
+intersection of the footprint of the upper part (extruded in z) and the side
+profile (extruded in x): a flat contact face on the chassis plate and one
+straight chamfer per side, below which the pivot blocks of the wishbones are
+mounted. A rectangular block under the pinion, the bosses for the upper
 bulkhead and the tabs for the sway bar mounts are added. The gear cavity, the
 bearing seats and the M3 holes are cut.
 
@@ -59,38 +61,34 @@ def bulkhead_lower(p, test_print=False):
     seat_add = p["print_seat_allowance"] if test_print else 0.0
     hole_d = p["print_hole_d"] if test_print else None
 
-    # body: top view outline extruded in z
+    # body: footprint of the upper part, extruded to the parting face
     y0, y1 = p["body_y_outer_end"], p["body_y_pinion_end"]
     plan = (cq.Workplane("XY").center(0, (y0 + y1) / 2)
             .rect(2 * w, y1 - y0).extrude(zc + 5).edges("|Z").fillet(p["body_corner_r"]))
 
-    # body: side profile (y, z) with the flared wings, extruded in x
-    a = p["base_half_length"]
-    pts = [(-a, 0.0), (a, 0.0)] + [tuple(q) for q in p["wing_pinion_side"]]
-    pts += [(q[0], zc) for q in [p["wing_pinion_side"][-1]]]
-    pts += [tuple(q) for q in reversed(p["wing_outer_side"])]
-    clean = []
-    for q in pts:
-        if not clean or abs(q[0] - clean[-1][0]) > 1e-6 or abs(q[1] - clean[-1][1]) > 1e-6:
-            clean.append(q)
-    side = cq.Workplane("YZ").polyline(clean).close().extrude(w + 5, both=True)
+    # body: side profile (y, z), flat contact face on the chassis plate and one straight chamfer
+    # per side up to a short end face (space for the pivot blocks below the chamfers)
+    a, hb, he = p["base_half_length"], p["base_height"], p["end_face_h"]
+    pts = [(y0, zc), (y0, zc - he), (-a, hb), (-a, 0.0), (a, 0.0), (a, hb), (y1, zc - he), (y1, zc)]
+    side = cq.Workplane("YZ").polyline(pts).close().extrude(w + 5, both=True)
     body = plan.intersect(side)
 
-    # pinion housing (lower half of a tube along y)
+    # stepped block under the pinion: wide and deep under the pinion pocket, narrow under the
+    # pinion seats; half cylinder over the outer pinion bearing beyond the end of the footprint
     yp_in = p["pinion_seat_y_inner"]
     yp_end = yp_in + p["pinion_seat_length"]
-    housing = cyl_y(p["pinion_housing_r"], 12.0, yp_end, 0.0, zc)
-    body = body.union(cq.Workplane().add(housing))
-    # shell around the pinion pocket below the wing
-    shell = cyl_y(p["pinion_pocket_r"] + p["pinion_pocket_wall"], p["pinion_shell_y_min"], yp_in, 0.0, zc)
-    body = body.union(cq.Workplane().add(shell))
+    k = p["pinion_pocket_r"] + p["pinion_pocket_wall"]
+    kh = p["pinion_housing_r"]
+    body = body.union(cq.Workplane().add(box(-k, k, a, yp_in, zc - k, zc)))
+    body = body.union(cq.Workplane().add(box(-kh, kh, yp_in - 0.01, y1, zc - kh, zc)))
+    body = body.union(cq.Workplane().add(cyl_y(kh, y1 - 1.0, yp_end, 0.0, zc)))
 
-    # tabs for the sway bar mounts
+    # tabs for the sway bar mounts (top face in the parting face)
     tx, ty, tr, tt = p["swaybar_hole_x"], p["swaybar_hole_y"], p["swaybar_tab_r"], p["swaybar_tab_t"]
     for sx in (-1, 1):
         tab = (cq.Workplane("XY").workplane(offset=zc - tt)
                .center(sx * tx, ty).circle(tr).extrude(tt))
-        bridge = box(sx * tx - tr, sx * tx + tr, ty, y0 + 4.0, zc - tt, zc)
+        bridge = box(sx * tx - tr, sx * tx + tr, ty, -a, zc - tt, zc)
         body = body.union(tab).union(cq.Workplane().add(bridge))
 
     # remove everything above the parting face
