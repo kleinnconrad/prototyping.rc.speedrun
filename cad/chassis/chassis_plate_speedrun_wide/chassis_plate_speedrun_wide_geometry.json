@@ -1,5 +1,5 @@
 {
- "version": "speedrun wide (outline from chassis_plate_T410R_speedrun_wide.step; holes, cutouts and thickness from v2 (caliper-corrected: sx=1.00522, sy=1.00609))",
+ "basis": "speedrun wide (outline from chassis_plate_T410R_speedrun_wide.step; holes, cutouts and thickness from the chassis plate, caliper-corrected: sx=1.00522, sy=1.00609)",
  "units": "mm",
  "thickness": 2.0,
  "hole_d": 3.2,

@@ -1,7 +1,7 @@
 """Generate a DXF file for CNC manufacturing from a geometry JSON file.
 
 The geometry JSON files (*_geometry.json) are stored in the part directories
-of cad/chassis_v2. The DXF file has the same layout as the DXF files in those
+of cad/chassis. The DXF file has the same layout as the DXF files in those
 directories:
 
 * DXF version R2010, units mm
@@ -17,8 +17,8 @@ Usage (from the root directory of the repository):
 
 Example:
     python scripts/cad/generate_dxf.py \\
-        cad/chassis_v2/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json \\
-        cad/chassis_v2/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.dxf
+        cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json \\
+        cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.dxf
 
 Requires the package ezdxf (pip install ezdxf).
 """
