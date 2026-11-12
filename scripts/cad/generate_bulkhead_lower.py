@@ -81,6 +81,9 @@ def bulkhead_lower(p, test_print=False):
     yp_end = yp_in + p["pinion_seat_length"]
     housing = cyl_y(p["pinion_housing_r"], 12.0, yp_end, 0.0, zc)
     body = body.union(cq.Workplane().add(housing))
+    # shell around the pinion pocket below the wing
+    shell = cyl_y(p["pinion_pocket_r"] + p["pinion_pocket_wall"], p["pinion_shell_y_min"], yp_in, 0.0, zc)
+    body = body.union(cq.Workplane().add(shell))
 
     # tabs for the sway bar mounts
     tx, ty, tr, tt = p["swaybar_hole_x"], p["swaybar_hole_y"], p["swaybar_tab_r"], p["swaybar_tab_t"]
