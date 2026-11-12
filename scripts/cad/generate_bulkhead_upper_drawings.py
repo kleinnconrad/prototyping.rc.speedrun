@@ -173,7 +173,7 @@ ROWS = [
     ("U6", "A", "Contact face of the shock tower to the outer end face (y)", "square against the face, depth rod",
      "20.2", ""),
     ("U7", "A", "Top brace holes: spacing across (x)", "as U1", "25.6", "25.6"),
-    ("U8", "A", "Top brace hole to the screw hole on the pinion side (y)", "as U1", "6.94", ""),
+    ("U8", "A", "Top brace hole to the screw hole on the pinion side (y)", "as U1", "6.45", ""),
     ("U9", "A", "Top brace contact face (top of the 2 raised bosses): height above the parting face",
      "part on its parting face, depth rod", "15.4", "15.4"),
     ("U10", "B", "Ear tops: height above the parting face", "as U9", "31.5", "31.5"),

@@ -198,19 +198,22 @@ def plate_a4x2(path, g, print_scale):
     c.save()
 
 
-def brace_a4(path, g, print_scale):
+def brace_a4(path, g, print_scale, name="top brace", info=None):
+    """1:1 template of a top brace on one A4 page (portrait). info: lines below the notes."""
     k = mm / print_scale
     pw, ph = A4[0] / k, A4[1] / k
     k_ = (0, 0, 0)
-    lines = [("Carten T410R top brace - 1:1 template, A4", 3.0, True, k_), ("", 1.2, False, k_)] + \
+    if info is None:
+        info = ["Scaled to the caliper value of the bar width: %.2f mm." % width_at(g, 120.0),
+                "Origin: x = 0 centre line, y = 0 end edge with the hexagon cutout."]
+    lines = [(f"Carten T410R {name} - 1:1 template, A4", 3.0, True, k_), ("", 1.2, False, k_)] + \
         print_lines(print_scale) + [
         ("Check both 100 mm bars with a ruler before use.", 2.2, False, k_),
         ("", 1.2, False, k_),
         (f"Red: through holes Ø{g['hole_d']:g} mm with centre cross (not countersunk).", 2.2, False, k_),
-        ("Scaled to the caliper value of the bar width: %.2f mm." % width_at(g, 120.0), 2.2, False, DARK),
-        ("Origin: x = 0 centre line, y = 0 end edge with the hexagon cutout.", 2.2, False, DARK),
-    ]
-    c = canvas_for(path, A4, f"Top brace - 1:1 template ({print_scale * 100:g} %)", "Carten T410R top brace, A4 portrait")
+    ] + [(t, 2.2, False, DARK) for t in info]
+    title = name[0].upper() + name[1:]
+    c = canvas_for(path, A4, f"{title} - 1:1 template ({print_scale * 100:g} %)", f"Carten T410R {name}, A4 portrait")
     c.saveState()
     c.scale(k, k)
     write_notes(c, 8, ph - 12, lines)
