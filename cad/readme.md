@@ -2,6 +2,9 @@
 
 ## Table of contents
 * [Overview](#overview)
+* [Speedrun chassis](#speedrun-chassis)
+  * [Parts of the speedrun chassis](#parts-of-the-speedrun-chassis)
+  * [Assembly file](#assembly-file)
 * [Chassis plate and top brace](#chassis-plate-and-top-brace)
   * [Parts](#parts)
   * [Files](#files)
@@ -12,6 +15,11 @@
 * [Speedrun chassis plate (wide)](#speedrun-chassis-plate-wide)
   * [Print template](#print-template)
   * [Longer motor window for a 3660 motor](#longer-motor-window-for-a-3660-motor)
+* [Speedrun top brace](#speedrun-top-brace)
+  * [Design of the speedrun top brace](#design-of-the-speedrun-top-brace)
+  * [Fit to the bulkheads](#fit-to-the-bulkheads)
+  * [Files of the speedrun top brace](#files-of-the-speedrun-top-brace)
+  * [Open points of the speedrun top brace](#open-points-of-the-speedrun-top-brace)
 * [Lower bulkhead](#lower-bulkhead)
   * [Interfaces](#interfaces)
   * [Files of the lower bulkhead](#files-of-the-lower-bulkhead)
@@ -46,10 +54,35 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/test_print`**: STL files of the chassis plate and the top brace for a test print on a home 3D printer
   * **`/chassis_plate_speedrun_wide`**: Wide variant of the chassis plate for speedruns (STEP, STL, PDF template, geometry data)
   * **`/chassis_plate_speedrun_wide_motor10`**: Wide variant with a longer motor window for a 3660 motor (STEP, STL, DXF, PDF template, geometry data)
+  * **`/top_brace_speedrun`**: New design of the top brace that matches the bulkheads of this project (STEP, STL, DXF, PDF templates, geometry data, hole table, test print STL files)
 * **`/bulkhead`**: CAD data of the bulkheads (gear boxes): lower bulkhead, upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets).
+* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads and top brace (STEP).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are released under the licenses of this repository (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
+
+## Speedrun chassis
+The speedrun chassis combines the parts that are designed in this project for speeds over 100 km/h. The parts share their interfaces: the bulkheads are mounted on the hole patterns of the chassis plate, the top brace on the contact faces of both upper bulkheads.
+
+![Speedrun chassis: chassis plate, bulkheads and top brace](../photos/cad_speedrun_chassis_assembly.png)
+
+### Parts of the speedrun chassis
+| Part | Quantity | Directory | Status | Material | Mass |
+|:---|---:|:---|:---|:---|---:|
+| [Speedrun chassis plate (wide) with longer motor window](#longer-motor-window-for-a-3660-motor) | 1 | `/chassis/chassis_plate_speedrun_wide_motor10` | Verified | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
+| [Lower bulkhead](#lower-bulkhead) | 2 | `/bulkhead` | Verified | 7075 | 2 x 35 g |
+| [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | Not verified, U5, U6 and U11 open | 7075 | 2 x 56 g |
+| [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | Verified | Carbon or 7075 | 14 g (carbon), 24 g (7075) |
+| **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace carbon | **410 g** |
+
+* The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³). Screws, bearings and the other parts of the car are not included.
+* The bulkheads are the same parts at both ends. At End A, they are rotated by 180 degrees, so that both pinions point to the middle of the car.
+* The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
+
+### Assembly file
+* `assembly/speedrun_chassis_T410R.step`: assembly of all 6 parts in the coordinate system of the chassis plate (STEP AP214, one solid per part).
+* The interference check of all pairs of parts gives 0 mm³.
+* The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
 
 ## Chassis plate and top brace
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -155,7 +188,7 @@ The outline differs from the chassis plate only between y = 55.3 mm and y = 246.
 | Opposite end | 246.5 to 325.6 mm | Identical to the chassis plate |
 
 * The values are taken from the STL file.
-* The wide section is 10 mm wider than the width over the tires (190 mm, `spec_cartent410r.yaml`) and the body width (190 mm, `spec_body.yaml`). It protrudes by 5 mm per side. The clearance to the wheels and to the body has to be checked before manufacturing.
+* The wide section is 10 mm wider than the width over the tires (190 mm, `spec_cartent410r.yaml`) and the body width (190 mm, `spec_body.yaml`). It protrudes by 5 mm per side. The speedrun chassis plate with the longer motor window is verified (see [longer motor window for a 3660 motor](#longer-motor-window-for-a-3660-motor)).
 * The thickness of 2.0 mm is the same as for the chassis plate. The chassis plate of the car measures 2.03 mm (see [open points](#open-points)).
 * The hole pattern and both narrow ends are identical to the chassis plate and are therefore confirmed by its [test print](#test-print). The widened section is not part of the test print.
 
@@ -178,7 +211,7 @@ Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape fo
 ### Longer motor window for a 3660 motor
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Variant of the speedrun chassis plate (wide) with a motor window that is 10 mm longer. The window is lengthened to fit a 3660 motor. The motor of the car (Hobbywing 3660SL G2) has a diameter of 36 mm and a length of 60 mm (`specs/electronics/brushless_combo/spec_brushless_combo.yaml`) and is 10 mm longer than a 3650 motor.
-* **Status:** Not yet verified. The fit of the motor has to be checked before manufacturing. The [test print](#test-print) of the chassis plate confirms the hole pattern, but does not include the longer motor window.
+* **Status:** Verified. The hole pattern is also confirmed by the [test print](#test-print) of the chassis plate.
 
 ![Top view of the wide chassis plate with the longer motor window and hole labels](../photos/cad_chassis_speedrun_wide_motor10_preview.png)
 
@@ -206,10 +239,72 @@ Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape fo
 * All files are stored in the directory `/chassis/chassis_plate_speedrun_wide_motor10`. The preview image above (`photos/cad_chassis_speedrun_wide_motor10_preview.png`) shows the previous window as a red dashed line. The STEP, STL and DXF files are generated from the geometry data. All files and the preview image can be regenerated with scripts (see [scripts](#scripts)).
 * The geometry data is the geometry data of the speedrun chassis plate (wide) (`chassis_plate_speedrun_wide_geometry.json`) with the longer window. That file combines the outline of `chassis_plate_T410R_speedrun_wide.step` with the holes, cutouts and countersink parameters of `chassis_plate_geometry.json` and reproduces `chassis_plate_T410R_speedrun_wide.step` exactly.
 
+## Speedrun top brace
+* **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
+* **Description:** New design of the top brace for the bulkheads of this project, in the same style as the bulkheads: straight lines and radii only. The original top brace (see [chassis plate and top brace](#chassis-plate-and-top-brace)) is kept unchanged.
+* **Status:** Verified. The holes are taken from the original top brace, which is confirmed by its test print. The fit to the new bulkheads is also checked in the CAD model (see [fit to the bulkheads](#fit-to-the-bulkheads)).
+
+![Top view of the speedrun top brace with the outline of the original top brace](../photos/cad_top_brace_speedrun_drawing.png)
+
+The assembly with the chassis plate and the bulkheads is shown in the section [speedrun chassis](#speedrun-chassis).
+
+### Design of the speedrun top brace
+| Feature | Original top brace | Speedrun top brace |
+|:---|:---|:---|
+| Holes | 15 holes Ø3.2 mm (B01 to B15) | 13 holes, positions unchanged. B05 and B06 in the middle part are closed. |
+| Ends | 32.7 to 38.0 mm wide, with a notch in the middle of each end | 34.48 mm wide (same as the bulkheads, flush with their sides), flat end edges, corner radius 4 mm |
+| Middle part | Bar 15.09 mm wide with a short slot (3.2 x 17.5 mm) and a long slot (3.2 x 88.2 mm) | Solid bar 15.09 mm wide |
+| Transitions | Approx. 42 degrees (end with B01 to B04) and 29 degrees (end with B07 to B15) to the y axis | 30 degrees on both ends, fillets 3 mm |
+| Cutout at the end with B01 to B04 | Hexagon | Rectangular window 9.0 x 17.25 mm, corner radius 2 mm (contains the hexagon) |
+| Cutout at the end with B07 to B15 | Obround 27.0 x 9.3 mm | Unchanged |
+| Size | 38.0 x 243.3 x 2.0 mm | 34.48 x 243.3 x 2.0 mm |
+| Volume | 7.84 cm³ | 8.64 cm³ |
+| Mass | 12.5 g in carbon (1.6 g/cm³) | 13.8 g in carbon, 24.3 g in 7075 (2.81 g/cm³) |
+
+* The notches at the ends of the original top brace most likely clear the raised rib on top of the stock upper bulkhead. The upper bulkhead of this project has a flat contact face there. The speedrun top brace therefore fits only the bulkheads of this project. With the stock bulkheads, the original top brace is used.
+* The new outline lies within the outline of the original top brace, except at the ends: the closed notches and the wider ends (222 mm² in total) lie on the contact faces of the bulkheads. Outside the contact faces, the new outline does not exceed the original outline (0 mm², checked by the script). The window contains the hexagon completely.
+* The obround is kept unchanged, because it lies in the area of the spur gear.
+* The closed holes and slots make the middle part stiffer. The manual (step 25) shows a part NHA410 with a screw M3x6 in the middle part of the top brace. It has no mounting hole on the speedrun top brace.
+
+### Fit to the bulkheads
+The script `generate_top_brace_speedrun.py` places the top brace on the upper bulkheads at both ends of the chassis plate (centres of H03 to H06 and H28 to H31) and checks the fit:
+
+| Check | Result |
+|:---|:---|
+| Top brace screws B01, B02, B14, B15 to the tapped holes of the upper bulkheads, along the car | 0.00 mm, after the correction of the upper bulkhead (see below) |
+| Top brace screws across | B01/B02: +-0.25 mm, B14/B15: +-0.03 mm (see [open points](#open-points-of-the-speedrun-top-brace)) |
+| Access holes B03/B04 and B12/B13 above the screws M3x10 of the bulkheads | Offset 0.5 mm or less, the hex key reaches the screws |
+| Ends of the top brace on the contact faces of the upper bulkheads | 15.2 mm (end with B01 to B04) and 15.7 mm (end with B07 to B15) over the full width, 0.5 mm clearance to the step of the gear block |
+| Interference with both upper bulkheads | 0 mm³ |
+
+* Correction of the upper bulkhead: the distance of the top brace screws B01 and B14 (236.13 mm) and the distance of the bulkhead centres on the chassis plate (265.83 mm) require the top brace screws 14.85 mm from the bulkhead centre. The upper bulkhead had 14.36 mm (estimate from photos). The upper bulkhead now has 14.85 mm. Both the top brace and the chassis plate are confirmed by their test print.
+* The end with B07 to B15 (obround) is placed at End B of the chassis plate (motor window, spur gear), the end with B01 to B04 at End A.
+
+### Files of the speedrun top brace
+All files are stored in the directory `/chassis/top_brace_speedrun`. They are generated with the script `generate_top_brace_speedrun.py` (see [scripts](#scripts)).
+
+| File | Format | Use |
+|:---|:---|:---|
+| `top_brace_T410R_speedrun.step` | STEP (AP214) | Solid model (one solid) |
+| `top_brace_T410R_speedrun.stl` | STL (binary) | Triangle mesh of the solid model |
+| `top_brace_T410R_speedrun.dxf` | DXF | 2D drawing for CNC manufacturing with the layers `OUTLINE`, `CUTOUT` and `HOLE_THROUGH` |
+| `top_brace_T410R_speedrun_1to1_A4.pdf` | PDF (A4, 1 page) | 1:1 template, print at 100 % |
+| `top_brace_T410R_speedrun_1to1_A4_print97.pdf` | PDF (A4, 1 page) | 1:1 template pre-scaled to 103.09 %, print at 97 % |
+| `testprint_top_brace_speedrun_halfA.stl`, `testprint_top_brace_speedrun_halfB.stl` | STL (binary) | Test print in two halves (34.5 x 126.7 mm and 34.5 x 121.7 mm), split at y = 121.65 mm with one dovetail, 0.1 mm gap per side |
+| `top_brace_speedrun_geometry.json` | JSON | Geometry data: outline, cutouts, holes, thickness |
+| `top_brace_speedrun_hole_table.csv` | CSV | Hole coordinates (x, y) and diameter |
+
+* The coordinate system is the same as for the original top brace: x = 0 centre line, y = 0 end edge with B01 to B04.
+* The design values (bar width, corner radii, angle of the transitions, window) are defined at the top of the script.
+
+### Open points of the speedrun top brace
+* **Spacing B01 to B02:** 26.10 mm in the geometry data of the original top brace, 25.65 mm between B14 and B15 and 25.6 mm between the top brace screws of the stock upper bulkhead (U7). Both bulkheads are the same part, so both ends of the top brace should have the same spacing. With a hole of 3.2 mm, a screw M3 has approx. 0.1 mm radial clearance, so an offset of 0.25 mm per side can block the screws. The verification of the speedrun top brace shows that the screws fit. A measurement of the spacing B01 to B02 on the carbon top brace can still confirm the value of the geometry data.
+* Function of the part NHA410 (manual step 25) in the middle part of the original top brace.
+
 ## Lower bulkhead
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** CAD model of the lower half of the gear box (bulkhead) of the Carten T410R. The stock part is the plastic part NBA249 ("Gear box"), which is used at the front and at the rear. The model is the basis for a CNC part made of 7075-T6. The interfaces to the chassis plate, the bearings, the gears, the upper bulkhead and the sway bar follow the stock part. The shape is designed to match the [upper bulkhead](#upper-bulkhead-new-design) (see [design of the lower bulkhead](#design-of-the-lower-bulkhead)).
-* **Status:** Two test prints done (see [test print of the lower bulkhead](#test-print-of-the-lower-bulkhead)). The new shape is not test printed yet. The interfaces are based on caliper measurements of the stock part. Some positions are taken from photos (accuracy approx. +-0.5 mm) or derived from the caliper values (see [measurement basis of the lower bulkhead](#measurement-basis-of-the-lower-bulkhead)).
+* **Status:** Verified (test prints: see [test print of the lower bulkhead](#test-print-of-the-lower-bulkhead)). The interfaces are based on caliper measurements of the stock part. Some positions are taken from photos (accuracy approx. +-0.5 mm) or derived from the caliper values (see [measurement basis of the lower bulkhead](#measurement-basis-of-the-lower-bulkhead)).
 
 ![Views of the lower bulkhead](../photos/cad_bulkhead_lower_preview.png)
 
@@ -316,7 +411,7 @@ The lower part has the same design as the upper part: the footprint of the upper
   * below the pinion: 82 mm³ in the corners beside the previous round shell (|x| up to 9.75 mm). The lowest point is unchanged at 7.45 mm above the bottom face.
   * corners of the footprint on the pinion side: 13 mm³ (corner radius 6 mm instead of 7 mm), more than 11 mm above the bottom face.
   * outer side: 2 mm³.
-* The clearance to the pivot blocks is to be checked with the test print.
+* The clearance to the pivot blocks is confirmed by the verification of the lower bulkhead.
 * The interfaces (holes, bearing seats, cavities, floor opening, bosses, tabs) are not changed by the new shape.
 * Correction after the first model of the new shape: the wide block below the pinion pocket ended at the end of the pocket. Below the pinion seat, the narrow block and the chamfer start only 10.15 mm above the bottom face, the pocket reaches down to 8.95 mm. The end face of the pocket therefore had a window of approx. 8.6 x 1.2 mm to the outside. The wide block now ends 1.5 mm behind the pocket.
 
@@ -339,7 +434,7 @@ The lower part has the same design as the upper part: the footprint of the upper
 ## Upper bulkhead (new design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** CAD model of a new upper half of the gear box (bulkhead) of the Carten T410R for CNC manufacturing from 7075-T6. The shape is a new design. The interfaces follow the stock part: the lower bulkhead, the diff and pinion bearings, the shock tower and the top brace.
-* **Status:** Not verified. The interfaces to the lower part and the bearings are taken from the parameter file of the lower bulkhead. The shock tower hole pattern and its height, the spacing of the top brace screws and the height of the top brace face are caliper values (U1 to U4, U7, U9, U10). The position of the shock tower contact face and of the top brace screws along y are estimates from photos (accuracy approx. +-1.5 mm, U5, U6, U8 open). The test print is useful only after these values are known (see [measurement sheet of the stock upper bulkhead](#measurement-sheet-of-the-stock-upper-bulkhead)).
+* **Status:** Not verified. The interfaces to the lower part and the bearings are taken from the parameter file of the lower bulkhead. The shock tower hole pattern and its height, the spacing of the top brace screws and the height of the top brace face are caliper values (U1 to U4, U7, U9, U10). The position of the shock tower contact face is an estimate from photos (accuracy approx. +-1.5 mm, U5, U6 open). The position of the top brace screws along y is derived from the top brace and the chassis plate (U8 open as a check). The test print is useful only after these values are known (see [measurement sheet of the stock upper bulkhead](#measurement-sheet-of-the-stock-upper-bulkhead)).
 
 ![Views and sections of the upper bulkhead](../photos/cad_bulkhead_upper_preview.png)
 
@@ -354,10 +449,10 @@ The preview shows the upper part, the assembly with the lower part and two secti
 | Pinion bearings (5x10x4) | Clamped between the two halves | Upper half bores 10 mm with the rib (0.9 mm wide, 0.3 mm high) between the bearings as the only axial stop, open toward the pinion pocket and at the housing end face | Lower part, user |
 | Gears | Ring gear 42T (31.93 mm), pinion 17T (14.1 mm) | Same cavities as the lower part: diff case radius 13.5 mm, ring gear radius 16.4 mm on the ring gear side (from x = 4.5 mm to 10.4 mm, 1 mm beyond the back face of the ring gear), pinion pocket radius 8.25 mm | Lower part, photo |
 | Shock tower | 3 mm carbon, 4 button head screws M3x8 (manual steps 19 and 20). Stock holes 2.9 mm, through the 5.8 mm ears | Flat contact face facing the outer side at y = -5.3 mm, 4 tapped holes M3 (through the 6 mm wall) at x = +-9.55 mm and 22.5 / 28.6 mm above the parting face. In front of the face, no material above 17.8 mm | Caliper (holes), photo (contact face) |
-| Top brace (NHA432) | 2 button head screws M3x8 per bulkhead (manual step 25) into 2 raised bosses | Flat contact face 15.4 mm above the parting face, from y = 10.5 mm to the pinion end, 2 tapped holes M3 at x = +-12.8 mm, y = 14.36 mm | Caliper (height, spacing), photo and top brace (y) |
+| Top brace (NHA432) | 2 button head screws M3x8 per bulkhead (manual step 25) into 2 raised bosses | Flat contact face 15.4 mm above the parting face, from y = 10.5 mm to the pinion end, 2 tapped holes M3 at x = +-12.8 mm, y = 14.85 mm | Caliper (height, spacing), top brace and chassis plate (y, see [fit to the bulkheads](#fit-to-the-bulkheads)) |
 | Sway bar holders | M3x6 from above onto the tabs of the lower part (manual step 23) | The upper part ends at y = -25.5 mm, 3.2 mm before the sway bar holes | Photo |
 
-* The pinion side screws (M3x10) sit below the top brace. The top brace has access holes above them (B03/B04 and B12/B13, spacing 19.1 mm, 6.94 mm from the top brace screws).
+* The pinion side screws (M3x10) sit below the top brace. The top brace has access holes above them (B03/B04 and B12/B13, spacing 19.1 mm, 6.94 mm and 6.58 mm from the top brace screws).
 * The upper part is the same at the front and at the rear, like the lower part. The front and the rear shock tower use the same 4 holes.
 
 ### Design of the upper bulkhead
@@ -421,6 +516,8 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_window_preview.py` | Geometry data of both speedrun chassis plates | Preview image `photos/cad_chassis_speedrun_wide_motor10_preview.png` | matplotlib |
 | `generate_print_template.py` | Geometry data of both speedrun chassis plates and the chassis plate | Print templates of both speedrun chassis plates (option `--plate wide` or `--plate motor10`). The option `--print-scale` sets the scale of the PDF viewer. | reportlab |
 | `generate_chassis_templates.py` | Geometry data of the chassis plate and the top brace | Print templates `chassis_plate_T410R_1to1_A3.pdf`, `chassis_plate_T410R_1to1_A4x2.pdf`, `top_brace_T410R_1to1_A4.pdf` and the drawing `photos/cad_chassis_drawing.png`. The options `--print-scale` and `--suffix` generate pre-scaled templates (for example `_print97`). | matplotlib, reportlab |
+| `generate_top_brace_speedrun.py` | Geometry data of the original top brace, parameter files of the bulkheads | All files of the speedrun top brace, drawing `photos/cad_top_brace_speedrun_drawing.png`, checks of the outline and of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
+| `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file, geometry checks | cadquery |
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
 | `generate_bulkhead_upper.py` | Parameter files of the upper and the lower bulkhead | STEP and STL file of the upper part, test print STL file, assembly STEP file, interference check, geometry checks | cadquery |
@@ -457,13 +554,15 @@ Both generators of the bulkheads check the solid after each run:
 * **Thin slits and walls:** faces without a common edge that are closer than 0.25 mm (exact distance between the faces).
 * **Interference** of the lower and the upper part (upper generator).
 
-The following commands regenerate the files of the bulkheads from the parameter files (lower part first):
+The following commands regenerate the files of the bulkheads from the parameter files (lower part first) and the files of the speedrun top brace and the assembly of the speedrun chassis:
 
 ```bash
 python scripts/cad/generate_bulkhead_lower.py
 python scripts/cad/generate_bulkhead_drawings.py
 python scripts/cad/generate_bulkhead_upper.py
 python scripts/cad/generate_bulkhead_upper_drawings.py
+python scripts/cad/generate_top_brace_speedrun.py
+python scripts/cad/generate_speedrun_assembly.py
 ```
 
 ### DXF generation

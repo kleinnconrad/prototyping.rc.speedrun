@@ -384,7 +384,7 @@ def preview(path, tris):
         ax = fig.add_axes(rect)
         lo, hi = draw_mesh(ax, tris, view)
         frame(ax, lo, hi, pad=(2, 2, 2, 2), title=title)
-    fig.suptitle("Carten T410R lower bulkhead, design matching the upper part (after two test prints)",
+    fig.suptitle("Carten T410R lower bulkhead, design matching the upper part (verified)",
                  fontsize=13, y=0.985)
     fig.savefig(path, dpi=110)
     plt.close(fig)
