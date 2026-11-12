@@ -211,7 +211,7 @@ Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape fo
 |:---|:---|:---|
 | Chassis plate | 4 countersunk screws M3x8 from below through the 2 mm chassis plate | 4 M3 holes (tap drill 2.5 mm, 8 mm deep), spacing 28.0 x 20.0 mm |
 | Upper bulkhead | 2 button head screws M3x10 on the pinion side, 2 button head screws M3x8 on the outer side | 4 bosses 4.86 mm, 2.42 mm above the parting face, M3 holes (tap drill 2.5 mm, 7 mm deep). Spacing across 18.7 mm (pinion side) and 21.6 mm (outer side), spacing along 42.6 mm |
-| Diff | 2 bearings 10x15x4 (NBA299) | Per side: outer lip (opening 12.28 mm), seat 15 x 4 mm, inner shoulder 1.89 mm. Inner faces of the lips 30.7 mm apart |
+| Diff | 2 bearings 10x15x4 (NBA299) | Per side: outer lip 1.89 mm thick (opening 12.28 mm) and seat 15 x 4 mm, open toward the gear cavity. Inner faces of the lips 30.7 mm apart |
 | Pinion shaft | 2 bearings 5x10x4 (NBA298) | Seat 10 mm, 9.25 mm long, with a shoulder (opening 7.5 mm) toward the pinion gear and a rib of 1.25 mm between the bearings |
 | Ring gear (42T, 31.93 mm) and diff case | Gear diff NBA230 | Cavity with a radius of 12.5 mm for the diff case, deepening with a radius of 16.4 mm for the ring gear on the ring gear side |
 | Pinion gear (17T, 14.1 mm) | Pinion NBA207 | Pocket with a radius of 7.75 mm |
@@ -235,9 +235,9 @@ All files are stored in the directory `/bulkhead`. The STEP and STL files and th
 
 | Property | Value |
 |:---|:---|
-| Size (x by y by z) | 34.2 x 59.4 x 19.62 mm (with the sway bar tabs and the pinion housing) |
-| Volume | 14.6 cm³ |
-| Mass | 41 g in 7075 (2.81 g/cm³), 18 g in PLA (1.24 g/cm³) |
+| Size (x by y by z) | 34.48 x 59.4 x 19.62 mm (with the sway bar tabs and the pinion housing) |
+| Volume | 13.8 cm³ |
+| Mass | 39 g in 7075 (2.81 g/cm³), 17 g in PLA (1.24 g/cm³) |
 
 ### Coordinate system of the lower bulkhead
 * Units are millimeters.
@@ -251,17 +251,18 @@ Each parameter in `bulkhead_lower_v2_parameters.json` has a source code:
 
 | Source code | Meaning | Parameters |
 |:---|:---|:---|
-| `caliper` | Caliper measurement of the stock part (number of the measurement sheet in the note) | Hole spacings, heights, widths, lips, shoulders, seat lengths, boss and tab sizes |
+| `caliper` | Caliper measurement of the stock part (number of the measurement sheet in the note) | Hole spacings, heights, widths, lips, seat lengths, boss and tab sizes |
 | `derived` | Calculated from caliper values and part sizes | Positions along y, deepening, floor thickness, pocket radii |
 | `manual` | T410R instruction manual | Bearing sizes |
-| `user` | Information from the owner of the car | Screw sizes, function of the sway bar holes, deepening for the ring gear |
+| `user` | Information from the owner of the car | Screw sizes, function of the sway bar holes, deepening for the ring gear, diff bearing seat limited only by the outer lip |
 | `photo` | Estimate from photos with rulers at the height of the part | Position of the diff axis, outline, side profile, ring gear position and side |
 | `design` | Free design choice | Tap drill diameters, hole depths, openings that were not measured |
 
 * The caliper values 7, 8 and 9 (top boss holes) agree with the top view photo within 0.3 mm. The ratio of the bottom hole spacings (28.0 / 20.0) agrees with the bottom view photo within 0.3 %.
 * The stock part measures 15.6 mm (diff) and 10.5 mm (pinion) across the half bores at the parting face. The model uses the bearing diameters 15.0 mm and 10.0 mm for the bearing fit.
 * The positions along y are calculated from the caliper values 16, 17 and 19 with the seat edge (15.6 mm) as the reference. With this reference, the inner pinion bearing is 18.15 mm from the diff axis. The photo with the diff installed shows approx. 18.3 mm.
-* The photo with the diff installed shows the ring gear between 5.0 and 9.4 mm from the diff centre. The back face of the ring gear is approx. 1.9 mm from the inner face of the bearing, which matches the inner shoulder of 1.89 mm.
+* The photo with the diff installed shows the ring gear between 5.0 and 9.4 mm from the diff centre. The back face of the ring gear is approx. 1.9 mm from the inner face of the bearing.
+* The lip thickness is 1.89 mm (no. 13, measured twice as no. 15). With the inner faces of the lips 30.7 mm apart (no. 14), the width over the outer faces is 34.48 mm. The caliper value no. 10 is 34.2 mm. The model keeps no. 13 and no. 14, because they set the position of the bearings.
 
 ### Caliper measurement sheet
 The measurement sheet `bulkhead_lower_v2_measurement_sheet.pdf` documents the caliper values and lists the open dimensions:
@@ -270,6 +271,7 @@ The measurement sheet `bulkhead_lower_v2_measurement_sheet.pdf` documents the ca
 * **Priority A:** interfaces (holes, bearing seats, bosses, tabs, clearance for the gears). **Priority B:** shape.
 * Hole spacings are measured with the inside jaws from far edge to far edge minus the hole diameter. Heights are measured with the depth rod with the part on a flat surface.
 * The new values 38 to 41 cover the rib between the pinion bearings, the position of the diff axis relative to the bottom holes (39 and 40) and the height of the sway bar tabs.
+* No. 15 now describes the length of the diff bearing seat (4.0 mm from the lip inward). The seat has no inner shoulder.
 
 ### Test print of the lower bulkhead
 * `testprint_bulkhead_lower_v2.stl` differs from the solid model in two points: the bearing seats are 0.2 mm larger in diameter (15.2 mm and 10.2 mm), and all M3 holes have a diameter of 2.7 mm for self-tapping screws.
@@ -279,15 +281,16 @@ The measurement sheet `bulkhead_lower_v2_measurement_sheet.pdf` documents the ca
 
 ### Design notes
 * The body is solid apart from the gear cavity. Pockets to reduce the mass are planned after the test print.
-* The diff bearings are held between the outer lip and the inner shoulder. The diff with both bearings measures 30.0 mm, the lips are 30.7 mm apart: the diff has 0.7 mm axial play, as on the stock part.
-* The gear cavity has two depths. Between the inner shoulders, a cylinder with a radius of 12.5 mm holds the diff case (floor 4.7 mm thick). On the ring gear side, a deepening with a radius of 16.4 mm from x = 4.5 mm to the inner shoulder (x = 9.46 mm) holds the ring gear (floor 0.8 mm thick, clearance 0.43 mm).
+* Each diff bearing seat is limited only by the outer lip. The half bore of 15 mm runs 4.0 mm inward from the lip and then opens into the gear cavity. On the inner side, the diff holds the bearings. The diff with both bearings measures 30.0 mm, the lips are 30.7 mm apart: the diff has 0.7 mm axial play, as on the stock part.
+* The gear cavity has two depths. Between the bearing seats, a cylinder with a radius of 12.5 mm holds the diff case (floor 4.7 mm thick). On the ring gear side, a deepening with a radius of 16.4 mm from x = 4.5 mm to the inner end of the bearing seat (x = 11.35 mm) holds the ring gear (floor 0.8 mm thick, clearance 0.43 mm). The wall between the deepening and the bottom holes is 1.4 mm thick.
 * The ring gear is on the +x side. Seen from the pinion housing, the deepening is on the left. The bulkhead is the same part at the front and at the rear and is rotated by 180 degrees. Both pinions point to the centre shaft, so the ring gear is on the same side of the bulkhead at both ends.
 * The STEP file contains no threads. The M3 holes are modelled with the tap drill diameter of 2.5 mm. For CNC manufacturing, the threads are specified in the comment field of the order (M3, thread depth 6.5 mm for the bottom holes).
 
 ### Open points of the lower bulkhead
 * **Chassis plate:** the bottom holes of the stock bulkhead are 28.0 x 20.0 mm apart. The chassis plate v2 and the speedrun chassis plates have 28.17 x 20.22 mm (H03 to H06) and 28.13 x 20.19 mm (H28 to H31). Countersunk screws center themselves in the countersinks, so the difference of approx. 0.1 mm per hole is not compensated by clearance. The hole spacings of the carbon chassis plate are to be measured before the aluminium plate is ordered.
 * Open caliper values of the measurement sheet (nos. 20, 21, 26, 30 to 36, 38 to 41).
-* The value 15 (1.89 mm) is interpreted as the thickness of the inner shoulder, the value 22 (5 mm) as the height of the narrow lower section, and the value 25 (4.35 mm) as the thickness of the sway bar tabs with the top face in the parting face.
+* The value 22 (5 mm) is interpreted as the height of the narrow lower section, and the value 25 (4.35 mm) as the thickness of the sway bar tabs with the top face in the parting face.
+* Width over the outer faces of the diff bearing walls: 34.48 mm in the model, 34.2 mm measured (no. 10).
 * The outer end face of the stock part has small holes. Their function is unknown, so they are not modelled.
 * Upper bulkhead: not modelled yet.
 * Front and rear: End A of the chassis plate is assumed to be the front (bumper holes H34 to H36), End B the rear (motor window).

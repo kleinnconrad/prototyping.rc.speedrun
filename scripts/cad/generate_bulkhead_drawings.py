@@ -85,10 +85,9 @@ def vdim(ax, x1, y1, x2, y2, xd, n, txt_shift=0.0):
 
 
 def seat_x(p):
-    """Inner face of the outer lip, inner end of the seat, inner face of the inner shoulder (|x|)."""
+    """Inner face of the outer lip and inner end of the bearing seat (|x|)."""
     xl = p["diff_lip_inner_x"]
-    xs = xl - p["diff_seat_width"]
-    return xl, xs, xs - p["diff_shoulder_t"]
+    return xl, xl - p["diff_seat_width"]
 
 
 def leader(ax, p, q, n):
@@ -199,9 +198,8 @@ def views_page(pdf, tris, p):
 
 def sections_page(pdf, solid, p):
     yd, w, zc = p["diff_axis_y"], p["body_half_width"], p["axis_z"]
-    xl, xs, xi = seat_x(p)
+    xl, xs = seat_x(p)
     rs, lip = p["diff_bearing"][1] / 2, p["diff_lip_d"] / 2
-    rsh = p["diff_shoulder_d"] / 2
     yin, L, ts = p["pinion_seat_y_inner"], p["pinion_seat_length"], p["pinion_shoulder_t"]
     rp = p["pinion_bearing"][1] / 2
 
@@ -232,7 +230,7 @@ def sections_page(pdf, solid, p):
     sg = 1 if p["ring_gear_side"] > 0 else -1
     zcase = zc - p["case_cavity_r"]
     fz = p["floor_z"]
-    a_out = -sg * min(p["ring_recess_x_outer"], xi)
+    a_out = -sg * min(p["ring_recess_x_outer"], xs)
     a_in = -sg * p["ring_recess_x_inner"]
     xm = (a_out + a_in) / 2
     dim(ax, (-w, 0), (w, 0), (0, -4), 10)
@@ -240,7 +238,7 @@ def sections_page(pdf, solid, p):
     leader(ax, (sg * (xl - 2), zc - rs), (sg * 8, 25), 11)
     leader(ax, (sg * (xl + 0.5), zc - lip), (sg * 22, 26), 12)
     hdim(ax, sg * xl, zc - lip, sg * w, zc - lip, 12.5, 13, txt_shift=sg * 4.5)
-    hdim(ax, sg * xi, zc - rsh, sg * xs, zc - rsh, 1.5, 15, txt_shift=-sg * 4)
+    hdim(ax, sg * xs, zc - rs, sg * xl, zc - rs, 1.5, 15, txt_shift=-sg * 4)
     hdim(ax, -sg * w, zc - lip, a_out, zcase, 20.5, 31)
     hdim(ax, -sg * w, zc - lip, a_in, zcase, 23.5, 32)
     dim(ax, (xm, fz), (xm, zc), (0, 0), 33, ext=False)
@@ -299,12 +297,13 @@ ROWS = [
     (7, "A", "Top boss holes: spacing across, pinion side (M3x10)", "as no. 1", "18.7", "18.7"),
     (8, "A", "Top boss holes: spacing across, outer side (M3x8)", "as no. 1", "21.6", "21.6"),
     (9, "A", "Top boss holes: spacing along (y)", "as no. 1", "42.6", "42.6"),
-    (10, "B", "Width over the outer faces of the diff bearing walls", "outside jaws", "34.2", "34.2"),
+    (10, "B", "Width over the outer faces of the diff bearing walls", "outside jaws", "34.48", "34.2"),
     (11, "A", "Diff bearing seat: width of the half bore at the parting face", "inside jaws", "15.0 (fit)", "15.6"),
     (12, "A", "Diff bearing lip: opening diameter", "inside jaws at the outer face", "12.28", "12.28"),
-    (13, "A", "Diff bearing lip: thickness", "outside jaws or depth rod", "1.75", "1.89"),
+    (13, "A", "Diff bearing lip: thickness", "outside jaws or depth rod", "1.89", "1.89"),
     (14, "A", "Spacing of the inner faces of the two lips", "inside jaws across the cavity", "30.7", "30.7"),
-    (15, "A", "Inner shoulder of the diff seats: thickness", "depth rod", "1.89", "1.89"),
+    (15, "A", "Diff bearing seat: length from the lip inward / inner shoulder", "depth rod", "4.0 / none",
+     "4.0 / none"),
     (16, "A", "Outer end face to the near edge of the diff half bore at the parting face", "depth rod",
      "21.42", "21.12"),
     (17, "A", "Pinion housing end face to the near edge of the diff half bore", "as no. 16", "19.9", "19.6"),
@@ -326,15 +325,15 @@ ROWS = [
     (30, "B", "4 small holes on the outer end face: function, diameter, positions", "photo with ruler",
      "not modelled", ""),
     (31, "A", "Ring gear deepening: outer face of the diff wall (ring gear side) to the outer end", "depth rod",
-     "7.64", ""),
+     "5.89", ""),
     (32, "A", "Ring gear deepening: outer face of the diff wall (ring gear side) to the inner end", "depth rod",
-     "12.6", ""),
+     "12.74", ""),
     (33, "A", "Ring gear deepening: depth below the parting face", "depth rod", "16.4", ""),
     (34, "B", "Floor below the diff case: depth below the parting face", "depth rod", "12.5", ""),
     (35, "A", "Diff: largest outer diameter of the diff case (without the ring gear)", "outside jaws on the diff",
      "max. 24.0", ""),
     (36, "A", "Diff: back face of the ring gear to the outer face of the bearing on that side", "depth rod",
-     "min. 5.9", ""),
+     "min. 4.0", ""),
     (37, "A", "Ring gear side: seen from the pinion housing, is the deepening on the left?", "look", "left",
      "left (photo)"),
     (38, "A", "Pinion seat: rib between the two bearings: width / opening diameter", "depth rod / inside jaws",

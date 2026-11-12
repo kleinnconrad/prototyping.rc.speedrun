@@ -101,29 +101,26 @@ def bulkhead_lower(p, test_print=False):
     for (x, y) in bosses:
         body = body.union(cq.Workplane().add(cyl_z(br, p["top_boss_z_base"], ztop, x, y)))
 
-    # diff bearing seats: outer lip, seat for the bearing, inner shoulder (from outside to inside)
+    # diff bearing seats: limited only by the outer lip, open toward the gear cavity
     xl = p["diff_lip_inner_x"]                 # inner face of the outer lip
-    xs = xl - p["diff_seat_width"]             # inner end of the seat, start of the inner shoulder
-    xi = xs - p["diff_shoulder_t"]             # inner face of the inner shoulder
+    xs = xl - p["diff_seat_width"]             # inner end of the seat
     d_out = p["diff_bearing"][1]
     rs = (d_out + seat_add) / 2
 
-    # gear cavity: diff case between the inner shoulders, deepening for the ring gear on one side
+    # gear cavity: diff case between the bearing seats, deepening for the ring gear on one side
     floor = box(-BIG, BIG, -BIG, BIG, p["floor_z"], BIG)
-    cav = cyl_x(p["case_cavity_r"], -xi, xi, yd, zc)
+    cav = cyl_x(p["case_cavity_r"], -xs - 0.01, xs + 0.01, yd, zc)
     s = 1 if p["ring_gear_side"] > 0 else -1
-    xa, xb = sorted((s * p["ring_recess_x_inner"], s * min(p["ring_recess_x_outer"], xi)))
+    xa, xb = sorted((s * p["ring_recess_x_inner"], s * min(p["ring_recess_x_outer"], xs)))
     cav = cav.fuse(cyl_x(p["ring_recess_r"], xa, xb, yd, zc))
     cav = cav.intersect(floor)
     body = body.cut(cq.Workplane().add(cav))
 
     for sx in (-1, 1):
-        xa, xb = sorted((sx * xs, sx * xl))
+        xa, xb = sorted((sx * (xs - 0.01), sx * xl))
         body = body.cut(cq.Workplane().add(cyl_x(rs, xa, xb, yd, zc)))
         xa, xb = sorted((sx * (xl - 0.01), sx * (w + 5)))
         body = body.cut(cq.Workplane().add(cyl_x(p["diff_lip_d"] / 2, xa, xb, yd, zc)))
-        xa, xb = sorted((sx * (xi - 0.01), sx * (xs + 0.01)))
-        body = body.cut(cq.Workplane().add(cyl_x(p["diff_shoulder_d"] / 2, xa, xb, yd, zc)))
 
     # pinion pocket, shoulder opening and bearing seat
     body = body.cut(cq.Workplane().add(cyl_y(p["pinion_pocket_r"], p["pinion_pocket_y_min"],
