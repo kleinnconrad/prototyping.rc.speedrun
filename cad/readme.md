@@ -566,7 +566,7 @@ Positions in the plane of the tower: x across the car, height above the parting 
 |:---|:---|:---|:---|
 | Mounting holes T1 to T4 | x = ±9.55 mm, 22.5 mm and 28.6 mm, Ø3.2 mm | Same | Tapped holes of the upper bulkhead (U1 to U3) |
 | Camber link holes C1, C2 (wheel mounts) | x = ±21.24 mm, 19.1 mm, Ø3.2 mm | Same | Stock towers: 8.5 mm outward and 5 mm down from the top of the lower mounting hole, x = ±18.05 mm (owner); moved outward, see below |
-| Damper holes D1, D2 | x = ±31.65 mm, 30.6 mm, Ø3.2 mm | x = ±36.15 mm, 26.6 mm, Ø3.2 mm | Stock towers, from the outer end of the upper mounting hole: front 20.5 mm outward and 2 mm up, rear 25 mm outward and 2 mm down (owner) |
+| Damper holes D1, D2 | x = ±31.65 mm, 30.6 mm, Ø3.2 mm | x = ±36.15 mm, 30.6 mm, Ø3.2 mm | Stock towers, from the outer end of the upper mounting hole to the centre of the damper hole: front 20.5 mm outward and 2 mm up, rear 25 mm outward and 2 mm up (owner) |
 | Body post bores B1, B2 | – | x = ±51.65 mm, 31.2 mm, Ø5.2 mm | Stock rear tower: bottom of the bore 40.5 mm outward from the outer end of the upper mounting hole (owner) |
 | Body post screw bores S1, S2 | – | x = ±51.65 mm, 37.85 mm, Ø3.2 mm | Stock rear tower: bottom of the bore 2.45 mm above the top of the 5.2 mm bore (owner) |
 | Thickness | 3.0 mm carbon | 3.0 mm carbon | Owner. The upper bulkhead is designed for it: screws M3x8, 5 mm thread engagement |
@@ -589,7 +589,7 @@ Results of the checks of `generate_shock_towers.py` (same for both towers):
 | Contact area on the wall | 318 mm² |
 | Gap below the tower (block and root radius) | 0.20 mm |
 | Zone of the rod ends behind the tower (radius 4.0 mm, 9 mm long) | Free, 0 mm³ overlap with the bulkheads |
-| Edge distance of the holes | Mounting holes 2.9 mm, camber link holes 1.9 mm, damper holes 1.9 mm (front) and 3.9 mm (rear), body post bores 1.9 mm and 2.9 mm |
+| Edge distance of the holes | Mounting holes 2.9 mm, camber link holes 1.9 mm, damper holes 1.9 mm (front) and 5.3 mm (rear), body post bores 1.9 mm and 2.9 mm |
 | Thin slits and walls | None |
 
 * Both towers are part of the assembly of the speedrun chassis: the front tower at End A (assumed front), the rear tower at End B. The interference check of all parts gives 0 mm³.

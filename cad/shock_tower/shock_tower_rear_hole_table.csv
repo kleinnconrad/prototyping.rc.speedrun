@@ -5,8 +5,8 @@ T3,-9.55,28.60,3.2,mounting screw M3x8 (tapped hole of the upper bulkhead)
 T4,9.55,28.60,3.2,mounting screw M3x8 (tapped hole of the upper bulkhead)
 C1,-21.24,19.10,3.2,camber link ball stud (wheel mount)
 C2,21.24,19.10,3.2,camber link ball stud (wheel mount)
-D1,-36.15,26.60,3.2,damper ball stud
-D2,36.15,26.60,3.2,damper ball stud
+D1,-36.15,30.60,3.2,damper ball stud
+D2,36.15,30.60,3.2,damper ball stud
 B1,-51.65,31.20,5.2,body post
 B2,51.65,31.20,5.2,body post
 S1,-51.65,37.85,3.2,screw of the body post mount
