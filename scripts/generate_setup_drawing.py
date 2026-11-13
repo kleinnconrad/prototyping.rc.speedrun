@@ -15,6 +15,7 @@ Usage:
 """
 
 import argparse
+import json
 import math
 import re
 from pathlib import Path
@@ -27,6 +28,8 @@ SETUP_DIR = ROOT_DIR / "setup_sheets"
 CHASSIS_SPEC = ROOT_DIR / "specs" / "mechanics" / "carten_t410r" / "spec_cartent410r.yaml"
 TIRE_SPEC = ROOT_DIR / "specs" / "mechanics" / "wheels" / "spec_tires.yaml"
 DEFAULT_OUTPUT = ROOT_DIR / "photos" / "latest_setup_drawing.svg"
+FRONT_TOWER = ROOT_DIR / "cad" / "shock_tower" / "shock_tower_front_geometry.json"
+LOWER_BULKHEAD = ROOT_DIR / "cad" / "bulkhead" / "bulkhead_lower_parameters.json"
 SHEET_PATTERN = re.compile(r"^(\d+)_setup_sheet\.ya?ml$")
 
 # Scale 1:2 at 96 dpi: 1 mm on the car equals 0.5 mm on the sheet.
@@ -208,6 +211,36 @@ def load_vehicle():
         "width": as_number(dimensions.get("track_width_mm"), 190.0),
         "tire_diameter": as_number(nested(tires, "spec", "properties", "dimensions", "diameter_mm"), 64.0),
     }
+
+
+def load_tower(path=FRONT_TOWER, bulkhead=LOWER_BULKHEAD):
+    """Speedrun shock tower from the CAD files: outline (polygon), holes (u, v, radius, id) and
+    thickness. u: across the car (positive = right side), v: height above the top face of the
+    bottom plate (bottom face of the bulkheads). Returns None if a file is missing."""
+    try:
+        geometry = json.loads(path.read_text(encoding="utf-8"))
+        parting = json.loads(bulkhead.read_text(encoding="utf-8"))["parameters"]["axis_z"]["value"]
+    except (OSError, ValueError, KeyError):
+        return None
+    outline = []
+    for prim in geometry["outline"]:
+        if prim["type"] != "arc":
+            outline.append(tuple(prim["start"]))
+            continue
+        cx, cy = prim["center"]
+        a0, am, a1 = (math.atan2(prim[k][1] - cy, prim[k][0] - cx) for k in ("start", "mid", "end"))
+        sweep = (a1 - a0) % (2 * math.pi)
+        if (am - a0) % (2 * math.pi) > sweep:  # clockwise arc
+            sweep -= 2 * math.pi
+        steps = max(2, math.ceil(abs(sweep) / math.radians(10)))
+        outline += [(cx + prim["r"] * math.cos(a0 + sweep * k / steps),
+                     cy + prim["r"] * math.sin(a0 + sweep * k / steps)) for k in range(steps)]
+    outline = [(u, v + parting) for u, v in outline]
+    holes = [(h["x"], h["y"] + parting, h.get("d", geometry["hole_d"]) / 2, h["id"]) for h in geometry["holes"]]
+    right = {hole[3][0]: (hole[0], hole[1]) for hole in holes if hole[0] > 0}
+    return {"outline": outline, "holes": holes, "thickness": geometry["thickness"],
+            "bottom": min(v for _, v in outline), "top": max(v for _, v in outline),
+            "damper": right["D"], "camber": right["C"]}
 
 
 # ---------------------------------------------------------------------------
@@ -648,12 +681,18 @@ def draw_side_view(sheet, car, origin_x, ground_y):
 
     draw_ground(sheet, proj, -95, wb + 105)
 
-    # Shock towers and shocks, mostly hidden behind the wheels
+    # Shock towers and shocks, mostly hidden behind the wheels. Front: speedrun front shock tower.
+    tower = load_tower()
     for axle_x, tower_x in ((0.0, 12.0), (wb, wb - 15.5)):
         tower_base = car.plate_bottom(tower_x) + PLATE_THICKNESS
-        sheet.polygon(proj.poly([(tower_x, tower_base + 28), (tower_x + 3.5, tower_base + 28),
-                                 (tower_x + 3.5, TOWER_TOP), (tower_x, TOWER_TOP)]), "part")
-        draw_shock(sheet, proj(tower_x - 1.5, SHOCK_TOP), proj(axle_x + (6 if axle_x == 0 else -6), 21))
+        if axle_x == 0 and tower is not None:
+            low, high, thick = tower_base + tower["bottom"], tower_base + tower["top"], tower["thickness"]
+            shock_top = tower_base + tower["damper"][1]
+        else:
+            low, high, thick, shock_top = tower_base + 28, TOWER_TOP, 3.5, SHOCK_TOP
+        sheet.polygon(proj.poly([(tower_x, low), (tower_x + thick, low), (tower_x + thick, high),
+                                 (tower_x, high)]), "part")
+        draw_shock(sheet, proj(tower_x - 1.5, shock_top), proj(axle_x + (6 if axle_x == 0 else -6), 21))
 
     # Bottom plate with the rake defined by the ride heights, front bumper
     x0, x1 = PLATE_X
@@ -935,16 +974,23 @@ def draw_axle_view(sheet, car, axle, origin_x, ground_y, title_y):
 
     draw_ground(sheet, proj, -car.width / 2 - 12, car.width / 2 + 12)
 
-    # Bottom plate and shock tower
+    # Bottom plate and shock tower (front: speedrun front shock tower from the CAD files, drawn in
+    # front of the bulkhead; rear: schematic)
     sheet.polygon(proj.poly([(-PLATE_HALF_WIDTH, ride_height), (PLATE_HALF_WIDTH, ride_height),
                              (PLATE_HALF_WIDTH, ride_height + PLATE_THICKNESS),
                              (-PLATE_HALF_WIDTH, ride_height + PLATE_THICKNESS)]), "part")
     base = ride_height + PLATE_THICKNESS
-    sheet.polygon(proj.poly([(-26, 46), (26, 46), (50, TOWER_TOP - 7), (50, TOWER_TOP), (-50, TOWER_TOP),
-                             (-50, TOWER_TOP - 7)]), "part")
-    for side in (1, -1):
-        for hole_y in (32, 44):
-            sheet.circle(proj(side * hole_y, SHOCK_TOP), 1.6 * S, "part-light")
+    tower = load_tower() if front else None
+    if tower is None:
+        sheet.polygon(proj.poly([(-26, 46), (26, 46), (50, TOWER_TOP - 7), (50, TOWER_TOP), (-50, TOWER_TOP),
+                                 (-50, TOWER_TOP - 7)]), "part")
+        for side in (1, -1):
+            for hole_y in (32, 44):
+                sheet.circle(proj(side * hole_y, SHOCK_TOP), 1.6 * S, "part-light")
+        camber_inner, shock_top = (14, 56), (44, SHOCK_TOP)
+    else:
+        camber_inner = (tower["camber"][0], base + tower["camber"][1])
+        shock_top = (tower["damper"][0], base + tower["damper"][1])
 
     # Lower arms, hub carriers, camber links and drive shafts
     for side in (1, -1):
@@ -952,10 +998,14 @@ def draw_axle_view(sheet, car, axle, origin_x, ground_y, title_y):
                                  (side * 28, base + 9)]), "part")
         sheet.polygon(proj.poly([(side * (inner_face - 6), 16), (side * (inner_face + 2), 16),
                                  (side * (inner_face + 2), 50), (side * (inner_face - 6), 50)]), "part")
-        sheet.line(proj(side * 14, 56), proj(side * (inner_face - 3), 48), "rod")
-        sheet.circle(proj(side * 14, 56), 2.2 * S, "part-light")
+        sheet.line(proj(side * camber_inner[0], camber_inner[1]), proj(side * (inner_face - 3), 48), "rod")
+        sheet.circle(proj(side * camber_inner[0], camber_inner[1]), 2.2 * S, "part-light")
         sheet.circle(proj(side * (inner_face - 3), 48), 2.2 * S, "part-light")
     sheet.polygon(proj.poly([(-30, base), (30, base), (30, 46), (-30, 46)]), "part")
+    if tower is not None:
+        sheet.polygon(proj.poly([(u, base + v) for u, v in tower["outline"]]), "part")
+        for u, v, radius, _ in tower["holes"]:
+            sheet.circle(proj(u, base + v), radius * S, "part-light")
     for side in (1, -1):
         sheet.polygon(proj.poly([(side * 19, r - 2.3), (side * inner_face, r - 2.3),
                                  (side * inner_face, r + 2.3), (side * 19, r + 2.3)]), "part")
@@ -967,7 +1017,7 @@ def draw_axle_view(sheet, car, axle, origin_x, ground_y, title_y):
 
     # Shocks
     for side in (1, -1):
-        draw_shock(sheet, proj(side * 44, SHOCK_TOP), proj(side * 58, base + 7))
+        draw_shock(sheet, proj(side * shock_top[0], shock_top[1]), proj(side * 58, base + 7))
 
     # Sway bar with drop links to the lower arms
     if car.sway_bars is not None:
@@ -1102,7 +1152,7 @@ def draw_notes(sheet, x, y, width, vehicle):
         "Dimensions in mm, angles in degrees. Toe and camber are drawn per wheel.",
         f"Wheelbase {format_length(vehicle['wheelbase'])} mm and width {format_length(vehicle['width'])} mm "
         f"from the chassis spec, tire diameter {format_length(vehicle['tire_diameter'])} mm from the tire spec.",
-        "Component positions and outlines are schematic.",
+        "Outlines are schematic. Front shock tower: CAD model.",
         "Generated by scripts/generate_setup_drawing.py. Do not edit manually.",
     ]
     line_y = y + 22
