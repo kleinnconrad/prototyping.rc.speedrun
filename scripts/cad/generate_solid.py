@@ -18,6 +18,7 @@ Requires the package cadquery (pip install cadquery).
 """
 import argparse
 import json
+import math
 
 import numpy as np
 import cadquery as cq
@@ -54,6 +55,83 @@ def plate_solid(geometry):
             s = s.fuse(cone)
         cutter = s if cutter is None else cutter.fuse(s)
     return body.cut(cq.Workplane().add(cutter))
+
+
+def contour_samples(p, n):
+    """Points and unit tangents along a line or arc of a contour (in the direction of the contour)."""
+    if p["type"] == "line":
+        a, b = np.array(p["start"]), np.array(p["end"])
+        t = (b - a) / np.linalg.norm(b - a)
+        return [(a + (b - a) * k / (n - 1), t) for k in range(n)]
+    c = np.array(p["center"])
+    a0, am, a1 = (math.atan2(q[1] - c[1], q[0] - c[0]) for q in (p["start"], p["mid"], p["end"]))
+    s_mid, s_end = (am - a0) % (2 * math.pi), (a1 - a0) % (2 * math.pi)
+    sweep = s_end if s_mid < s_end else s_end - 2 * math.pi
+    out = []
+    for k in range(n):
+        a = a0 + sweep * k / (n - 1)
+        out.append((c + p["r"] * np.array([math.cos(a), math.sin(a)]),
+                    np.sign(sweep) * np.array([-math.sin(a), math.cos(a)])))
+    return out
+
+
+def edge_chamfer_tools(prims, z_face, into, size, eps=0.01, material_inside=True):
+    """Cutting tools of an edge chamfer along a contour on the face z = z_face (material on the side
+    +into in z). size(point) gives the leg length of the chamfer at a point of the contour.
+    material_inside: the material lies inside the contour (outline) or outside (cutout).
+
+    Each tool is a triangle with the given legs on the face and on the side wall of the contour,
+    swept along a line or arc of the contour (ruled for lines, smooth for arcs). The triangles
+    of adjacent lines and arcs are the same at their common point (tangent contours)."""
+    pts = np.array([q for p in prims for q, _ in contour_samples(p, 12)])
+    area = 0.5 * np.sum(pts[:, 0] * np.roll(pts[:, 1], -1) - np.roll(pts[:, 0], -1) * pts[:, 1])
+    ccw = (area > 0) == material_inside
+    tools = []
+    for p in prims:
+        n = 2 if p["type"] == "line" else 9
+        if p["type"] == "line":
+            a, b = np.array(p["start"]), np.array(p["end"])
+            if any(abs(size(a + (b - a) * k / 4) - size(a)) > 1e-9 for k in range(5)):
+                n = 9                                       # leg length changes along the line
+        wires = []
+        for q, t in contour_samples(p, n):
+            out = np.array([t[1], -t[0]]) if ccw else np.array([-t[1], t[0]])
+            d = size(q)
+            corner = [(q + out * eps, z_face - into * eps), (q - out * d, z_face - into * eps),
+                      (q + out * eps, z_face + into * d)]
+            wires.append(cq.Wire.makePolygon([cq.Vector(x, y, z) for (x, y), z in corner], close=True))
+        tools.append(cq.Solid.makeLoft(wires, ruled=(p["type"] == "line")))
+    return tools
+
+
+def hole_chamfer_cones(x, y, r, c, t):
+    """Cones of a chamfer c on both ends of a through hole with the radius r in a plate 0 <= z <= t."""
+    return [cq.Solid.makeCone(r + c + 0.01, r - 0.01, c + 0.02, cq.Vector(x, y, z0 - dz * 0.01), cq.Vector(0, 0, dz))
+            for z0, dz in ((0.0, 1), (t, -1))]
+
+
+def chamfered_plate_solid(geometry, edge, hole_edge):
+    """Plate solid (cadquery Solid) with edge chamfers: chamfer edge on both faces of the outline and
+    of the cutouts, chamfer hole_edge on both ends of the holes (plain through holes, no countersinks)."""
+    t = geometry["thickness"]
+    s = wire_from_prims(geometry["outline"]).extrude(t).val()
+    for contour in geometry["cutouts"].values():
+        s = s.cut(wire_from_prims(contour, -1).extrude(t + 2).val())
+
+    def size(q):
+        return edge
+    tools = []
+    for prims, inside in [(geometry["outline"], True)] + [(c, False) for c in geometry["cutouts"].values()]:
+        for z_face, into in ((0.0, 1), (t, -1)):
+            tools += edge_chamfer_tools(prims, z_face, into, size, material_inside=inside)
+    for tool in tools:
+        s = s.cut(tool)
+    r = geometry["hole_d"] / 2
+    for h in geometry["holes"]:
+        s = s.cut(cq.Solid.makeCylinder(r, t + 2, cq.Vector(h["x"], h["y"], -1)))
+        for cone in hole_chamfer_cones(h["x"], h["y"], r, hole_edge, t):
+            s = s.cut(cone)
+    return s.clean()
 
 
 def main():

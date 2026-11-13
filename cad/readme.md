@@ -265,9 +265,10 @@ The assembly with the chassis plate and the bulkheads is shown in the section [s
 | Transitions | Approx. 42 degrees (end with B01 to B04) and 29 degrees (end with B07 to B15) to the y axis | 30 degrees on both ends, fillets 3 mm |
 | Cutout at the end with B01 to B04 | Hexagon | None: the cutout is obsolete and closed |
 | Cutout at the end with B07 to B15 | Obround 27.0 x 9.3 mm | Unchanged |
+| Edges | Sharp edges | Edge chamfers 0.5 mm on both faces (outline and obround), chamfers 0.3 mm on the holes, as the bulkheads and the shock tower |
 | Size | 38.0 x 243.3 x 2.0 mm | 34.48 x 243.3 x 2.0 mm |
-| Volume | 7.84 cm³ | 8.94 cm³ |
-| Mass | 12.5 g in carbon (1.6 g/cm³) | 14.3 g in carbon, 25.1 g in 7075 (2.81 g/cm³) |
+| Volume | 7.84 cm³ | 8.78 cm³ |
+| Mass | 12.5 g in carbon (1.6 g/cm³) | 14.0 g in carbon, 24.7 g in 7075 (2.81 g/cm³) |
 
 * The notches at the ends of the original top brace most likely clear the raised rib on top of the stock upper bulkhead. The upper bulkhead of this project has a flat contact face there. The speedrun top brace therefore fits only the bulkheads of this project. With the stock bulkheads, the original top brace is used.
 * The new outline lies within the outline of the original top brace, except at the ends: the closed notches and the wider ends (222 mm² in total) lie on the contact faces of the bulkheads. Outside the contact faces, the new outline does not exceed the original outline (0 mm², checked by the script).
@@ -293,9 +294,9 @@ All files are stored in the directory `/chassis/top_brace_speedrun`. They are ge
 
 | File | Format | Use |
 |:---|:---|:---|
-| `top_brace_T410R_speedrun.step` | STEP (AP214) | Solid model (one solid) |
+| `top_brace_T410R_speedrun.step` | STEP (AP214) | Solid model with the edge chamfers and the hole chamfers (one solid) |
 | `top_brace_T410R_speedrun.stl` | STL (binary) | Triangle mesh of the solid model |
-| `top_brace_T410R_speedrun.dxf` | DXF | 2D drawing for CNC manufacturing with the layers `OUTLINE`, `CUTOUT` and `HOLE_THROUGH` |
+| `top_brace_T410R_speedrun.dxf` | DXF | 2D drawing for CNC manufacturing with the layers `OUTLINE`, `CUTOUT` and `HOLE_THROUGH` (without the chamfers; edge chamfers 0.5 mm and hole chamfers 0.3 mm on both faces are given in the order or taken from the STEP file) |
 | `top_brace_T410R_speedrun_1to1_A4.pdf` | PDF (A4, 1 page) | 1:1 template, print at 100 % |
 | `top_brace_T410R_speedrun_1to1_A4_print97.pdf` | PDF (A4, 1 page) | 1:1 template pre-scaled to 103.09 %, print at 97 % |
 | `testprint_top_brace_speedrun_halfA.stl`, `testprint_top_brace_speedrun_halfB.stl` | STL (binary) | Test print in two halves (34.5 x 126.7 mm and 34.5 x 121.7 mm), split at y = 121.65 mm with one dovetail, 0.1 mm gap per side |
@@ -303,7 +304,7 @@ All files are stored in the directory `/chassis/top_brace_speedrun`. They are ge
 | `top_brace_speedrun_hole_table.csv` | CSV | Hole coordinates (x, y) and diameter |
 
 * The coordinate system is the same as for the original top brace: x = 0 centre line, y = 0 end edge with B01 to B04.
-* The design values (bar width, corner radii, angle of the transitions) are defined at the top of the script.
+* The design values (bar width, corner radii, angle of the transitions, chamfers) are defined at the top of the script.
 
 ### Open points of the speedrun top brace
 * **Spacing B01 to B02:** 26.10 mm in the geometry data of the original top brace, 25.65 mm between B14 and B15 and 25.6 mm between the top brace screws of the stock upper bulkhead (U7). Both bulkheads are the same part, so both ends of the top brace should have the same spacing. With a hole of 3.2 mm, a screw M3 has approx. 0.1 mm radial clearance, so an offset of 0.25 mm per side can block the screws. The verification of the speedrun top brace shows that the screws fit. A measurement of the spacing B01 to B02 on the carbon top brace can still confirm the value of the geometry data.
@@ -615,7 +616,7 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 |:---|:---|:---|:---|
 | `geometry_from_step.py` | STEP file of the speedrun chassis plate (wide), geometry data of the chassis plate | Geometry data of the speedrun chassis plate (wide). The option `--check` compares the rebuilt solid with the STEP file. | cadquery |
 | `lengthen_motor_window.py` | Geometry data of the speedrun chassis plate (wide) | Geometry data with the motor window 10 mm longer toward End A (option `--length`) | None |
-| `generate_solid.py` | Geometry data | STEP and STL file | cadquery |
+| `generate_solid.py` | Geometry data | STEP and STL file. Helper module: plates with edge chamfers and hole chamfers (speedrun top brace, front shock tower) | cadquery |
 | `generate_dxf.py` | Geometry data | DXF file (see [DXF generation](#dxf-generation)) | ezdxf |
 | `check_motor_window.py` | STEP files and geometry data of both speedrun chassis plates | Check results: solid, volume, section through the window, holes, distances to the countersinks | cadquery |
 | `generate_drawing.py` | Geometry data of the speedrun chassis plate (wide) and the chassis plate | Drawing `photos/cad_chassis_speedrun_wide_drawing.png` | matplotlib |
