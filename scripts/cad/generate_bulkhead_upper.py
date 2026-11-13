@@ -9,9 +9,9 @@ The upper part is a new design. Only its interfaces follow the stock part:
 Design: the footprint of the lower part, extruded to 4 flat levels along y: a flange for the
 heads of the outer screws, a block over the diff and the ring gear, one shock tower wall over
 the full width (instead of two ears) and a flat face for the top brace on the pinion side.
-All outer faces are flat, apart from the inside radii (inside_corner_r of the lower part) at
-the block over the outer pinion bearing. The only other curved faces are the bores and the
-cavities.
+All outer faces are flat. The edges get the same treatment as the lower part (radii and edge
+chamfers), the root of the shock tower wall a radius (wall_root_r). The only other curved faces
+are the bores and the cavities.
 
 Coordinate system: as for the lower bulkhead (origin at the centre of the 4 bottom holes of
 the lower part on its bottom face, x along the diff axis, +y toward the pinion, +z up).
@@ -28,13 +28,16 @@ inside of the part.
 Requires the package cadquery (pip install cadquery).
 """
 import argparse
+import json
+import math
 
 import cadquery as cq
 from cadquery.occ_impl.exporters.assembly import exportAssembly
 
-from generate_bulkhead_lower import (BIG, bearing_voids, box, bulkhead_lower, concave_vertical_edges, cyl_x, cyl_y,
-                                     cyl_z, enclosed_voids, functional_check, load_params,
-                                     round_inside_corners, thin_gaps)
+from generate_bulkhead_lower import (BIG, bearing_voids, box, bulkhead_lower, chamfer_outside_edges,
+                                     concave_vertical_edges, cyl_x, cyl_y, cyl_z, edge_report, enclosed_voids,
+                                     functional_check, load_params, round_inside_corners, round_outside_corners,
+                                     thin_gaps, without_edge_treatment)
 
 
 def screw_positions(lp):
@@ -95,10 +98,18 @@ def outer_body_upper(lp, up):
     return cut(body, box(-BIG, BIG, -BIG, BIG, -BIG, zc))
 
 
-def voids_upper(lp, up, test_print=False):
+def keepouts_upper(lp, up):
+    """Keep-out zones (spaces of other parts): top brace above its contact face, shock tower in
+    front of the contact face of the wall."""
+    zc, fy = lp["axis_z"], up["tower_face_y"]
+    return [box(-BIG, BIG, up["deck_end_y"] - 0.5, BIG, zc + up["deck_h"], BIG),
+            box(-BIG, BIG, fy - up["tower_plate_t"] - 1.0, fy, zc + up["tower_keepout_h"], BIG)]
+
+
+def voids_upper(lp, up, test_print=False, keepouts=True):
     """Functional voids of the upper part: keep-out zones of the top brace and the shock tower
-    plate, gear cavity, bearing seats (as the lower part), recesses for
-    the bosses of the lower part, screw holes, counterbores, tapped holes."""
+    (keepouts=True), gear cavity, bearing seats (as the lower part), recesses for the bosses of the
+    lower part, screw holes, counterbores, tapped holes (the inside of the part)."""
     zc = lp["axis_z"]
     yd = lp["diff_axis_y"]
     seat_add = lp["print_seat_allowance"] if test_print else 0.0
@@ -111,9 +122,7 @@ def voids_upper(lp, up, test_print=False):
     _, z_pin = head_heights(lp, up)
     fy, wt = up["tower_face_y"], up["wall_t"]
 
-    # keep-out zones: top brace (above its contact face) and shock tower plate (in front of the face)
-    voids = [box(-BIG, BIG, up["deck_end_y"] - 0.5, BIG, h(up["deck_h"]), BIG),
-             box(-BIG, BIG, fy - up["tower_plate_t"] - 1.0, fy, h(up["tower_keepout_h"]), BIG)]
+    voids = keepouts_upper(lp, up) if keepouts else []
 
     xs = lp["diff_lip_inner_x"] - lp["diff_seat_width"]
     s = 1 if lp["ring_gear_side"] > 0 else -1
@@ -149,11 +158,69 @@ def voids_upper(lp, up, test_print=False):
     return voids
 
 
+def root_fillet_solid(y_face, sign, z_floor, w, rr, rc):
+    """Radius rr at the root of a wall face y = y_face on a floor at the height z_floor. The wall
+    lies on the side +sign of the face, the radius on the side -sign, over the width |x| <= w.
+    The vertical corners of the wall have the radius rc: the root radius runs around them (profile
+    revolved about the corner axis) and is trimmed at the side faces |x| = w."""
+    from OCP.BRepPrimAPI import BRepPrimAPI_MakeRevol
+    from OCP.gp import gp_Ax1, gp_Dir, gp_Pnt
+    xs = w - rc
+
+    def profile(x0):
+        def pt(d, h):
+            return cq.Vector(x0, y_face - sign * d, z_floor + h)
+        c = rr - rr / math.sqrt(2)
+        edges = [cq.Edge.makeLine(pt(0, 0), pt(rr, 0)),
+                 cq.Edge.makeThreePointArc(pt(rr, 0), pt(c, c), pt(0, rr)),
+                 cq.Edge.makeLine(pt(0, rr), pt(0, 0))]
+        return cq.Face.makeFromWires(cq.Wire.assembleEdges(edges))
+
+    sol = cq.Solid.extrudeLinear(profile(-xs).outerWire(), [], cq.Vector(2 * xs, 0, 0))
+    for sx in (-1, 1):
+        axis = gp_Ax1(gp_Pnt(sx * xs, y_face + sign * rc, z_floor), gp_Dir(0, 0, 1))
+        for a in (math.pi / 2, -math.pi / 2):
+            rev = cq.Solid(BRepPrimAPI_MakeRevol(profile(sx * xs).wrapped, axis, a).Shape())
+            if sx * (rev.Center().x - sx * xs) > 0:     # the revolution that runs around the corner
+                sol = sol.fuse(rev)
+                break
+    return sol.intersect(box(-w, w, -BIG, BIG, z_floor - 1, z_floor + rr + 1)).clean()
+
+
+_OUTER_SHAPES = {}
+
+
+def outer_shape_upper(lp, up):
+    """Outer shape of the upper part with the edge treatment: radii of the vertical outside edges,
+    root radius of the shock tower wall on both sides, radii in the vertical inside corners,
+    chamfers of the other hard outside edges. The underside (parting face) is not changed.
+    Returns (Workplane, chamfered edges, shortened edges, skipped edges), cached per parameter set."""
+    key = json.dumps([lp, up], sort_keys=True)
+    if key not in _OUTER_SHAPES:
+        zc = lp["axis_z"]
+
+        def joint(f):
+            return f.BoundingBox().zmax <= zc + 1e-6     # parting face
+
+        body = round_outside_corners(outer_body_upper(lp, up), lp.get("outside_corner_r", 0.0), joint)
+        rr = up.get("wall_root_r", 0.0)
+        if rr > 0:
+            fy, wt, zg = up["tower_face_y"], up["wall_t"], zc + up["gear_block_h"]
+            s = body.val()
+            for y_face, sign in ((fy, 1), (fy + wt, -1)):
+                s = s.fuse(root_fillet_solid(y_face, sign, zg, lp["body_half_width"], rr,
+                                             lp.get("outside_corner_r", 0.0))).clean()
+            body = cq.Workplane().add(s)
+        body = round_inside_corners(body, lp.get("inside_corner_r", 0.0), zc)
+        _OUTER_SHAPES[key] = chamfer_outside_edges(body, lp.get("edge_chamfer", 0.0), joint)
+    return _OUTER_SHAPES[key]
+
+
 def bulkhead_upper(lp, up, test_print=False):
-    """Build the upper part (cadquery Workplane): outer shape, rounded inside corners,
-    functional voids. The voids are cut last, so the radii cannot change them.
-    lp: lower part parameters, up: upper part."""
-    body = round_inside_corners(outer_body_upper(lp, up), lp.get("inside_corner_r", 0.0), lp["axis_z"])
+    """Build the upper part (cadquery Workplane): outer shape with the edge treatment, then the
+    functional voids and keep-out zones. The voids are cut last, so the radii and chamfers cannot
+    change the inside of the part. lp: lower part parameters, up: upper part."""
+    body = outer_shape_upper(lp, up)[0]
     for v in voids_upper(lp, up, test_print):
         body = body.cut(cq.Workplane().add(v))
     return body
@@ -215,9 +282,12 @@ def main():
     print(f"  check for thin slits and walls (faces closer than 0.25 mm): {len(gaps)} found")
     for g in gaps:
         print(f"    {g[0]}: {g[1]} mm at {g[2]}")
-    print(f"  vertical inside corners without radius: {len(concave_vertical_edges(s[0]))}")
-    ref = bulkhead_upper(dict(lp, inside_corner_r=0.0), up).val()
-    ok, lines = functional_check(s[0], ref, voids_upper(lp, up), lp["inside_corner_r"])
+    long_corners = [e for e in concave_vertical_edges(s[0]) if e.Length() > 1.0]
+    print(f"  vertical inside corners without radius (longer than 1 mm): {len(long_corners)}")
+    print("\n".join(edge_report(*outer_shape_upper(lp, up)[1:])))
+    ref = bulkhead_upper(without_edge_treatment(lp), dict(up, wall_root_r=0.0)).val()
+    ok, lines = functional_check(s[0], ref, voids_upper(lp, up, keepouts=False), lp["inside_corner_r"],
+                                 keepouts_upper(lp, up))
     print("\n".join(lines))
     print(f"  functional check: {'passed' if ok else 'FAILED'}")
     inter = lower.val().intersect(upper.val())

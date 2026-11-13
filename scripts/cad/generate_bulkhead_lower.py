@@ -5,10 +5,11 @@ intersection of the footprint of the upper part (extruded in z) and the side
 profile (extruded in x): a flat contact face on the chassis plate and one
 straight chamfer per side, below which the pivot blocks of the wishbones are
 mounted. A rectangular block under the pinion, the bosses for the upper
-bulkhead and the tabs for the sway bar mounts are added. The vertical inside
-corners are rounded with inside_corner_r (end mill radius). Then the gear cavity,
-the bearing seats and the M3 holes are cut, so the radii cannot change the inside
-of the part.
+bulkhead and the tabs for the sway bar mounts are added. The edges of the outer
+shape get radii (vertical outside edges: outside_corner_r, vertical inside
+corners: inside_corner_r) and edge chamfers (other hard outside edges:
+edge_chamfer). Then the gear cavity, the bearing seats and the M3 holes are cut,
+so the edge treatment cannot change the inside of the part.
 
 Coordinate system: origin at the centre of the 4 bottom holes on the bottom face,
 x along the diff axis, +y toward the pinion, z = 0 bottom face.
@@ -142,6 +143,186 @@ def concave_vertical_edges(solid, eps=0.01, n=72, limit=0.55):
         if k / n > limit:
             found.append(e)
     return found
+
+
+def material_fraction(clf, edge, eps=0.01, n=48):
+    """Part of a small circle around the middle of the edge (perpendicular to the edge) that lies
+    in the material: 1/4 at a 90 degree outside edge, 1/2 at a tangent transition, 3/4 at a 90
+    degree inside corner. clf: BRepClass3d_SolidClassifier of the solid."""
+    from OCP.TopAbs import TopAbs_IN
+    from OCP.gp import gp_Pnt
+    t = edge.tangentAt(0.5).normalized()
+    m = edge.positionAt(0.5)
+    a = cq.Vector(1, 0, 0) if abs(t.x) < 0.9 else cq.Vector(0, 1, 0)
+    u = t.cross(a).normalized()
+    v = t.cross(u).normalized()
+    k = 0
+    for i in range(n):
+        ang = 2 * math.pi * i / n
+        q = m + u * (eps * math.cos(ang)) + v * (eps * math.sin(ang))
+        clf.Perform(gp_Pnt(q.x, q.y, q.z), 1e-7)
+        k += clf.State() == TopAbs_IN
+    return k / n
+
+
+def outside_edges(solid, joint, max_fraction):
+    """Outside (convex) edges of the outer shape with their two faces: (edge, face1, face2).
+
+    Only edges with a material fraction below max_fraction (see material_fraction) and without a
+    face of the joint (joint(face) is True: parting face, bosses) are returned."""
+    from OCP.BRepClass3d import BRepClass3d_SolidClassifier
+    from OCP.TopAbs import TopAbs_EDGE, TopAbs_FACE
+    from OCP.TopExp import TopExp
+    from OCP.TopTools import TopTools_IndexedDataMapOfShapeListOfShape
+    emap = TopTools_IndexedDataMapOfShapeListOfShape()
+    TopExp.MapShapesAndAncestors_s(solid.wrapped, TopAbs_EDGE, TopAbs_FACE, emap)
+    clf = BRepClass3d_SolidClassifier(solid.wrapped)
+    out = []
+    for e in solid.Edges():
+        if e.Length() < 1e-3:
+            continue
+        faces = [cq.Face(f) for f in emap.FindFromKey(e.wrapped)]
+        if len(faces) != 2 or any(joint(f) for f in faces):
+            continue
+        if material_fraction(clf, e) < max_fraction:
+            out.append((e, faces[0], faces[1]))
+    return out
+
+
+def round_outside_corners(body, r, joint):
+    """Round the vertical outside edges of the outer shape (corners seen from above) with the
+    radius r. The end mill follows the contour, so the radius does not add machining time."""
+    if r <= 0:
+        return body
+    s = body.val()
+    edges = [e for e, _, _ in outside_edges(s, joint, 0.45)
+             if e.geomType() == "LINE" and abs(e.tangentAt(0.5).z) > 0.999]
+    return cq.Workplane().add(s.fillet(r, edges)) if edges else body
+
+
+def close_face_pairs(faces, limit, lo=1e-4):
+    """Pairs of faces without a common edge or vertex that are closer than limit:
+    (distance, i, j, closest points)."""
+    from OCP.BRepExtrema import BRepExtrema_DistShapeShape
+    boxes = [f.BoundingBox() for f in faces]
+    found = []
+    for a in range(len(faces)):
+        for b in range(a + 1, len(faces)):
+            ba, bb = boxes[a], boxes[b]
+            if (ba.xmin - bb.xmax > limit or bb.xmin - ba.xmax > limit or ba.ymin - bb.ymax > limit
+                    or bb.ymin - ba.ymax > limit or ba.zmin - bb.zmax > limit or bb.zmin - ba.zmax > limit):
+                continue
+            ext = BRepExtrema_DistShapeShape(faces[a].wrapped, faces[b].wrapped)
+            d = ext.Value()
+            if lo < d < limit:
+                found.append((d, a, b, ext.PointOnShape1(1), ext.PointOnShape2(1)))
+    return found
+
+
+def chamfer_outside_edges(body, d, joint, eps=0.01, sliver=0.05):
+    """Chamfer the hard outside edges of the outer shape (material fraction below 0.34: angle
+    between the faces up to approx. 120 degrees) with the leg length d.
+
+    Each chamfer is cut with a tool: a triangle with the legs d on both faces, swept along the
+    edge. The longest edges are cut first. If the full cut leaves a thin sliver at an end (the next
+    edge continues tangentially and is not chamfered), the chamfer stops 1.5 d before both ends of
+    the edge. An edge is left as it is where the chamfer is not possible: a face beside it
+    narrower than 2 d somewhere along the edge, a cut that does not give one valid solid, or a
+    cut that leaves faces closer than sliver. Returns (body, chamfered edges, shortened edges,
+    skipped edges); the edges as (type, length, midpoint)."""
+    if d <= 0:
+        return body, [], [], []
+    s = body.val()
+
+    def legs(e, f1, f2, t):
+        p, tan = e.positionAt(t), e.tangentAt(t)
+        n1, n2 = f1.normalAt(p), f2.normalAt(p)
+        u1 = tan.cross(n1).normalized()
+        u2 = tan.cross(n2).normalized()
+        return p, n1, n2, (-u1 if u1.dot(n2) > 0 else u1), (-u2 if u2.dot(n1) > 0 else u2)
+
+    def on_face(face, q):
+        """True if the point q projected onto the surface of the face lies inside the face."""
+        from OCP.BRep import BRep_Tool
+        from OCP.GeomAPI import GeomAPI_ProjectPointOnSurf
+        from OCP.gp import gp_Pnt
+        surf = BRep_Tool.Surface_s(face.wrapped)
+        proj = GeomAPI_ProjectPointOnSurf(gp_Pnt(q.x, q.y, q.z), surf)
+        d_surf = proj.LowerDistance() if proj.NbPoints() else 0.0
+        return cq.Vertex.makeVertex(q.x, q.y, q.z).distance(face) < d_surf + 1e-4
+
+    def wide_enough(face, p, u, need):
+        """The face continues from p in the direction u for at least the length need."""
+        return all(on_face(face, p + u * (need * k / 6)) for k in range(1, 7))
+
+    def cut_edge(solid, e, f1, f2, t0, t1):
+        """Cut the chamfer between the edge parameters t0 and t1; None if the result is not one
+        valid solid without thin slivers near the edge."""
+        closed = (e.startPoint() - e.endPoint()).Length < 1e-6 and t0 == 0.0 and t1 == 1.0
+        nsec = 2 if e.geomType() == "LINE" else 13 if e.geomType() == "CIRCLE" else 25
+        tm = (t0 + t1) / 2
+        spans = [(t0, tm), (tm, t1)] if closed else [(t0, t1)]
+        try:
+            new = solid
+            for a, b in spans:
+                wires = []
+                for i in range(nsec):
+                    p, n1, n2, u1, u2 = legs(e, f1, f2, a + (b - a) * i / (nsec - 1))
+                    wires.append(cq.Wire.makePolygon([p + (n1 + n2) * eps, p + u1 * d + n1 * eps,
+                                                      p + u2 * d + n2 * eps], close=True))
+                new = new.cut(cq.Solid.makeLoft(wires, ruled=(e.geomType() == "LINE")))
+            new = new.clean()
+        except Exception:
+            return None
+        if not (new.isValid() and len(new.Solids()) == 1 and new.Volume() < solid.Volume()):
+            return None
+        new = new.Solids()[0]
+        bb = e.BoundingBox()
+        m = d + 0.3
+        near = [f for f in new.Faces()
+                if not (f.BoundingBox().xmin > bb.xmax + m or f.BoundingBox().xmax < bb.xmin - m
+                        or f.BoundingBox().ymin > bb.ymax + m or f.BoundingBox().ymax < bb.ymin - m
+                        or f.BoundingBox().zmin > bb.zmax + m or f.BoundingBox().zmax < bb.zmin - m)]
+        return None if close_face_pairs(near, sliver) else new
+
+    done, shortened, skipped = [], [], []
+    candidates = sorted(outside_edges(s, joint, 0.34), key=lambda c: -c[0].Length())
+    for e, f1, f2 in candidates:
+        length = e.Length()
+        desc = (e.geomType(), round(length, 2), tuple(round(v, 2) for v in e.positionAt(0.5).toTuple()))
+        if length < 0.05:
+            continue
+        # the faces beside the edge must be at least 2 d wide along the whole edge (the bounding
+        # box of the face gives an upper bound of the width; checked at 5 points)
+        ts = [0.0, 0.25, 0.5, 0.75, 1.0]
+        ok = [all(wide_enough(f, q[0], u, 2 * d) for f, u in ((f1, q[3]), (f2, q[4])))
+              for q in (legs(e, f1, f2, min(max(t, 1e-3), 1 - 1e-3)) for t in ts)]
+        if not all(ok[1:4]):
+            skipped.append(desc)                 # face narrower than 2 d in the middle part of the edge
+            continue
+        new = cut_edge(s, e, f1, f2, 0.0, 1.0) if ok[0] and ok[4] else None
+        if new is not None:
+            s = new
+            done.append(desc)
+            continue
+        for margin in (1.5 * d, 3.0 * d):         # stop the chamfer before the ends
+            dt = margin / length
+            if dt >= 0.25:
+                break
+            if not all(all(wide_enough(f, q[0], u, 2 * d) for f, u in ((f1, q[3]), (f2, q[4])))
+                       for q in (legs(e, f1, f2, t) for t in (dt, 1.0 - dt))):
+                continue
+            new = cut_edge(s, e, f1, f2, dt, 1.0 - dt)
+            if new is not None:
+                s = new
+                shortened.append(desc)
+                break
+        else:
+            skipped.append(desc)
+            continue
+        if new is None:
+            skipped.append(desc)
+    return cq.Workplane().add(s), done, shortened, skipped
 
 
 def plane_section(solid, z):
@@ -289,36 +470,71 @@ def voids_lower(p, test_print=False):
     return voids
 
 
+_OUTER_SHAPES = {}
+
+
+def outer_shape_lower(p):
+    """Outer shape of the lower part with the edge treatment: radii of the vertical outside edges,
+    radii in the vertical inside corners, chamfers of the other hard outside edges. The parting
+    face and the bosses (joint) are not changed. Returns (Workplane, chamfered edges, skipped
+    edges). The result is cached per parameter set (the test print uses the same outer shape)."""
+    key = json.dumps(p, sort_keys=True)
+    if key not in _OUTER_SHAPES:
+        zc = p["axis_z"]
+
+        def joint(f):
+            return f.BoundingBox().zmin >= zc - 1e-6     # parting face, bosses above it
+
+        body = round_outside_corners(outer_body_lower(p), p.get("outside_corner_r", 0.0), joint)
+        body = round_inside_corners(body, p.get("inside_corner_r", 0.0), zc, envelope=side_profile_lower(p).val())
+        _OUTER_SHAPES[key] = chamfer_outside_edges(body, p.get("edge_chamfer", 0.0), joint)
+    return _OUTER_SHAPES[key]
+
+
+def without_edge_treatment(p):
+    """Parameters without radii and chamfers: the model with the verified inside of the part."""
+    return dict(p, inside_corner_r=0.0, outside_corner_r=0.0, edge_chamfer=0.0)
+
+
 def bulkhead_lower(p, test_print=False):
-    """Build the solid (cadquery Workplane) from the parameters: outer shape, rounded inside
-    corners, functional voids. The voids are cut last, so the radii cannot change them."""
-    body = round_inside_corners(outer_body_lower(p), p.get("inside_corner_r", 0.0), p["axis_z"],
-                                envelope=side_profile_lower(p).val())
+    """Build the solid (cadquery Workplane) from the parameters: outer shape with the edge
+    treatment, then the functional voids. The voids are cut last, so the radii and chamfers
+    cannot change the inside of the part."""
+    body = outer_shape_lower(p)[0]
     for v in voids_lower(p, test_print):
         body = body.cut(cq.Workplane().add(v))
     return body
 
 
-def functional_check(solid, ref, voids, r):
-    """Compare the solid with the reference solid without the radii of the outer shape
-    (inside_corner_r = 0). The reference has the verified inside of the part. Returns (ok, lines).
+def functional_check(solid, ref, voids, r, keepouts=()):
+    """Compare the solid with the reference solid without radii and chamfers (see
+    without_edge_treatment). The reference has the verified inside of the part. Returns (ok, lines).
 
-    * The inside of the part must not change: no added or removed material may touch a
-      functional void (cavities, bearing seats, lip openings, pinion pocket, rib, holes,
-      counterbores, recesses, keep-out zones). The smallest distance must be larger than 0.
+    * The inside of the part must not change: no added or removed material may touch a functional
+      void (cavities, bearing seats, lip openings, pinion pocket, rib, holes, counterbores,
+      recesses). The smallest distance must be larger than 0.
+    * Keep-out zones (spaces of other parts): no added material inside them.
     * Each added piece must lie within the height range of the material beside it (within r): no
       radius reaches lower or higher than the existing faces next to it, for example into the
       space of the pivot blocks."""
     added, removed = solid.cut(ref), ref.cut(solid)
     changed = added.Solids() + removed.Solids()
-    dist = min((c.distance(v) for c in changed for v in voids), default=float("inf"))
+    # distance between the surfaces (the distance between solids is 0 if OCC classifies one solid
+    # as inside the other) and the overlap volume
+    dist = min((cq.Compound.makeCompound(c.Faces()).distance(cq.Compound.makeCompound(v.Faces()))
+                for c in changed for v in voids), default=float("inf"))
+    if any(c.intersect(v).Volume() > 1e-6 for c in changed for v in voids):
+        dist = 0.0
+    in_keepouts = sum(added.intersect(k).Volume() for k in keepouts)
     pieces = added.Solids()
-    ok = dist > 1e-3
-    lines = ["  comparison with the verified inside of the part (model without radii of the outer shape):",
-             f"    smallest distance of the changed material to the cavities, bearing seats, holes, recesses and "
-             f"keep-out zones: {dist:.2f} mm (inside of the part {'unchanged' if ok else 'CHANGED'})",
-             f"    removed material: {removed.Volume():.2f} mm3",
-             f"    added material (radii of the outer shape): {added.Volume():.2f} mm3 in {len(pieces)} pieces"]
+    ok = dist > 1e-3 and in_keepouts < 1e-3
+    lines = ["  comparison with the verified inside of the part (model without radii and chamfers):",
+             f"    smallest distance of the changed material to the cavities, bearing seats, holes and recesses: "
+             f"{dist:.2f} mm (inside of the part {'unchanged' if dist > 1e-3 else 'CHANGED'})"]
+    if keepouts:
+        lines.append(f"    added material in the keep-out zones: {in_keepouts:.4f} mm3")
+    lines += [f"    removed material (chamfers, outside radii): {removed.Volume():.2f} mm3",
+              f"    added material (inside radii): {added.Volume():.2f} mm3 in {len(pieces)} pieces"]
     for sol in sorted(pieces, key=lambda q: (q.BoundingBox().ymin, q.BoundingBox().xmin)):
         bb = sol.BoundingBox()
         near = ref.intersect(box(bb.xmin - r, bb.xmax + r, bb.ymin - r, bb.ymax + r, -BIG, BIG)).BoundingBox()
@@ -328,6 +544,16 @@ def functional_check(solid, ref, voids, r):
                      f"z {bb.zmin:5.2f} to {bb.zmax:5.2f}, {sol.Volume():5.2f} mm3 (material beside it: "
                      f"z {near.zmin:5.2f} to {near.zmax:5.2f}{'' if inside else ', OUTSIDE'})")
     return ok, lines
+
+
+def edge_report(done, shortened, skipped):
+    """Report lines of the chamfered, the shortened and the skipped edges (see chamfer_outside_edges)."""
+    lines = [f"  chamfered hard outside edges: {len(done)} ({sum(e[1] for e in done):.0f} mm), chamfer stopped "
+             f"before the ends: {len(shortened)} ({sum(e[1] for e in shortened):.0f} mm), left as they are "
+             f"(chamfer not possible): {len(skipped)} ({sum(e[1] for e in skipped):.0f} mm)"]
+    for kind, length, mid in sorted(skipped, key=lambda e: -e[1]):
+        lines.append(f"    left: {kind.lower()} {length} mm at {mid}")
+    return lines
 
 
 def thin_gaps(solid, limit=0.25):
@@ -342,33 +568,21 @@ def thin_gaps(solid, limit=0.25):
     between the two faces is about half the distance away from the surface.
     """
     from OCP.BRepClass3d import BRepClass3d_SolidClassifier
-    from OCP.BRepExtrema import BRepExtrema_DistShapeShape
     from OCP.TopAbs import TopAbs_IN, TopAbs_OUT
     from OCP.gp import gp_Pnt
     clf = BRepClass3d_SolidClassifier(solid.wrapped)
     faces = solid.Faces()
     surface = cq.Compound.makeCompound(faces)
-    boxes = [f.BoundingBox() for f in faces]
     found = []
-    for a in range(len(faces)):
-        for b in range(a + 1, len(faces)):
-            ba, bb = boxes[a], boxes[b]
-            if (ba.xmin - bb.xmax > limit or bb.xmin - ba.xmax > limit or ba.ymin - bb.ymax > limit
-                    or bb.ymin - ba.ymax > limit or ba.zmin - bb.zmax > limit or bb.zmin - ba.zmax > limit):
-                continue
-            ext = BRepExtrema_DistShapeShape(faces[a].wrapped, faces[b].wrapped)
-            d = ext.Value()
-            if not 1e-4 < d < limit:
-                continue                     # touching faces (common edge or vertex) or far apart
-            p1, p2 = ext.PointOnShape1(1), ext.PointOnShape2(1)
-            mid = cq.Vector((p1.X() + p2.X()) / 2, (p1.Y() + p2.Y()) / 2, (p1.Z() + p2.Z()) / 2)
-            clf.Perform(gp_Pnt(mid.x, mid.y, mid.z), 1e-6)
-            state = clf.State()
-            if cq.Vertex.makeVertex(mid.x, mid.y, mid.z).distance(surface) < 0.25 * d:
-                kind = "narrow face"         # other faces lie between the two faces, close to the gap
-            else:
-                kind = "wall" if state == TopAbs_IN else ("slit" if state == TopAbs_OUT else "narrow face")
-            found.append((kind, round(d, 3), (round(mid.x, 2), round(mid.y, 2), round(mid.z, 2))))
+    for d, _, _, p1, p2 in close_face_pairs(faces, limit):
+        mid = cq.Vector((p1.X() + p2.X()) / 2, (p1.Y() + p2.Y()) / 2, (p1.Z() + p2.Z()) / 2)
+        clf.Perform(gp_Pnt(mid.x, mid.y, mid.z), 1e-6)
+        state = clf.State()
+        if cq.Vertex.makeVertex(mid.x, mid.y, mid.z).distance(surface) < 0.25 * d:
+            kind = "narrow face"         # other faces lie between the two faces, close to the gap
+        else:
+            kind = "wall" if state == TopAbs_IN else ("slit" if state == TopAbs_OUT else "narrow face")
+        found.append((kind, round(d, 3), (round(mid.x, 2), round(mid.y, 2), round(mid.z, 2))))
     return found
 
 
@@ -435,8 +649,10 @@ def main():
     print(f"  check for thin slits and walls (faces closer than 0.25 mm): {len(gaps)} found")
     for g in gaps:
         print(f"    {g[0]}: {g[1]} mm at {g[2]}")
-    print(f"  vertical inside corners without radius: {len(concave_vertical_edges(s))}")
-    ref = bulkhead_lower(dict(p, inside_corner_r=0.0)).val()
+    long_corners = [e for e in concave_vertical_edges(s) if e.Length() > 1.0]
+    print(f"  vertical inside corners without radius (longer than 1 mm): {len(long_corners)}")
+    print("\n".join(edge_report(*outer_shape_lower(p)[1:])))
+    ref = bulkhead_lower(without_edge_treatment(p)).val()
     ok, lines = functional_check(s, ref, voids_lower(p), p["inside_corner_r"])
     print("\n".join(lines))
     print(f"  functional check: {'passed' if ok else 'FAILED'}")

@@ -49,12 +49,12 @@ The speedrun chassis is designed in this project for speeds over 100 km/h. It co
 | Part | Quantity | Status | Mass |
 |:---|---:|:---|---:|
 | Speedrun chassis plate (wide) with longer motor window | 1 | Verified | 217 g (aluminium 6082) |
-| Lower bulkhead | 2 | Verified | 2 x 35 g (7075) |
-| Upper bulkhead | 2 | Verified | 2 x 56 g (7075) |
+| Lower bulkhead | 2 | Verified | 2 x 34 g (7075) |
+| Upper bulkhead | 2 | Verified, new shock tower required | 2 x 56 g (7075) |
 | Speedrun top brace | 1 | Verified | 14 g (carbon) |
 | **Total** | | | **411 g** |
 
-* All parts are verified. The bulkheads have radii in the inside corners of the outer shape for CNC milling; the inside of the parts is the verified geometry (see [radii of the outer shape](cad/readme.md#radii-of-the-outer-shape)). The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
+* All parts are verified. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#edges-of-the-outer-shape)). The root radius of the shock tower wall needs a new shock tower, the stock shock tower plate does not fit. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
 * The assembly is available as a STEP file (`cad/assembly/speedrun_chassis_T410R.step`).
 
 ## Repository structure
