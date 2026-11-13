@@ -154,8 +154,8 @@ def drawing(path, p, lay, items):
 
     z = lay["z"]
     fig = plt.figure(figsize=(15, 9.5))
-    fig.suptitle("Carten T410R centre driveshaft with cup joints: stock parts, not part of the speedrun design "
-                 "(modelled for the completeness of the build)", fontsize=12, y=0.985)
+    fig.suptitle("Carten T410R centre driveshaft with cup joints: stock parts, not part of the speedrun design, "
+                 "modelled for the completeness of the build (not verified)", fontsize=12, y=0.985)
     ax = fig.add_axes([0.04, 0.55, 0.92, 0.38])
     draw(ax)
     y0, y1 = lay["shaft"]

@@ -97,12 +97,19 @@ The speedrun chassis combines the parts that are designed in this project for sp
 | [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | Verified | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
 | **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace and shock towers carbon | **417 g** |
 
+Stock parts of the Carten T410R, modelled for the completeness of the build (not part of the speedrun design, not in the mass total):
+
+| Stock part | Quantity | Directory | Status |
+|:---|---:|:---|:---|
+| [Pivot blocks of the wishbones](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design) (long and short block) | 4 | `/stock_parts/pivot_block` | Not verified |
+| [Centre driveshaft with fixed metal pins](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 1 | `/stock_parts/driveshaft` | Not verified |
+
 * The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³). Screws, bearings and the other parts of the car are not included.
 * The bulkheads are the same parts at both ends. At End A, they are rotated by 180 degrees, so that both pinions point to the middle of the car.
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
 
 ### Assembly file
-* `assembly/speedrun_chassis_T410R.step`: assembly of all 8 parts in the coordinate system of the chassis plate (STEP AP214, one solid per part).
+* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and the 5 stock parts (4 pivot blocks, centre driveshaft) in the coordinate system of the chassis plate (STEP AP214, one solid per part).
 * The assembly also contains the 4 stock pivot blocks of the wishbones (see [pivot blocks](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design)) and the stock centre driveshaft (see [centre driveshaft](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design)). These parts are not part of the speedrun design, are modelled for the completeness of the build and are not in the mass total. The picture also shows the cups on the pinions and the cups of the diff outdrives as simple bodies; they are not in the STEP file.
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [position and fit on the speedrun chassis](#position-and-fit-on-the-speedrun-chassis)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
@@ -635,7 +642,7 @@ Both shock towers are verified by the owner. The following points are not requir
 ## Pivot blocks (stock parts, not part of the speedrun design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Models of the stock pivot blocks of the Carten T410R. The pivot blocks hold the hinge pins of the wishbones and are screwed to the chassis plate from below (countersunk screws M3). They are stock parts: they are not part of the speedrun design and are not manufactured in this project. They are modelled for the completeness of the build: the assembly of the speedrun chassis contains them, so that the space below the bulkheads can be checked.
-* **Status:** Not part of the speedrun design (stock part). The dimensions are measurements of the owner, the distances of the mounting holes are taken from the hole pattern of the speedrun chassis plate, the lengths of the shoulders are estimates from photos.
+* **Status:** Not verified. Not part of the speedrun design (stock part). The dimensions are measurements of the owner, the distances of the mounting holes are taken from the hole pattern of the speedrun chassis plate, the lengths of the shoulders are estimates from photos.
 
 ![Pivot blocks: sections and top views](../photos/cad_pivot_blocks_drawing.png)
 
@@ -685,7 +692,7 @@ All files are stored in the directory `/stock_parts/pivot_block`. They are gener
 ## Centre driveshaft (stock parts, not part of the speedrun design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Model of the centre driveshaft of the Carten T410R (NHA413) between the pinions of the two bulkheads. The shaft has a ball end at each end with a metal pin (NBA255, 2.0 x 7.6 mm), which is fixed on the shaft. The pins run in the slots of the cups on the pinion shafts, so the shaft turns with the cups (cup joint). The shaft is shorter than the distance between the bottoms of the two cups, so it can move a little back and forth. The shaft is a stock part: it is not part of the speedrun design and is not manufactured in this project. It is modelled for the completeness of the build. The cups on the pinions (NBA255) and the cups of the diff outdrives are shown as simple bodies in the assembly picture only; they are not modelled as CAD files.
-* **Status:** Not part of the speedrun design (stock parts). The position is derived from the models of this project, the length is provisional (see [open points of the centre driveshaft](#open-points-of-the-centre-driveshaft)). The cross pins are taken from the manual, the other dimensions of the cups and the shaft are typical values of 1:10 touring cars and are not measured on the car.
+* **Status:** Not verified. Not part of the speedrun design (stock part). The position is derived from the models of this project, the length is provisional (see [open points of the centre driveshaft](#open-points-of-the-centre-driveshaft)). The cross pins are taken from the manual, the other dimensions of the cups and the shaft are typical values of 1:10 touring cars and are not measured on the car.
 
 ![Centre driveshaft with the cup joints](../photos/cad_driveshaft_drawing.png)
 

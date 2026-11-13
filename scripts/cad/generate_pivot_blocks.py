@@ -134,8 +134,8 @@ def drawing(path, p, solids):
         return out
 
     fig = plt.figure(figsize=(15, 9.5))
-    fig.suptitle("Carten T410R pivot blocks: stock parts, not part of the speedrun design (modelled for the "
-                 "completeness of the build)",
+    fig.suptitle("Carten T410R pivot blocks: stock parts, not part of the speedrun design, modelled for the "
+                 "completeness of the build (not verified)",
                  fontsize=12, y=0.985)
     w = p["width"]
     for row, kind in enumerate(("long", "short")):
