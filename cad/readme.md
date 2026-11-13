@@ -37,6 +37,11 @@
   * [Files of the upper bulkhead](#files-of-the-upper-bulkhead)
   * [Measurement sheet of the stock upper bulkhead](#measurement-sheet-of-the-stock-upper-bulkhead)
   * [Open points of the upper bulkhead](#open-points-of-the-upper-bulkhead)
+* [Speedrun front shock tower](#speedrun-front-shock-tower)
+  * [Design of the speedrun front shock tower](#design-of-the-speedrun-front-shock-tower)
+  * [Fit to the upper bulkhead](#fit-to-the-upper-bulkhead)
+  * [Files of the speedrun front shock tower](#files-of-the-speedrun-front-shock-tower)
+  * [Open points of the speedrun front shock tower](#open-points-of-the-speedrun-front-shock-tower)
 * [Scripts](#scripts)
   * [Regenerating the files](#regenerating-the-files)
   * [DXF generation](#dxf-generation)
@@ -57,31 +62,33 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/chassis_plate_speedrun_wide_motor10`**: Wide variant with a longer motor window for a 3660 motor (STEP, STL, DXF, PDF template, geometry data)
   * **`/top_brace_speedrun`**: New design of the top brace that matches the bulkheads of this project (STEP, STL, DXF, PDF templates, geometry data, hole table, test print STL files)
 * **`/bulkhead`**: CAD data of the bulkheads (gear boxes): lower bulkhead, upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets).
-* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads and top brace (STEP).
+* **`/shock_tower`**: New design of the front shock tower that matches the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
+* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and front shock tower (STEP).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
 
 ## Speedrun chassis
-The speedrun chassis combines the parts that are designed in this project for speeds over 100 km/h. The parts share their interfaces: the bulkheads are mounted on the hole patterns of the chassis plate, the top brace on the contact faces of both upper bulkheads.
+The speedrun chassis combines the parts that are designed in this project for speeds over 100 km/h. The parts share their interfaces: the bulkheads are mounted on the hole patterns of the chassis plate, the top brace on the contact faces of both upper bulkheads, the front shock tower on the shock tower wall of the upper bulkhead at End A.
 
-![Speedrun chassis: chassis plate, bulkheads and top brace](../photos/cad_speedrun_chassis_assembly.png)
+![Speedrun chassis: chassis plate, bulkheads, top brace and front shock tower](../photos/cad_speedrun_chassis_assembly.png)
 
 ### Parts of the speedrun chassis
 | Part | Quantity | Directory | Status | Material | Mass |
 |:---|---:|:---|:---|:---|---:|
 | [Speedrun chassis plate (wide) with longer motor window](#longer-motor-window-for-a-3660-motor) | 1 | `/chassis/chassis_plate_speedrun_wide_motor10` | Verified | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
 | [Lower bulkhead](#lower-bulkhead) | 2 | `/bulkhead` | Verified | 7075 | 2 x 34 g |
-| [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | Verified, new shock tower required | 7075 | 2 x 56 g |
+| [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | Verified | 7075 | 2 x 56 g |
 | [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | Verified | Carbon or 7075 | 14 g (carbon), 25 g (7075) |
-| **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace carbon | **411 g** |
+| [Speedrun front shock tower](#speedrun-front-shock-tower) | 1 | `/shock_tower` | Not verified | Carbon or 7075 | 4.5 g (carbon), 7.9 g (7075) |
+| **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace and shock tower carbon | **415 g** |
 
 * The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³). Screws, bearings and the other parts of the car are not included.
 * The bulkheads are the same parts at both ends. At End A, they are rotated by 180 degrees, so that both pinions point to the middle of the car.
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
 
 ### Assembly file
-* `assembly/speedrun_chassis_T410R.step`: assembly of all 6 parts in the coordinate system of the chassis plate (STEP AP214, one solid per part).
+* `assembly/speedrun_chassis_T410R.step`: assembly of all 7 parts in the coordinate system of the chassis plate (STEP AP214, one solid per part).
 * The interference check of all pairs of parts gives 0 mm³.
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
 
@@ -447,7 +454,7 @@ Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The insid
 * Lower part: 18 edges with full edge chamfers (178 mm), 18 edges with stopped edge chamfers (154 mm), 12 short edges left as they are (25 mm: edges of the small inside radii and of the narrow block under the pinion).
 * The generators list all edges that are left as they are.
 
-**Shock tower wall:** the root radius changes the interface to the shock tower. In front of the contact face, the zone above 19.8 mm is kept free (block 17.8 mm plus the root radius). The stock shock tower plate reaches down to approx. 17.8 mm and does not fit. A new shock tower that fits the upper bulkhead is planned.
+**Shock tower wall:** the root radius changes the interface to the shock tower. In front of the contact face, the zone above 19.8 mm is kept free (block 17.8 mm plus the root radius). The stock shock tower plate reaches down to approx. 17.8 mm and does not fit. The [speedrun front shock tower](#speedrun-front-shock-tower) is designed for the upper bulkhead.
 
 **Unchanged inside:** the generators build the outer shape with the edge treatment first and then cut all functional voids: gear cavity, floor opening, bearing seats, lip openings, pinion pocket, rib, holes, counterbores, recesses and the keep-out zones of the upper part (top brace, shock tower). A comparison with the model without edge treatment, which has the verified inside, gives:
 
@@ -474,7 +481,7 @@ Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The insid
 ## Upper bulkhead (new design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** CAD model of a new upper half of the gear box (bulkhead) of the Carten T410R for CNC manufacturing from 7075-T6. The shape is a new design. The interfaces follow the stock part: the lower bulkhead, the diff and pinion bearings, the shock tower and the top brace.
-* **Status:** Verified with a test print. The interfaces to the lower part and the bearings are taken from the parameter file of the lower bulkhead. The shock tower hole pattern and its height, the spacing of the top brace screws and the height of the top brace face are caliper values (U1 to U4, U7, U9, U10). The position of the shock tower contact face is an estimate from photos (U5, U6), and the position of the top brace screws along y is derived from the top brace and the chassis plate (U8). The test print confirms the part (see [measurement sheet of the stock upper bulkhead](#measurement-sheet-of-the-stock-upper-bulkhead)). The root radius of the shock tower wall was added after the test print: the stock shock tower plate does not fit, a new shock tower is planned (see [edges of the outer shape](#edges-of-the-outer-shape)).
+* **Status:** Verified with a test print. The interfaces to the lower part and the bearings are taken from the parameter file of the lower bulkhead. The shock tower hole pattern and its height, the spacing of the top brace screws and the height of the top brace face are caliper values (U1 to U4, U7, U9, U10). The position of the shock tower contact face is an estimate from photos (U5, U6), and the position of the top brace screws along y is derived from the top brace and the chassis plate (U8). The test print confirms the part (see [measurement sheet of the stock upper bulkhead](#measurement-sheet-of-the-stock-upper-bulkhead)). The root radius of the shock tower wall was added after the test print: the stock shock tower plate does not fit, the [speedrun front shock tower](#speedrun-front-shock-tower) is designed for the upper bulkhead.
 
 ![Views and sections of the upper bulkhead](../photos/cad_bulkhead_upper_preview.png)
 
@@ -488,7 +495,7 @@ The preview shows the upper part, the assembly with the lower part and two secti
 | Diff bearings (10x15x4) | Clamped between the two halves | Upper half bores 15 x 4 mm, limited only by the outer lips (opening 12.28 mm, 1.89 mm thick) | Lower part |
 | Pinion bearings (5x10x4) | Clamped between the two halves | Upper half bores 10 mm with the rib (0.9 mm wide, 0.3 mm high) between the bearings as the only axial stop, open toward the pinion pocket and at the housing end face | Lower part, user |
 | Gears | Ring gear 42T (31.93 mm), pinion 17T (14.1 mm) | Same cavities as the lower part: diff case radius 13.5 mm, ring gear radius 16.4 mm on the ring gear side (from x = 4.5 mm to 10.4 mm, 1 mm beyond the back face of the ring gear), pinion pocket radius 8.25 mm | Lower part, photo |
-| Shock tower | 3 mm carbon, 4 button head screws M3x8 (manual steps 19 and 20). Stock holes 2.9 mm, through the 5.8 mm ears | Flat contact face facing the outer side at y = -5.3 mm, 4 tapped holes M3 (through the 6 mm wall) at x = +-9.55 mm and 22.5 / 28.6 mm above the parting face. Root radius 2.0 mm on both sides of the wall. In front of the face, no material above 19.8 mm: the stock plate does not fit, a new shock tower is planned | Caliper (holes), photo (contact face) |
+| Shock tower | 3 mm carbon, 4 button head screws M3x8 (manual steps 19 and 20). Stock holes 2.9 mm, through the 5.8 mm ears | Flat contact face facing the outer side at y = -5.3 mm, 4 tapped holes M3 (through the 6 mm wall) at x = +-9.55 mm and 22.5 / 28.6 mm above the parting face. Root radius 2.0 mm on both sides of the wall. In front of the face, no material above 19.8 mm: the stock plate does not fit, the [speedrun front shock tower](#speedrun-front-shock-tower) fits | Caliper (holes), photo (contact face) |
 | Top brace (NHA432) | 2 button head screws M3x8 per bulkhead (manual step 25) into 2 raised bosses | Flat contact face 15.4 mm above the parting face, from y = 10.5 mm to the pinion end, 2 tapped holes M3 at x = +-12.8 mm, y = 14.85 mm | Caliper (height, spacing), top brace and chassis plate (y, see [fit to the bulkheads](#fit-to-the-bulkheads)) |
 | Sway bar holders | M3x6 from above onto the tabs of the lower part (manual step 23) | The upper part ends at y = -25.5 mm, 3.2 mm before the sway bar holes | Photo |
 
@@ -538,8 +545,68 @@ The measurement sheet `bulkhead_upper_measurement_sheet.pdf` shows the interface
 
 ### Open points of the upper bulkhead
 * Caliper values of the stock upper part that are not measured: U5, U6 (position of the shock tower contact face), U8 (position of the top brace screws along y), U11 (lowest edge of the shock towers), U12 to U14. The test print confirms the part, so these values are not required for manufacturing.
-* Shock tower: a new shock tower that fits the contact face and the root radius of the wall is planned. The stock shock tower plate does not fit.
+* Shock tower: the stock shock tower plate does not fit. The [speedrun front shock tower](#speedrun-front-shock-tower) is designed for the upper bulkhead; a rear shock tower is open.
 * Mass: 56 g in 7075. Straight pockets in the flat faces can reduce the mass.
+
+## Speedrun front shock tower
+* **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
+* **Description:** New front shock tower for the speedrun upper bulkhead. Flat carbon plate of 3 mm (as the stock shock towers) on the contact face of the shock tower wall, fixed with 4 button head screws M3x8 in the tapped holes of the wall. The dampers are mounted on the front face (outer end), the rod ends of the camber links on the back face (wall side), as on the car.
+* **Status:** Not verified. The damper and camber link positions are based on measurements of the stock front shock tower by the owner. The camber link holes are moved outward by 3.19 mm because of the wall of the speedrun upper bulkhead (see [design of the speedrun front shock tower](#design-of-the-speedrun-front-shock-tower)). The space for the rod ends is an estimate from photos.
+
+![Speedrun front shock tower on the speedrun bulkheads](../photos/cad_shock_tower_front_drawing.png)
+
+### Design of the speedrun front shock tower
+| Element | Position or size | Basis |
+|:---|:---|:---|
+| Mounting holes T1 to T4 | x = ±9.55 mm, 22.5 mm and 28.6 mm above the parting face, Ø3.2 mm | Tapped holes of the upper bulkhead (U1 to U3) |
+| Damper holes D1, D2 | x = ±31.65 mm, 30.6 mm above the parting face, Ø3.2 mm | Stock tower: 20.5 mm outward from the outer end of the upper mounting hole, 2 mm above it (owner) |
+| Camber link holes C1, C2 | x = ±21.24 mm, 19.1 mm above the parting face, Ø3.2 mm | Stock tower: 8.5 mm outward and 5 mm down from the top of the lower mounting hole, x = ±18.05 mm (owner); moved outward, see below |
+| Thickness | 3.0 mm carbon | Stock shock towers (spec). The upper bulkhead is designed for it: screws M3x8, 5 mm thread engagement |
+| Outline | Straight top edge 34.1 mm above the parting face, round ends R3.5 around the damper holes, straight edges down to round lobes R3.5 around the camber link holes, straight bottom edge 0.2 mm above the block in front of the wall, inside corners R1 | Design |
+| Edges | Chamfer 0.5 mm on both faces, chamfers of 0.3 mm on the holes | As the edge chamfers of the bulkheads, no sharp edges |
+| Relief on the back face | Along the bottom edge: chamfer at 45 degrees with legs of 2.05 mm, runs out to the edge chamfer over 1.5 mm beside the bulkhead | Clears the root radius of the wall (2.0 mm) by 0.18 mm |
+
+* The measurements of the owner refer to the edges of the holes of the stock tower. The model assumes holes of 3.2 mm in the stock tower (parameter `stock_hole_d`).
+* Camber link holes: at the stock position (x = ±18.05 mm), the rod ends behind the tower would collide with the wall of the speedrun upper bulkhead, which spans the full width of 34.48 mm (the stock bulkhead has two narrow ears). The holes are moved outward at the same height until a zone with a radius of 4.0 mm around the ball stud (rod end with clearance) is clear of the side faces of the bulkhead: x = 17.24 + 4.0 = 21.24 mm. The camber links become 3.19 mm shorter (turnbuckles). The inner pivot points stay at the same height and in the same plane.
+* The bottom edge lies 0.2 mm above the block in front of the wall (17.8 mm). The edge distance below the lower mounting holes is 2.9 mm.
+* Mass: 4.5 g in carbon, 7.9 g in 7075.
+
+### Fit to the upper bulkhead
+Results of the checks of `generate_shock_tower_front.py`:
+
+| Check | Result |
+|:---|:---|
+| Mounting holes on the tapped holes of the upper bulkhead | Offset 0.00 mm |
+| Interference with the upper and the lower bulkhead | 0 mm³ |
+| Contact area on the wall | 318 mm² |
+| Gap below the tower (block and root radius) | 0.20 mm |
+| Zone of the rod ends behind the tower (radius 4.0 mm, 9 mm long) | Free, 0 mm³ overlap with the bulkheads |
+| Edge distance of the holes | 2.9 mm (mounting holes), 1.9 mm (camber link and damper holes) |
+| Thin slits and walls | None |
+
+* The tower is part of the assembly of the speedrun chassis at End A (assumed front). The interference check of all parts gives 0 mm³.
+
+### Files of the speedrun front shock tower
+All files are stored in the directory `/shock_tower`. They are generated with `generate_shock_tower_front.py` (see [scripts](#scripts)).
+
+| File | Format | Use |
+|:---|:---|:---|
+| `shock_tower_front_T410R_speedrun.step` | STEP (AP214) | Solid model with the edge chamfers and the relief, for CNC manufacturing. Plate coordinates: x across the car, y height above the parting face, z = 0 back face |
+| `shock_tower_front_T410R_speedrun.stl` | STL (binary) | Triangle mesh, also for a test print |
+| `shock_tower_front_T410R_speedrun.dxf` | DXF | 2D drawing with the layers `OUTLINE` and `HOLE_THROUGH` (outline without the chamfers) |
+| `shock_tower_front_T410R_speedrun_1to1_A4.pdf`, `shock_tower_front_T410R_speedrun_1to1_A4_print97.pdf` | PDF (A4) | 1:1 templates (100 % and 97 %) to compare the holes with the stock tower and the bulkhead |
+| `shock_tower_front_geometry.json` | JSON | Geometry data: outline and holes |
+| `shock_tower_front_parameters.json` | JSON | All dimensions, each with its source and a note |
+| `shock_tower_front_hole_table.csv` | CSV | Hole table |
+
+* CNC order of the carbon plate: outline and holes from the DXF file. The edge chamfers and the relief on the back face are in the STEP file (relief: 45 degrees, 2.05 mm, along the bottom edge on the back face).
+
+### Open points of the speedrun front shock tower
+* Rod ends of the camber links: size and position behind the tower are to be measured (the zone with a radius of 4.0 mm is an estimate). With smaller rod ends, the camber link holes can move inward (parameter `rod_end_clearance_r`).
+* Camber geometry: the camber link holes are 3.19 mm further outward than on the stock tower. The effect on the camber change is to be checked on the car. Alternative with the stock position: recesses at both ends of the wall of the upper bulkhead (outer shape), as the free space beside the ears of the stock bulkhead.
+* Holes of the stock tower: the conversion of the measurements assumes holes of 3.2 mm.
+* Rear shock tower (End B): not designed yet. It needs the hole positions of the stock rear shock tower.
+* Test print with the dampers and the camber links installed.
 
 ## Scripts
 The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates (except `generate_chassis_templates.py`, which writes the templates of the chassis plate and the top brace), and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
@@ -556,7 +623,8 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_print_template.py` | Geometry data of both speedrun chassis plates and the chassis plate | Print templates of both speedrun chassis plates (option `--plate wide` or `--plate motor10`). The option `--print-scale` sets the scale of the PDF viewer. | reportlab |
 | `generate_chassis_templates.py` | Geometry data of the chassis plate and the top brace | Print templates `chassis_plate_T410R_1to1_A3.pdf`, `chassis_plate_T410R_1to1_A4x2.pdf`, `top_brace_T410R_1to1_A4.pdf` and the drawing `photos/cad_chassis_drawing.png`. The options `--print-scale` and `--suffix` generate pre-scaled templates (for example `_print97`). | matplotlib, reportlab |
 | `generate_top_brace_speedrun.py` | Geometry data of the original top brace, parameter files of the bulkheads | All files of the speedrun top brace, drawing `photos/cad_top_brace_speedrun_drawing.png`, checks of the outline and of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
-| `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
+| `generate_shock_tower_front.py` | Parameter files of the bulkheads and of the front shock tower | All files of the speedrun front shock tower, drawing `photos/cad_shock_tower_front_drawing.png`, checks of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
+| `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads and of the front shock tower, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file, geometry checks | cadquery |
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
 | `generate_bulkhead_upper.py` | Parameter files of the upper and the lower bulkhead | STEP and STL file of the upper part, test print STL file, assembly STEP file, interference check, geometry checks | cadquery |
@@ -604,6 +672,7 @@ python scripts/cad/generate_bulkhead_drawings.py
 python scripts/cad/generate_bulkhead_upper.py
 python scripts/cad/generate_bulkhead_upper_drawings.py
 python scripts/cad/generate_top_brace_speedrun.py
+python scripts/cad/generate_shock_tower_front.py
 python scripts/cad/generate_speedrun_assembly.py
 ```
 
