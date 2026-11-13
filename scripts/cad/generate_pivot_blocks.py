@@ -66,7 +66,8 @@ def block_solid(p, kind):
         s = s.fuse(box(xa, xb, -w / 2, w / 2, 0, p["shoulder_h"]))
         s = s.fuse(cyl_y(p["lobe_r"], -w / 2, w / 2, sx * c, p["pin_h"]))
     for sx in (-1, 1):
-        s = s.cut(cyl_y(p["pin_bore_d"] / 2, -w / 2 - 1, w / 2 + 1, sx * c, p["pin_h"]))
+        # blind bores of the hinge pin seats, open at y = +w/2
+        s = s.cut(cyl_y(p["pin_bore_d"] / 2, w / 2 - p["pin_bore_depth"], w / 2 + 1, sx * c, p["pin_h"]))
         s = s.cut(cyl_z(p["mount_hole_d"] / 2, -1, p["height_max"] + 1, sx * mounts / 2, 0))
     return s.clean()
 
@@ -165,18 +166,23 @@ def drawing(path, p, solids):
         ax2.add_patch(Rectangle((-length / 2, -w / 2), length, w, fc="#3b4048", ec="#1d2025", lw=0.8))
         for sx in (-1, 1):
             ax2.add_patch(Circle((sx * mounts / 2, 0), p["mount_hole_d"] / 2, fc="white", ec="#1d2025", lw=0.6))
-            ax2.plot([sx * (pins / 2 - p["pin_bore_d"] / 2)] * 2, [-w / 2, w / 2], color="#bbbbbb", lw=0.6, ls="--")
-            ax2.plot([sx * (pins / 2 + p["pin_bore_d"] / 2)] * 2, [-w / 2, w / 2], color="#bbbbbb", lw=0.6, ls="--")
+            yb = w / 2 - p["pin_bore_depth"]                     # bottom of the blind bore
+            for xe in (pins / 2 - p["pin_bore_d"] / 2, pins / 2 + p["pin_bore_d"] / 2):
+                ax2.plot([sx * xe] * 2, [yb, w / 2], color="#bbbbbb", lw=0.6, ls="--")
+            ax2.plot([sx * (pins / 2 - p["pin_bore_d"] / 2), sx * (pins / 2 + p["pin_bore_d"] / 2)], [yb, yb],
+                     color="#bbbbbb", lw=0.6, ls="--")
         ax2.annotate("", (length / 2 + 1.2, -w / 2), (length / 2 + 1.2, w / 2), arrowprops=dict(arrowstyle="<->", lw=0.8))
         ax2.text(length / 2 + 1.6, 0, f"{w:.2f}", va="center", fontsize=8)
-        ax2.set_title("Top view (hinge pin bores dashed)", fontsize=10, loc="left")
+        ax2.set_title(f"Top view (blind bores {p['pin_bore_depth']:g} deep dashed, open at the top edge)", fontsize=10,
+                      loc="left")
         ax2.set_xlim(-length / 2 - 2, length / 2 + 6)
         ax2.set_ylim(-w / 2 - 6, w / 2 + 6)
         ax2.set_aspect("equal")
         ax2.axis("off")
-    fig.text(0.04, 0.012, f"Bores {p['pin_bore_d']:g} for the hinge pins with inserts (inserts not modelled). Mounting "
-             "holes: tap drill 2.5 for the M3 countersunk screws from below through the chassis plate (assumed through). "
-             "Heights, lengths and bores: measurements of the owner; shoulder lengths from photos.", fontsize=8)
+    fig.text(0.04, 0.008, f"Bores {p['pin_bore_d']:g} x {p['pin_bore_depth']:g} deep (blind) for the hinge pins with "
+             "inserts (inserts not modelled). Mounting holes: tap drill 2.5 for the M3 countersunk screws from below\n"
+             "through the chassis plate (assumed through). Heights, lengths and bores: measurements of the owner; "
+             "shoulder lengths from photos.", fontsize=8, va="bottom")
     fig.savefig(path, dpi=110)
     plt.close(fig)
 
