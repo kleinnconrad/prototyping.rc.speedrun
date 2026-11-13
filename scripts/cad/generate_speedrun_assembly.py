@@ -98,11 +98,15 @@ def image(parts, path):
         tris.append(t)
         cols.append(np.tile(COLORS[key], (len(t), 1)))
     tris, cols = np.concatenate(tris), np.concatenate(cols)
-    fig = plt.figure(figsize=(16, 10))
-    fig.suptitle("Speedrun chassis of the Carten T410R: chassis plate, bulkheads, top brace and shock towers", fontsize=13, y=0.98)
-    views = [([0.0, 0.3, 0.68, 0.64], iso_basis(-35, 28), ""),
-             ([0.0, 0.0, 0.68, 0.3], ((-1, 0, 0), (0, 1, 0), (0, 0, 1)), "Side view"),
-             ([0.66, 0.02, 0.34, 0.88], ((0, 0, -1), (1, 0, 0), (0, 1, 0)), "Top view")]
+    fig = plt.figure(figsize=(16, 15))
+    fig.suptitle("Speedrun chassis of the Carten T410R: chassis plate, bulkheads, top brace and shock towers", fontsize=13, y=0.987)
+    top = 1 / 3                                             # overview in the upper 2/3, close-ups below
+
+    def upper(rect):
+        return [rect[0], top + rect[1] * (1 - top), rect[2], rect[3] * (1 - top)]
+    views = [(upper([0.0, 0.3, 0.68, 0.64]), iso_basis(-35, 28), ""),
+             (upper([0.0, 0.0, 0.68, 0.3]), ((-1, 0, 0), (0, 1, 0), (0, 0, 1)), "Side view"),
+             (upper([0.66, 0.02, 0.34, 0.88]), ((0, 0, -1), (1, 0, 0), (0, 1, 0)), "Top view")]
     for rect, view, title in views:
         ax = fig.add_axes(rect)
         if isinstance(view[0], tuple):
@@ -122,8 +126,31 @@ def image(parts, path):
             ax.text(lo[0], hi[1] + 1, "End B", ha="left", va="bottom", fontsize=9)
             ax.text(hi[0], hi[1] + 1, "End A", ha="right", va="bottom", fontsize=9)
             ax.set_ylim(lo[1] - 2, hi[1] + 8)
+    # close-ups of both ends, seen from the outer end: bulkheads, shock tower, end of the top brace
+    for k, (end, yb, azim) in enumerate((("End A (front): front shock tower", BULKHEAD_Y["front"], 55),
+                                         ("End B (rear): rear shock tower", BULKHEAD_Y["rear"], -125))):
+        region = cq.Solid.makeBox(124, 64, 90, cq.Vector(-62, yb - 32, -5))
+        tris_e, cols_e = [], []
+        for _, key, s in parts:
+            if s.BoundingBox().ymin > yb + 32 or s.BoundingBox().ymax < yb - 32:
+                continue
+            cut = s.intersect(region)
+            if cut.Volume() < 1e-3:
+                continue
+            t = subdivide(tess(cut, 0.02), 4.0 if key == "plate" else 1.2)
+            tris_e.append(t)
+            cols_e.append(np.tile(COLORS[key], (len(t), 1)))
+        ax = fig.add_axes([0.5 * k, 0.01, 0.5, 0.3])
+        lo, hi = draw_mesh(ax, np.concatenate(tris_e), iso_basis(azim, 22), tri_colors=np.concatenate(cols_e),
+                           depth_cue=0.3)
+        ax.set_xlim(lo[0] - 2, hi[0] + 2)
+        ax.set_ylim(lo[1] - 2, hi[1] + 2)
+        ax.set_aspect("equal")
+        ax.axis("off")
+        ax.set_title(f"{end} on the bulkheads, view from the outer end", fontsize=10, loc="left")
     handles = [Patch(color=np.clip(np.asarray(COLORS[k]) + 0.08, 0, 1), label=MATERIALS[k][0]) for k in COLORS]
-    fig.legend(handles=handles, loc="upper left", bbox_to_anchor=(0.01, 0.93), fontsize=9, frameon=False)
+    fig.legend(handles=handles, loc="upper left", bbox_to_anchor=(0.01, top + 0.93 * (1 - top)), fontsize=9,
+               frameon=False)
     fig.savefig(path, dpi=100)
     plt.close(fig)
 

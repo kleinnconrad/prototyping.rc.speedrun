@@ -10,8 +10,6 @@ on:
       - 'specs/mechanics/carten_t410r/spec_cartent410r.yaml'
       - 'specs/mechanics/wheels/spec_tires.yaml'
       - 'scripts/generate_setup_drawing.py'
-      - 'cad/shock_tower/shock_tower_front_geometry.json'
-      - 'cad/bulkhead/bulkhead_lower_parameters.json'
   workflow_dispatch:
 
 # Runs are processed one after another. Each run draws the latest state of main.
