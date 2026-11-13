@@ -29,6 +29,7 @@
   * [Test print of the lower bulkhead](#test-print-of-the-lower-bulkhead)
   * [Design of the lower bulkhead](#design-of-the-lower-bulkhead)
   * [Design notes](#design-notes)
+  * [Inside radii and relief grooves](#inside-radii-and-relief-grooves)
   * [Open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)
 * [Upper bulkhead (new design)](#upper-bulkhead-new-design)
   * [Interfaces of the upper bulkhead](#interfaces-of-the-upper-bulkhead)
@@ -70,8 +71,8 @@ The speedrun chassis combines the parts that are designed in this project for sp
 | Part | Quantity | Directory | Status | Material | Mass |
 |:---|---:|:---|:---|:---|---:|
 | [Speedrun chassis plate (wide) with longer motor window](#longer-motor-window-for-a-3660-motor) | 1 | `/chassis/chassis_plate_speedrun_wide_motor10` | Verified | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
-| [Lower bulkhead](#lower-bulkhead) | 2 | `/bulkhead` | Verified | 7075 | 2 x 35 g |
-| [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | Not verified, U5, U6 and U11 open | 7075 | 2 x 56 g |
+| [Lower bulkhead](#lower-bulkhead) | 2 | `/bulkhead` | Verified | 7075 | 2 x 34 g |
+| [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | Verified | 7075 | 2 x 55 g |
 | [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | Verified | Carbon or 7075 | 14 g (carbon), 25 g (7075) |
 | **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace carbon | **411 g** |
 
@@ -313,8 +314,8 @@ All files are stored in the directory `/chassis/top_brace_speedrun`. They are ge
 |:---|:---|:---|
 | Chassis plate | 4 countersunk screws M3x8 from below through the 2 mm chassis plate | 4 M3 holes (tap drill 2.5 mm, 8 mm deep), spacing 28.0 x 20.0 mm |
 | Upper bulkhead | 2 button head screws M3x10 on the pinion side, 2 button head screws M3x8 on the outer side | 4 bosses 4.86 mm, 2.42 mm above the parting face, M3 holes (tap drill 2.5 mm, 7 mm deep). Spacing across 18.7 mm (pinion side) and 21.6 mm (outer side), spacing along 42.6 mm |
-| Diff | 2 bearings 10x15x4 (NBA299) | Per side: outer lip 1.89 mm thick (opening 12.28 mm) and seat 15 x 4 mm, open toward the gear cavity. Inner faces of the lips 30.7 mm apart |
-| Pinion shaft | 2 bearings 5x10x4 (NBA298) | Seat 10 mm, 9.25 mm long: 2 seats of 4 mm (outer seat 4.35 mm) with a rib of 0.9 mm between the bearings, 0.3 mm high (opening 9.4 mm). The rib is the only axial stop: no shoulder at the inner end, open at the housing end face |
+| Diff | 2 bearings 10x15x4 (NBA299) | Per side: outer lip 1.89 mm thick (opening 12.28 mm) and seat 15 x 4 mm, open toward the gear cavity. Inner faces of the lips 30.7 mm apart. Relief groove 16 mm, 1.0 mm long, at the lip (see [inside radii and relief grooves](#inside-radii-and-relief-grooves)) |
+| Pinion shaft | 2 bearings 5x10x4 (NBA298) | Seat 10 mm, 9.25 mm long: 2 seats of 4 mm (outer seat 4.35 mm) with a rib of 0.9 mm between the bearings, 0.3 mm high (opening 9.4 mm). The rib is the only axial stop: no shoulder at the inner end, open at the housing end face. Relief grooves 11 mm, 1.0 mm long, on both sides of the rib |
 | Ring gear (42T, 31.93 mm) and diff case | Gear diff NBA230 | Cavity with a radius of 13.5 mm for the diff case (test print), deepening with a radius of 16.4 mm for the ring gear on the ring gear side, with a through opening in the floor (test print) |
 | Pinion gear (17T, 14.1 mm) | Pinion NBA207 | Pocket with a radius of 8.25 mm (test print) in a rectangular block, wall 1.5 mm |
 | Sway bar | 2 M3 screws | 2 tabs, 4.35 mm thick, with M3 holes (tap drill 2.5 mm), spacing 16.2 mm |
@@ -338,8 +339,8 @@ All files are stored in the directory `/bulkhead`. The STEP and STL files and th
 | Property | Value |
 |:---|:---|
 | Size (x by y by z) | 34.48 x 59.4 x 19.62 mm (with the sway bar tabs and the pinion housing) |
-| Volume | 12.3 cm³ |
-| Mass | 35 g in 7075 (2.81 g/cm³), 15 g in PLA (1.24 g/cm³) |
+| Volume | 12.2 cm³ |
+| Mass | 34 g in 7075 (2.81 g/cm³), 15 g in PLA (1.24 g/cm³) |
 
 ### Coordinate system of the lower bulkhead
 * Units are millimeters.
@@ -376,7 +377,7 @@ The measurement sheet `bulkhead_lower_measurement_sheet.pdf` documents the calip
 * No. 15 now describes the length of the diff bearing seat (4.0 mm from the lip inward). The seat has no inner shoulder.
 
 ### Test print of the lower bulkhead
-* `testprint_bulkhead_lower.stl` differs from the solid model in two points: the bearing seats are 0.2 mm larger in diameter (15.2 mm and 10.2 mm), and all M3 holes have a diameter of 2.7 mm for self-tapping screws.
+* `testprint_bulkhead_lower.stl` differs from the solid model in two points: the bearing seats are 0.2 mm larger in diameter (15.2 mm and 10.2 mm), and all M3 holes have a diameter of 2.7 mm for self-tapping screws. The test print file contains the inside radii and the relief grooves of the solid model (relief grooves 0.5 mm deeper than the enlarged seats).
 * Print orientation: bottom face on the print bed. The boss columns below the chamfers and the sway bar tabs need supports.
 * The floor below the ring gear deepening has an opening of 6.85 x 5 mm. Around the opening, the floor is 0.8 mm thick and increases toward the ends of the deepening.
 * Checks: the 4 bottom holes on the chassis plate, the diff and the pinion shaft with their bearings in the seats, the mesh of the gears, the fit of the stock upper bulkhead and the clearance to the suspension arms and pivot blocks.
@@ -397,7 +398,7 @@ Result of the second test print:
 | The part is functional. The shape is to match the upper part. | New shape of the lower part (see [design of the lower bulkhead](#design-of-the-lower-bulkhead)). The interfaces are not changed. |
 
 ### Design of the lower bulkhead
-The lower part has the same design as the upper part: the footprint of the upper part (34.48 mm wide, corner radius 6 mm, outer end at y = -25.5 mm), with flat faces only. The two parts end flush at the outer end and on the sides.
+The lower part has the same design as the upper part: the footprint of the upper part (34.48 mm wide, corner radius 6 mm, outer end at y = -25.5 mm), with flat faces and inside radii of 1.0 mm (see [inside radii and relief grooves](#inside-radii-and-relief-grooves)). The two parts end flush at the outer end and on the sides.
 
 | Section | Shape | Function |
 |:---|:---|:---|
@@ -422,6 +423,34 @@ The lower part has the same design as the upper part: the footprint of the upper
 * The ring gear is on the +x side. Seen from the pinion housing, the deepening is on the left. The bulkhead is the same part at the front and at the rear and is rotated by 180 degrees. Both pinions point to the centre shaft, so the ring gear is on the same side of the bulkhead at both ends.
 * The STEP file contains no threads. The M3 holes are modelled with the tap drill diameter of 2.5 mm. For CNC manufacturing, the threads are specified in the comment field of the order (M3, thread depth 6.5 mm for the bottom holes).
 
+### Inside radii and relief grooves
+Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The parameters `inside_corner_r`, `seat_relief_width` and `seat_relief_depth` are stored in `bulkhead_lower_parameters.json` and are used for the lower and the upper part.
+
+**Inside radii (1.0 mm):**
+* An end mill cannot cut a sharp inside corner parallel to its axis. It leaves its own radius, and it cannot enter a gap narrower than its diameter. The vertical inside corners of the outer shape have a radius of 1.0 mm (end mill 2 mm). Outside corners are not changed.
+* Lower part, 10 corners: sway bar bridges at the outer end face (4) and at the outer bosses (2), block under the pinion at the pinion end face (2) and at the pinion bosses (2). At the pinion bosses, the radius also closes the gap between the narrow block and the boss columns. This gap was 0.32 mm wide, so no end mill could enter it.
+* Upper part, 2 corners: block over the outer pinion bearing at the pinion end face.
+* The block over the outer pinion bearing projects 1.2 mm beyond the end of the footprint. This limits the radius. Between the radius and the end of the block, a flat of 0.2 mm remains.
+* The script closes the horizontal section at the end of each inside edge with the radius (offset by +1.0 mm and back by -1.0 mm) and extends the added faces to the parting face. Above the chamfers, they lie inside the body. At the corners of the footprint above the chamfers, the lower end of the radius follows the chamfer.
+
+**Relief grooves (1.0 mm long, 0.5 mm deep):**
+* At each bearing stop face, the seat has a groove next to the stop face: 16.0 mm at the diff seats (inner faces of the lips), 11.0 mm at the pinion seats (both faces of the rib), in the lower and the upper part.
+* The edges of the bearings have a chamfer of approx. 0.15 to 0.2 mm. Without a groove, a cutter with a larger corner radius leaves a radius in the corner of the seat, and the bearing does not sit flat on the stop face. At the rib between the pinion bearings (0.3 mm high), this radius would take most of the stop face. With the groove, the corner radius of the cutter lies outside the bearing.
+* The stop faces, the seat diameters and the positions of the bearings are not changed. The bearings are supported over 3.0 of 4.0 mm.
+* Cutter: up to 1.0 mm diameter, reach 8.0 mm below the parting face at the diff seats and 5.5 mm at the pinion seats.
+
+**Unchanged functions:** the generators build the outer shape first, then round the inside corners and then cut all functional voids: gear cavity, floor opening, bearing seats, lip openings, pinion pocket, holes and the keep-out zones of the upper part (top brace, shock tower plate). The radii therefore cannot change these voids. A comparison with the model without radii and grooves gives:
+
+| Check | Lower part | Upper part |
+|:---|:---|:---|
+| Material removed outside the relief grooves | 0 mm³ | 0 mm³ |
+| Material added in the cavities, bearing seats, holes and keep-out zones | 0 mm³ | 0 mm³ |
+| Material added by the radii | 8.6 mm³ in 10 pieces | 2.8 mm³ in 2 pieces |
+| Material removed by the relief grooves | 40.8 mm³ | 40.8 mm³ |
+
+* Space for the pivot blocks: each radius lies between two existing faces and does not reach lower than the material beside it. Below the chamfers on the outer side, the radii lie between the sway bar bridges and the outer bosses, from 12.85 mm above the bottom face (lower face of the bridges) and up to x = 11.6 mm (the bosses reach 13.2 mm). On the pinion side, they lie between the narrow block and the pinion bosses, from 10.6 mm above the bottom face (lower face of the narrow block) and up to x = 8.1 mm (the bosses reach 11.8 mm).
+* The interference of the lower and the upper part, and of all parts of the speedrun chassis, is 0 mm³.
+
 ### Open points of the lower bulkhead
 * **Chassis plate:** the bottom holes of the stock bulkhead are 28.0 x 20.0 mm apart. The chassis plate and the speedrun chassis plates have 28.17 x 20.22 mm (H03 to H06) and 28.13 x 20.19 mm (H28 to H31). Countersunk screws center themselves in the countersinks, so the difference of approx. 0.1 mm per hole is not compensated by clearance. The hole spacings of the carbon chassis plate are to be measured before the aluminium plate is ordered.
 * Open caliper values of the measurement sheet (nos. 21, 26, 30 to 36, 38 to 41).
@@ -434,7 +463,7 @@ The lower part has the same design as the upper part: the footprint of the upper
 ## Upper bulkhead (new design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** CAD model of a new upper half of the gear box (bulkhead) of the Carten T410R for CNC manufacturing from 7075-T6. The shape is a new design. The interfaces follow the stock part: the lower bulkhead, the diff and pinion bearings, the shock tower and the top brace.
-* **Status:** Not verified. The interfaces to the lower part and the bearings are taken from the parameter file of the lower bulkhead. The shock tower hole pattern and its height, the spacing of the top brace screws and the height of the top brace face are caliper values (U1 to U4, U7, U9, U10). The position of the shock tower contact face is an estimate from photos (accuracy approx. +-1.5 mm, U5, U6 open). The position of the top brace screws along y is derived from the top brace and the chassis plate (U8 open as a check). The test print is useful only after these values are known (see [measurement sheet of the stock upper bulkhead](#measurement-sheet-of-the-stock-upper-bulkhead)).
+* **Status:** Verified with a test print. The interfaces to the lower part and the bearings are taken from the parameter file of the lower bulkhead. The shock tower hole pattern and its height, the spacing of the top brace screws and the height of the top brace face are caliper values (U1 to U4, U7, U9, U10). The position of the shock tower contact face is an estimate from photos (U5, U6), and the position of the top brace screws along y is derived from the top brace and the chassis plate (U8). The test print confirms the part (see [measurement sheet of the stock upper bulkhead](#measurement-sheet-of-the-stock-upper-bulkhead)).
 
 ![Views and sections of the upper bulkhead](../photos/cad_bulkhead_upper_preview.png)
 
@@ -445,8 +474,8 @@ The preview shows the upper part, the assembly with the lower part and two secti
 |:---|:---|:---|:---|
 | Lower bulkhead | Parting face, 4 bosses of the lower part (4.86 mm, 2.42 mm high) | Flat underside, 4 recesses 5.06 x 2.52 mm for the bosses (locating the two halves) | Lower part |
 | Screws to the lower part | 2 button head screws M3x8 on the outer side, 2 button head screws M3x10 on the pinion side | Clearance holes 3.2 mm. Head seats 4.92 mm (outer side, on the flange) and 6.92 mm (pinion side, counterbore 6.5 mm) above the parting face: 5.5 mm thread engagement in the lower part | User, lower part |
-| Diff bearings (10x15x4) | Clamped between the two halves | Upper half bores 15 x 4 mm, limited only by the outer lips (opening 12.28 mm, 1.89 mm thick) | Lower part |
-| Pinion bearings (5x10x4) | Clamped between the two halves | Upper half bores 10 mm with the rib (0.9 mm wide, 0.3 mm high) between the bearings as the only axial stop, open toward the pinion pocket and at the housing end face | Lower part, user |
+| Diff bearings (10x15x4) | Clamped between the two halves | Upper half bores 15 x 4 mm, limited only by the outer lips (opening 12.28 mm, 1.89 mm thick), relief grooves at the lips as the lower part | Lower part |
+| Pinion bearings (5x10x4) | Clamped between the two halves | Upper half bores 10 mm with the rib (0.9 mm wide, 0.3 mm high) between the bearings as the only axial stop, open toward the pinion pocket and at the housing end face, relief grooves on both sides of the rib as the lower part | Lower part, user |
 | Gears | Ring gear 42T (31.93 mm), pinion 17T (14.1 mm) | Same cavities as the lower part: diff case radius 13.5 mm, ring gear radius 16.4 mm on the ring gear side (from x = 4.5 mm to 10.4 mm, 1 mm beyond the back face of the ring gear), pinion pocket radius 8.25 mm | Lower part, photo |
 | Shock tower | 3 mm carbon, 4 button head screws M3x8 (manual steps 19 and 20). Stock holes 2.9 mm, through the 5.8 mm ears | Flat contact face facing the outer side at y = -5.3 mm, 4 tapped holes M3 (through the 6 mm wall) at x = +-9.55 mm and 22.5 / 28.6 mm above the parting face. In front of the face, no material above 17.8 mm | Caliper (holes), photo (contact face) |
 | Top brace (NHA432) | 2 button head screws M3x8 per bulkhead (manual step 25) into 2 raised bosses | Flat contact face 15.4 mm above the parting face, from y = 10.5 mm to the pinion end, 2 tapped holes M3 at x = +-12.8 mm, y = 14.85 mm | Caliper (height, spacing), top brace and chassis plate (y, see [fit to the bulkheads](#fit-to-the-bulkheads)) |
@@ -456,7 +485,7 @@ The preview shows the upper part, the assembly with the lower part and two secti
 * The upper part is the same at the front and at the rear, like the lower part. The front and the rear shock tower use the same 4 holes.
 
 ### Design of the upper bulkhead
-The upper part is a prismatic block: the footprint of the lower part (34.48 mm wide, corner radius 6 mm) is extruded to 4 flat levels along y. All outer faces are flat. The only curved faces are the bores and the cavities, which follow the lower part.
+The upper part is a prismatic block: the footprint of the lower part (34.48 mm wide, corner radius 6 mm) is extruded to 4 flat levels along y. All outer faces are flat, apart from the inside radii of 1.0 mm at the block over the outer pinion bearing (see [inside radii and relief grooves](#inside-radii-and-relief-grooves)). The only other curved faces are the bores and the cavities, which follow the lower part.
 
 | Section (y) | Level above the parting face | Function |
 |:---|:---|:---|
@@ -469,11 +498,11 @@ The upper part is a prismatic block: the footprint of the lower part (34.48 mm w
 
 * The interference check of the assembly of the lower and the upper part gives 0 mm³.
 * The ring gear cavity of the upper part ends at x = 10.4 mm (lower part: 11.35 mm). Up to 11.35 mm, the wall to the tapped hole of the top brace screw was only 0.2 mm. It is now 1.15 mm.
-* Size 34.48 x 53.4 x 31.5 mm, volume 19.8 cm³, mass 56 g in 7075 (2.81 g/cm³), 25 g in PLA.
+* Size 34.48 x 53.4 x 31.5 mm, volume 19.7 cm³, mass 55 g in 7075 (2.81 g/cm³), 24 g in PLA.
 * The wall is 6 mm thick: the screws M3x8 through the 3 mm shock tower have 5 mm thread engagement. The material above the thread of the upper holes is 1.4 mm (wall top at the height of the stock ears, U10).
 * The block over the ring gear is 17.8 mm high, equal to the zone kept free for the shock tower plate in front of the wall. The cover over the ring gear cavity is 1.4 mm directly behind the wall and 2.5 mm at the contact face.
 * The mass is higher than with shells that follow the gears. Straight pockets in the flat faces can reduce it, if required.
-* Manufacturing: 3 setups on a 3-axis machine (underside with the bores and cavities, top with the levels and the vertical holes, outer side with the 4 shock tower holes). The STEP file contains no threads: the tapped holes are modelled with the tap drill diameter of 2.5 mm.
+* Manufacturing: 3 setups on a 3-axis machine (underside with the bores and cavities, top with the levels and the vertical holes, outer side with the 4 shock tower holes). The STEP file contains no threads: the tapped holes are modelled with the tap drill diameter of 2.5 mm. Inside radii and relief grooves: see [inside radii and relief grooves](#inside-radii-and-relief-grooves).
 
 ### Files of the upper bulkhead
 All files are stored in the directory `/bulkhead`. The files are generated from the parameter files of the upper and the lower part (see [scripts](#scripts)).
@@ -497,10 +526,8 @@ The measurement sheet `bulkhead_upper_measurement_sheet.pdf` shows the interface
 * The photos are stored as `photos/bulkhead_upper_stock_end_view.jpg`, `photos/bulkhead_upper_stock_side_view.jpg` and `photos/bulkhead_upper_stock_top_view.jpg`.
 
 ### Open points of the upper bulkhead
-* Open caliper values of the stock upper part: U5, U6 (position of the shock tower contact face), U8 (position of the top brace screws along y), U11 (lowest edge of the shock towers), U12 to U14.
-* Lowest edge of the shock tower plates: the block in front of the wall is 17.8 mm high. If a shock tower plate reaches lower, the block in front of the wall is to be lowered (the ring gear cavity requires at least 15.3 mm plus the wall at the contact face).
-* Top brace: the end of the top brace is assumed at y = 11.0 mm. The shape of its end (hexagon and slot) is not checked against the block.
-* Mass: 56 g in 7075. Straight pockets are possible after the interfaces are confirmed.
+* Caliper values of the stock upper part that are not measured: U5, U6 (position of the shock tower contact face), U8 (position of the top brace screws along y), U11 (lowest edge of the shock towers), U12 to U14. The test print confirms the part, so these values are not required for manufacturing.
+* Mass: 55 g in 7075. Straight pockets in the flat faces can reduce the mass.
 
 ## Scripts
 The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates (except `generate_chassis_templates.py`, which writes the templates of the chassis plate and the top brace), and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
@@ -551,7 +578,9 @@ python scripts/cad/generate_chassis_templates.py --print-scale 0.97 --suffix _pr
 
 Both generators of the bulkheads check the solid after each run:
 * **Enclosure check:** the intended openings (parting face, lip openings, end of the pinion seat, floor opening below the ring gear) are closed with plugs. The gear cavity must then be a closed void. If it is not, the part has an unwanted opening to the outside.
-* **Thin slits and walls:** faces without a common edge that are closer than 0.25 mm (exact distance between the faces).
+* **Thin slits and walls:** faces without a common edge that are closer than 0.25 mm (exact distance between the faces). Each pair is reported as a slit (void between the faces), a wall (material between the faces) or a narrow face (the faces are separated by other faces, not by a gap, for example the flat of 0.2 mm between a radius and the end of a block). In a slit or a wall, the point between the two faces is about half the distance away from the surface. Current result: lower part 6 and upper part 2 narrow faces at the inside radii, no slits and no walls.
+* **Inside corners:** number of vertical inside corners without a radius. Current result: 0 in both parts.
+* **Functional check:** comparison with the model without inside radii and relief grooves (see [inside radii and relief grooves](#inside-radii-and-relief-grooves)). Material may be removed only in the relief grooves, and the added material must not lie in the functional voids or lower or higher than the material beside it.
 * **Interference** of the lower and the upper part (upper generator).
 
 The following commands regenerate the files of the bulkheads from the parameter files (lower part first) and the files of the speedrun top brace and the assembly of the speedrun chassis:

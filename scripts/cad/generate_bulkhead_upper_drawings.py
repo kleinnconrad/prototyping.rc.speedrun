@@ -103,8 +103,7 @@ def draw_sections(ax, items, origin, normal, right, up_dir):
 def preview(path, lp, up, lower, upper):
     zc, yd = lp["axis_z"], lp["diff_axis_y"]
     fig = plt.figure(figsize=(15, 10))
-    fig.suptitle("Carten T410R upper bulkhead, new design (shock tower holes and top brace height measured, "
-                 "contact face and top brace position not yet measured)", fontsize=12, y=0.985)
+    fig.suptitle("Carten T410R upper bulkhead, new design (verified)", fontsize=12, y=0.985)
     for rect, view, title in (([0.0, 0.5, 0.33, 0.44], iso_basis(-55, 30), "Upper part, view from the outer side"),
                               ([0.33, 0.5, 0.33, 0.44], iso_basis(125, 30), "Upper part, view from the pinion side"),
                               ([0.02, 0.03, 0.3, 0.42], iso_basis(-120, -40), "Upper part, underside")):

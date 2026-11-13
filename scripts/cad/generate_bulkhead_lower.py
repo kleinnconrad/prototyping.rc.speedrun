@@ -5,8 +5,10 @@ intersection of the footprint of the upper part (extruded in z) and the side
 profile (extruded in x): a flat contact face on the chassis plate and one
 straight chamfer per side, below which the pivot blocks of the wishbones are
 mounted. A rectangular block under the pinion, the bosses for the upper
-bulkhead and the tabs for the sway bar mounts are added. The gear cavity, the
-bearing seats and the M3 holes are cut.
+bulkhead and the tabs for the sway bar mounts are added. The vertical inside
+corners are rounded with inside_corner_r (end mill radius). Then the gear cavity,
+the bearing seats with the relief grooves at the stop faces and the M3 holes are
+cut, so the radii cannot change them.
 
 Coordinate system: origin at the centre of the 4 bottom holes on the bottom face,
 x along the diff axis, +y toward the pinion, z = 0 bottom face.
@@ -16,12 +18,15 @@ Usage (from the root directory of the repository):
 
 The script writes the STEP and STL file of the part (nominal dimensions, for CNC
 manufacturing) and an STL file for a test print (bearing seats enlarged by
-print_seat_allowance, M3 holes with print_hole_d for self-tapping screws).
+print_seat_allowance, M3 holes with print_hole_d for self-tapping screws). It
+checks the solid and compares it with the model without inside radii and relief
+grooves (functional check).
 
 Requires the package cadquery (pip install cadquery).
 """
 import argparse
 import json
+import math
 
 import cadquery as cq
 
@@ -53,28 +58,41 @@ def box(x0, x1, y0, y1, z0, z1):
     return cq.Solid.makeBox(x1 - x0, y1 - y0, z1 - z0, cq.Vector(x0, y0, z0))
 
 
-def bulkhead_lower(p, test_print=False):
-    """Build the solid (cadquery Workplane) from the parameters."""
+def boss_positions(p):
+    """Positions (x, y) of the 4 bosses for the screws of the upper bulkhead: pinion side,
+    outer side (the two pairs have different spacings)."""
+    bosses = [(sx * p["top_boss_x_pinion"], p["top_boss_y_pinion"]) for sx in (-1, 1)]
+    bosses += [(sx * p["top_boss_x_outer"], p["top_boss_y_outer"]) for sx in (-1, 1)]
+    return bosses
+
+
+def side_profile_lower(p):
+    """Side profile of the body (y, z), extruded in x over the full width: flat contact face on
+    the chassis plate and one straight chamfer per side up to a short end face below the parting
+    face (space for the pivot blocks below the chamfers)."""
+    zc, w = p["axis_z"], p["body_half_width"]
+    y0, y1 = p["body_y_outer_end"], p["body_y_pinion_end"]
+    a, hb, he = p["base_half_length"], p["base_height"], p["end_face_h"]
+    pts = [(y0, zc), (y0, zc - he), (-a, hb), (-a, 0.0), (a, 0.0), (a, hb), (y1, zc - he), (y1, zc)]
+    return cq.Workplane("YZ").polyline(pts).close().extrude(w + 5, both=True)
+
+
+def outer_body_lower(p):
+    """Outer shape of the lower part (cadquery Workplane): body, blocks, tabs and bosses,
+    before the inside corners are rounded and the functional voids are cut."""
     zc = p["axis_z"]
-    yd = p["diff_axis_y"]
     w = p["body_half_width"]
-    seat_add = p["print_seat_allowance"] if test_print else 0.0
-    hole_d = p["print_hole_d"] if test_print else None
 
     # body: footprint of the upper part, extruded to the parting face
     y0, y1 = p["body_y_outer_end"], p["body_y_pinion_end"]
     plan = (cq.Workplane("XY").center(0, (y0 + y1) / 2)
             .rect(2 * w, y1 - y0).extrude(zc + 5).edges("|Z").fillet(p["body_corner_r"]))
 
-    # body: side profile (y, z), flat contact face on the chassis plate and one straight chamfer
-    # per side up to a short end face (space for the pivot blocks below the chamfers)
-    a, hb, he = p["base_half_length"], p["base_height"], p["end_face_h"]
-    pts = [(y0, zc), (y0, zc - he), (-a, hb), (-a, 0.0), (a, 0.0), (a, hb), (y1, zc - he), (y1, zc)]
-    side = cq.Workplane("YZ").polyline(pts).close().extrude(w + 5, both=True)
-    body = plan.intersect(side)
+    body = plan.intersect(side_profile_lower(p))
 
     # stepped block under the pinion: wide and deep under the pinion pocket, narrow under the
     # pinion seats and beyond the end of the footprint (outer pinion bearing)
+    a = p["base_half_length"]
     yp_in = p["pinion_seat_y_inner"]
     yp_end = yp_in + p["pinion_seat_length"]
     k = p["pinion_pocket_r"] + p["pinion_pocket_wall"]
@@ -93,19 +111,175 @@ def bulkhead_lower(p, test_print=False):
     # remove everything above the parting face
     body = body.cut(cq.Workplane().add(box(-BIG, BIG, -BIG, BIG, zc, BIG)))
 
-    # bosses for the screws of the upper bulkhead (the two pairs have different spacings)
+    # bosses for the screws of the upper bulkhead
     br = p["top_boss_d"] / 2
     ztop = zc + p["top_boss_protrusion"]
-    bosses = [(sx * p["top_boss_x_pinion"], p["top_boss_y_pinion"]) for sx in (-1, 1)]
-    bosses += [(sx * p["top_boss_x_outer"], p["top_boss_y_outer"]) for sx in (-1, 1)]
-    for (x, y) in bosses:
+    for (x, y) in boss_positions(p):
         body = body.union(cq.Workplane().add(cyl_z(br, p["top_boss_z_base"], ztop, x, y)))
+    return body
 
-    # diff bearing seats: limited only by the outer lip, open toward the gear cavity
+
+def concave_vertical_edges(solid, eps=0.01, n=72, limit=0.55):
+    """Straight edges parallel to z with an inside (concave) angle between their two faces.
+
+    A small circle around the middle of the edge (in the xy plane) is tested: at an inside
+    corner, more than half of the circle lies in the material (3/4 at a 90 degree corner, 1/2
+    at a tangent transition, 1/4 at an outside corner)."""
+    from OCP.BRepClass3d import BRepClass3d_SolidClassifier
+    from OCP.TopAbs import TopAbs_IN
+    from OCP.gp import gp_Pnt
+    clf = BRepClass3d_SolidClassifier(solid.wrapped)
+    found = []
+    for e in solid.Edges():
+        if e.geomType() != "LINE" or abs(e.tangentAt(0.5).z) < 0.999:
+            continue
+        m = e.positionAt(0.5)
+        k = 0
+        for i in range(n):
+            ang = 2 * math.pi * i / n
+            clf.Perform(gp_Pnt(m.x + eps * math.cos(ang), m.y + eps * math.sin(ang), m.z), 1e-7)
+            k += clf.State() == TopAbs_IN
+        if k / n > limit:
+            found.append(e)
+    return found
+
+
+def plane_section(solid, z):
+    """Faces of the section of the solid with the horizontal plane at the height z."""
+    plane = cq.Face.makePlane(2 * BIG, 2 * BIG, basePnt=cq.Vector(0, 0, z), dir=cq.Vector(0, 0, 1))
+    return solid.intersect(plane).Faces()
+
+
+def closing_2d(faces, r):
+    """Closing of horizontal faces with the radius r: offset by +r, union, offset by -r.
+
+    The result is the shape that an end mill with the radius r leaves: inside corners are
+    rounded with r, gaps narrower than 2 r are filled, outside corners are not changed."""
+    def offset(fs, d):
+        out = None
+        for f in fs:
+            if f.innerWires():
+                raise ValueError("closing_2d: faces with holes are not supported")
+            for wire in f.outerWire().offset2D(d, "arc"):
+                g = cq.Face.makeFromWires(wire)
+                out = g if out is None else out.fuse(g)
+        return out.clean().Faces()
+    return offset(offset(faces, r), -r)
+
+
+def round_inside_corners(body, r, zc, envelope=None):
+    """Round the vertical inside corners of the outer shape with the radius r.
+
+    An end mill cannot cut a sharp inside corner parallel to its axis: it leaves its own
+    radius, and it cannot enter a gap narrower than its diameter. For each vertical inside
+    edge, the section at the end of the edge away from the parting face (zc) is closed with
+    the radius r (see closing_2d). The added faces next to the edge are extruded from there
+    to the parting face. Above the chamfers, they lie inside the body. The fillets add material
+    only in the inside corners and not beyond the end of the edge, with one exception: where a
+    fillet runs onto a wall that reaches further (the footprint corner above a chamfer), its end
+    follows the envelope (side profile of the body), at most r beyond the end of the edge."""
+    if r <= 0:
+        return body
+    s = body.val()
+    levels = {}
+    for e in concave_vertical_edges(s):
+        z0, z1 = sorted((e.startPoint().z, e.endPoint().z))
+        zf = z0 if abs(z0 - zc) > abs(z1 - zc) else z1      # end away from the parting face
+        levels.setdefault(round(zf, 6), []).append(e.positionAt(0.5))
+    fills = []
+    for zf, mids in levels.items():
+        zs = zf + 0.01 if zf < zc else zf - 0.01            # section just inside the edge
+        sec = plane_section(s, zs)
+        sec_shape = sec[0]
+        for f in sec[1:]:
+            sec_shape = sec_shape.fuse(f)
+        for f in closing_2d(sec, r):
+            for piece in f.cut(sec_shape).Faces():
+                if piece.Area() < 1e-4:
+                    continue                                # numerical slivers along unchanged edges
+                if min(piece.distance(cq.Vertex.makeVertex(m.x, m.y, zs)) for m in mids) > 1e-3:
+                    continue                                # not at an inside edge of this level
+                fills.append(prism_z(piece, zf, zc))
+                if envelope is not None:
+                    ext = prism_z(piece, zf - r if zf < zc else zf + r, zf).intersect(envelope)
+                    if ext.Volume() > 1e-9:
+                        fills.append(ext)
+    for fill in fills:
+        s = s.fuse(fill)
+    return cq.Workplane().add(s.clean())
+
+
+def prism_z(face, za, zb):
+    """Prism of a horizontal face between the heights za and zb."""
+    face = face.translate(cq.Vector(0, 0, za - face.Center().z))
+    return cq.Solid.extrudeLinear(face.outerWire(), face.innerWires(), cq.Vector(0, 0, zb - za))
+
+
+def relief_grooves(p, seat_add=0.0):
+    """Relief grooves at the bearing stop faces: the inner faces of the two diff lips and both
+    faces of the pinion rib (lower and upper part).
+
+    Each groove is a short bore with the seat diameter plus 2 x seat_relief_depth, inside the
+    seat and next to the stop face. The corner radius of the cutter then lies outside the
+    bearing, and the bearing sits flat on the stop face. The stop faces and the seat diameters
+    are not changed."""
+    wg, dg = p.get("seat_relief_width", 0.0), p.get("seat_relief_depth", 0.0)
+    if wg <= 0 or dg <= 0:
+        return []
+    zc, yd = p["axis_z"], p["diff_axis_y"]
+    xl = p["diff_lip_inner_x"]
+    rs = (p["diff_bearing"][1] + seat_add) / 2
+    rp = (p["pinion_bearing"][1] + seat_add) / 2
+    yr0 = p["pinion_seat_y_inner"] + p["pinion_bearing"][2]
+    yr1 = yr0 + p["pinion_rib_t"]
+    grooves = []
+    for sx in (-1, 1):
+        xa, xb = sorted((sx * (xl - wg), sx * xl))
+        grooves.append(cyl_x(rs + dg, xa, xb, yd, zc))
+    grooves.append(cyl_y(rp + dg, yr0 - wg, yr0, 0.0, zc))
+    grooves.append(cyl_y(rp + dg, yr1, yr1 + wg, 0.0, zc))
+    return grooves
+
+
+def bearing_voids(p, seat_add=0.0):
+    """Bearing seats and openings of the lower and the upper part: diff bearing seats (limited
+    only by the outer lips, open toward the gear cavity), lip openings, pinion pocket, pinion
+    bearing seats with the rib between them, relief grooves at the stop faces."""
+    zc, yd, w = p["axis_z"], p["diff_axis_y"], p["body_half_width"]
     xl = p["diff_lip_inner_x"]                 # inner face of the outer lip
     xs = xl - p["diff_seat_width"]             # inner end of the seat
-    d_out = p["diff_bearing"][1]
-    rs = (d_out + seat_add) / 2
+    rs = (p["diff_bearing"][1] + seat_add) / 2
+    voids = []
+    for sx in (-1, 1):
+        xa, xb = sorted((sx * (xs - 0.01), sx * xl))
+        voids.append(cyl_x(rs, xa, xb, yd, zc))
+        xa, xb = sorted((sx * (xl - 0.01), sx * (w + 5)))
+        voids.append(cyl_x(p["diff_lip_d"] / 2, xa, xb, yd, zc))
+
+    # pinion pocket up to the inner end of the pinion seat (no shoulder in front of the bearings).
+    # In the lower part, the pocket ends exactly at the end of the wide block below it: a pocket
+    # that runs past the block leaves a slit through the bottom.
+    yp_in = p["pinion_seat_y_inner"]
+    yp_end = yp_in + p["pinion_seat_length"]
+    voids.append(cyl_y(p["pinion_pocket_r"], p["pinion_pocket_y_min"], yp_in, 0.0, zc))
+    # pinion bearing seats: inner bearing, rib, outer bearing
+    rp = (p["pinion_bearing"][1] + seat_add) / 2
+    yr0 = yp_in + p["pinion_bearing"][2]       # rib between the two bearings
+    yr1 = yr0 + p["pinion_rib_t"]
+    voids.append(cyl_y(rp, yp_in - 0.01, yr0, 0.0, zc))
+    voids.append(cyl_y(p["pinion_rib_d"] / 2, yr0 - 0.01, yr1 + 0.01, 0.0, zc))
+    voids.append(cyl_y(rp, yr1, yp_end + 5, 0.0, zc))
+    return voids + relief_grooves(p, seat_add)
+
+
+def voids_lower(p, test_print=False):
+    """Functional voids of the lower part: gear cavity, floor opening, bearing seats with the
+    relief grooves, M3 holes."""
+    zc, yd = p["axis_z"], p["diff_axis_y"]
+    seat_add = p["print_seat_allowance"] if test_print else 0.0
+    hole_d = p["print_hole_d"] if test_print else None
+    xs = p["diff_lip_inner_x"] - p["diff_seat_width"]
+    voids = []
 
     # gear cavity: diff case between the bearing seats, deepening for the ring gear on one side
     floor = box(-BIG, BIG, -BIG, BIG, p["floor_z"], BIG)
@@ -113,50 +287,76 @@ def bulkhead_lower(p, test_print=False):
     s = 1 if p["ring_gear_side"] > 0 else -1
     xa, xb = sorted((s * p["ring_recess_x_inner"], s * min(p["ring_recess_x_outer"], xs)))
     cav = cav.fuse(cyl_x(p["ring_recess_r"], xa, xb, yd, zc))
-    cav = cav.intersect(floor)
-    body = body.cut(cq.Workplane().add(cav))
+    voids.append(cav.intersect(floor))
 
     # through opening in the floor below the ring gear deepening (closed by the chassis plate)
     hl = p.get("ring_floor_opening_half_length", 0.0)
     if hl > 0:
-        xa, xb = sorted((s * p["ring_recess_x_inner"], s * min(p["ring_recess_x_outer"], xs)))
         window = (cq.Workplane("XY").box(xb - xa, 2 * hl, p["floor_z"] + 4.0, centered=False)
                   .translate((xa, yd - hl, -1.0)).edges("|Z").fillet(p["ring_floor_opening_r"]))
-        body = body.cut(window)
+        voids.append(window.val())
 
-    for sx in (-1, 1):
-        xa, xb = sorted((sx * (xs - 0.01), sx * xl))
-        body = body.cut(cq.Workplane().add(cyl_x(rs, xa, xb, yd, zc)))
-        xa, xb = sorted((sx * (xl - 0.01), sx * (w + 5)))
-        body = body.cut(cq.Workplane().add(cyl_x(p["diff_lip_d"] / 2, xa, xb, yd, zc)))
-
-    # pinion pocket up to the inner end of the pinion seat (no shoulder in front of the bearings).
-    # The pocket ends exactly at the end of the wide block below it: a pocket that runs past
-    # the block leaves a slit through the bottom.
-    body = body.cut(cq.Workplane().add(cyl_y(p["pinion_pocket_r"], p["pinion_pocket_y_min"],
-                                             yp_in, 0.0, zc)))
-    # pinion bearing seats: inner bearing, rib, outer bearing
-    rp = (p["pinion_bearing"][1] + seat_add) / 2
-    bp = p["pinion_bearing"][2]
-    yr0 = yp_in + bp                           # rib between the two bearings
-    yr1 = yr0 + p["pinion_rib_t"]
-    body = body.cut(cq.Workplane().add(cyl_y(rp, yp_in - 0.01, yr0, 0.0, zc)))
-    body = body.cut(cq.Workplane().add(cyl_y(p["pinion_rib_d"] / 2, yr0 - 0.01, yr1 + 0.01, 0.0, zc)))
-    body = body.cut(cq.Workplane().add(cyl_y(rp, yr1, yp_end + 5, 0.0, zc)))
+    voids += bearing_voids(p, seat_add)
 
     # M3 holes
     hx, hy = p["bottom_hole_dx"] / 2, p["bottom_hole_dy"] / 2
     r = (hole_d or p["bottom_hole_d"]) / 2
     for sx in (-1, 1):
         for sy in (-1, 1):
-            body = body.cut(cq.Workplane().add(cyl_z(r, -1.0, p["bottom_hole_depth"], sx * hx, sy * hy)))
+            voids.append(cyl_z(r, -1.0, p["bottom_hole_depth"], sx * hx, sy * hy))
+    ztop = zc + p["top_boss_protrusion"]
     r = (hole_d or p["top_hole_d"]) / 2
-    for (x, y) in bosses:
-        body = body.cut(cq.Workplane().add(cyl_z(r, ztop - p["top_hole_depth"], ztop + 1, x, y)))
+    for (x, y) in boss_positions(p):
+        voids.append(cyl_z(r, ztop - p["top_hole_depth"], ztop + 1, x, y))
     r = (hole_d or p["swaybar_hole_d"]) / 2
     for sx in (-1, 1):
-        body = body.cut(cq.Workplane().add(cyl_z(r, zc - tt - 1, zc + 1, sx * tx, ty)))
+        voids.append(cyl_z(r, zc - p["swaybar_tab_t"] - 1, zc + 1, sx * p["swaybar_hole_x"],
+                           p["swaybar_hole_y"]))
+    return voids
+
+
+def bulkhead_lower(p, test_print=False):
+    """Build the solid (cadquery Workplane) from the parameters: outer shape, rounded inside
+    corners, functional voids. The voids are cut last, so the radii cannot change them."""
+    body = round_inside_corners(outer_body_lower(p), p.get("inside_corner_r", 0.0), p["axis_z"],
+                                envelope=side_profile_lower(p).val())
+    for v in voids_lower(p, test_print):
+        body = body.cut(cq.Workplane().add(v))
     return body
+
+
+def functional_check(solid, ref, voids, grooves, r):
+    """Compare the solid with the reference solid without the inside radii and the relief grooves
+    (inside_corner_r = 0, seat_relief_width = 0). Returns (ok, report lines).
+
+    * Removed material: must lie inside the relief grooves (outside the seat diameters, between
+      the stop faces and seat_relief_width into the seats).
+    * Added material (fillets of the inside corners): must not lie in the functional voids
+      (cavities, bearing seats, lip openings, holes, keep-out zones). Each added piece must lie
+      within the height range of the material beside it (within r): no fillet reaches lower or
+      higher than the existing faces next to it, for example into the space of the pivot blocks."""
+    added, removed = solid.cut(ref), ref.cut(solid)
+    groove_shape = None
+    for g in grooves:
+        groove_shape = g if groove_shape is None else groove_shape.fuse(g)
+    removed_outside = removed.cut(groove_shape).Volume() if groove_shape else removed.Volume()
+    added_in_voids = sum(added.intersect(v).Volume() for v in voids)
+    pieces = added.Solids()
+    ok = removed_outside < 1e-3 and added_in_voids < 1e-3
+    lines = ["  comparison with the model without inside radii and relief grooves:",
+             f"    removed material (relief grooves): {removed.Volume():.2f} mm3, outside the grooves: "
+             f"{removed_outside:.4f} mm3",
+             f"    added material (inside radii): {added.Volume():.2f} mm3 in {len(pieces)} pieces, inside the "
+             f"cavities, bores, holes and keep-out zones: {added_in_voids:.4f} mm3"]
+    for sol in sorted(pieces, key=lambda q: (q.BoundingBox().ymin, q.BoundingBox().xmin)):
+        bb = sol.BoundingBox()
+        near = ref.intersect(box(bb.xmin - r, bb.xmax + r, bb.ymin - r, bb.ymax + r, -BIG, BIG)).BoundingBox()
+        inside = bb.zmin >= near.zmin - 1e-6 and bb.zmax <= near.zmax + 1e-6
+        ok = ok and inside
+        lines.append(f"      x {bb.xmin:6.2f} to {bb.xmax:6.2f}, y {bb.ymin:6.2f} to {bb.ymax:6.2f}, "
+                     f"z {bb.zmin:5.2f} to {bb.zmax:5.2f}, {sol.Volume():5.2f} mm3 (material beside it: "
+                     f"z {near.zmin:5.2f} to {near.zmax:5.2f}{'' if inside else ', OUTSIDE'})")
+    return ok, lines
 
 
 def thin_gaps(solid, limit=0.25):
@@ -164,10 +364,19 @@ def thin_gaps(solid, limit=0.25):
     closer than limit (exact distance between the faces).
 
     Returns (kind, distance, point) per pair: kind "slit" (no material between the closest
-    points, an unwanted opening or step) or "wall" (material between them, a thin wall).
+    points, an unwanted opening or step), "wall" (material between them, a thin wall) or
+    "narrow face" (the point between the two faces lies on the surface or closer to it than a
+    quarter of the distance: the faces are separated by other faces, not by a gap, for example
+    the short flat between a radius and the end of a block). In a slit or a wall, the point
+    between the two faces is about half the distance away from the surface.
     """
+    from OCP.BRepClass3d import BRepClass3d_SolidClassifier
     from OCP.BRepExtrema import BRepExtrema_DistShapeShape
+    from OCP.TopAbs import TopAbs_IN, TopAbs_OUT
+    from OCP.gp import gp_Pnt
+    clf = BRepClass3d_SolidClassifier(solid.wrapped)
     faces = solid.Faces()
+    surface = cq.Compound.makeCompound(faces)
     boxes = [f.BoundingBox() for f in faces]
     found = []
     for a in range(len(faces)):
@@ -182,7 +391,12 @@ def thin_gaps(solid, limit=0.25):
                 continue                     # touching faces (common edge or vertex) or far apart
             p1, p2 = ext.PointOnShape1(1), ext.PointOnShape2(1)
             mid = cq.Vector((p1.X() + p2.X()) / 2, (p1.Y() + p2.Y()) / 2, (p1.Z() + p2.Z()) / 2)
-            kind = "wall" if solid.isInside(mid) else "slit"
+            clf.Perform(gp_Pnt(mid.x, mid.y, mid.z), 1e-6)
+            state = clf.State()
+            if cq.Vertex.makeVertex(mid.x, mid.y, mid.z).distance(surface) < 0.25 * d:
+                kind = "narrow face"         # other faces lie between the two faces, close to the gap
+            else:
+                kind = "wall" if state == TopAbs_IN else ("slit" if state == TopAbs_OUT else "narrow face")
             found.append((kind, round(d, 3), (round(mid.x, 2), round(mid.y, 2), round(mid.z, 2))))
     return found
 
@@ -250,6 +464,11 @@ def main():
     print(f"  check for thin slits and walls (faces closer than 0.25 mm): {len(gaps)} found")
     for g in gaps:
         print(f"    {g[0]}: {g[1]} mm at {g[2]}")
+    print(f"  vertical inside corners without radius: {len(concave_vertical_edges(s))}")
+    ref = bulkhead_lower(dict(p, inside_corner_r=0.0, seat_relief_width=0.0)).val()
+    ok, lines = functional_check(s, ref, voids_lower(p), relief_grooves(p), p["inside_corner_r"])
+    print("\n".join(lines))
+    print(f"  functional check: {'passed' if ok else 'FAILED'}")
 
 
 if __name__ == "__main__":

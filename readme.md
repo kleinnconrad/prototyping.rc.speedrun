@@ -49,12 +49,12 @@ The speedrun chassis is designed in this project for speeds over 100 km/h. It co
 | Part | Quantity | Status | Mass |
 |:---|---:|:---|---:|
 | Speedrun chassis plate (wide) with longer motor window | 1 | Verified | 217 g (aluminium 6082) |
-| Lower bulkhead | 2 | Verified | 2 x 35 g (7075) |
-| Upper bulkhead | 2 | Not verified | 2 x 56 g (7075) |
+| Lower bulkhead | 2 | Verified | 2 x 34 g (7075) |
+| Upper bulkhead | 2 | Verified | 2 x 55 g (7075) |
 | Speedrun top brace | 1 | Verified | 14 g (carbon) |
 | **Total** | | | **411 g** |
 
-* The chassis plate, the lower bulkheads and the top brace are verified. The upper bulkhead is not verified yet. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
+* All parts are verified. The bulkheads have inside radii of 1.0 mm and relief grooves at the bearing stop faces for CNC milling (see [inside radii and relief grooves](cad/readme.md#inside-radii-and-relief-grooves)). The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
 * The assembly is available as a STEP file (`cad/assembly/speedrun_chassis_T410R.step`).
 
 ## Repository structure
