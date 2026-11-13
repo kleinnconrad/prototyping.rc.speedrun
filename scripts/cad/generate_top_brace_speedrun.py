@@ -38,10 +38,10 @@ import numpy as np
 import cadquery as cq
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from generate_solid import plate_solid, wire_from_prims  # noqa: E402
+from generate_solid import chamfered_plate_solid, plate_solid, wire_from_prims  # noqa: E402
 from generate_dxf import build_dxf  # noqa: E402
 from generate_drawing import contour_points  # noqa: E402
-from generate_bulkhead_lower import load_params  # noqa: E402
+from generate_bulkhead_lower import load_params, thin_gaps  # noqa: E402
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 
 CAD = "cad/chassis"
@@ -62,6 +62,8 @@ DESIGN = {
     "rear_bar_end": 196.6,         # start of the transition at the end with B07 to B15
     "closed_holes": ("B05", "B06"),
     "split_y": 121.65,             # test print halves
+    "edge_chamfer": 0.5,           # chamfer of the outline and the obround, both faces (as the bulkheads)
+    "hole_chamfer": 0.3,           # chamfer of the holes, both faces
 }
 DENSITY = {"carbon": 1.6, "7075": 2.81, "PLA": 1.24}
 
@@ -195,6 +197,11 @@ def check_bulkheads(g, lp, up):
 
 
 # ---------------------------------------------------------------- outputs
+def brace_solid(g):
+    """Solid of the speedrun top brace (cadquery Solid) with the edge chamfers and hole chamfers."""
+    return chamfered_plate_solid(g, DESIGN["edge_chamfer"], DESIGN["hole_chamfer"])
+
+
 def write_hole_table(g, path):
     with open(path, "w", newline="", encoding="utf-8") as f:
         wr = csv.writer(f)
@@ -236,6 +243,8 @@ def drawing(g, orig, path):
     wb = width_at(g, 120.0)
     dim_arrows(ax, -wb / 2, wb / 2, -10, f"{wb:.2f} bar, {x1 - x0:.2f} ends", x1 + 6, y0, y1)
     ax.text(0, -24, f"Plain Ø{g['hole_d']:g} holes · t = {g['thickness']:.1f}", ha="center", va="top", fontsize=8.5)
+    ax.text(0, -29, f"Chamfers: edges {DESIGN['edge_chamfer']:g} mm, holes {DESIGN['hole_chamfer']:g} mm "
+            f"(both faces)", ha="center", va="top", fontsize=8.5)
     ax.set_xlim(-24, 32)
     ax.set_ylim(-34, 262)
     ax.set_title("Speedrun top brace - top view")
@@ -254,13 +263,15 @@ def main():
     g = build_geometry(orig, lp["body_half_width"])
     with open(GEOM, "w", encoding="utf-8") as f:
         json.dump(g, f, indent=1)
-    solid = plate_solid(g).val()
+    solid = brace_solid(g)
     cq.exporters.export(cq.Workplane().add(solid), STEM + ".step")
     cq.exporters.export(cq.Workplane().add(solid), STEM + ".stl", tolerance=0.01, angularTolerance=0.1)
     build_dxf(g).saveas(STEM + ".dxf")
     write_hole_table(g, f"{OUT}/top_brace_speedrun_hole_table.csv")
     info = ["New design for the bulkheads of this project: ends as wide as the bulkheads, solid bar.",
-            "Origin: x = 0 centre line, y = 0 end edge with B01 to B04 (same as the original top brace)."]
+            "Origin: x = 0 centre line, y = 0 end edge with B01 to B04 (same as the original top brace).",
+            f"Outline without the edge chamfers ({DESIGN['edge_chamfer']:g} mm) and the hole chamfers "
+            f"({DESIGN['hole_chamfer']:g} mm)."]
     for scale, suffix in ((1.0, ""), (0.97, "_print97")):
         brace_a4(f"{STEM}_1to1_A4{suffix}.pdf", g, scale, name="speedrun top brace", info=info)
     halves = test_print_halves(solid, g["thickness"], DESIGN["split_y"], f"{OUT}/testprint_top_brace_speedrun")
@@ -268,7 +279,8 @@ def main():
 
     vol, vol0 = solid.Volume(), plate_solid(orig).val().Volume()
     print(f"Wrote {GEOM}, {STEM}.step/.stl/.dxf, hole table, templates, test print halves, drawing")
-    print(f"  solid valid: {solid.isValid()}, holes: {len(g['holes'])} (closed: {', '.join(DESIGN['closed_holes'])})")
+    print(f"  solid valid: {solid.isValid()}, holes: {len(g['holes'])} (closed: {', '.join(DESIGN['closed_holes'])}), "
+          f"edge chamfers {DESIGN['edge_chamfer']:g} mm, hole chamfers {DESIGN['hole_chamfer']:g} mm")
     print(f"  volume {vol / 1000:.2f} cm3 (original {vol0 / 1000:.2f} cm3), mass: "
           + ", ".join(f"{m} {vol / 1000 * rho:.1f} g" for m, rho in DENSITY.items()))
     for path, w, l in halves:
@@ -296,6 +308,10 @@ def main():
             b = b.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180)
         inter += b.intersect(upper.val()).Volume()
     print(f"  interference of the top brace with both upper bulkheads: {inter:.4f} mm3")
+    gaps = thin_gaps(solid)
+    print(f"  check for thin slits and walls (faces closer than 0.25 mm): "
+          f"{sum(1 for k in gaps if k[0] != 'narrow face')} slits or walls, "
+          f"{sum(1 for k in gaps if k[0] == 'narrow face')} narrow faces")
 
 
 if __name__ == "__main__":

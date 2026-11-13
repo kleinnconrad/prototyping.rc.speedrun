@@ -38,7 +38,7 @@ from generate_bulkhead_lower import bulkhead_lower, load_params, thin_gaps  # no
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 from generate_drawing import contour_points  # noqa: E402
 from generate_dxf import build_dxf  # noqa: E402
-from generate_solid import wire_from_prims  # noqa: E402
+from generate_solid import edge_chamfer_tools, hole_chamfer_cones, wire_from_prims  # noqa: E402
 from generate_top_brace_speedrun import filleted_polygon  # noqa: E402
 
 LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
@@ -113,48 +113,6 @@ def build_geometry(tp, lp, up, lay):
 
 
 # ---------------------------------------------------------------- solid
-def _samples(p, n):
-    """Points and unit tangents along a line or arc of a contour (in the direction of the contour)."""
-    if p["type"] == "line":
-        a, b = np.array(p["start"]), np.array(p["end"])
-        t = (b - a) / np.linalg.norm(b - a)
-        return [(a + (b - a) * k / (n - 1), t) for k in range(n)]
-    c = np.array(p["center"])
-    a0, am, a1 = (math.atan2(q[1] - c[1], q[0] - c[0]) for q in (p["start"], p["mid"], p["end"]))
-    s_mid, s_end = (am - a0) % (2 * math.pi), (a1 - a0) % (2 * math.pi)
-    sweep = s_end if s_mid < s_end else s_end - 2 * math.pi
-    out = []
-    for k in range(n):
-        a = a0 + sweep * k / (n - 1)
-        out.append((c + p["r"] * np.array([math.cos(a), math.sin(a)]),
-                    np.sign(sweep) * np.array([-math.sin(a), math.cos(a)])))
-    return out
-
-
-def edge_chamfer_tools(prims, z_face, into, size, eps=0.01):
-    """Cutting tools of the edge chamfer along the outline on the face z = z_face (material on the
-    side +into). size(point) gives the leg length of the chamfer at a point of the outline."""
-    pts = contour_points(prims, n=60)
-    area = 0.5 * np.sum(pts[:, 0] * np.roll(pts[:, 1], -1) - np.roll(pts[:, 0], -1) * pts[:, 1])
-    ccw = area > 0
-    tools = []
-    for p in prims:
-        n = 2 if p["type"] == "line" else 9
-        if p["type"] == "line":
-            a, b = np.array(p["start"]), np.array(p["end"])
-            if any(abs(size(a + (b - a) * k / 4) - size(a)) > 1e-9 for k in range(5)):
-                n = 9                                       # leg length changes along the line
-        wires = []
-        for q, t in _samples(p, n):
-            out = np.array([t[1], -t[0]]) if ccw else np.array([-t[1], t[0]])
-            d = size(q)
-            corner = [(q + out * eps, z_face - into * eps), (q - out * d, z_face - into * eps),
-                      (q + out * eps, z_face + into * d)]
-            wires.append(cq.Wire.makePolygon([cq.Vector(x, y, z) for (x, y), z in corner], close=True))
-        tools.append(cq.Solid.makeLoft(wires, ruled=(p["type"] == "line")))
-    return tools
-
-
 def tower_solid(g, tp, lp, up):
     """Solid of the tower in plate coordinates (cadquery Solid)."""
     t, e = g["thickness"], tp["edge_chamfer"]
@@ -175,9 +133,8 @@ def tower_solid(g, tp, lp, up):
     r, c = g["hole_d"] / 2, tp["hole_chamfer"]
     for h in g["holes"]:
         s = s.cut(cq.Solid.makeCylinder(r, t + 2, cq.Vector(h["x"], h["y"], -1)))
-        for z0, dz in ((0.0, 1), (t, -1)):                    # chamfer cones on both faces
-            s = s.cut(cq.Solid.makeCone(r + c + 0.01 * 1, r - 0.01, c + 0.02,
-                                        cq.Vector(h["x"], h["y"], z0 - dz * 0.01), cq.Vector(0, 0, dz)))
+        for cone in hole_chamfer_cones(h["x"], h["y"], r, c, t):   # chamfers on both faces
+            s = s.cut(cone)
     return s.clean()
 
 

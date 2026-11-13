@@ -33,8 +33,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_bulkhead_lower import bulkhead_lower, load_params  # noqa: E402
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 from generate_shock_tower_front import tower_in_bulkhead  # noqa: E402
-from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset  # noqa: E402
-from generate_solid import plate_solid  # noqa: E402
+from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
 PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
 LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
@@ -59,7 +58,7 @@ def build():
     lower, upper = bulkhead_lower(lp).val(), bulkhead_upper(lp, up).val()
     with open(BRACE_GEOM, encoding="utf-8") as f:
         brace_g = json.load(f)
-    brace = plate_solid(brace_g).val()
+    brace = brace_solid(brace_g)
     parts = [("chassis plate", "plate", plate)]
     for end, yb in (("End B", BULKHEAD_Y["rear"]), ("End A", BULKHEAD_Y["front"])):
         for key, solid in (("lower", lower), ("upper", upper)):
