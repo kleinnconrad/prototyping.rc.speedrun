@@ -52,11 +52,11 @@ The speedrun chassis is designed in this project for speeds over 100 km/h. It co
 | Lower bulkhead | 2 | Verified | 2 x 34 g (7075) |
 | Upper bulkhead | 2 | Verified | 2 x 56 g (7075) |
 | Speedrun top brace | 1 | Verified | 14 g (carbon) |
-| Speedrun front shock tower | 1 | Not verified | 4.5 g (carbon) |
+| Speedrun front shock tower | 1 | Verified | 4.5 g (carbon) |
 | Speedrun rear shock tower | 1 | Not verified | 7.7 g (carbon) |
 | **Total** | | | **423 g** |
 
-* All parts except the new shock towers are verified. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#edges-of-the-outer-shape)). The stock shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. Their camber link holes are 3.19 mm further outward than on the stock towers. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
+* All parts except the speedrun rear shock tower are verified. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#edges-of-the-outer-shape)). The stock shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. Their camber link holes are 3.19 mm further outward than on the stock towers. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
 * The assembly is available as a STEP file (`cad/assembly/speedrun_chassis_T410R.step`).
 
 ## Repository structure

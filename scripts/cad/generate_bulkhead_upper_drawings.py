@@ -1,8 +1,9 @@
 """Preview image and measurement sheet of the upper bulkhead (new design).
 
-The preview shows the upper part alone, the assembly with the lower part and two sections of
-the assembly with the bearings, the gears, the shock tower plate and the end of the top brace
-(simplified bodies). The measurement sheet shows the interfaces of the stock upper part on
+The preview shows the upper part alone, the assemblies at End A (front shock tower) and End B
+(rear shock tower) with the lower part, the speedrun shock towers and the ends of the speedrun top
+brace, and two sections of the assembly at End A. The bearings, the gears and the diff case are
+simplified bodies. The measurement sheet shows the interfaces of the stock upper part on
 photos with numbered dimensions and lists the estimates of the model.
 
 Usage (from the root directory of the repository):
@@ -32,6 +33,8 @@ from mesh_views import subdivide, draw_mesh, iso_basis  # noqa: E402
 from generate_bulkhead_lower import bulkhead_lower, cyl_x, cyl_y, box, load_params  # noqa: E402
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 from generate_bulkhead_drawings import section, frame, balloon, DIM_COLOR, A4_LANDSCAPE  # noqa: E402
+from generate_shock_towers import tower_in_bulkhead  # noqa: E402
+from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
 COL = {"lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3), "steel": (0.78, 0.8, 0.82),
        "gear": (0.85, 0.72, 0.35), "carbon": (0.22, 0.22, 0.24), "case": (0.3, 0.3, 0.32)}
@@ -73,12 +76,24 @@ def drivetrain(lp, up):
         parts.append(("pinion bearing", "steel", ring_y(pb[0] / 2, pb[1] / 2, y0, y0 + pb[2], 0.0, zc)))
     parts.append(("pinion", "gear", cyl_y(14.1 / 2, 11.8, 16.3, 0.0, zc)
                   .fuse(cyl_y(pb[0] / 2, 11.8, y_r + pb[2] + 3, 0.0, zc))))
-    fy, h = up["tower_face_y"], lambda v: zc + v
-    parts.append(("shock tower", "carbon", box(-18, 18, fy - up["tower_plate_t"], fy,
-                                               h(up["tower_keepout_h"] + 0.5), h(up["wall_top_h"] + 8))))
-    parts.append(("top brace", "carbon", box(-19, 19, up["deck_end_y"], 40,
-                                             h(up["deck_h"]), h(up["deck_h"]) + 2)))
     return parts
+
+
+def chassis_parts(lp, up, end):
+    """Speedrun shock tower and the end of the speedrun top brace on the upper bulkhead at End A
+    (front tower) or End B (rear tower), in the coordinates of the bulkhead."""
+    import json
+    tower = tower_in_bulkhead(lp, up, "front" if end == "A" else "rear")
+    with open(BRACE_GEOM, encoding="utf-8") as f:
+        g = json.load(f)
+    c = sum(brace_offset(g, up["deck_screw_y"])) / 2
+    yb = BULKHEAD_Y["front" if end == "A" else "rear"]
+    brace = brace_solid(g).rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180).translate(
+        cq.Vector(0, c - yb, lp["axis_z"] + up["deck_h"]))
+    if end == "A":
+        brace = brace.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180)
+    brace = brace.intersect(box(-40, 40, -40, 42, -10, 80))     # end of the top brace on the bulkhead
+    return [("shock tower", "carbon", tower), ("top brace", "carbon", brace)]
 
 
 def draw_assembly(ax, items, view, sub=1.2):
@@ -102,30 +117,34 @@ def draw_sections(ax, items, origin, normal, right, up_dir):
 
 def preview(path, lp, up, lower, upper):
     zc, yd = lp["axis_z"], lp["diff_axis_y"]
-    fig = plt.figure(figsize=(15, 10))
-    fig.suptitle("Carten T410R upper bulkhead, new design (verified)", fontsize=12, y=0.985)
-    for rect, view, title in (([0.0, 0.5, 0.33, 0.44], iso_basis(-55, 30), "Upper part, view from the outer side"),
-                              ([0.33, 0.5, 0.33, 0.44], iso_basis(125, 30), "Upper part, view from the pinion side"),
-                              ([0.02, 0.03, 0.3, 0.42], iso_basis(-120, -40), "Upper part, underside")):
+    fig = plt.figure(figsize=(15, 14))
+    fig.suptitle("Carten T410R upper bulkhead, new design (verified), with the speedrun shock towers and the "
+                 "speedrun top brace", fontsize=12, y=0.99)
+    for rect, view, title in (([0.0, 0.66, 0.33, 0.3], iso_basis(-55, 30), "Upper part, view from the outer side"),
+                              ([0.33, 0.66, 0.33, 0.3], iso_basis(125, 30), "Upper part, view from the pinion side"),
+                              ([0.67, 0.66, 0.31, 0.3], iso_basis(-120, -40), "Upper part, underside")):
         ax = fig.add_axes(rect)
         lo, hi = draw_assembly(ax, [("upper", upper.val())], view)
         frame(ax, lo, hi, pad=(2, 2, 2, 2), title=title)
 
     parts = drivetrain(lp, up)
-    ax = fig.add_axes([0.66, 0.5, 0.34, 0.44])
-    items = [("lower", lower.val()), ("upper", upper.val())] + [(k, s) for _, k, s in parts]
-    lo, hi = draw_assembly(ax, items, iso_basis(-60, 25), sub=1.6)
-    frame(ax, lo, hi, pad=(2, 2, 2, 2), title="Assembly with shock tower and top brace (dark grey)")
+    base = [("lower", lower.val()), ("upper", upper.val())] + [(k, s_) for _, k, s_ in parts]
+    for rect, end, title in (([0.0, 0.33, 0.5, 0.31], "A", "End A (front): front shock tower and top brace (dark grey)"),
+                             ([0.5, 0.33, 0.5, 0.31], "B", "End B (rear): rear shock tower and top brace (dark grey)")):
+        ax = fig.add_axes(rect)
+        items = base + [(k, s_) for _, k, s_ in chassis_parts(lp, up, end)]
+        lo, hi = draw_assembly(ax, items, iso_basis(-60, 25), sub=1.6)
+        frame(ax, lo, hi, pad=(2, 2, 2, 2), title=title)
 
-    sec_items = [("lower", lower.val()), ("upper", upper.val())] + [(k, s) for _, k, s in parts]
-    ax = fig.add_axes([0.33, 0.03, 0.33, 0.42])
+    sec_items = base + [(k, s_) for _, k, s_ in chassis_parts(lp, up, "A")]
+    ax = fig.add_axes([0.03, 0.02, 0.45, 0.29])
     draw_sections(ax, sec_items, (0, yd, 0), (0, 1, 0), (-1, 0, 0), (0, 0, 1))
     frame(ax, (-22, -1), (22, zc + up["wall_top_h"] + 9), pad=(0, 0, 0, 0),
-          title="Section through the diff axis, seen from the pinion side")
-    ax = fig.add_axes([0.66, 0.03, 0.34, 0.42])
+          title="End A: section through the diff axis, seen from the pinion side")
+    ax = fig.add_axes([0.52, 0.02, 0.46, 0.29])
     draw_sections(ax, sec_items, (0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1))
-    frame(ax, (-33, -1), (36, zc + up["wall_top_h"] + 9), pad=(0, 0, 0, 0),
-          title="Section along the pinion axis (x = 0)")
+    frame(ax, (-33, -1), (42, zc + up["wall_top_h"] + 9), pad=(0, 0, 0, 0),
+          title="End A: section along the pinion axis (x = 0)")
     fig.savefig(path, dpi=100)
     plt.close(fig)
 

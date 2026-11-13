@@ -51,10 +51,10 @@ OUT = "cad/shock_tower"
 TOWERS = {
     "front": {"params": f"{OUT}/shock_tower_front_parameters.json", "stem": f"{OUT}/shock_tower_front_T410R_speedrun",
               "geom": f"{OUT}/shock_tower_front_geometry.json", "table": f"{OUT}/shock_tower_front_hole_table.csv",
-              "drawing": "photos/cad_shock_tower_front_drawing.png"},
+              "drawing": "photos/cad_shock_tower_front_drawing.png", "status": "verified"},
     "rear": {"params": f"{OUT}/shock_tower_rear_parameters.json", "stem": f"{OUT}/shock_tower_rear_T410R_speedrun",
              "geom": f"{OUT}/shock_tower_rear_geometry.json", "table": f"{OUT}/shock_tower_rear_hole_table.csv",
-             "drawing": "photos/cad_shock_tower_rear_drawing.png"},
+             "drawing": "photos/cad_shock_tower_rear_drawing.png", "status": "not verified"},
 }
 HOLE_USE = {"T": "mounting screw M3x8 (tapped hole of the upper bulkhead)", "C": "camber link ball stud (wheel mount)",
             "D": "damper ball stud", "B": "body post", "S": "screw of the body post mount"}
@@ -261,7 +261,8 @@ def drawing(path, name, g, lay, tp, lp, up, tower_b, upper, lower):
     from OCP.BRepTools import BRepTools_WireExplorer
 
     fig = plt.figure(figsize=(15, 10.5))
-    fig.suptitle(f"Carten T410R speedrun {name} shock tower for the speedrun upper bulkhead (not verified)",
+    fig.suptitle(f"Carten T410R speedrun {name} shock tower for the speedrun upper bulkhead "
+                 f"({TOWERS[name]['status']})",
                  fontsize=12, y=0.985)
     pts = contour_points(g["outline"], 80)
     x_max, y_min, y_max = max(pts[:, 0]), min(pts[:, 1]), max(pts[:, 1])
