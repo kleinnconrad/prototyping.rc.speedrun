@@ -92,6 +92,7 @@ The speedrun chassis combines the parts that are designed in this project for sp
 * `assembly/speedrun_chassis_T410R.step`: assembly of all 8 parts in the coordinate system of the chassis plate (STEP AP214, one solid per part).
 * The interference check of all pairs of parts gives 0 mm³.
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
+* The image shows an overall view, a side view, a top view and close-ups of both ends: bulkheads, shock tower and end of the top brace, seen from the outer end.
 
 ## Chassis plate and top brace
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
