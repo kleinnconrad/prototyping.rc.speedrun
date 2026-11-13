@@ -54,7 +54,7 @@ TOWERS = {
               "drawing": "photos/cad_shock_tower_front_drawing.png", "status": "verified"},
     "rear": {"params": f"{OUT}/shock_tower_rear_parameters.json", "stem": f"{OUT}/shock_tower_rear_T410R_speedrun",
              "geom": f"{OUT}/shock_tower_rear_geometry.json", "table": f"{OUT}/shock_tower_rear_hole_table.csv",
-             "drawing": "photos/cad_shock_tower_rear_drawing.png", "status": "not verified"},
+             "drawing": "photos/cad_shock_tower_rear_drawing.png", "status": "verified"},
 }
 HOLE_USE = {"T": "mounting screw M3x8 (tapped hole of the upper bulkhead)", "C": "camber link ball stud (wheel mount)",
             "D": "damper ball stud", "B": "body post", "S": "screw of the body post mount"}

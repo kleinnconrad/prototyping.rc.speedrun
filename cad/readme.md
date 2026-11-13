@@ -81,7 +81,7 @@ The speedrun chassis combines the parts that are designed in this project for sp
 | [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | Verified | 7075 | 2 x 56 g |
 | [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | Verified | Carbon or 7075 | 14 g (carbon), 25 g (7075) |
 | [Speedrun front shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | Verified | Carbon or 7075 | 4.5 g (carbon), 7.9 g (7075) |
-| [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | Not verified | Carbon or 7075 | 7.7 g (carbon), 13.5 g (7075) |
+| [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | Verified | Carbon or 7075 | 7.7 g (carbon), 13.5 g (7075) |
 | **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace and shock towers carbon | **423 g** |
 
 * The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³). Screws, bearings and the other parts of the car are not included.
@@ -553,7 +553,7 @@ The measurement sheet `bulkhead_upper_measurement_sheet.pdf` shows the interface
 ## Speedrun shock towers
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** New front and rear shock towers for the speedrun upper bulkhead. Flat carbon plates of 3 mm (as the stock shock towers) on the contact face of the shock tower wall, each fixed with 4 button head screws M3x8 in the tapped holes of the wall. The dampers are mounted on the front face (outer end), the rod ends of the camber links on the back face (wall side), as on the car. The rear tower also carries the body post mounts.
-* **Status:** Front shock tower: verified by the owner. Rear shock tower: not verified. The damper, camber link (wheel mount) and body post positions are based on measurements of the stock shock towers by the owner. The camber link holes of both towers are moved outward by 3.19 mm because of the wall of the speedrun upper bulkhead (see [design of the speedrun shock towers](#design-of-the-speedrun-shock-towers)). The space for the rod ends is an estimate from photos.
+* **Status:** Verified by the owner (front and rear shock tower). The damper, camber link (wheel mount) and body post positions are based on measurements of the stock shock towers by the owner. The camber link holes of both towers are moved outward by 3.19 mm because of the wall of the speedrun upper bulkhead (see [design of the speedrun shock towers](#design-of-the-speedrun-shock-towers)). The space for the rod ends is an estimate from photos.
 
 ![Speedrun front shock tower on the speedrun bulkheads](../photos/cad_shock_tower_front_drawing.png)
 
@@ -610,12 +610,10 @@ All files are stored in the directory `/shock_tower`. They are generated with `g
 * CNC order of the carbon plates: outline and holes from the DXF files. The edge chamfers and the relief on the back face are in the STEP files (relief: 45 degrees, 2.05 mm, along the bottom edge on the back face).
 
 ### Open points of the speedrun shock towers
-The front shock tower is verified by the owner. The following points are open for the rear shock tower.
-* Rod ends of the camber links: size and position behind the towers are to be measured (the zone with a radius of 4.0 mm is an estimate). With smaller rod ends, the camber link holes can move inward (parameter `rod_end_clearance_r`).
-* Camber geometry: the camber link holes are 3.19 mm further outward than on the stock towers. The effect on the camber change is to be checked on the car. Alternative with the stock position: recesses at both ends of the wall of the upper bulkhead (outer shape), as the free space beside the ears of the stock bulkhead.
+Both shock towers are verified by the owner. The following points are not required for manufacturing. They are relevant for later changes of the design.
+* Rod ends of the camber links: size and position behind the towers are not measured (the zone with a radius of 4.0 mm is an estimate). With smaller rod ends, the camber link holes can move inward (parameter `rod_end_clearance_r`).
+* Camber geometry: the camber link holes are 3.19 mm further outward than on the stock towers. The effect on the camber change can be checked on the car. Alternative with the stock position: recesses at both ends of the wall of the upper bulkhead (outer shape), as the free space beside the ears of the stock bulkhead.
 * Holes of the stock towers: the conversion of the measurements assumes holes of 3.2 mm.
-* Body post mounts of the rear tower: the use of the 5.2 mm bore and the 3.2 mm bore (body post holder) is taken from the stock tower without further check.
-* Test print of the rear shock tower with the dampers, the camber links and the body posts installed.
 
 ## Scripts
 The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates (except `generate_chassis_templates.py`, which writes the templates of the chassis plate and the top brace), and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
