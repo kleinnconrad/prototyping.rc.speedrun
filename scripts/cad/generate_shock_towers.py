@@ -51,10 +51,10 @@ OUT = "cad/shock_tower"
 TOWERS = {
     "front": {"params": f"{OUT}/shock_tower_front_parameters.json", "stem": f"{OUT}/shock_tower_front_T410R_speedrun",
               "geom": f"{OUT}/shock_tower_front_geometry.json", "table": f"{OUT}/shock_tower_front_hole_table.csv",
-              "drawing": "photos/cad_shock_tower_front_drawing.png"},
+              "drawing": "photos/cad_shock_tower_front_drawing.png", "status": "verified"},
     "rear": {"params": f"{OUT}/shock_tower_rear_parameters.json", "stem": f"{OUT}/shock_tower_rear_T410R_speedrun",
              "geom": f"{OUT}/shock_tower_rear_geometry.json", "table": f"{OUT}/shock_tower_rear_hole_table.csv",
-             "drawing": "photos/cad_shock_tower_rear_drawing.png"},
+             "drawing": "photos/cad_shock_tower_rear_drawing.png", "status": "not verified"},
 }
 HOLE_USE = {"T": "mounting screw M3x8 (tapped hole of the upper bulkhead)", "C": "camber link ball stud (wheel mount)",
             "D": "damper ball stud", "B": "body post", "S": "screw of the body post mount"}
@@ -261,7 +261,8 @@ def drawing(path, name, g, lay, tp, lp, up, tower_b, upper, lower):
     from OCP.BRepTools import BRepTools_WireExplorer
 
     fig = plt.figure(figsize=(15, 10.5))
-    fig.suptitle(f"Carten T410R speedrun {name} shock tower for the speedrun upper bulkhead (not verified)",
+    fig.suptitle(f"Carten T410R speedrun {name} shock tower for the speedrun upper bulkhead "
+                 f"({TOWERS[name]['status']})",
                  fontsize=12, y=0.985)
     pts = contour_points(g["outline"], 80)
     x_max, y_min, y_max = max(pts[:, 0]), min(pts[:, 1]), max(pts[:, 1])
@@ -276,8 +277,9 @@ def drawing(path, name, g, lay, tp, lp, up, tower_b, upper, lower):
     ax.add_patch(MPoly(pts, closed=True, fc="#3b4048", ec="#1d2025", lw=1.0, alpha=0.88, zorder=2))
     for h in g["holes"]:
         ax.add_patch(Circle((h["x"], h["y"]), hole_d(g, h) / 2, fc="white", ec="#1d2025", lw=0.6, zorder=4))
-        ax.annotate(h["id"], (h["x"], h["y"]), xytext=(4, 4), textcoords="offset points", fontsize=7.5,
-                    color="white" if h["id"][0] in "TD" else "#1d2025", zorder=5)
+        off = 4 + 5 * (hole_d(g, h) - g["hole_d"]) / 2           # labels of larger holes further outward
+        ax.annotate(h["id"], (h["x"], h["y"]), xytext=(off, off), textcoords="offset points", fontsize=7.5,
+                    color="white" if h["id"][0] in "TDBS" else "#1d2025", zorder=5)
     cs = lay["camber_stock"]
     for sx in (-1, 1):
         ax.add_patch(Circle((sx * cs[0], cs[1]), tp["rod_end_clearance_r"] - 0.5, fill=False, ec="#c0392b", lw=0.9,
@@ -294,9 +296,12 @@ def drawing(path, name, g, lay, tp, lp, up, tower_b, upper, lower):
     heights = sorted({round(v, 2) for v in [up["tower_hole_h_lower"], up["tower_hole_h_upper"], lay["camber"][1],
                                              lay["damper"][1]] + [lay[k][1] for k in ("body_post", "body_post_screw")
                                                                   if k in lay]})
+    labels = []                                             # label heights at least 1.8 mm apart
     for yy in heights:
-        ax.plot([xr - 1, xr + 1], [yy, yy], color="k", lw=0.7)
-        ax.text(xr + 1.5, yy, f"{yy:.2f}", va="center", fontsize=8)
+        labels.append(max(yy, labels[-1] + 1.8) if labels else yy)
+    for yy, yt in zip(heights, labels):
+        ax.plot([xr - 1, xr + 1, xr + 1.6], [yy, yy, yt], color="k", lw=0.7)
+        ax.text(xr + 2.0, yt, f"{yy:.2f}", va="center", fontsize=8)
     ax.text(xr - 1, y_max + 1.2, "height above the\nparting face", fontsize=7.5, va="bottom")
     y_bottom = y_dim - 3.2 * len(dims) - 3
     ax.set_xlim(-x_max - 6, x_max + 15)

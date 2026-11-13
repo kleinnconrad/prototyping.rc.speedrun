@@ -18,7 +18,7 @@
     "camber_dx": {"value": 8.5, "source": "user", "note": "Stock rear shock tower: centre of the hole of the wheel mount (camber link) 8.5 mm outward from the top of the lower mounting hole."},
     "camber_dy": {"value": -5.0, "source": "user", "note": "Stock rear shock tower: centre of the hole of the wheel mount 5 mm below the top of the lower mounting hole."},
     "damper_dx": {"value": 25.0, "source": "user", "note": "Stock rear shock tower: centre of the damper hole 25 mm outward from the outer end of the upper mounting hole."},
-    "damper_dy": {"value": -2.0, "source": "user", "note": "Stock rear shock tower: centre of the damper hole 2 mm below the upper mounting hole."},
+    "damper_dy": {"value": 2.0, "source": "user", "note": "Stock rear shock tower: centre of the damper hole 2 mm above the upper mounting hole (corrected by the owner, before: 2 mm below)."},
     "body_post_dx": {"value": 40.5, "source": "user", "note": "Stock rear shock tower: the bottom of the body post bore lies 40.5 mm outward from the outer end of the upper mounting hole, at the height of the centre of the upper mounting hole."},
     "body_post_d": {"value": 5.2, "source": "user", "note": "Diameter of the body post bore."},
     "body_post_gap": {"value": 2.45, "source": "user", "note": "Distance from the top of the body post bore to the bottom of the bore of the body post screw."},
