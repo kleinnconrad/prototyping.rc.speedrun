@@ -8,6 +8,7 @@ The artefacts of this repository are:
 * Architecture decision records (ADRs) in the `/architecture` directory
 * System specification in the `specs/full_spec.yaml` file
 * Vehicle setup configurations in the `/setup_sheets` directory
+* CAD designs of the speedrun chassis (chassis plate, bulkheads, top brace, shock towers and their assembly) and 3D print files in the `/cad` directory: STEP, STL and DXF files, parameter files and drawings, described in the [CAD readme](cad/readme.md)
 
 <table>
   <tbody>
