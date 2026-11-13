@@ -440,9 +440,11 @@ Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The insid
 
 **Edge chamfers:**
 * Each edge chamfer is cut with a tool along the edge: a triangle with legs of 0.5 mm on both faces. The edges at the parting faces and the bosses are not changed.
-* Where an edge chamfer is not possible, the edge is left as it is: a face beside the edge is narrower than 1.0 mm (for example the end faces of 0.5 mm below the parting face of the lower part), or the cut leaves thin slivers. Where the next edge continues tangentially and cannot be chamfered, the edge chamfer stops 0.75 mm or 1.5 mm before the ends of the edge.
-* Lower part: 18 edges with edge chamfers (178 mm), 8 edges with stopped edge chamfers (74 mm, among them the edges between the side faces and the inclined faces), 22 short or tapering edges left as they are (105 mm: lower ends of the boss columns, edges of the inclined faces at the footprint corners, edges of the small radii).
-* Upper part: 23 edges with edge chamfers (247 mm), 10 edges with stopped edge chamfers (70 mm), 4 short edges left as they are (8 mm).
+* Edges that meet tangentially, for example a straight edge and the arc of a corner radius, are cut together. The edge chamfer runs through the junction without a step.
+* Where a face beside the edge becomes narrower than 1.0 mm, the edge chamfer stops 0.1 mm before that point. This occurs where an edge runs into the recess of a vertical corner radius (deck and flange of the upper part at the corners of the gear blocks), into the corner radius of the shock tower wall (sides of the root radius) or into a narrowing face of the lower part (lower ends of the boss columns, inclined faces at the footprint corners). The end of such an edge chamfer is a small triangular face.
+* Where an edge chamfer is not possible at all, the edge is left as it is: a face beside the middle of the edge is narrower than 1.0 mm (for example the end faces of 0.5 mm below the parting face of the lower part), or the cut leaves thin slivers.
+* Upper part: 27 edges with full edge chamfers (280 mm), 8 edges with stopped edge chamfers (42 mm), 2 short arcs of 1.2 mm left as they are.
+* Lower part: 18 edges with full edge chamfers (178 mm), 18 edges with stopped edge chamfers (154 mm), 12 short edges left as they are (25 mm: edges of the small inside radii and of the narrow block under the pinion).
 * The generators list all edges that are left as they are.
 
 **Shock tower wall:** the root radius changes the interface to the shock tower. In front of the contact face, the zone above 19.8 mm is kept free (block 17.8 mm plus the root radius). The stock shock tower plate reaches down to approx. 17.8 mm and does not fit. A new shock tower that fits the upper bulkhead is planned.
@@ -453,9 +455,9 @@ Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The insid
 |:---|:---|:---|
 | Smallest distance of the changed material to the cavities, bearing seats, holes and recesses | 0.60 mm | 0.60 mm |
 | Added material in the keep-out zones (top brace, shock tower) | – | 0 mm³ |
-| Removed material (edge chamfers, outside radii) | 35.4 mm³ | 54.7 mm³ |
-| Added material (inside radii, root radius) | 8.5 mm³ in 10 pieces | 59.6 mm³ in 4 pieces |
-| Thin slits and walls | None (6 narrow faces at the inside radii) | None |
+| Removed material (edge chamfers, outside radii) | 43.3 mm³ | 56.6 mm³ |
+| Added material (inside radii, root radius) | 8.3 mm³ in 10 pieces | 59.5 mm³ in 4 pieces |
+| Thin slits and walls | None (narrow faces: 6 at the inside radii, 8 at the ends of stopped edge chamfers) | None (narrow faces: 12 at the ends of stopped edge chamfers) |
 
 * Space for the pivot blocks: each radius lies between two existing faces and does not reach lower than the material beside it. Below the inclined faces on the outer side, the radii lie between the sway bar bridges and the outer bosses, from 12.85 mm above the bottom face (lower face of the bridges) and up to x = 11.6 mm (the bosses reach 13.2 mm). On the pinion side, they lie between the narrow block and the pinion bosses, from 10.6 mm above the bottom face (lower face of the narrow block) and up to x = 8.1 mm (the bosses reach 11.8 mm). The edge chamfers and the outside radii only remove material.
 * The interference of the lower and the upper part, and of all parts of the speedrun chassis, is 0 mm³. The top brace fits the upper bulkheads unchanged.
@@ -588,7 +590,7 @@ python scripts/cad/generate_chassis_templates.py --print-scale 0.97 --suffix _pr
 
 Both generators of the bulkheads check the solid after each run:
 * **Enclosure check:** the intended openings (parting face, lip openings, end of the pinion seat, floor opening below the ring gear) are closed with plugs. The gear cavity must then be a closed void. If it is not, the part has an unwanted opening to the outside.
-* **Thin slits and walls:** faces without a common edge that are closer than 0.25 mm (exact distance between the faces). Each pair is reported as a slit (void between the faces), a wall (material between the faces) or a narrow face (the faces are separated by other faces, not by a gap, for example the flat of 0.2 mm between a radius and the end of a block). In a slit or a wall, the point between the two faces is about half the distance away from the surface. Current result: lower part 6 narrow faces at the inside radii, upper part none; no slits and no walls.
+* **Thin slits and walls:** faces without a common edge that are closer than 0.25 mm (exact distance between the faces). Each pair is reported as a slit (void between the faces), a wall (material between the faces) or a narrow face (the faces are separated by other faces, not by a gap, for example the flat of 0.2 mm between a radius and the end of a block). In a slit or a wall, the point between the two faces is about half the distance away from the surface. Current result: lower part 14 narrow faces (6 at the inside radii, 8 at the ends of stopped edge chamfers), upper part 12 narrow faces (ends of stopped edge chamfers); no slits and no walls.
 * **Inside corners:** number of vertical inside corners without a radius that are longer than 1 mm (shorter ones occur at the ends of stopped edge chamfers). Current result: 0 in both parts.
 * **Edge chamfers:** number and length of the edges with edge chamfers, with stopped edge chamfers and of the edges left as they are, with a list of the edges left as they are.
 * **Functional check:** comparison with the model without edge treatment, which has the verified inside of the part (see [edges of the outer shape](#edges-of-the-outer-shape)). No added or removed material may touch the cavities, bearing seats, holes or recesses, no material may be added in the keep-out zones, and no radius may reach lower or higher than the material beside it.

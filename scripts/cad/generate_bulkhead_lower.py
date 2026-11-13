@@ -219,16 +219,41 @@ def close_face_pairs(faces, limit, lo=1e-4):
     return found
 
 
+def tangent_chains(items, tol=1e-4):
+    """Group edges into chains of edges that meet tangentially at a common end point.
+    items: list of (edge, face1, face2). Returns a list of chains (lists of items)."""
+    n = len(items)
+    parent = list(range(n))
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+    ends = [[(it[0].positionAt(t), it[0].tangentAt(t)) for t in (0.0, 1.0)] for it in items]
+    for a in range(n):
+        for b in range(a + 1, n):
+            if any((pa - pb).Length < tol and abs(ta.normalized().dot(tb.normalized())) > 0.999
+                   for pa, ta in ends[a] for pb, tb in ends[b]):
+                parent[find(a)] = find(b)
+    groups = {}
+    for i in range(n):
+        groups.setdefault(find(i), []).append(items[i])
+    return list(groups.values())
+
+
 def chamfer_outside_edges(body, d, joint, eps=0.01, sliver=0.05):
     """Chamfer the hard outside edges of the outer shape (material fraction below 0.34: angle
     between the faces up to approx. 120 degrees) with the leg length d.
 
     Each chamfer is cut with a tool: a triangle with the legs d on both faces, swept along the
-    edge. The longest edges are cut first. If the full cut leaves a thin sliver at an end (the next
-    edge continues tangentially and is not chamfered), the chamfer stops 1.5 d before both ends of
-    the edge. An edge is left as it is where the chamfer is not possible: a face beside it
-    narrower than 2 d somewhere along the edge, a cut that does not give one valid solid, or a
-    cut that leaves faces closer than sliver. Returns (body, chamfered edges, shortened edges,
+    edge. Edges that meet tangentially (for example a straight edge and the arc of a corner
+    radius) form a chain and are cut together, so the edge chamfer runs through the junctions.
+    Where a chain ends at a tangent transition that cannot be chamfered (the edge disappears
+    into a radius), the edge chamfer stops 1.5 d (or 3 d) before the end. The longest chains are
+    cut first. An edge is left as it is where the chamfer is not possible: a face beside it
+    narrower than 2 d in the middle part of the edge, or a cut that does not give one valid solid
+    or that leaves faces closer than sliver. Returns (body, chamfered edges, shortened edges,
     skipped edges); the edges as (type, length, midpoint)."""
     if d <= 0:
         return body, [], [], []
@@ -251,77 +276,138 @@ def chamfer_outside_edges(body, d, joint, eps=0.01, sliver=0.05):
         d_surf = proj.LowerDistance() if proj.NbPoints() else 0.0
         return cq.Vertex.makeVertex(q.x, q.y, q.z).distance(face) < d_surf + 1e-4
 
-    def wide_enough(face, p, u, need):
-        """The face continues from p in the direction u for at least the length need."""
-        return all(on_face(face, p + u * (need * k / 6)) for k in range(1, 7))
+    def width_ok(e, f1, f2, t):
+        """Both faces continue from the edge (parameter t) for at least 2 d."""
+        p, _, _, u1, u2 = legs(e, f1, f2, min(max(t, 1e-3), 1 - 1e-3))
+        return all(on_face(f, p + u * (2 * d * k / 6)) for f, u in ((f1, u1), (f2, u2)) for k in range(1, 7))
 
-    def cut_edge(solid, e, f1, f2, t0, t1):
-        """Cut the chamfer between the edge parameters t0 and t1; None if the result is not one
-        valid solid without thin slivers near the edge."""
-        closed = (e.startPoint() - e.endPoint()).Length < 1e-6 and t0 == 0.0 and t1 == 1.0
-        nsec = 2 if e.geomType() == "LINE" else 13 if e.geomType() == "CIRCLE" else 25
-        tm = (t0 + t1) / 2
-        spans = [(t0, tm), (tm, t1)] if closed else [(t0, t1)]
+    def desc(e):
+        return (e.geomType(), round(e.Length(), 2), tuple(round(v, 2) for v in e.positionAt(0.5).toTuple()))
+
+    def cut(solid, parts):
+        """Cut the chamfers of parts [(edge, face1, face2, t0, t1)]; None if the result is not one
+        valid solid without thin slivers near the edges."""
         try:
             new = solid
-            for a, b in spans:
-                wires = []
-                for i in range(nsec):
-                    p, n1, n2, u1, u2 = legs(e, f1, f2, a + (b - a) * i / (nsec - 1))
-                    wires.append(cq.Wire.makePolygon([p + (n1 + n2) * eps, p + u1 * d + n1 * eps,
-                                                      p + u2 * d + n2 * eps], close=True))
-                new = new.cut(cq.Solid.makeLoft(wires, ruled=(e.geomType() == "LINE")))
+            for e, f1, f2, t0, t1 in parts:
+                closed = (e.startPoint() - e.endPoint()).Length < 1e-6 and t0 == 0.0 and t1 == 1.0
+                nsec = 2 if e.geomType() == "LINE" else 13 if e.geomType() == "CIRCLE" else 25
+                tm = (t0 + t1) / 2
+                for a, b in ([(t0, tm), (tm, t1)] if closed else [(t0, t1)]):
+                    wires = []
+                    for i in range(nsec):
+                        p, n1, n2, u1, u2 = legs(e, f1, f2, a + (b - a) * i / (nsec - 1))
+                        wires.append(cq.Wire.makePolygon([p + (n1 + n2) * eps, p + u1 * d + n1 * eps,
+                                                          p + u2 * d + n2 * eps], close=True))
+                    new = new.cut(cq.Solid.makeLoft(wires, ruled=(e.geomType() == "LINE")))
             new = new.clean()
         except Exception:
             return None
         if not (new.isValid() and len(new.Solids()) == 1 and new.Volume() < solid.Volume()):
             return None
         new = new.Solids()[0]
-        bb = e.BoundingBox()
         m = d + 0.3
+        boxes = [e.BoundingBox() for e, _, _, _, _ in parts]
+        x0, x1 = min(b.xmin for b in boxes) - m, max(b.xmax for b in boxes) + m
+        y0, y1 = min(b.ymin for b in boxes) - m, max(b.ymax for b in boxes) + m
+        z0, z1 = min(b.zmin for b in boxes) - m, max(b.zmax for b in boxes) + m
         near = [f for f in new.Faces()
-                if not (f.BoundingBox().xmin > bb.xmax + m or f.BoundingBox().xmax < bb.xmin - m
-                        or f.BoundingBox().ymin > bb.ymax + m or f.BoundingBox().ymax < bb.ymin - m
-                        or f.BoundingBox().zmin > bb.zmax + m or f.BoundingBox().zmax < bb.zmin - m)]
+                if not (f.BoundingBox().xmin > x1 or f.BoundingBox().xmax < x0 or f.BoundingBox().ymin > y1
+                        or f.BoundingBox().ymax < y0 or f.BoundingBox().zmin > z1 or f.BoundingBox().zmax < z0)]
         return None if close_face_pairs(near, sliver) else new
 
     done, shortened, skipped = [], [], []
-    candidates = sorted(outside_edges(s, joint, 0.34), key=lambda c: -c[0].Length())
-    for e, f1, f2 in candidates:
-        length = e.Length()
-        desc = (e.geomType(), round(length, 2), tuple(round(v, 2) for v in e.positionAt(0.5).toTuple()))
-        if length < 0.05:
+    usable, good = [], {}
+    samples = [i / 10 for i in range(11)]
+    for e, f1, f2 in outside_edges(s, joint, 0.34):
+        if e.Length() < 0.05:
             continue
-        # the faces beside the edge must be at least 2 d wide along the whole edge (the bounding
-        # box of the face gives an upper bound of the width; checked at 5 points)
-        ts = [0.0, 0.25, 0.5, 0.75, 1.0]
-        ok = [all(wide_enough(f, q[0], u, 2 * d) for f, u in ((f1, q[3]), (f2, q[4])))
-              for q in (legs(e, f1, f2, min(max(t, 1e-3), 1 - 1e-3)) for t in ts)]
-        if not all(ok[1:4]):
-            skipped.append(desc)                 # face narrower than 2 d in the middle part of the edge
+        wide = [width_ok(e, f1, f2, t) for t in samples]
+        if not wide[5]:
+            skipped.append(desc(e))             # face narrower than 2 d at the middle of the edge
             continue
-        new = cut_edge(s, e, f1, f2, 0.0, 1.0) if ok[0] and ok[4] else None
-        if new is not None:
-            s = new
-            done.append(desc)
-            continue
-        for margin in (1.5 * d, 3.0 * d):         # stop the chamfer before the ends
-            dt = margin / length
-            if dt >= 0.25:
-                break
-            if not all(all(wide_enough(f, q[0], u, 2 * d) for f, u in ((f1, q[3]), (f2, q[4])))
-                       for q in (legs(e, f1, f2, t) for t in (dt, 1.0 - dt))):
+        # range of the edge around its middle with faces of at least 2 d; the limits between a
+        # good and a narrow sample are found by bisection, with 0.1 mm toward the good side
+        a = 5
+        while a > 0 and wide[a - 1]:
+            a -= 1
+        b = 5
+        while b < 10 and wide[b + 1]:
+            b += 1
+        ga, gb = samples[a], samples[b]
+        step = 0.1 / e.Length()
+        if a > 0:
+            lo, hi = samples[a - 1], samples[a]          # narrow, good
+            for _ in range(8):
+                mid = (lo + hi) / 2
+                lo, hi = (lo, mid) if width_ok(e, f1, f2, mid) else (mid, hi)
+            ga = min(hi + step, 0.5)
+        if b < 10:
+            lo, hi = samples[b], samples[b + 1]          # good, narrow
+            for _ in range(8):
+                mid = (lo + hi) / 2
+                lo, hi = (mid, hi) if width_ok(e, f1, f2, mid) else (lo, mid)
+            gb = max(lo - step, 0.5)
+        good[id(e)] = (ga, gb)
+        usable.append((e, f1, f2))
+    chains = sorted(tangent_chains(usable), key=lambda c: -sum(it[0].Length() for it in c))
+    for chain in chains:
+        # free ends of the chain: end points without a tangent neighbour in the chain
+        free = []
+        for i, (e, _, _) in enumerate(chain):
+            if (e.startPoint() - e.endPoint()).Length < 1e-6:
                 continue
-            new = cut_edge(s, e, f1, f2, dt, 1.0 - dt)
+            for t in (0.0, 1.0):
+                p = e.positionAt(t)
+                if not any((p - other.positionAt(tt)).Length < 1e-4
+                           for j, (other, _, _) in enumerate(chain) if j != i for tt in (0.0, 1.0)):
+                    free.append((i, t))
+        result = None
+        for margin in (0.0, 1.5 * d, 3.0 * d):
+            parts, ok = [], True
+            for i, (e, f1, f2) in enumerate(chain):
+                t0, t1 = 0.0, 1.0
+                ga, gb = good[id(e)]
+                for k, t in free:
+                    if k == i:
+                        # at a free end: stop the chamfer by the margin, and at least where the
+                        # faces become narrower than 2 d
+                        if t == 0.0:
+                            t0 = max(margin / e.Length(), ga)
+                        else:
+                            t1 = min(1.0 - margin / e.Length(), gb)
+                if t1 - t0 < 0.1 or not all(width_ok(e, f1, f2, t) for k, tt in free if k == i
+                                            for t in (t0 if tt == 0.0 else t1,)):
+                    ok = False
+                    break
+                parts.append((e, f1, f2, t0, t1))
+            new = cut(s, parts) if ok else None
             if new is not None:
-                s = new
-                shortened.append(desc)
+                result = (new, parts)
                 break
-        else:
-            skipped.append(desc)
+        if result is not None:
+            s, parts = result
+            for e, _, _, t0, t1 in parts:
+                (shortened if t0 > 1e-9 or t1 < 1.0 - 1e-9 else done).append(desc(e))
             continue
-        if new is None:
-            skipped.append(desc)
+        # the chain cannot be cut as a whole: cut the edges one by one
+        for e, f1, f2 in chain:
+            for margin in (0.0, 1.5 * d, 3.0 * d):
+                t0, t1 = margin / e.Length(), 1.0 - margin / e.Length()
+                if t1 - t0 < 0.5:
+                    break
+                if margin > 0 and not (width_ok(e, f1, f2, t0) and width_ok(e, f1, f2, t1)):
+                    continue
+                new = cut(s, [(e, f1, f2, t0, t1)])
+                if new is not None:
+                    s = new
+                    (shortened if margin > 0 else done).append(desc(e))
+                    break
+            else:
+                skipped.append(desc(e))
+                continue
+            if new is None:
+                skipped.append(desc(e))
     return cq.Workplane().add(s), done, shortened, skipped
 
 
