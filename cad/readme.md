@@ -561,7 +561,7 @@ The measurement sheet `bulkhead_upper_measurement_sheet.pdf` shows the interface
 | Mounting holes T1 to T4 | x = ±9.55 mm, 22.5 mm and 28.6 mm above the parting face, Ø3.2 mm | Tapped holes of the upper bulkhead (U1 to U3) |
 | Damper holes D1, D2 | x = ±31.65 mm, 30.6 mm above the parting face, Ø3.2 mm | Stock tower: 20.5 mm outward from the outer end of the upper mounting hole, 2 mm above it (owner) |
 | Camber link holes C1, C2 | x = ±21.24 mm, 19.1 mm above the parting face, Ø3.2 mm | Stock tower: 8.5 mm outward and 5 mm down from the top of the lower mounting hole, x = ±18.05 mm (owner); moved outward, see below |
-| Thickness | 3.0 mm carbon | Stock shock towers (spec). The upper bulkhead is designed for it: screws M3x8, 5 mm thread engagement |
+| Thickness | 3.0 mm carbon | Owner, same as the stock shock towers. The upper bulkhead is designed for it: screws M3x8, 5 mm thread engagement |
 | Outline | Straight top edge 34.1 mm above the parting face, round ends R3.5 around the damper holes, straight edges down to round lobes R3.5 around the camber link holes, straight bottom edge 0.2 mm above the block in front of the wall, inside corners R1 | Design |
 | Edges | Chamfer 0.5 mm on both faces, chamfers of 0.3 mm on the holes | As the edge chamfers of the bulkheads, no sharp edges |
 | Relief on the back face | Along the bottom edge: chamfer at 45 degrees with legs of 2.05 mm, runs out to the edge chamfer over 1.5 mm beside the bulkhead | Clears the root radius of the wall (2.0 mm) by 0.18 mm |

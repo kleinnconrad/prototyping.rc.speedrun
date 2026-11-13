@@ -12,7 +12,7 @@
     "design": "Design choice of the model, free"
   },
   "parameters": {
-    "thickness": {"value": 3.0, "source": "spec", "note": "Carbon plate, as the stock shock towers (3.0 mm Eco-Carbon). The upper bulkhead is designed for it: screws M3x8 through the tower, 5 mm thread engagement in the wall."},
+    "thickness": {"value": 3.0, "source": "user", "note": "Carbon plate, 3 mm (owner), as the stock shock towers (3.0 mm Eco-Carbon, spec). The upper bulkhead is designed for it: screws M3x8 through the tower, 5 mm thread engagement in the wall."},
     "hole_d": {"value": 3.2, "source": "design", "note": "Through holes M3 (mounting screws M3x8, damper ball studs, camber link ball studs)."},
     "hole_chamfer": {"value": 0.3, "source": "design", "note": "Chamfer of the hole edges on both faces (no sharp edges). The screw heads and the ball studs seat on the flat face around it."},
     "stock_hole_d": {"value": 3.2, "source": "design", "note": "Assumed diameter of the holes of the stock front shock tower. The measurements of the owner refer to the edges of these holes (top of the lower mounting hole, outer end of the upper mounting hole)."},
