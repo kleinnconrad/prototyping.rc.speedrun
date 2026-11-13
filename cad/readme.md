@@ -366,7 +366,7 @@ Each parameter in `bulkhead_lower_parameters.json` has a source code:
 |:---|:---|:---|
 | `caliper` | Caliper measurement of the stock part (number of the measurement sheet in the note) | Hole spacings, heights, widths, lips, seat lengths, boss and tab sizes |
 | `derived` | Calculated from caliper values and part sizes | Positions along y, deepening, floor thickness, pocket radii |
-| `manual` | T410R instruction manual | Bearing sizes |
+| `manual` | T410R instruction manual (not stored in this repository, see [sources](#sources)) | Bearing sizes |
 | `user` | Information from the owner of the car | Screw sizes, function of the sway bar holes, deepening for the ring gear, diff bearing seat limited only by the outer lip |
 | `photo` | Estimate from photos with rulers at the height of the part | Position of the diff axis, length of the contact block, ring gear position and side |
 | `design` | Free design choice | Tap drill diameters, hole depths, openings that were not measured |
@@ -722,6 +722,11 @@ python scripts/cad/generate_dxf.py cad/chassis/chassis_plate_speedrun_wide_motor
 ---
 
 ## Sources
+
+The instruction manual of the Carten T410R is not stored in this repository (copyright of the manufacturer). It is available from the manufacturer and from distributors:
+
+* **Manufacturer:** [Carten](https://www.carten-rc.com)
+* **Download page of a distributor:** [Blaze-RC downloads](http://blazerc.com/download) ("CARTEN T410 Instruction Manual-FINAL", also covers the T410R)
 
 The RC maintenance stand (`stojan_3dprint_25.stl`) is not mine. The original files and all credits go to the original designer on printables:
 
