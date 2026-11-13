@@ -76,7 +76,7 @@ The speedrun chassis is designed in this project for speeds over 100 km/h. It co
   * **`/shock_tower`**: Front and rear shock tower for the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file)
   * **`/stock_parts`**: Models of stock parts of the Carten T410R, not part of the speedrun design, modelled for the completeness of the build
     * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file)
-    * **`/driveshaft`**: Centre driveshaft with the cross holes for the metal pins of the cup joints (STEP, STL, parameter file)
+    * **`/driveshaft`**: Centre driveshaft with the fixed metal pins of the cup joints (STEP, STL, parameter file)
   * **`/chassis`**: Chassis plate, wide speedrun chassis plate, top brace and speedrun top brace with one subdirectory per part (STEP, STL, DXF, OpenSCAD, 1:1 templates, test print files)
 * **`/docs`**: Static web dashboard for visualizing the latest setup configurations
 * **`/photos`**: Central directory for all image files

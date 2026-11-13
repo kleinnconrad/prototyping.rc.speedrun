@@ -1,8 +1,8 @@
 {
-  "part": "Centre driveshaft of the Carten T410R (NHA413) between the pinions of the two bulkheads, with cross holes for the metal pins of the cup joints. Stock part, not part of the speedrun design. Modelled for the completeness of the build (assembly of the speedrun chassis). The cups on the pinions (NBA255), the metal pins and the diff outdrives are shown as simple bodies in the assembly picture only (no CAD files).",
+  "part": "Centre driveshaft of the Carten T410R (NHA413) between the pinions of the two bulkheads, with the fixed metal pins of the cup joints. Stock part, not part of the speedrun design. Modelled for the completeness of the build (assembly of the speedrun chassis). The cups on the pinions (NBA255) and the diff outdrives are shown as simple bodies in the assembly picture only (no CAD files).",
   "units": "mm",
-  "coordinate_system": "Part coordinates: shaft along y from y = 0 to y = length, axis at x = 0, z = 0, cross holes along x. Chassis plate coordinates (assembly): pinion axis at x = 0, z = plate thickness + axis_z of the lower bulkhead.",
-  "design": "Round shaft with a ball end at each end. Each ball end has a cross hole for a metal pin (NBA255 2.0x7.6), which fixes the shaft in the slots of the cup on the pinion shaft in the direction of rotation (cup joint). The shaft is shorter than the distance between the bottoms of the two cups by the axial play, so it can move back and forth.",
+  "coordinate_system": "Part coordinates: shaft along y from y = 0 to y = length, axis at x = 0, z = 0, metal pins along x. Chassis plate coordinates (assembly): pinion axis at x = 0, z = plate thickness + axis_z of the lower bulkhead.",
+  "design": "Round shaft with a ball end at each end. Each ball end carries a metal pin (NBA255 2.0x7.6), which is fixed on the shaft and runs in the slots of the cup on the pinion shaft, so the shaft turns with the cup (cup joint). The shaft is shorter than the distance between the bottoms of the two cups by the axial play, so it can move back and forth.",
   "derived_from_the_model": "Pinion axis: x = 0, 2.0 + 17.2 = 19.2 above the chassis plate (axis_z of the lower bulkhead). End face of the pinion housing: pinion_seat_y_inner + pinion_seat_length = 18.65 + 9.25 = 27.9 from the origin of the bulkhead, at the bulkheads at y = 21.53 (End B) and 287.36 (End A, rotated by 180 degrees): 49.43 and 259.46 on the chassis plate, 210.03 apart.",
   "source_codes": {
     "user": "Information of the owner",
@@ -19,9 +19,8 @@
     "cup_bore_depth": {"value": 6.0, "source": "standard", "note": "Depth of the bore from the open end. Bottom of the bore: cup_gap + cup_length - cup_bore_depth = 3.5 beyond the end face of the pinion housing. Body in the assembly picture only."},
     "cup_slot_w": {"value": 2.1, "source": "standard", "note": "Width of the two slots for the cross pin, over the depth of the bore. Body in the assembly picture only."},
     "shaft_d": {"value": 5.0, "source": "standard", "note": "Diameter of the shaft and of its ball ends (radius 2.5). Clearance in the bore of the cup: 0.3 on the radius."},
-    "pin_d": {"value": 2.0, "source": "manual", "note": "Diameter of the metal cross pins NBA255 2.0x7.6 (manual step 5), 0.1 smaller than the slots of the cups. Separate metal parts, shown in the assembly picture only."},
+    "pin_d": {"value": 2.0, "source": "manual", "note": "Diameter of the metal pins NBA255 2.0x7.6 (manual step 5), 0.1 smaller than the slots of the cups. The pins are fixed on the shaft and are part of the model of the shaft."},
     "pin_length": {"value": 7.6, "source": "manual", "note": "Length of the metal cross pins NBA255 2.0x7.6 (manual step 5), 0.7 inside the outer diameter of the cup."},
-    "pin_hole_d": {"value": 2.0, "source": "manual", "note": "Cross hole through each ball end, at its centre, for the metal pin 2.0 (press fit). The pins fix the shaft in the direction of rotation in the slots of the cups."},
     "axial_play": {"value": 1.0, "source": "user", "note": "Total axial play of the shaft between the bottoms of the two cups (0.5 at each end in the centred position): the shaft can move a little back and forth."},
     "outdrive_gap": {"value": 0.3, "source": "standard", "note": "Diff outdrives (picture only): gap between the side face of the bulkhead (lip opening of the diff bearing) and the back face of the cup of the outdrive."},
     "outdrive_od": {"value": 12.0, "source": "standard", "note": "Diff outdrives (picture only): outer diameter of the cup (lip opening of the bulkhead 12.28)."},
