@@ -5,7 +5,7 @@
  "csk_d": 0.0,
  "csk_angle": 90.0,
  "csk_side": "none",
- "basis": "speedrun front shock tower (generate_shock_tower_front.py): x across the car, y height above the parting face of the bulkheads. T1 to T4: mounting holes (tapped holes of the upper bulkhead), C1/C2: camber link ball studs, D1/D2: damper ball studs",
+ "basis": "speedrun front shock tower (generate_shock_towers.py): x across the car, y height above the parting face of the bulkheads. T1 to T4: mounting holes (tapped holes of the upper bulkhead), C1/C2: camber link ball studs, D1/D2: damper ball studs",
  "outline": [
   {
    "type": "arc",
