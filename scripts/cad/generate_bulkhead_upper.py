@@ -7,8 +7,10 @@ The upper part is a new design. Only its interfaces follow the stock part:
 * top brace: flat contact face at the height of the stock part with 2 tapped holes M3
 
 Design: the footprint of the lower part, extruded to 4 flat levels along y: a flange for the
-heads of the outer screws, a block over the diff and the ring gear, one shock tower wall over
-the full width (instead of two ears) and a flat face for the top brace on the pinion side.
+heads of the outer screws, a block over the diff and the ring gear, one shock tower wall
+(instead of two ears) and a flat face for the top brace on the pinion side. The wall and the
+gear block are narrowed to 2 x wall_half_width: side steps beside them give space for the rod
+ends of the camber links behind the shock towers and for the camber link lobes of the towers.
 All outer faces are flat. The edges get the same treatment as the lower part (radii and edge
 chamfers), the root of the shock tower wall a radius (wall_root_r). The only other curved faces
 are the bores and the cavities.
@@ -89,6 +91,14 @@ def outer_body_upper(lp, up):
     body = cut(body, box(-BIG, BIG, fy + wt, yg1, zg, BIG))           # gear block behind the wall
     body = cut(body, box(-BIG, BIG, yg1, BIG, h(up["deck_h"]), BIG))  # top brace face
 
+    # side steps beside the narrowed wall and gear block: space for the rod ends of the camber links
+    # behind the shock towers and for the camber link lobes of the towers
+    xw = up.get("wall_half_width", w)
+    if xw < w:
+        for sx in (-1, 1):
+            xa, xb = sorted((sx * xw, sx * BIG))
+            body = cut(body, box(xa, xb, -BIG, up["side_step_end_y"], h(up["side_step_h"]), BIG))
+
     # block over the outer pinion bearing beyond the end of the footprint
     yp_end = lp["pinion_seat_y_inner"] + lp["pinion_seat_length"]
     e = up["pinion_end_r"]
@@ -100,10 +110,18 @@ def outer_body_upper(lp, up):
 
 def keepouts_upper(lp, up):
     """Keep-out zones (spaces of other parts): top brace above its contact face, shock tower in
-    front of the contact face of the wall."""
+    front of the contact face of the wall, and beside the narrowed wall the camber link lobes of
+    the towers and the rod ends of the camber links (above the side steps, 0.2 mm from their faces)."""
     zc, fy = lp["axis_z"], up["tower_face_y"]
-    return [box(-BIG, BIG, up["deck_end_y"] - 0.5, BIG, zc + up["deck_h"], BIG),
-            box(-BIG, BIG, fy - up["tower_plate_t"] - 1.0, fy, zc + up["tower_keepout_h"], BIG)]
+    zones = [box(-BIG, BIG, up["deck_end_y"] - 0.5, BIG, zc + up["deck_h"], BIG),
+             box(-BIG, BIG, fy - up["tower_plate_t"] - 1.0, fy, zc + up["tower_keepout_h"], BIG)]
+    xw = up.get("wall_half_width", lp["body_half_width"])
+    if xw < lp["body_half_width"]:
+        y_end = up["side_step_end_y"] - lp.get("inside_corner_r", 0.0) - 0.2
+        for sx in (-1, 1):
+            xa, xb = sorted((sx * (xw + 0.2), sx * BIG))
+            zones.append(box(xa, xb, fy - up["tower_plate_t"] - 1.0, y_end, zc + up["side_step_h"] + 0.2, BIG))
+    return zones
 
 
 def voids_upper(lp, up, test_print=False, keepouts=True):
@@ -208,8 +226,8 @@ def outer_shape_upper(lp, up):
             fy, wt, zg = up["tower_face_y"], up["wall_t"], zc + up["gear_block_h"]
             s = body.val()
             for y_face, sign in ((fy, 1), (fy + wt, -1)):
-                s = s.fuse(root_fillet_solid(y_face, sign, zg, lp["body_half_width"], rr,
-                                             lp.get("outside_corner_r", 0.0))).clean()
+                s = s.fuse(root_fillet_solid(y_face, sign, zg, up.get("wall_half_width", lp["body_half_width"]),
+                                             rr, lp.get("outside_corner_r", 0.0))).clean()
             body = cq.Workplane().add(s)
         body = round_inside_corners(body, lp.get("inside_corner_r", 0.0), zc)
         _OUTER_SHAPES[key] = chamfer_outside_edges(body, lp.get("edge_chamfer", 0.0), joint)
@@ -290,6 +308,13 @@ def main():
                                  keepouts_upper(lp, up))
     print("\n".join(lines))
     print(f"  functional check: {'passed' if ok else 'FAILED'}")
+    if up.get("wall_half_width", lp["body_half_width"]) < lp["body_half_width"]:
+        full = outer_body_upper(lp, dict(up, wall_half_width=lp["body_half_width"])).val()
+        removed = full.cut(outer_body_upper(lp, up).val())
+        inside = cq.Compound.makeCompound([f for v in voids_upper(lp, up, keepouts=False) for f in v.Faces()])
+        print(f"  side steps beside the wall: removed {removed.Volume() / 1000:.2f} cm3, "
+              f"distance to the inside of the part (cavities, seats, holes) "
+              f"{cq.Compound.makeCompound(removed.Faces()).distance(inside):.2f} mm")
     inter = lower.val().intersect(upper.val())
     print(f"  interference with the lower part: {inter.Volume():.4f} mm3")
     z_out, z_pin = head_heights(lp, up)

@@ -78,11 +78,11 @@ The speedrun chassis combines the parts that are designed in this project for sp
 |:---|---:|:---|:---|:---|---:|
 | [Speedrun chassis plate (wide) with longer motor window](#longer-motor-window-for-a-3660-motor) | 1 | `/chassis/chassis_plate_speedrun_wide_motor10` | Verified | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
 | [Lower bulkhead](#lower-bulkhead) | 2 | `/bulkhead` | Verified | 7075 | 2 x 34 g |
-| [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | Verified | 7075 | 2 x 56 g |
+| [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | Verified | 7075 | 2 x 53 g |
 | [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | Verified | Carbon or 7075 | 14 g (carbon), 25 g (7075) |
-| [Speedrun front shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | Verified | Carbon or 7075 | 4.5 g (carbon), 7.9 g (7075) |
-| [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | Not verified | Carbon or 7075 | 7.7 g (carbon), 13.5 g (7075) |
-| **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace and shock towers carbon | **423 g** |
+| [Speedrun front shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | Verified | Carbon or 7075 | 4.4 g (carbon), 7.7 g (7075) |
+| [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | Verified | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
+| **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace and shock towers carbon | **417 g** |
 
 * The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³). Screws, bearings and the other parts of the car are not included.
 * The bulkheads are the same parts at both ends. At End A, they are rotated by 180 degrees, so that both pinions point to the middle of the car.
@@ -433,11 +433,11 @@ The lower part has the same design as the upper part: the footprint of the upper
 * The STEP file contains no threads. The M3 holes are modelled with the tap drill diameter of 2.5 mm. For CNC manufacturing, the threads are specified in the comment field of the order (M3, thread depth 6.5 mm for the bottom holes).
 
 ### Edges of the outer shape
-Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The inside of the parts is not changed (rule in `CLAUDE.md`): gear cavity, floor opening, bearing seats, lips, rib, pinion pocket, all holes, counterbores, the recesses and the bosses are the verified geometry of the test prints with the diff and the pinion. The parting faces are not changed either. Only the edges of the outer shape have radii and edge chamfers. The parameters are stored in `bulkhead_lower_parameters.json` (`inside_corner_r`, `outside_corner_r`, `edge_chamfer`, used for both parts) and `bulkhead_upper_parameters.json` (`wall_root_r`).
+Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The inside of the parts is not changed (rule in `CLAUDE.md`): gear cavity, floor opening, bearing seats, lips, rib, pinion pocket, all holes, counterbores, the recesses and the bosses are the verified geometry of the test prints with the diff and the pinion. The parting faces are not changed either. Only the edges of the outer shape have radii and edge chamfers. The parameters are stored in `bulkhead_lower_parameters.json` (`inside_corner_r`, `outside_corner_r`, `edge_chamfer`, used for both parts) and `bulkhead_upper_parameters.json` (`wall_root_r`). The narrowed shock tower wall with the side steps of the upper part is also a change of the outer shape (see [design of the upper bulkhead](#design-of-the-upper-bulkhead)).
 
 | Edge treatment | Size | Where | Reason |
 |:---|:---|:---|:---|
-| Radius in the vertical inside corners | 1.0 mm | Lower part: sway bar bridges, block under the pinion, pinion bosses (10 corners). Upper part: block over the outer pinion bearing (2 corners) | An end mill cannot cut a sharp inside corner parallel to its axis and cannot enter a gap narrower than its diameter (end mill 2 mm) |
+| Radius in the vertical inside corners | 1.0 mm | Lower part: sway bar bridges, block under the pinion, pinion bosses (10 corners). Upper part: block over the outer pinion bearing (2 corners), ends of the side steps behind the wall (2 corners) | An end mill cannot cut a sharp inside corner parallel to its axis and cannot enter a gap narrower than its diameter (end mill 2 mm) |
 | Radius of the vertical outside edges | 1.0 mm | Corners of the levels and blocks seen from above | No extra machining time: the end mill follows the contour |
 | Root radius of the shock tower wall | 2.0 mm | Upper part, both sides of the wall, around the corners of the wall | Strength of the wall at its root |
 | Edge chamfer | 0.5 mm | The other hard outside edges (angle between the faces up to approx. 120 degrees) | Edge break with a lower cost than a radius |
@@ -450,23 +450,23 @@ Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The insid
 **Edge chamfers:**
 * Each edge chamfer is cut with a tool along the edge: a triangle with legs of 0.5 mm on both faces. The edges at the parting faces and the bosses are not changed.
 * Edges that meet tangentially, for example a straight edge and the arc of a corner radius, are cut together. The edge chamfer runs through the junction without a step.
-* Where a face beside the edge becomes narrower than 1.0 mm, the edge chamfer stops 0.1 mm before that point. This occurs where an edge runs into the recess of a vertical corner radius (deck and flange of the upper part at the corners of the gear blocks), into the corner radius of the shock tower wall (sides of the root radius) or into a narrowing face of the lower part (lower ends of the boss columns, inclined faces at the footprint corners). The end of such an edge chamfer is a small triangular face.
+* Where a face beside the edge becomes narrower than 1.0 mm, the edge chamfer stops 0.1 mm before that point. This occurs where an edge runs into the recess of a vertical corner radius (deck, side steps and flange of the upper part at the corners of the gear blocks), into the corner radius of the shock tower wall (sides of the root radius) or into a narrowing face of the lower part (lower ends of the boss columns, inclined faces at the footprint corners). The end of such an edge chamfer is a small triangular face.
 * Where an edge chamfer is not possible at all, the edge is left as it is: a face beside the middle of the edge is narrower than 1.0 mm (for example the end faces of 0.5 mm below the parting face of the lower part), or the cut leaves thin slivers.
-* Upper part: 27 edges with full edge chamfers (280 mm), 8 edges with stopped edge chamfers (42 mm), 2 short arcs of 1.2 mm left as they are.
+* Upper part: 37 edges with full edge chamfers (269 mm), 12 edges with stopped edge chamfers (94 mm), 2 short arcs of 1.2 mm left as they are.
 * Lower part: 18 edges with full edge chamfers (178 mm), 18 edges with stopped edge chamfers (154 mm), 12 short edges left as they are (25 mm: edges of the small inside radii and of the narrow block under the pinion).
 * The generators list all edges that are left as they are.
 
-**Shock tower wall:** the root radius changes the interface to the shock tower. In front of the contact face, the zone above 19.8 mm is kept free (block 17.8 mm plus the root radius). The stock shock tower plate reaches down to approx. 17.8 mm and does not fit. The [speedrun shock towers](#speedrun-shock-towers) are designed for the upper bulkhead.
+**Shock tower wall:** the root radius changes the interface to the shock tower. In front of the contact face, the zone above 19.8 mm is kept free (block 17.8 mm plus the root radius). Beside the narrowed wall, the zones above the side steps are kept free for the camber link lobes of the towers and the rod ends of the camber links. The stock shock tower plate reaches down to approx. 17.8 mm and does not fit. The [speedrun shock towers](#speedrun-shock-towers) are designed for the upper bulkhead.
 
-**Unchanged inside:** the generators build the outer shape with the edge treatment first and then cut all functional voids: gear cavity, floor opening, bearing seats, lip openings, pinion pocket, rib, holes, counterbores, recesses and the keep-out zones of the upper part (top brace, shock tower). A comparison with the model without edge treatment, which has the verified inside, gives:
+**Unchanged inside:** the generators build the outer shape with the edge treatment first and then cut all functional voids: gear cavity, floor opening, bearing seats, lip openings, pinion pocket, rib, holes, counterbores, recesses and the keep-out zones of the upper part (top brace, shock tower, rod ends beside the wall). A comparison with the model without edge treatment, which has the verified inside, gives:
 
 | Check | Lower part | Upper part |
 |:---|:---|:---|
 | Smallest distance of the changed material to the cavities, bearing seats, holes and recesses | 0.60 mm | 0.60 mm |
-| Added material in the keep-out zones (top brace, shock tower) | – | 0 mm³ |
-| Removed material (edge chamfers, outside radii) | 43.3 mm³ | 56.6 mm³ |
-| Added material (inside radii, root radius) | 8.3 mm³ in 10 pieces | 59.5 mm³ in 4 pieces |
-| Thin slits and walls | None (narrow faces: 6 at the inside radii, 8 at the ends of stopped edge chamfers) | None (narrow faces: 12 at the ends of stopped edge chamfers) |
+| Added material in the keep-out zones (top brace, shock tower, rod ends) | – | 0 mm³ |
+| Removed material (edge chamfers, outside radii) | 43.3 mm³ | 61.9 mm³ |
+| Added material (inside radii, root radius) | 8.3 mm³ in 10 pieces | 49.4 mm³ in 6 pieces |
+| Thin slits and walls | None (narrow faces: 6 at the inside radii, 8 at the ends of stopped edge chamfers) | None (narrow faces: 16 at the ends of stopped edge chamfers, 4 at the ends of the root radius beside the narrowed wall) |
 
 * Space for the pivot blocks: each radius lies between two existing faces and does not reach lower than the material beside it. Below the inclined faces on the outer side, the radii lie between the sway bar bridges and the outer bosses, from 12.85 mm above the bottom face (lower face of the bridges) and up to x = 11.6 mm (the bosses reach 13.2 mm). On the pinion side, they lie between the narrow block and the pinion bosses, from 10.6 mm above the bottom face (lower face of the narrow block) and up to x = 8.1 mm (the bosses reach 11.8 mm). The edge chamfers and the outside radii only remove material.
 * The interference of the lower and the upper part, and of all parts of the speedrun chassis, is 0 mm³. The top brace fits the upper bulkheads unchanged.
@@ -483,7 +483,7 @@ Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The insid
 ## Upper bulkhead (new design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** CAD model of a new upper half of the gear box (bulkhead) of the Carten T410R for CNC manufacturing from 7075-T6. The shape is a new design. The interfaces follow the stock part: the lower bulkhead, the diff and pinion bearings, the shock tower and the top brace.
-* **Status:** Verified with a test print. The interfaces to the lower part and the bearings are taken from the parameter file of the lower bulkhead. The shock tower hole pattern and its height, the spacing of the top brace screws and the height of the top brace face are caliper values (U1 to U4, U7, U9, U10). The position of the shock tower contact face is an estimate from photos (U5, U6), and the position of the top brace screws along y is derived from the top brace and the chassis plate (U8). The test print confirms the part (see [measurement sheet of the stock upper bulkhead](#measurement-sheet-of-the-stock-upper-bulkhead)). The root radius of the shock tower wall was added after the test print: the stock shock tower plate does not fit, the [speedrun shock towers](#speedrun-shock-towers) are designed for the upper bulkhead.
+* **Status:** Verified with a test print. The interfaces to the lower part and the bearings are taken from the parameter file of the lower bulkhead. The shock tower hole pattern and its height, the spacing of the top brace screws and the height of the top brace face are caliper values (U1 to U4, U7, U9, U10). The position of the shock tower contact face is an estimate from photos (U5, U6), and the position of the top brace screws along y is derived from the top brace and the chassis plate (U8). The test print confirms the part (see [measurement sheet of the stock upper bulkhead](#measurement-sheet-of-the-stock-upper-bulkhead)). The root radius of the shock tower wall was added after the test print: the stock shock tower plate does not fit, the [speedrun shock towers](#speedrun-shock-towers) are designed for the upper bulkhead. Also after the test print, the shock tower wall was narrowed to 28.0 mm with side steps beside it (request of the owner): the camber link holes of the towers are at the stock position, and the rod ends of the camber links sit beside the wall. The inside of the part and the 4 tapped holes of the shock tower are not changed.
 
 ![Views and sections of the upper bulkhead](../photos/cad_bulkhead_upper_preview.png)
 
@@ -497,7 +497,7 @@ The preview shows the upper part, the assemblies at End A (front) and End B (rea
 | Diff bearings (10x15x4) | Clamped between the two halves | Upper half bores 15 x 4 mm, limited only by the outer lips (opening 12.28 mm, 1.89 mm thick) | Lower part |
 | Pinion bearings (5x10x4) | Clamped between the two halves | Upper half bores 10 mm with the rib (0.9 mm wide, 0.3 mm high) between the bearings as the only axial stop, open toward the pinion pocket and at the housing end face | Lower part, user |
 | Gears | Ring gear 42T (31.93 mm), pinion 17T (14.1 mm) | Same cavities as the lower part: diff case radius 13.5 mm, ring gear radius 16.4 mm on the ring gear side (from x = 4.5 mm to 10.4 mm, 1 mm beyond the back face of the ring gear), pinion pocket radius 8.25 mm | Lower part, photo |
-| Shock tower | 3 mm carbon, 4 button head screws M3x8 (manual steps 19 and 20). Stock holes 2.9 mm, through the 5.8 mm ears | Flat contact face facing the outer side at y = -5.3 mm, 4 tapped holes M3 (through the 6 mm wall) at x = +-9.55 mm and 22.5 / 28.6 mm above the parting face. Root radius 2.0 mm on both sides of the wall. In front of the face, no material above 19.8 mm: the stock plate does not fit, the [speedrun shock towers](#speedrun-shock-towers) fit | Caliper (holes), photo (contact face) |
+| Shock tower | 3 mm carbon, 4 button head screws M3x8 (manual steps 19 and 20). Stock holes 2.9 mm, through the 5.8 mm ears | Flat contact face facing the outer side at y = -5.3 mm, 4 tapped holes M3 (through the 6 mm wall) at x = +-9.55 mm and 22.5 / 28.6 mm above the parting face. Root radius 2.0 mm on both sides of the wall. In front of the face, no material above 19.8 mm: the stock plate does not fit, the [speedrun shock towers](#speedrun-shock-towers) fit. Wall 28.0 mm wide (x = +-14.0 mm) with side steps 15.0 mm above the parting face beside it: space for the rod ends of the camber links (x = +-18.05 mm, 19.1 mm) | Caliper (holes), photo (contact face), owner (camber links) |
 | Top brace (NHA432) | 2 button head screws M3x8 per bulkhead (manual step 25) into 2 raised bosses | Flat contact face 15.4 mm above the parting face, from y = 10.5 mm to the pinion end, 2 tapped holes M3 at x = +-12.8 mm, y = 14.85 mm | Caliper (height, spacing), top brace and chassis plate (y, see [fit to the bulkheads](#fit-to-the-bulkheads)) |
 | Sway bar holders | M3x6 from above onto the tabs of the lower part (manual step 23) | The upper part ends at y = -25.5 mm, 3.2 mm before the sway bar holes | Photo |
 
@@ -505,20 +505,22 @@ The preview shows the upper part, the assemblies at End A (front) and End B (rea
 * The upper part is the same at the front and at the rear, like the lower part. The front and the rear shock tower use the same 4 holes.
 
 ### Design of the upper bulkhead
-The upper part is a prismatic block: the footprint of the lower part (34.48 mm wide, corner radius 6 mm) is extruded to 4 flat levels along y. All outer faces are flat. The edges have radii and edge chamfers, the root of the shock tower wall has a radius of 2.0 mm (see [edges of the outer shape](#edges-of-the-outer-shape)). The only other curved faces are the bores and the cavities, which follow the lower part.
+The upper part is a prismatic block: the footprint of the lower part (34.48 mm wide, corner radius 6 mm) is extruded to 4 flat levels along y. The shock tower wall and the gear block are narrowed to 28.0 mm, with side steps beside them. All outer faces are flat. The edges have radii and edge chamfers, the root of the shock tower wall has a radius of 2.0 mm (see [edges of the outer shape](#edges-of-the-outer-shape)). The only other curved faces are the bores and the cavities, which follow the lower part.
 
 | Section (y) | Level above the parting face | Function |
 |:---|:---|:---|
 | -25.5 to -17.9 mm | 4.92 mm | Flange: seat of the heads of the outer screws |
-| -17.9 to -5.3 mm | 17.8 mm | Block over the diff and the ring gear (2 mm in front of the ring gear cavity) |
-| -5.3 to 0.7 mm | 31.5 mm | Shock tower wall over the full width, 6 mm thick, flat contact face, root radius 2.0 mm on both sides |
-| 0.7 to 10.5 mm | 17.8 mm | Block over the diff and the ring gear |
+| -17.9 to -5.3 mm | 17.8 mm | Block over the diff and the ring gear (2 mm in front of the ring gear cavity), 28.0 mm wide |
+| -5.3 to 0.7 mm | 31.5 mm | Shock tower wall, 28.0 mm wide (x = +-14.0 mm), 6 mm thick, flat contact face, root radius 2.0 mm on both sides |
+| 0.7 to 10.5 mm | 17.8 mm | Block over the diff and the ring gear, 28.0 mm wide up to 5.0 mm |
 | 10.5 to 26.7 mm | 15.4 mm | Flat contact face of the top brace over the pinion, counterbores of the pinion side screws |
 | 26.7 to 27.9 mm | Rectangular block, 13.2 mm wide, 6.6 mm high | Cover of the outer pinion bearing beyond the footprint (same section as the lower part) |
 
+* Side steps: beside the wall and the gear block (|x| > 14.0 mm), from the front face of the gear block to y = 5.0 mm, the part is 15.0 mm high. This gives space for the rod ends of the camber links behind the shock towers (zone with a radius of 4.0 mm around the ball stud at x = +-18.05 mm, 19.1 mm, 9 mm long; estimate) and for the camber link lobes of the towers (lowest point 15.6 mm). The removed material is 3.05 mm away from the cavities, seats and holes; above the diff bearing seats, 7.5 mm of material remain.
+* The tapped holes of the shock tower (x = +-9.55 mm) are 4.45 mm from the side faces of the narrowed wall (centre to face).
 * The interference check of the assembly of the lower and the upper part gives 0 mm³.
 * The ring gear cavity of the upper part ends at x = 10.4 mm (lower part: 11.35 mm). Up to 11.35 mm, the wall to the tapped hole of the top brace screw was only 0.2 mm. It is now 1.15 mm.
-* Size 34.48 x 53.4 x 31.5 mm, volume 19.8 cm³, mass 56 g in 7075 (2.81 g/cm³), 25 g in PLA.
+* Size 34.48 x 53.4 x 31.5 mm, volume 18.8 cm³, mass 53 g in 7075 (2.81 g/cm³), 23 g in PLA.
 * The wall is 6 mm thick: the screws M3x8 through the 3 mm shock tower have 5 mm thread engagement. The material above the thread of the upper holes is 1.4 mm (wall top at the height of the stock ears, U10).
 * The block over the ring gear is 17.8 mm high. In front of the wall, the zone above 19.8 mm (block plus root radius) is kept free for the shock tower. The cover over the ring gear cavity is 1.4 mm directly behind the wall and 2.5 mm at the contact face.
 * The mass is higher than with shells that follow the gears. Straight pockets in the flat faces can reduce it, if required.
@@ -548,12 +550,12 @@ The measurement sheet `bulkhead_upper_measurement_sheet.pdf` shows the interface
 ### Open points of the upper bulkhead
 * Caliper values of the stock upper part that are not measured: U5, U6 (position of the shock tower contact face), U8 (position of the top brace screws along y), U11 (lowest edge of the shock towers), U12 to U14. The test print confirms the part, so these values are not required for manufacturing.
 * Shock tower: the stock shock tower plate does not fit. The [speedrun shock towers](#speedrun-shock-towers) (front and rear) are designed for the upper bulkhead.
-* Mass: 56 g in 7075. Straight pockets in the flat faces can reduce the mass.
+* Mass: 53 g in 7075. Straight pockets in the flat faces can reduce the mass.
 
 ## Speedrun shock towers
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** New front and rear shock towers for the speedrun upper bulkhead. Flat carbon plates of 3 mm (as the stock shock towers) on the contact face of the shock tower wall, each fixed with 4 button head screws M3x8 in the tapped holes of the wall. The dampers are mounted on the front face (outer end), the rod ends of the camber links on the back face (wall side), as on the car. The rear tower also carries the body post mounts.
-* **Status:** Front shock tower: verified by the owner. Rear shock tower: not verified. The damper, camber link (wheel mount) and body post positions are based on measurements of the stock shock towers by the owner. The camber link holes of both towers are moved outward by 3.19 mm because of the wall of the speedrun upper bulkhead (see [design of the speedrun shock towers](#design-of-the-speedrun-shock-towers)). The space for the rod ends is an estimate from photos.
+* **Status:** Verified by the owner (front and rear shock tower). The damper, camber link (wheel mount) and body post positions are based on measurements of the stock shock towers by the owner. After the verification, the camber link holes were moved back to the stock position (the owner found them about 3 mm too far outward), and the shock tower wall of the upper bulkhead was narrowed for the rod ends (see [design of the speedrun shock towers](#design-of-the-speedrun-shock-towers)). The space for the rod ends is an estimate from photos.
 
 ![Speedrun front shock tower on the speedrun bulkheads](../photos/cad_shock_tower_front_drawing.png)
 
@@ -565,19 +567,19 @@ Positions in the plane of the tower: x across the car, height above the parting 
 | Element | Front shock tower | Rear shock tower | Basis |
 |:---|:---|:---|:---|
 | Mounting holes T1 to T4 | x = ±9.55 mm, 22.5 mm and 28.6 mm, Ø3.2 mm | Same | Tapped holes of the upper bulkhead (U1 to U3) |
-| Camber link holes C1, C2 (wheel mounts) | x = ±21.24 mm, 19.1 mm, Ø3.2 mm | Same | Stock towers: 8.5 mm outward and 5 mm down from the top of the lower mounting hole, x = ±18.05 mm (owner); moved outward, see below |
+| Camber link holes C1, C2 (wheel mounts) | x = ±18.05 mm, 19.1 mm, Ø3.2 mm | Same | Stock towers: 8.5 mm outward and 5 mm down from the top of the lower mounting hole (owner) |
 | Damper holes D1, D2 | x = ±31.65 mm, 30.6 mm, Ø3.2 mm | x = ±36.15 mm, 30.6 mm, Ø3.2 mm | Stock towers, from the outer end of the upper mounting hole to the centre of the damper hole: front 20.5 mm outward and 2 mm up, rear 25 mm outward and 2 mm up (owner) |
 | Body post bores B1, B2 | – | x = ±51.65 mm, 31.2 mm, Ø5.2 mm | Stock rear tower: bottom of the bore 40.5 mm outward from the outer end of the upper mounting hole (owner) |
 | Body post screw bores S1, S2 | – | x = ±51.65 mm, 37.85 mm, Ø3.2 mm | Stock rear tower: bottom of the bore 2.45 mm above the top of the 5.2 mm bore (owner) |
 | Thickness | 3.0 mm carbon | 3.0 mm carbon | Owner. The upper bulkhead is designed for it: screws M3x8, 5 mm thread engagement |
 | Outline | Straight top edge 34.1 mm high, round ends R3.5 around the damper holes, straight edges down to the camber link lobes | Straight top edge 32.1 mm high over the width of the bulkhead, corners R6, rising straight edges to round ends R4.5 around the body post bores, straight edges down to the camber link lobes; the damper holes lie in the wings | Design |
-| Common outline | Round lobes R3.5 around the camber link holes, straight bottom edge 0.2 mm above the block in front of the wall, inside corners R1 | Same | Design |
-| Size, mass | 70.3 x 18.5 x 3 mm, 4.5 g (carbon), 7.9 g (7075) | 112.3 x 26.8 x 3 mm, 7.7 g (carbon), 13.5 g (7075) | |
+| Common outline | Round lobes R3.5 around the camber link holes beside the narrowed block, straight bottom edge 0.2 mm above the block in front of the wall, inside corners R1 | Same | Design |
+| Size, mass | 70.3 x 18.5 x 3 mm, 4.4 g (carbon), 7.7 g (7075) | 112.3 x 26.8 x 3 mm, 7.6 g (carbon), 13.4 g (7075) | |
 
 * Edges of both towers: chamfer 0.5 mm on both faces (as the edge chamfers of the bulkheads), chamfers of 0.3 mm on the holes. No sharp corners: all outside corners are radii.
-* Relief on the back face: along the bottom edge, the edge chamfer increases to 45 degrees with legs of 2.05 mm and runs out to the edge chamfer over 1.5 mm beside the bulkhead. It clears the root radius of the wall (2.0 mm) by 0.18 mm.
-* Camber link holes: at the stock position (x = ±18.05 mm), the rod ends behind the tower would collide with the wall of the speedrun upper bulkhead, which spans the full width of 34.48 mm (the stock bulkhead has two narrow ears). The holes are moved outward at the same height until a zone with a radius of 4.0 mm around the ball stud (rod end with clearance) is clear of the side faces of the bulkhead: x = 17.24 + 4.0 = 21.24 mm. The camber links become 3.19 mm shorter (turnbuckles). The inner pivot points stay at the same height and in the same plane.
-* The bottom edge lies 0.2 mm above the block in front of the wall (17.8 mm). The edge distance below the lower mounting holes is 2.9 mm, around the other holes at least 1.9 mm.
+* Relief on the back face: along the bottom edge, the edge chamfer increases to 45 degrees with legs of 2.05 mm and runs out to the edge chamfer over 1.5 mm beside the wall. It clears the root radius of the wall (2.0 mm) by 0.18 mm.
+* Camber link holes: at the stock position (x = ±18.05 mm). The rod ends sit behind the tower beside the shock tower wall of the upper bulkhead. For this, the wall and the gear block of the upper bulkhead are narrowed to 28.0 mm (x = ±14.0 mm), with side steps 15.0 mm above the parting face beside them (see [design of the upper bulkhead](#design-of-the-upper-bulkhead)). A zone with a radius of 4.0 mm around the ball stud (rod end with clearance, estimate) is 0.05 mm clear of the side faces of the wall: 18.05 - 4.0 - 0.05 = 14.0 mm.
+* The bottom edge lies 0.2 mm above the block in front of the wall (17.8 mm). The camber link lobes reach down to 15.6 mm beside the narrowed block, 0.6 mm above the side steps. The edge distance below the lower mounting holes is 2.9 mm, around the other holes at least 1.9 mm.
 
 ### Fit to the upper bulkhead
 Results of the checks of `generate_shock_towers.py` (same for both towers):
@@ -586,7 +588,7 @@ Results of the checks of `generate_shock_towers.py` (same for both towers):
 |:---|:---|
 | Mounting holes on the tapped holes of the upper bulkhead | Offset 0.00 mm |
 | Interference with the upper and the lower bulkhead | 0 mm³ |
-| Contact area on the wall | 318 mm² |
+| Contact area on the wall | 247 mm² |
 | Gap below the tower (block and root radius) | 0.20 mm |
 | Zone of the rod ends behind the tower (radius 4.0 mm, 9 mm long) | Free, 0 mm³ overlap with the bulkheads |
 | Edge distance of the holes | Mounting holes 2.9 mm, camber link holes 1.9 mm, damper holes 1.9 mm (front) and 5.3 mm (rear), body post bores 1.9 mm and 2.9 mm |
@@ -610,12 +612,9 @@ All files are stored in the directory `/shock_tower`. They are generated with `g
 * CNC order of the carbon plates: outline and holes from the DXF files. The edge chamfers and the relief on the back face are in the STEP files (relief: 45 degrees, 2.05 mm, along the bottom edge on the back face).
 
 ### Open points of the speedrun shock towers
-The front shock tower is verified by the owner. The following points are open for the rear shock tower.
-* Rod ends of the camber links: size and position behind the towers are to be measured (the zone with a radius of 4.0 mm is an estimate). With smaller rod ends, the camber link holes can move inward (parameter `rod_end_clearance_r`).
-* Camber geometry: the camber link holes are 3.19 mm further outward than on the stock towers. The effect on the camber change is to be checked on the car. Alternative with the stock position: recesses at both ends of the wall of the upper bulkhead (outer shape), as the free space beside the ears of the stock bulkhead.
+Both shock towers are verified by the owner. The following points are not required for manufacturing. They are relevant for later changes of the design.
+* Rod ends of the camber links: size and position behind the towers are not measured (the zone with a radius of 4.0 mm is an estimate). It sets the width of the shock tower wall of the upper bulkhead (parameters `rod_end_clearance_r` of the towers and `wall_half_width` of the upper bulkhead).
 * Holes of the stock towers: the conversion of the measurements assumes holes of 3.2 mm.
-* Body post mounts of the rear tower: the use of the 5.2 mm bore and the 3.2 mm bore (body post holder) is taken from the stock tower without further check.
-* Test print of the rear shock tower with the dampers, the camber links and the body posts installed.
 
 ## Scripts
 The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates (except `generate_chassis_templates.py`, which writes the templates of the chassis plate and the top brace), and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
@@ -667,7 +666,7 @@ python scripts/cad/generate_chassis_templates.py --print-scale 0.97 --suffix _pr
 
 Both generators of the bulkheads check the solid after each run:
 * **Enclosure check:** the intended openings (parting face, lip openings, end of the pinion seat, floor opening below the ring gear) are closed with plugs. The gear cavity must then be a closed void. If it is not, the part has an unwanted opening to the outside.
-* **Thin slits and walls:** faces without a common edge that are closer than 0.25 mm (exact distance between the faces). Each pair is reported as a slit (void between the faces), a wall (material between the faces) or a narrow face (the faces are separated by other faces, not by a gap, for example the flat of 0.2 mm between a radius and the end of a block). In a slit or a wall, the point between the two faces is about half the distance away from the surface. Current result: lower part 14 narrow faces (6 at the inside radii, 8 at the ends of stopped edge chamfers), upper part 12 narrow faces (ends of stopped edge chamfers); no slits and no walls.
+* **Thin slits and walls:** faces without a common edge that are closer than 0.25 mm (exact distance between the faces). Each pair is reported as a slit (void between the faces), a wall (material between the faces) or a narrow face (the faces are separated by other faces, not by a gap, for example the flat of 0.2 mm between a radius and the end of a block). In a slit or a wall, the point between the two faces is about half the distance away from the surface. Current result: lower part 14 narrow faces (6 at the inside radii, 8 at the ends of stopped edge chamfers), upper part 20 narrow faces (16 at the ends of stopped edge chamfers, 4 at the ends of the root radius beside the narrowed wall); no slits and no walls.
 * **Inside corners:** number of vertical inside corners without a radius that are longer than 1 mm (shorter ones occur at the ends of stopped edge chamfers). Current result: 0 in both parts.
 * **Edge chamfers:** number and length of the edges with edge chamfers, with stopped edge chamfers and of the edges left as they are, with a list of the edges left as they are.
 * **Functional check:** comparison with the model without edge treatment, which has the verified inside of the part (see [edges of the outer shape](#edges-of-the-outer-shape)). No added or removed material may touch the cavities, bearing seats, holes or recesses, no material may be added in the keep-out zones, and no radius may reach lower or higher than the material beside it.
