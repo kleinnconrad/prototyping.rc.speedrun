@@ -51,7 +51,7 @@ The speedrun chassis is designed in this project for speeds over 100 km/h. It co
 * Laser cutting: the top brace (2 mm) and the shock towers (3 mm) are flat plates with plain holes, so that they can be laser cut from aluminium or another material of choice (for example carbon). The outline and the holes are taken from the DXF files. The edge and hole chamfers and the relief on the back face of the shock towers (clearance to the root radius of the wall of the upper bulkhead) are a second machining step.
 * Simple design: a further goal is a simplified design of the bulkheads, the shock towers and the top brace with flat faces, straight edges and radii.
 * Chassis plate: apart from the material, the speedrun chassis plate is designed to match the ZooRacing Hellcat body (190 mm). It also gives more space for further developments: a battery with 4S or 6S instead of 3S, a dual motor setup and the custom [telemetry system](#follow-up-project-telemetry-system).
-* Stock parts: the other parts of the car are not modelled. For these parts, the stock parts of the manufacturer are used, since this is the technically and economically reasonable solution. Only the stock pivot blocks of the wishbones and the stock centre driveshaft with its cup joints are modelled (`cad/stock_parts`). They are not part of the speedrun design and are modelled for the completeness of the build.
+* Stock parts: the other parts of the car are not modelled. For these parts, the stock parts of the manufacturer are used, since this is the technically and economically reasonable solution. Only the stock pivot blocks of the wishbones and the stock centre driveshaft are modelled (`cad/stock_parts`). The cup joints and the diff outdrives are shown in the assembly picture only. They are not part of the speedrun design and are modelled for the completeness of the build.
 
 ![Speedrun chassis: chassis plate, bulkheads, top brace and shock towers](photos/cad_speedrun_chassis_assembly.png)
 
@@ -76,7 +76,7 @@ The speedrun chassis is designed in this project for speeds over 100 km/h. It co
   * **`/shock_tower`**: Front and rear shock tower for the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file)
   * **`/stock_parts`**: Models of stock parts of the Carten T410R, not part of the speedrun design, modelled for the completeness of the build
     * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file)
-    * **`/driveshaft`**: Centre driveshaft and cups of the cup joints on the pinions (STEP, STL, parameter file)
+    * **`/driveshaft`**: Centre driveshaft with the cross holes for the metal pins of the cup joints (STEP, STL, parameter file)
   * **`/chassis`**: Chassis plate, wide speedrun chassis plate, top brace and speedrun top brace with one subdirectory per part (STEP, STL, DXF, OpenSCAD, 1:1 templates, test print files)
 * **`/docs`**: Static web dashboard for visualizing the latest setup configurations
 * **`/photos`**: Central directory for all image files

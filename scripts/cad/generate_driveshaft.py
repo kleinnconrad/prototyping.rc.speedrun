@@ -1,11 +1,13 @@
-"""Generate the centre driveshaft of the Carten T410R (NHA413) with its cup joints (stock parts, not
-part of the speedrun design).
+"""Generate the centre driveshaft of the Carten T410R (NHA413) (stock part, not part of the speedrun
+design).
 
 The centre driveshaft connects the pinions of the two bulkheads. Each end runs in a cup on the
-pinion shaft (cup joint): a ball end with a cross pin in a bore with two slots. The shaft is
-shorter than the distance between the bottoms of the cups by the axial play, so it can move a
-little back and forth. The parts are stock parts: they are not part of the speedrun design and
-are modelled for the completeness of the build.
+pinion shaft (cup joint): a ball end with a cross hole for a metal pin (NBA255 2.0x7.6), which
+fixes the shaft in the slots of the cup in the direction of rotation. The shaft is shorter than
+the distance between the bottoms of the cups by the axial play, so it can move a little back and
+forth. The shaft is a stock part: it is not part of the speedrun design and is modelled for the
+completeness of the build. The metal pins, the cups on the pinions and the cups of the diff
+outdrives are simple bodies for the assembly picture only (no CAD files).
 
 Derived from the models of this project: the pinion axis (x = 0, axis_z of the lower bulkhead
 above the chassis plate), the end faces of the pinion housings (pinion seats of the lower
@@ -16,7 +18,7 @@ the shaft and the cross pins are typical values of 1:10 touring cars
 Usage (from the root directory of the repository):
     python scripts/cad/generate_driveshaft.py
 
-The script writes the STEP and STL files of the shaft and of the cup and the drawing
+The script writes the STEP and STL files of the shaft and the drawing
 photos/cad_driveshaft_drawing.png, and checks the play and the fit in the cups.
 
 Requires the packages cadquery and matplotlib.
@@ -56,13 +58,28 @@ def layout(p, lp):
 
 
 def shaft_solid(p, length):
-    """Shaft along y from 0 to length (axis x = 0, z = 0): ball ends and cross pins along x."""
+    """Shaft along y from 0 to length (axis x = 0, z = 0): ball ends with cross holes along x for the
+    metal pins."""
     r = p["shaft_d"] / 2
     s = cyl_y(r, r, length - r, 0, 0)
     for yc in (r, length - r):
         s = s.fuse(cq.Solid.makeSphere(r, cq.Vector(0, yc, 0), angleDegrees1=-90, angleDegrees2=90))
-        s = s.fuse(cyl_x(p["pin_d"] / 2, -p["pin_length"] / 2, p["pin_length"] / 2, yc, 0))
+    for yc in (r, length - r):
+        s = s.cut(cyl_x(p["pin_hole_d"] / 2, -r - 1, r + 1, yc, 0))
     return s.clean()
+
+
+def pin_solid(p):
+    """Metal cross pin along x, centred at the origin (picture only)."""
+    return cyl_x(p["pin_d"] / 2, -p["pin_length"] / 2, p["pin_length"] / 2, 0, 0)
+
+
+def outdrive_solid(p):
+    """Cup of a diff outdrive along +x: back face at x = 0, open end at x = outdrive_length (picture
+    only)."""
+    lo = p["outdrive_length"]
+    s = cyl_x(p["outdrive_od"] / 2, 0, lo, 0, 0)
+    return s.cut(cyl_x(p["outdrive_bore_d"] / 2, lo - p["outdrive_bore_depth"], lo + 1, 0, 0)).clean()
 
 
 def cup_solid(p):
@@ -77,16 +94,30 @@ def cup_solid(p):
 
 
 def parts_in_plate(p=None, lp=None):
-    """Shaft and cups in the coordinates of the chassis plate: list of (name, solid)."""
+    """Parts in the coordinates of the chassis plate: list of (name, kind, solid). kind: "shaft"
+    (CAD file), "pin" and "cup" (simple bodies for the assembly picture only): metal pins, cups on
+    the pinions and cups of the diff outdrives on both sides of each bulkhead."""
     p = p or load_params(PARAMS)
     lp = lp or load_params(LOWER)
     lay = layout(p, lp)
     z = lay["z"]
+    zrot = (cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180)
     cup = cup_solid(p)
-    cup_b = cup.translate(cq.Vector(0, lay["back"][0], z))
-    cup_a = cup.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180).translate(cq.Vector(0, lay["back"][1], z))
-    shaft = shaft_solid(p, lay["length"]).translate(cq.Vector(0, lay["shaft"][0], z))
-    return [("centre driveshaft", shaft), ("cup End B", cup_b), ("cup End A", cup_a)]
+    r = p["shaft_d"] / 2
+    y0, y1 = lay["shaft"]
+    parts = [("centre driveshaft", "shaft", shaft_solid(p, lay["length"]).translate(cq.Vector(0, y0, z))),
+             ("metal pin End B", "pin", pin_solid(p).translate(cq.Vector(0, y0 + r, z))),
+             ("metal pin End A", "pin", pin_solid(p).translate(cq.Vector(0, y1 - r, z))),
+             ("cup End B", "cup", cup.translate(cq.Vector(0, lay["back"][0], z))),
+             ("cup End A", "cup", cup.rotate(*zrot).translate(cq.Vector(0, lay["back"][1], z)))]
+    od = outdrive_solid(p)
+    xo = lp["body_half_width"] + p["outdrive_gap"]
+    for end, label, yd in (("rear", "End B", BULKHEAD_Y["rear"] + lp["diff_axis_y"]),
+                           ("front", "End A", BULKHEAD_Y["front"] - lp["diff_axis_y"])):
+        for sx, side in ((1, "+x"), (-1, "-x")):
+            s = od if sx > 0 else od.rotate(*zrot)
+            parts.append((f"diff outdrive {label} {side}", "cup", s.translate(cq.Vector(sx * xo, yd, z))))
+    return parts
 
 
 def section_polys(solid):
@@ -168,30 +199,33 @@ def drawing(path, p, lay, items):
         ax2.text(lay["back"][i] + sign * p["cup_length"] / 2, z - 5.6, "cup", ha="center", va="top", fontsize=8)
         ax2.text(hy - sign * 7, z + 8.0, "pinion housing", ha="center", fontsize=8)
         ax2.text(sh + sign * 12, z + 3.5, "shaft", ha="center", fontsize=8)
-    fig.text(0.04, 0.008, f"Shaft {p['shaft_d']:g} mm with ball ends and cross pins {p['pin_d']:g} x {p['pin_length']:g} "
-             f"mm; cups {p['cup_od']:g} x {p['cup_length']:g} mm, bore {p['cup_bore_d']:g} x {p['cup_bore_depth']:g} mm, "
-             f"slots {p['cup_slot_w']:g} mm (typical values, not measured). Total axial play {p['axial_play']:g} mm.",
-             fontsize=8, va="bottom")
+        yp = sh + sign * p["shaft_d"] / 2                    # metal pin at the centre of the ball end
+        ax2.annotate(f"metal pin {p['pin_d']:g} x {p['pin_length']:g}", (yp, z), (yp + sign * 9, z - 3.5),
+                     fontsize=8, ha="center", arrowprops=dict(arrowstyle="-", lw=0.6))
+    fig.text(0.04, 0.008, f"Shaft {p['shaft_d']:g} mm with ball ends and cross holes {p['pin_hole_d']:g} mm for the metal "
+             f"pins NBA255 {p['pin_d']:g} x {p['pin_length']:g} mm, which fix the shaft in the slots of the cups in the "
+             f"direction of rotation. Total axial play {p['axial_play']:g} mm.\nCups {p['cup_od']:g} x "
+             f"{p['cup_length']:g} mm, bore {p['cup_bore_d']:g} x {p['cup_bore_depth']:g} mm, slots {p['cup_slot_w']:g} mm "
+             "(typical values, not measured). Metal pins and cups: simple bodies, no CAD files.", fontsize=8, va="bottom")
     fig.savefig(path, dpi=110)
     plt.close(fig)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate the centre driveshaft of the T410R with the cup joints "
-                                                 "(stock parts, not part of the speedrun design).")
+    parser = argparse.ArgumentParser(description="Generate the centre driveshaft of the T410R (stock part, not part "
+                                                 "of the speedrun design).")
     parser.parse_args()
     p, lp, up = load_params(PARAMS), load_params(LOWER), load_params(UPPER)
     lay = layout(p, lp)
-    shaft, cup = shaft_solid(p, lay["length"]), cup_solid(p)
-    for name, s in (("driveshaft", shaft), ("driveshaft_cup", cup)):
-        stem = f"{OUT}/{name}_T410R"
-        valid, bb, vol = s.isValid(), s.BoundingBox(), s.Volume()
-        cq.exporters.export(cq.Workplane().add(s), stem + ".step")
-        cq.exporters.export(cq.Workplane().add(s), stem + ".stl", tolerance=0.01, angularTolerance=0.1)
-        print(f"{name}: wrote {stem}.step/.stl, solid valid: {valid}, size {bb.xlen:.2f} x {bb.ylen:.2f} x "
-              f"{bb.zlen:.2f} mm, volume {vol / 1000:.2f} cm3")
+    s = shaft_solid(p, lay["length"])
+    stem = f"{OUT}/driveshaft_T410R"
+    valid, bb, vol = s.isValid(), s.BoundingBox(), s.Volume()
+    cq.exporters.export(cq.Workplane().add(s), stem + ".step")
+    cq.exporters.export(cq.Workplane().add(s), stem + ".stl", tolerance=0.01, angularTolerance=0.1)
+    print(f"driveshaft: wrote {stem}.step/.stl, solid valid: {valid}, size {bb.xlen:.2f} x {bb.ylen:.2f} x "
+          f"{bb.zlen:.2f} mm, volume {vol / 1000:.2f} cm3, cross holes {p['pin_hole_d']:g} for the metal pins")
 
-    parts = dict(parts_in_plate(p, lp))
+    parts = {name: solid for name, _, solid in parts_in_plate(p, lp)}
     bulkheads = []
     for end in ("rear", "front"):
         for solid in (bulkhead_lower(lp).val(), bulkhead_upper(lp, up).val()):
@@ -200,7 +234,8 @@ def main():
     plate = cq.importers.importStep("cad/chassis/chassis_plate_speedrun_wide_motor10/"
                                     "chassis_plate_T410R_speedrun_wide_motor10.step").val()
     items = [(plate, "#5b5f66")] + [(b, "#8c96a3" if k % 2 == 0 else "#d9a35f") for k, b in enumerate(bulkheads)]
-    items += [(parts["cup End B"], "#b8bcc2"), (parts["cup End A"], "#b8bcc2"), (parts["centre driveshaft"], "#c0392b")]
+    items += [(parts["cup End B"], "#b8bcc2"), (parts["cup End A"], "#b8bcc2"), (parts["centre driveshaft"], "#c0392b"),
+              (parts["metal pin End B"], "#5d636b"), (parts["metal pin End A"], "#5d636b")]
     drawing(DRAWING, p, lay, items)
     print(f"Wrote {DRAWING}")
 
@@ -216,6 +251,10 @@ def main():
     shaft_p = parts["centre driveshaft"]
     for name in ("cup End B", "cup End A"):
         print(f"  shaft / {name}: overlap {shaft_p.intersect(parts[name]).Volume():.4f} mm3")
+    for end in ("End B", "End A"):
+        pin = parts[f"metal pin {end}"]
+        print(f"  metal pin {end}: overlap with the cup {pin.intersect(parts['cup ' + end]).Volume():.4f} mm3, "
+              f"with the shaft (pin in the cross hole) {pin.intersect(shaft_p).Volume():.4f} mm3")
     for name, s in parts.items():
         worst = max(s.intersect(b).Volume() for b in bulkheads + [plate])
         print(f"  {name} / bulkheads and chassis plate: largest overlap {worst:.4f} mm3")

@@ -10,8 +10,10 @@ Parts:
 * stock pivot blocks of the wishbones (not part of the speedrun design, modelled for the
   completeness of the build, not in the mass total): long block on H01/H02, short blocks on
   H07/H08, H26/H27 and H32/H33
-* stock centre driveshaft with the cups on the pinions (not part of the speedrun design, modelled
-  for the completeness of the build, not in the mass total)
+* stock centre driveshaft (not part of the speedrun design, modelled for the completeness of the
+  build, not in the mass total)
+* picture only (simple bodies, not in the STEP file): metal pins of the centre driveshaft, cups
+  on the pinions and cups of the diff outdrives
 
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
@@ -50,7 +52,9 @@ OUT_STEP = "cad/assembly/speedrun_chassis_T410R.step"
 OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3),
           "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
-          "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77)}
+          "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "pin": (0.36, 0.38, 0.42),
+          "cup": (0.72, 0.74, 0.77)}
+PICTURE_ONLY = {"pin", "cup"}          # simple bodies for the picture, not in the STEP file
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
              "lower": ("Lower bulkhead (2 pieces)", {"7075": 2.81}),
@@ -60,7 +64,8 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81}),
              "pivot": ("Stock pivot blocks (4 pieces, not part of the speedrun design)", {}),     # no mass
              "shaft": ("Stock centre driveshaft (not part of the speedrun design)", {}),
-             "cup": ("Stock pinion cups (2 pieces, not part of the speedrun design)", {})}
+             "pin": ("Metal pins of the centre driveshaft (picture only)", {}),
+             "cup": ("Cup joints on the pinions and diff outdrives (picture only)", {})}
 
 
 def build():
@@ -92,9 +97,10 @@ def build():
     # design, modelled for the completeness of the build)
     for name, _, s, _ in blocks_in_plate():
         parts.append((f"stock pivot block {name}", "pivot", s))
-    # stock centre driveshaft in the cups on the pinions (not part of the speedrun design)
-    for name, s in driveshaft_in_plate():
-        parts.append((f"stock {name}", "shaft" if name == "centre driveshaft" else "cup", s))
+    # stock centre driveshaft (not part of the speedrun design); metal pins, cups on the pinions and
+    # cups of the diff outdrives as simple bodies for the picture only
+    for name, kind, s in driveshaft_in_plate():
+        parts.append((f"stock {name}" if kind == "shaft" else name, kind, s))
     return parts
 
 
@@ -178,7 +184,8 @@ def main():
     parts = build()
     assy = cq.Assembly(name="speedrun_chassis_T410R")
     for name, key, s in parts:
-        assy.add(s, name=name.replace(" ", "_"), color=cq.Color(*COLORS[key]))
+        if key not in PICTURE_ONLY:
+            assy.add(s, name=name.replace(" ", "_"), color=cq.Color(*COLORS[key]))
     exportAssembly(assy, OUT_STEP)
     image(parts, OUT_PNG)
     print(f"Wrote {OUT_STEP} and {OUT_PNG}")
@@ -191,7 +198,8 @@ def main():
         n = sum(1 for p in parts if p[1] == key)
         label, mats = MATERIALS[key]
         if not mats:
-            print(f"  {label}: {n} piece{'s' if n > 1 else ''}, stock parts, not in the mass total")
+            note = "simple bodies, picture only" if key in PICTURE_ONLY else "stock parts"
+            print(f"  {label}: {n} piece{'s' if n > 1 else ''}, {note}, not in the mass total")
             continue
         vol = s.Volume() / 1000
         masses = {m: vol * rho * n for m, rho in mats.items()}
