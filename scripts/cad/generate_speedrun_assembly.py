@@ -7,8 +7,9 @@ Parts:
 * speedrun top brace on both upper bulkheads (end with the obround at End B)
 * speedrun shock towers on the upper bulkheads: front tower at End A (assumed to be the front),
   rear tower at End B
-* stock pivot blocks of the wishbones (reference parts, not in the mass total): long block on
-  H01/H02, short blocks on H07/H08, H26/H27 and H32/H33
+* stock pivot blocks of the wishbones (not part of the speedrun design, modelled for the
+  completeness of the build, not in the mass total): long block on H01/H02, short blocks on
+  H07/H08, H26/H27 and H32/H33
 
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
@@ -54,7 +55,7 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "brace": ("Speedrun top brace", {"carbon": 1.6, "7075": 2.81}),
              "tower_front": ("Speedrun front shock tower", {"carbon": 1.6, "7075": 2.81}),
              "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81}),
-             "pivot": ("Stock pivot blocks (4 pieces, reference)", {})}     # stock parts: no mass
+             "pivot": ("Stock pivot blocks (4 pieces, not part of the speedrun design)", {})}     # no mass
 
 
 def build():
@@ -82,7 +83,8 @@ def build():
                   front.translate(cq.Vector(0, BULKHEAD_Y["front"], plate_t))))
     parts.append(("speedrun rear shock tower End B", "tower_rear",
                   tower_in_bulkhead(lp, up, "rear").translate(cq.Vector(0, BULKHEAD_Y["rear"], plate_t))))
-    # stock pivot blocks of the wishbones on the holes of the chassis plate (reference parts)
+    # stock pivot blocks of the wishbones on the holes of the chassis plate (not part of the speedrun
+    # design, modelled for the completeness of the build)
     for name, _, s, _ in blocks_in_plate():
         parts.append((f"stock pivot block {name}", "pivot", s))
     return parts

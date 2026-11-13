@@ -42,7 +42,7 @@
   * [Fit to the upper bulkhead](#fit-to-the-upper-bulkhead)
   * [Files of the speedrun shock towers](#files-of-the-speedrun-shock-towers)
   * [Open points of the speedrun shock towers](#open-points-of-the-speedrun-shock-towers)
-* [Pivot blocks (stock parts)](#pivot-blocks-stock-parts)
+* [Pivot blocks (stock parts, not part of the speedrun design)](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design)
   * [Dimensions of the pivot blocks](#dimensions-of-the-pivot-blocks)
   * [Position and fit on the speedrun chassis](#position-and-fit-on-the-speedrun-chassis)
   * [Files of the pivot blocks](#files-of-the-pivot-blocks)
@@ -68,8 +68,9 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/top_brace_speedrun`**: New design of the top brace that matches the bulkheads of this project (STEP, STL, DXF, PDF templates, geometry data, hole table, test print STL files)
 * **`/bulkhead`**: CAD data of the bulkheads (gear boxes): lower bulkhead, upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets).
 * **`/shock_tower`**: New design of the front and the rear shock tower that match the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
-* **`/pivot_block`**: Stock pivot blocks of the wishbones as reference models for the assembly (STEP, STL, parameter file).
-* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, with the stock pivot blocks as reference parts (STEP).
+* **`/stock_parts`**: Models of stock parts of the Carten T410R. They are not part of the speedrun design and are modelled for the completeness of the build.
+  * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file).
+* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the stock pivot blocks (STEP).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
@@ -96,7 +97,7 @@ The speedrun chassis combines the parts that are designed in this project for sp
 
 ### Assembly file
 * `assembly/speedrun_chassis_T410R.step`: assembly of all 8 parts in the coordinate system of the chassis plate (STEP AP214, one solid per part).
-* The assembly also contains the 4 stock pivot blocks of the wishbones as reference parts (see [pivot blocks](#pivot-blocks-stock-parts)). They are not in the mass total.
+* The assembly also contains the 4 stock pivot blocks of the wishbones (see [pivot blocks](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design)). They are not part of the speedrun design, are modelled for the completeness of the build and are not in the mass total.
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [position and fit on the speedrun chassis](#position-and-fit-on-the-speedrun-chassis)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
 * The image shows an overall view, a side view, a top view and close-ups of both ends: bulkheads, shock tower and end of the top brace, seen from the outer end.
@@ -625,10 +626,10 @@ Both shock towers are verified by the owner. The following points are not requir
 * Rod ends of the camber links: size and position behind the towers are not measured (the zone with a radius of 4.0 mm is an estimate). It sets the width of the shock tower wall of the upper bulkhead (parameters `rod_end_clearance_r` of the towers and `wall_half_width` of the upper bulkhead).
 * Holes of the stock towers: the conversion of the measurements assumes holes of 3.2 mm.
 
-## Pivot blocks (stock parts)
+## Pivot blocks (stock parts, not part of the speedrun design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** Reference models of the stock pivot blocks of the Carten T410R. The pivot blocks hold the hinge pins of the wishbones and are screwed to the chassis plate from below (countersunk screws M3). They are stock parts and are not manufactured in this project. The models are used in the assembly of the speedrun chassis and for the check of the space below the bulkheads.
-* **Status:** Reference model. The dimensions are measurements of the owner, the distances of the mounting holes are taken from the hole pattern of the speedrun chassis plate, the lengths of the shoulders are estimates from photos.
+* **Description:** Models of the stock pivot blocks of the Carten T410R. The pivot blocks hold the hinge pins of the wishbones and are screwed to the chassis plate from below (countersunk screws M3). They are stock parts: they are not part of the speedrun design and are not manufactured in this project. They are modelled for the completeness of the build: the assembly of the speedrun chassis contains them, so that the space below the bulkheads can be checked.
+* **Status:** Not part of the speedrun design (stock part). The dimensions are measurements of the owner, the distances of the mounting holes are taken from the hole pattern of the speedrun chassis plate, the lengths of the shoulders are estimates from photos.
 
 ![Pivot blocks: sections and top views](../photos/cad_pivot_blocks_drawing.png)
 
@@ -662,7 +663,7 @@ Results of the checks of `generate_pivot_blocks.py`:
 * The test prints of the lower bulkhead were made with the previous shape. The outer chamfers came with the new shape after the second test print, so this point is not checked on the car.
 
 ### Files of the pivot blocks
-All files are stored in the directory `/pivot_block`. They are generated with `generate_pivot_blocks.py` (see [scripts](#scripts)).
+All files are stored in the directory `/stock_parts/pivot_block`. They are generated with `generate_pivot_blocks.py` (see [scripts](#scripts)).
 
 | File | Format | Use |
 |:---|:---|:---|
