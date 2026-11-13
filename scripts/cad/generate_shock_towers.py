@@ -3,9 +3,8 @@
 Both towers are new designs for the speedrun upper bulkhead: flat 3 mm plates on the contact face
 of the shock tower wall, fixed with 4 screws M3x8 in the tapped holes of the wall. The damper holes
 (and the body post holes of the rear tower) are in the positions of the stock shock towers
-(measurements of the owner). The camber link holes (wheel mounts) have the height of the stock
-towers but are moved outward, so that the rod ends behind the tower have space beside the wall of
-the bulkhead (the stock bulkhead has two narrow ears).
+(measurements of the owner), the camber link holes (wheel mounts) as well. The wall of the upper
+bulkhead is narrowed (wall_half_width), so that the rod ends behind the tower have space beside it.
 
 Outline: a chain of straight edges and radii around the holes (round lobes around the camber link
 holes, round ends around the damper holes of the front tower and around the body post holes of the
@@ -67,9 +66,9 @@ def layout(tp, lp, up):
     r = tp["stock_hole_d"] / 2
     xm, yl, yu = up["tower_hole_x"], up["tower_hole_h_lower"], up["tower_hole_h_upper"]
     cam_stock = (xm + tp["camber_dx"], yl + r + tp["camber_dy"])
-    lay = {"mount": [(-xm, yl), (xm, yl), (-xm, yu), (xm, yu)], "camber_stock": cam_stock,
-           # rod end behind the tower: keep its radius clear of the side faces of the bulkhead
-           "camber": (max(cam_stock[0], lp["body_half_width"] + tp["rod_end_clearance_r"]), cam_stock[1]),
+    # camber link holes at the stock position: the wall of the upper bulkhead is narrowed so that the
+    # rod ends behind the tower have space beside it (wall_half_width of the upper bulkhead)
+    lay = {"mount": [(-xm, yl), (xm, yl), (-xm, yu), (xm, yu)], "camber": cam_stock,
            "damper": (xm + r + tp["damper_dx"], yu + tp["damper_dy"])}
     if "body_post_dx" in tp:
         xb = xm + r + tp["body_post_dx"]
@@ -82,7 +81,7 @@ def elements(tp, lp, up, lay):
     """Chain of the outline, counterclockwise: (centre, radius, fillet). Radius 0: a corner point
     with the given fillet radius; radius > 0: a circle that the outline runs around."""
     yb = up["gear_block_h"] + tp["bottom_gap"]
-    xs = lp["body_half_width"] + tp["side_gap"]
+    xs = up.get("wall_half_width", lp["body_half_width"]) + tp["side_gap"]
     cam = (np.array(lay["camber"]), tp["lobe_r"], 0.0)
     if "body_post" in lay:
         rb = tp["body_post_end_r"]
@@ -155,7 +154,7 @@ def tower_solid(g, tp, lp, up):
     t, e = g["thickness"], tp["edge_chamfer"]
     yb = up["gear_block_h"] + tp["bottom_gap"]
     relief = up["gear_block_h"] + up["wall_root_r"] + tp["root_clearance"] - yb
-    xa = lp["body_half_width"] + 0.1                          # full relief over the width of the bulkhead
+    xa = up.get("wall_half_width", lp["body_half_width"]) + 0.1   # full relief over the width of the wall
     xb = xa + 1.5                                             # run-out to the edge chamfer
 
     def back(q):
@@ -268,24 +267,28 @@ def drawing(path, name, g, lay, tp, lp, up, tower_b, upper, lower):
     x_max, y_min, y_max = max(pts[:, 0]), min(pts[:, 1]), max(pts[:, 1])
     # front view with the bulkhead behind it
     ax = fig.add_axes([0.03, 0.47, 0.6, 0.47])
-    hw = lp["body_half_width"]
+    hw, xw = lp["body_half_width"], up.get("wall_half_width", lp["body_half_width"])
     zg, zr, zw = up["gear_block_h"], up["gear_block_h"] + up["wall_root_r"], up["wall_top_h"]
-    ax.add_patch(Rectangle((-hw, zg - 3), 2 * hw, 3, fc="#f1e2cf", ec="#b08a5a", lw=0.8, ls="--", zorder=1))
-    ax.add_patch(Rectangle((-hw, zg), 2 * hw, zw - zg, fc="#f6ead9", ec="#b08a5a", lw=0.8, ls="--", zorder=1))
-    ax.plot([-hw, hw], [zr, zr], color="#b08a5a", lw=0.6, ls=":", zorder=1)
-    ax.text(-hw + 0.5, zg - 2.4, "block in front of the wall, 17.8", fontsize=7.5, color="#8a6a40")
+    zs = up.get("side_step_h", zg)
+    ax.add_patch(MPoly([(-hw, zs - 2), (hw, zs - 2), (hw, zs), (xw, zs), (xw, zg), (-xw, zg), (-xw, zs), (-hw, zs)],
+                       closed=True, fc="#f1e2cf", ec="#b08a5a", lw=0.8, ls="--", zorder=1))
+    ax.add_patch(Rectangle((-xw, zg), 2 * xw, zw - zg, fc="#f6ead9", ec="#b08a5a", lw=0.8, ls="--", zorder=1))
+    ax.plot([-xw, xw], [zr, zr], color="#b08a5a", lw=0.6, ls=":", zorder=1)
+    ax.text(-hw - 0.8, zs - 1.0, f"block in front of the wall {zg:g}\nside steps {zs:g}", fontsize=7.5,
+            color="#8a6a40", ha="right", va="center")
     ax.add_patch(MPoly(pts, closed=True, fc="#3b4048", ec="#1d2025", lw=1.0, alpha=0.88, zorder=2))
     for h in g["holes"]:
         ax.add_patch(Circle((h["x"], h["y"]), hole_d(g, h) / 2, fc="white", ec="#1d2025", lw=0.6, zorder=4))
         off = 4 + 5 * (hole_d(g, h) - g["hole_d"]) / 2           # labels of larger holes further outward
         ax.annotate(h["id"], (h["x"], h["y"]), xytext=(off, off), textcoords="offset points", fontsize=7.5,
                     color="white" if h["id"][0] in "TDBS" else "#1d2025", zorder=5)
-    cs = lay["camber_stock"]
+    cam = lay["camber"]
     for sx in (-1, 1):
-        ax.add_patch(Circle((sx * cs[0], cs[1]), tp["rod_end_clearance_r"] - 0.5, fill=False, ec="#c0392b", lw=0.9,
+        ax.add_patch(Circle((sx * cam[0], cam[1]), tp["rod_end_clearance_r"], fill=False, ec="#c0392b", lw=0.9,
                             ls="--", zorder=5))
-    ax.text(cs[0] + 0.5, cs[1] - 6.6, "stock camber link position\n(rod end would hit the wall)", fontsize=7.5,
-            color="#c0392b", ha="center")
+    ax.text(cam[0] + tp["rod_end_clearance_r"] + 0.8, cam[1] - tp["rod_end_clearance_r"] - 1.0,
+            f"space for the rod end behind the tower\n(radius {tp['rod_end_clearance_r']:g}, beside the wall)",
+            fontsize=7.5, color="#c0392b", ha="left", va="center")
     dims = [up["tower_hole_x"], lay["camber"][0], lay["damper"][0]] + ([lay["body_post"][0]] if "body_post" in lay else [])
     y_dim = y_min - 4.5
     for k, xd in enumerate(dims):
@@ -376,25 +379,25 @@ def generate(name, lp, up, upper, lower):
     with open(cfg["geom"], "w", encoding="utf-8") as f:
         json.dump(g, f, indent=1)
     solid = tower_solid(g, tp, lp, up)
+    # checks of the solid before the export: meshing for the STL file changes edge tolerances
+    valid, pieces, bb, vol = solid.isValid(), len(solid.Solids()), solid.BoundingBox(), solid.Volume()
     stem = cfg["stem"]
     cq.exporters.export(cq.Workplane().add(solid), stem + ".step")
     cq.exporters.export(cq.Workplane().add(solid), stem + ".stl", tolerance=0.01, angularTolerance=0.1)
     write_dxf(g, stem + ".dxf")
     write_hole_table(g, cfg["table"])
-    cs, cam = lay["camber_stock"], lay["camber"]
+    cam = lay["camber"]
     info = ["Origin: x = 0 centre line, y = 0 parting face of the bulkheads (height above it).",
             "Lay the template on the back face (wall side). T1 to T4: mounting holes, C1/C2: camber links,",
             "D1/D2: dampers" + (", B1/B2 and S1/S2: body post mounts." if "body_post" in lay else ".")
-            + f" The camber link holes are {cam[0] - cs[0]:.2f} mm further outward than on the stock tower."]
+            + " All holes are at the positions of the stock tower."]
     for scale, suffix in ((1.0, ""), (0.97, "_print97")):
         template_a4(f"{stem}_1to1_A4{suffix}.pdf", name, g, scale, info)
     tower_b = to_bulkhead(solid, lp, up)
     drawing(cfg["drawing"], name, g, lay, tp, lp, up, tower_b, upper, lower)
 
-    vol = solid.Volume()
-    bb = solid.BoundingBox()
     print(f"{name} shock tower: wrote {cfg['geom']}, {stem}.step/.stl/.dxf, hole table, templates, {cfg['drawing']}")
-    print(f"  solid valid: {solid.isValid()}, size {bb.xlen:.2f} x {bb.ylen:.2f} x {bb.zlen:.2f} mm, "
+    print(f"  solid valid: {valid}, pieces: {pieces}, size {bb.xlen:.2f} x {bb.ylen:.2f} x {bb.zlen:.2f} mm, "
           f"volume {vol / 1000:.2f} cm3, mass: " + ", ".join(f"{m} {vol / 1000 * rho:.1f} g" for m, rho in DENSITY.items()))
     dmp = lay["damper"]
     print(f"  damper holes: x +-{dmp[0]:.2f}, {dmp[1]:.2f} above the parting face (stock position)")
@@ -403,7 +406,7 @@ def generate(name, lp, up, upper, lower):
         print(f"  body post bores: x +-{bp[0]:.2f}, {bp[1]:.2f} (Ø{tp['body_post_d']:g}) and {bs[1]:.2f} "
               f"(Ø{tp['body_post_screw_d']:g}) above the parting face (stock position)")
     print(f"  camber link holes: x +-{cam[0]:.2f}, {cam[1]:.2f} above the parting face "
-          f"(stock: x +-{cs[0]:.2f}, moved {cam[0] - cs[0]:.2f} mm outward)")
+          f"(stock position)")
     print("  checks")
     off = max(math.hypot(h["x"] - x, h["y"] - y) for h, (x, y) in zip(g["holes"][:4], lay["mount"]))
     print(f"    mounting holes T1 to T4 on the tapped holes of the upper bulkhead: largest offset {off:.4f} mm")
