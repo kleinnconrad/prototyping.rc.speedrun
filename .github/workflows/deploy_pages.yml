@@ -10,6 +10,8 @@ on:
       - 'setup_sheets/*_setup_sheet.yml'
       - 'scripts/update_latest_setup.py'
       - 'scripts/generate_setup_drawing.py'
+      - 'cad/shock_tower/shock_tower_front_geometry.json'
+      - 'cad/bulkhead/bulkhead_lower_parameters.json'
       - 'specs/mechanics/carten_t410r/spec_cartent410r.yaml'
       - 'specs/mechanics/wheels/spec_tires.yaml'
   # Allows you to run this workflow manually from the Actions tab
