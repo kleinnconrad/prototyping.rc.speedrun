@@ -7,8 +7,8 @@ straight chamfer per side, below which the pivot blocks of the wishbones are
 mounted. A rectangular block under the pinion, the bosses for the upper
 bulkhead and the tabs for the sway bar mounts are added. The vertical inside
 corners are rounded with inside_corner_r (end mill radius). Then the gear cavity,
-the bearing seats with the relief grooves at the stop faces and the M3 holes are
-cut, so the radii cannot change them.
+the bearing seats and the M3 holes are cut, so the radii cannot change the inside
+of the part.
 
 Coordinate system: origin at the centre of the 4 bottom holes on the bottom face,
 x along the diff axis, +y toward the pinion, z = 0 bottom face.
@@ -19,8 +19,8 @@ Usage (from the root directory of the repository):
 The script writes the STEP and STL file of the part (nominal dimensions, for CNC
 manufacturing) and an STL file for a test print (bearing seats enlarged by
 print_seat_allowance, M3 holes with print_hole_d for self-tapping screws). It
-checks the solid and compares it with the model without inside radii and relief
-grooves (functional check).
+checks the solid and compares it with the model without radii, which has the
+verified inside of the part (functional check).
 
 Requires the package cadquery (pip install cadquery).
 """
@@ -215,36 +215,10 @@ def prism_z(face, za, zb):
     return cq.Solid.extrudeLinear(face.outerWire(), face.innerWires(), cq.Vector(0, 0, zb - za))
 
 
-def relief_grooves(p, seat_add=0.0):
-    """Relief grooves at the bearing stop faces: the inner faces of the two diff lips and both
-    faces of the pinion rib (lower and upper part).
-
-    Each groove is a short bore with the seat diameter plus 2 x seat_relief_depth, inside the
-    seat and next to the stop face. The corner radius of the cutter then lies outside the
-    bearing, and the bearing sits flat on the stop face. The stop faces and the seat diameters
-    are not changed."""
-    wg, dg = p.get("seat_relief_width", 0.0), p.get("seat_relief_depth", 0.0)
-    if wg <= 0 or dg <= 0:
-        return []
-    zc, yd = p["axis_z"], p["diff_axis_y"]
-    xl = p["diff_lip_inner_x"]
-    rs = (p["diff_bearing"][1] + seat_add) / 2
-    rp = (p["pinion_bearing"][1] + seat_add) / 2
-    yr0 = p["pinion_seat_y_inner"] + p["pinion_bearing"][2]
-    yr1 = yr0 + p["pinion_rib_t"]
-    grooves = []
-    for sx in (-1, 1):
-        xa, xb = sorted((sx * (xl - wg), sx * xl))
-        grooves.append(cyl_x(rs + dg, xa, xb, yd, zc))
-    grooves.append(cyl_y(rp + dg, yr0 - wg, yr0, 0.0, zc))
-    grooves.append(cyl_y(rp + dg, yr1, yr1 + wg, 0.0, zc))
-    return grooves
-
-
 def bearing_voids(p, seat_add=0.0):
     """Bearing seats and openings of the lower and the upper part: diff bearing seats (limited
     only by the outer lips, open toward the gear cavity), lip openings, pinion pocket, pinion
-    bearing seats with the rib between them, relief grooves at the stop faces."""
+    bearing seats with the rib between them."""
     zc, yd, w = p["axis_z"], p["diff_axis_y"], p["body_half_width"]
     xl = p["diff_lip_inner_x"]                 # inner face of the outer lip
     xs = xl - p["diff_seat_width"]             # inner end of the seat
@@ -269,12 +243,12 @@ def bearing_voids(p, seat_add=0.0):
     voids.append(cyl_y(rp, yp_in - 0.01, yr0, 0.0, zc))
     voids.append(cyl_y(p["pinion_rib_d"] / 2, yr0 - 0.01, yr1 + 0.01, 0.0, zc))
     voids.append(cyl_y(rp, yr1, yp_end + 5, 0.0, zc))
-    return voids + relief_grooves(p, seat_add)
+    return voids
 
 
 def voids_lower(p, test_print=False):
-    """Functional voids of the lower part: gear cavity, floor opening, bearing seats with the
-    relief grooves, M3 holes."""
+    """Functional voids of the lower part (the inside of the part): gear cavity, floor opening,
+    bearing seats, lip openings, pinion pocket, rib, M3 holes."""
     zc, yd = p["axis_z"], p["diff_axis_y"]
     seat_add = p["print_seat_allowance"] if test_print else 0.0
     hole_d = p["print_hole_d"] if test_print else None
@@ -325,29 +299,26 @@ def bulkhead_lower(p, test_print=False):
     return body
 
 
-def functional_check(solid, ref, voids, grooves, r):
-    """Compare the solid with the reference solid without the inside radii and the relief grooves
-    (inside_corner_r = 0, seat_relief_width = 0). Returns (ok, report lines).
+def functional_check(solid, ref, voids, r):
+    """Compare the solid with the reference solid without the radii of the outer shape
+    (inside_corner_r = 0). The reference has the verified inside of the part. Returns (ok, lines).
 
-    * Removed material: must lie inside the relief grooves (outside the seat diameters, between
-      the stop faces and seat_relief_width into the seats).
-    * Added material (fillets of the inside corners): must not lie in the functional voids
-      (cavities, bearing seats, lip openings, holes, keep-out zones). Each added piece must lie
-      within the height range of the material beside it (within r): no fillet reaches lower or
-      higher than the existing faces next to it, for example into the space of the pivot blocks."""
+    * The inside of the part must not change: no added or removed material may touch a
+      functional void (cavities, bearing seats, lip openings, pinion pocket, rib, holes,
+      counterbores, recesses, keep-out zones). The smallest distance must be larger than 0.
+    * Each added piece must lie within the height range of the material beside it (within r): no
+      radius reaches lower or higher than the existing faces next to it, for example into the
+      space of the pivot blocks."""
     added, removed = solid.cut(ref), ref.cut(solid)
-    groove_shape = None
-    for g in grooves:
-        groove_shape = g if groove_shape is None else groove_shape.fuse(g)
-    removed_outside = removed.cut(groove_shape).Volume() if groove_shape else removed.Volume()
-    added_in_voids = sum(added.intersect(v).Volume() for v in voids)
+    changed = added.Solids() + removed.Solids()
+    dist = min((c.distance(v) for c in changed for v in voids), default=float("inf"))
     pieces = added.Solids()
-    ok = removed_outside < 1e-3 and added_in_voids < 1e-3
-    lines = ["  comparison with the model without inside radii and relief grooves:",
-             f"    removed material (relief grooves): {removed.Volume():.2f} mm3, outside the grooves: "
-             f"{removed_outside:.4f} mm3",
-             f"    added material (inside radii): {added.Volume():.2f} mm3 in {len(pieces)} pieces, inside the "
-             f"cavities, bores, holes and keep-out zones: {added_in_voids:.4f} mm3"]
+    ok = dist > 1e-3
+    lines = ["  comparison with the verified inside of the part (model without radii of the outer shape):",
+             f"    smallest distance of the changed material to the cavities, bearing seats, holes, recesses and "
+             f"keep-out zones: {dist:.2f} mm (inside of the part {'unchanged' if ok else 'CHANGED'})",
+             f"    removed material: {removed.Volume():.2f} mm3",
+             f"    added material (radii of the outer shape): {added.Volume():.2f} mm3 in {len(pieces)} pieces"]
     for sol in sorted(pieces, key=lambda q: (q.BoundingBox().ymin, q.BoundingBox().xmin)):
         bb = sol.BoundingBox()
         near = ref.intersect(box(bb.xmin - r, bb.xmax + r, bb.ymin - r, bb.ymax + r, -BIG, BIG)).BoundingBox()
@@ -465,8 +436,8 @@ def main():
     for g in gaps:
         print(f"    {g[0]}: {g[1]} mm at {g[2]}")
     print(f"  vertical inside corners without radius: {len(concave_vertical_edges(s))}")
-    ref = bulkhead_lower(dict(p, inside_corner_r=0.0, seat_relief_width=0.0)).val()
-    ok, lines = functional_check(s, ref, voids_lower(p), relief_grooves(p), p["inside_corner_r"])
+    ref = bulkhead_lower(dict(p, inside_corner_r=0.0)).val()
+    ok, lines = functional_check(s, ref, voids_lower(p), p["inside_corner_r"])
     print("\n".join(lines))
     print(f"  functional check: {'passed' if ok else 'FAILED'}")
 

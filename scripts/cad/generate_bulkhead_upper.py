@@ -11,7 +11,7 @@ heads of the outer screws, a block over the diff and the ring gear, one shock to
 the full width (instead of two ears) and a flat face for the top brace on the pinion side.
 All outer faces are flat, apart from the inside radii (inside_corner_r of the lower part) at
 the block over the outer pinion bearing. The only other curved faces are the bores and the
-cavities. The bearing seats have the same relief grooves as the lower part.
+cavities.
 
 Coordinate system: as for the lower bulkhead (origin at the centre of the 4 bottom holes of
 the lower part on its bottom face, x along the diff axis, +y toward the pinion, +z up).
@@ -22,7 +22,8 @@ Usage (from the root directory of the repository):
 The script writes the STEP and STL file of the upper part, an STL file for a test print
 (bearing seats enlarged by print_seat_allowance, tapped holes with print_tap_d) and a STEP
 file of the assembly of the lower and the upper part. It checks the assembly for
-interference and compares the part with the model without inside radii and relief grooves.
+interference and compares the part with the model without radii, which has the verified
+inside of the part.
 
 Requires the package cadquery (pip install cadquery).
 """
@@ -32,7 +33,7 @@ import cadquery as cq
 from cadquery.occ_impl.exporters.assembly import exportAssembly
 
 from generate_bulkhead_lower import (BIG, bearing_voids, box, bulkhead_lower, concave_vertical_edges, cyl_x, cyl_y,
-                                     cyl_z, enclosed_voids, functional_check, load_params, relief_grooves,
+                                     cyl_z, enclosed_voids, functional_check, load_params,
                                      round_inside_corners, thin_gaps)
 
 
@@ -96,7 +97,7 @@ def outer_body_upper(lp, up):
 
 def voids_upper(lp, up, test_print=False):
     """Functional voids of the upper part: keep-out zones of the top brace and the shock tower
-    plate, gear cavity, bearing seats with the relief grooves (as the lower part), recesses for
+    plate, gear cavity, bearing seats (as the lower part), recesses for
     the bosses of the lower part, screw holes, counterbores, tapped holes."""
     zc = lp["axis_z"]
     yd = lp["diff_axis_y"]
@@ -122,7 +123,7 @@ def voids_upper(lp, up, test_print=False):
     voids.append(cav.fuse(cyl_x(lp["ring_recess_r"], xa, xb, yd, zc)))
 
     # diff bearing seats limited by the outer lips, pinion pocket, two pinion bearing seats with
-    # the rib between them (the only axial stop), relief grooves: as the lower part
+    # the rib between them (the only axial stop): as the lower part
     voids += bearing_voids(lp, seat_add)
 
     # recesses for the bosses of the lower part, clearance holes for the 4 screws,
@@ -215,8 +216,8 @@ def main():
     for g in gaps:
         print(f"    {g[0]}: {g[1]} mm at {g[2]}")
     print(f"  vertical inside corners without radius: {len(concave_vertical_edges(s[0]))}")
-    ref = bulkhead_upper(dict(lp, inside_corner_r=0.0, seat_relief_width=0.0), up).val()
-    ok, lines = functional_check(s[0], ref, voids_upper(lp, up), relief_grooves(lp), lp["inside_corner_r"])
+    ref = bulkhead_upper(dict(lp, inside_corner_r=0.0), up).val()
+    ok, lines = functional_check(s[0], ref, voids_upper(lp, up), lp["inside_corner_r"])
     print("\n".join(lines))
     print(f"  functional check: {'passed' if ok else 'FAILED'}")
     inter = lower.val().intersect(upper.val())
