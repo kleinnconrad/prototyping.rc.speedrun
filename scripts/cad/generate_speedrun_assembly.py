@@ -1,11 +1,12 @@
-"""Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and front shock tower.
+"""Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers.
 
 Parts:
 * speedrun chassis plate (wide) with the longer motor window
 * lower and upper bulkhead at End B (centre of H03 to H06) and at End A (centre of H28 to H31,
   rotated by 180 degrees); the pinions point to the middle of the car
 * speedrun top brace on both upper bulkheads (end with the obround at End B)
-* speedrun front shock tower on the upper bulkhead at End A (End A is assumed to be the front)
+* speedrun shock towers on the upper bulkheads: front tower at End A (assumed to be the front),
+  rear tower at End B
 
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
@@ -15,7 +16,7 @@ The script checks all pairs of parts for interference and lists the volume and t
 each part.
 
 Usage (from the root directory of the repository, after the scripts of the bulkheads, the
-speedrun top brace and the front shock tower):
+speedrun top brace and the shock towers):
     python scripts/cad/generate_speedrun_assembly.py
 
 Requires the packages cadquery and matplotlib.
@@ -32,7 +33,7 @@ from cadquery.occ_impl.exporters.assembly import exportAssembly
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_bulkhead_lower import bulkhead_lower, load_params  # noqa: E402
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
-from generate_shock_tower_front import tower_in_bulkhead  # noqa: E402
+from generate_shock_towers import tower_in_bulkhead  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
 PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
@@ -41,13 +42,14 @@ UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
 OUT_STEP = "cad/assembly/speedrun_chassis_T410R.step"
 OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3),
-          "brace": (0.55, 0.62, 0.72), "tower": (0.2, 0.21, 0.23)}
+          "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23)}
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
              "lower": ("Lower bulkhead (2 pieces)", {"7075": 2.81}),
              "upper": ("Upper bulkhead (2 pieces)", {"7075": 2.81}),
              "brace": ("Speedrun top brace", {"carbon": 1.6, "7075": 2.81}),
-             "tower": ("Speedrun front shock tower", {"carbon": 1.6, "7075": 2.81})}
+             "tower_front": ("Speedrun front shock tower", {"carbon": 1.6, "7075": 2.81}),
+             "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81})}
 
 
 def build():
@@ -68,10 +70,13 @@ def build():
     zb = plate_t + lp["axis_z"] + up["deck_h"]
     parts.append(("speedrun top brace", "brace",
                   brace.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180).translate(cq.Vector(0, c, zb))))
-    # front shock tower on the upper bulkhead at End A (assumed front), placed as that bulkhead
-    tower = tower_in_bulkhead(lp, up).rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180)
-    parts.append(("speedrun front shock tower End A", "tower",
-                  tower.translate(cq.Vector(0, BULKHEAD_Y["front"], plate_t))))
+    # shock towers on the upper bulkheads, placed as these bulkheads: front at End A (assumed front,
+    # rotated by 180 degrees), rear at End B
+    front = tower_in_bulkhead(lp, up, "front").rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180)
+    parts.append(("speedrun front shock tower End A", "tower_front",
+                  front.translate(cq.Vector(0, BULKHEAD_Y["front"], plate_t))))
+    parts.append(("speedrun rear shock tower End B", "tower_rear",
+                  tower_in_bulkhead(lp, up, "rear").translate(cq.Vector(0, BULKHEAD_Y["rear"], plate_t))))
     return parts
 
 
@@ -94,7 +99,7 @@ def image(parts, path):
         cols.append(np.tile(COLORS[key], (len(t), 1)))
     tris, cols = np.concatenate(tris), np.concatenate(cols)
     fig = plt.figure(figsize=(16, 10))
-    fig.suptitle("Speedrun chassis of the Carten T410R: chassis plate, bulkheads, top brace and front shock tower", fontsize=13, y=0.98)
+    fig.suptitle("Speedrun chassis of the Carten T410R: chassis plate, bulkheads, top brace and shock towers", fontsize=13, y=0.98)
     views = [([0.0, 0.3, 0.68, 0.64], iso_basis(-35, 28), ""),
              ([0.0, 0.0, 0.68, 0.3], ((-1, 0, 0), (0, 1, 0), (0, 0, 1)), "Side view"),
              ([0.66, 0.02, 0.34, 0.88], ((0, 0, -1), (1, 0, 0), (0, 1, 0)), "Top view")]
