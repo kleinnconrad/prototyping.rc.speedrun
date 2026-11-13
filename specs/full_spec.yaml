@@ -405,6 +405,10 @@ Cartent410R:
     brand: Carten
     model: T410R Touring Car Kit
     part_number: NHA413
+    instruction_manual: CARTEN T410 Instruction Manual-FINAL (PDF, also covers the
+      T410R). Not stored in this repository (copyright of the manufacturer). Available
+      from the manufacturer (https://www.carten-rc.com) and from distributors, for
+      example on the download page of Blaze-RC (http://blazerc.com/download).
   properties:
     carten_t410r:
       general:

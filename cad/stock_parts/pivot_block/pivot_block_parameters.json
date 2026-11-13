@@ -1,0 +1,32 @@
+{
+  "part": "Pivot blocks of the Carten T410R: holders of the hinge pins of the wishbones (suspension arms). Stock parts, not part of the speedrun design. Modelled for the completeness of the build (assembly of the speedrun chassis).",
+  "units": "mm",
+  "coordinate_system": "Block coordinates: x along the block (across the car, x = 0 centre of the block), y across the block (along the car, y = 0 centre of the width), z = 0 bottom face (contact face on the chassis plate). The hinge pin bores run along y, the mounting holes along z.",
+  "design": "Flat block with a round lobe at each end around the blind bore of the hinge pin, a shoulder beside each lobe with the mounting hole and a lower bar in the middle. Front view (along y): lobes with the radius lobe_r around the bores, shoulders shoulder_h high, bar bar_h high, flat bottom face. The small tabs on top of the shoulders and the inserts in the bores are not modelled.",
+  "source_codes": {
+    "user": "Measurement of the owner (caliper)",
+    "plate": "Hole pattern of the speedrun chassis plate (chassis_plate_speedrun_wide_motor10_geometry.json)",
+    "derived": "Calculated from other values",
+    "photo": "Estimate from photos of the parts with rulers",
+    "assumption": "Not measured, assumed for the model"
+  },
+  "parameters": {
+    "width": {"value": 5.94, "source": "user", "note": "Width of both blocks (along the car, along the hinge pins)."},
+    "height_max": {"value": 9.0, "source": "user", "note": "Height of both blocks at the lobes (top of the lobes above the bottom face)."},
+    "shoulder_h": {"value": 6.4, "source": "user", "note": "Middle height: shoulders beside the lobes, with the mounting holes."},
+    "bar_h": {"value": 3.8, "source": "user", "note": "Lower height: bar in the middle of the block."},
+    "long_length": {"value": 53.4, "source": "user", "note": "Total length of the long block (one piece, at the outer end of the rear axle, End B)."},
+    "long_pin_spacing": {"value": 44.6, "source": "user", "note": "Long block: distance of the centres of the two hinge pin bores (outer edges 50.6 minus bore 6.0)."},
+    "short_pin_spacing": {"value": 41.4, "source": "user", "note": "Short block: distance of the centres of the two hinge pin bores (outer edges 47.4 minus bore 6.0). Three pieces: inner block of the rear axle, both blocks of the front axle."},
+    "pin_bore_d": {"value": 6.0, "source": "derived", "note": "Bore of the hinge pin seat (with an insert, not modelled): the owner measured the bore distances over the outer edges and subtracted 6.0."},
+    "pin_bore_depth": {"value": 4.7, "source": "user", "note": "Depth of the bores: blind holes, not through the block. Wall at the bottom of the bore: width 5.94 - 4.7 = 1.24. The bores open toward the bulkhead (owner). In block coordinates they open at y = +width/2; on the chassis plate, each block is turned so that this side faces its bulkhead."},
+    "lobe_r": {"value": 4.4, "source": "derived", "note": "Radius of the lobes around the bores: (long_length - long_pin_spacing) / 2 = (53.4 - 44.6) / 2. Wall around the bore: 4.4 - 3.0 = 1.4."},
+    "pin_h": {"value": 4.6, "source": "derived", "note": "Height of the bore axis above the bottom face: height_max - lobe_r = 9.0 - 4.4."},
+    "short_length": {"value": 50.2, "source": "derived", "note": "Total length of the short block: short_pin_spacing + 2 x lobe_r = 41.4 + 8.8. Photo: approx. 49.6 to 50.3."},
+    "long_mount_spacing": {"value": 31.822, "source": "plate", "note": "Distance of the 2 mounting holes of the long block: holes H01/H02 of the speedrun chassis plate (x = +-15.911)."},
+    "short_mount_spacing": {"value": 29.121, "source": "plate", "note": "Distance of the 2 mounting holes of the short blocks: mean of the holes H07/H08 (29.172), H26/H27 (29.108) and H32/H33 (29.084) of the speedrun chassis plate. Photo of the underside of a short block: approx. 29.2."},
+    "long_shoulder_len": {"value": 15.0, "source": "photo", "note": "Long block: length of the shoulder from the end of the block to the step down to the bar."},
+    "short_shoulder_len": {"value": 14.0, "source": "photo", "note": "Short block: length of the shoulder from the end of the block to the step down to the bar."},
+    "mount_hole_d": {"value": 2.5, "source": "assumption", "note": "Mounting holes for the M3 countersunk screws from below through the chassis plate: tap drill 2.5, through (the shoulders are 6.4 high, a screw M3x8 through the 2 mm plate reaches 6 mm into the block)."}
+  }
+}
