@@ -47,6 +47,11 @@
   * [Position and fit on the speedrun chassis](#position-and-fit-on-the-speedrun-chassis)
   * [Files of the pivot blocks](#files-of-the-pivot-blocks)
   * [Open points of the pivot blocks](#open-points-of-the-pivot-blocks)
+* [Centre driveshaft (stock parts, not part of the speedrun design)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design)
+  * [Dimensions of the centre driveshaft](#dimensions-of-the-centre-driveshaft)
+  * [Checks of the centre driveshaft](#checks-of-the-centre-driveshaft)
+  * [Open points of the centre driveshaft](#open-points-of-the-centre-driveshaft)
+  * [Files of the centre driveshaft](#files-of-the-centre-driveshaft)
 * [Scripts](#scripts)
   * [Regenerating the files](#regenerating-the-files)
   * [DXF generation](#dxf-generation)
@@ -70,7 +75,8 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
 * **`/shock_tower`**: New design of the front and the rear shock tower that match the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
 * **`/stock_parts`**: Models of stock parts of the Carten T410R. They are not part of the speedrun design and are modelled for the completeness of the build.
   * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file).
-* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the stock pivot blocks (STEP).
+  * **`/driveshaft`**: Centre driveshaft and cups of the cup joints on the pinions (STEP, STL, parameter file).
+* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the stock pivot blocks and the stock centre driveshaft (STEP).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
@@ -97,7 +103,7 @@ The speedrun chassis combines the parts that are designed in this project for sp
 
 ### Assembly file
 * `assembly/speedrun_chassis_T410R.step`: assembly of all 8 parts in the coordinate system of the chassis plate (STEP AP214, one solid per part).
-* The assembly also contains the 4 stock pivot blocks of the wishbones (see [pivot blocks](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design)). They are not part of the speedrun design, are modelled for the completeness of the build and are not in the mass total.
+* The assembly also contains the 4 stock pivot blocks of the wishbones (see [pivot blocks](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design)) and the stock centre driveshaft with the cups on the pinions (see [centre driveshaft](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design)). These parts are not part of the speedrun design, are modelled for the completeness of the build and are not in the mass total.
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [position and fit on the speedrun chassis](#position-and-fit-on-the-speedrun-chassis)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
 * The image shows an overall view, a side view, a top view and close-ups of both ends: bulkheads, shock tower and end of the top brace, seen from the outer end.
@@ -676,6 +682,49 @@ All files are stored in the directory `/stock_parts/pivot_block`. They are gener
 * Overlap at End B, outer: check on the car whether the long pivot block touches the outer chamfer of the lower bulkhead, or measure the height of the shoulders at the side of the block that faces the bulkhead. If they touch, the outer chamfer of the lower bulkhead can be raised at this place (outer shape; the inside of the bulkhead is not changed).
 * Mounting holes: depth (through or blind) not measured.
 
+## Centre driveshaft (stock parts, not part of the speedrun design)
+* **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
+* **Description:** Model of the centre driveshaft of the Carten T410R (NHA413) with the cups of the cup joints (NBA255) on the pinions of the two bulkheads. The shaft has a ball end with a cross pin at each end, which runs in the bore and the two slots of the cup. The shaft is shorter than the distance between the bottoms of the two cups, so it can move a little back and forth. The parts are stock parts: they are not part of the speedrun design and are not manufactured in this project. They are modelled for the completeness of the build.
+* **Status:** Not part of the speedrun design (stock parts). The position is derived from the models of this project, the length is provisional (see [open points of the centre driveshaft](#open-points-of-the-centre-driveshaft)). The cross pins are taken from the manual, the other dimensions of the cups and the shaft are typical values of 1:10 touring cars and are not measured on the car.
+
+![Centre driveshaft with the cup joints](../photos/cad_driveshaft_drawing.png)
+
+### Dimensions of the centre driveshaft
+| Dimension | Value | Source |
+|:---|:---|:---|
+| Pinion axis | x = 0, 19.2 mm above the bottom face of the chassis plate (2.0 + 17.2) | Lower bulkhead (`axis_z`), chassis plate |
+| End faces of the pinion housings | y = 49.43 mm (End B) and 259.46 mm (End A), 210.03 mm apart | Lower bulkhead (pinion seat 18.65 + 9.25 = 27.9 mm), positions of the bulkheads on the chassis plate |
+| Cups | 9.0 mm outer diameter, 9.0 mm long, 0.5 mm from the end face of the pinion housing; bore 5.6 x 6.0 mm, 2 slots 2.1 mm wide | Typical values |
+| Bottoms of the cups | 3.5 mm beyond the end faces of the pinion housings, 203.03 mm apart | Derived |
+| Shaft | 5.0 mm, ball ends with a radius of 2.5 mm | Typical values |
+| Cross pins | 2.0 x 7.6 mm (NBA255) at the centres of the ball ends | Manual (step 5) |
+| Length of the shaft | 202.03 mm (203.03 mm minus the axial play), provisional | Derived |
+| Axial play | 1.0 mm in total, 0.5 mm at each end in the centred position | Owner (a little play), value chosen |
+
+### Checks of the centre driveshaft
+Results of `generate_driveshaft.py`:
+
+| Check | Result |
+|:---|:---|
+| Shaft in the cups | 0 mm³ overlap; radial clearance of the ball ends 0.30 mm, cross pins 0.05 mm per side in the slots, pin ends 0.70 mm inside the cups |
+| Shaft and cups with the bulkheads and the chassis plate | 0 mm³ overlap |
+
+* Not modelled: the pinion shafts between the bearings and the cups, the spur gear with its mount and the bearing holders on the centre shaft, the O-rings or foam pads in the cups (see `specs/mechanics/carten_t410r/drivetrain/spec_driveshaft_and_joints.yaml`).
+
+### Open points of the centre driveshaft
+* Length: the manual (step 12, parts list) and other sources do not give the length of NHA413. It is to be measured on the car.
+* End B: according to the manual (step 5), the spur gear (hub NBA205, spur gear NBA252) and a third bearing NBA298 (5x10x4) sit on the rear pinion shaft between the pinion housing and the cup. The cup at End B is therefore further from the bulkhead than modelled, and the real shaft is shorter. Required measurement: the distance from the end face of the rear pinion housing to the bottom of the rear cup, or the length of the shaft.
+* Cups: dimensions not measured (typical values); the O-ring NBA255 5.8 x 9.6 x 1.9 mm in the cup is not modelled.
+
+### Files of the centre driveshaft
+All files are stored in the directory `/stock_parts/driveshaft`. They are generated with `generate_driveshaft.py` (see [scripts](#scripts)).
+
+| File | Format | Use |
+|:---|:---|:---|
+| `driveshaft_T410R.step`, `driveshaft_T410R.stl` | STEP (AP214), STL (binary) | Centre driveshaft along y from 0 to 202.03 mm (provisional length), axis at x = 0, z = 0 |
+| `driveshaft_cup_T410R.step`, `driveshaft_cup_T410R.stl` | STEP (AP214), STL (binary) | Cup of the cup joint (2 pieces in the assembly): back face at y = 0, open end at y = 9.0 mm |
+| `driveshaft_parameters.json` | JSON | All dimensions, each with its source and a note |
+
 ## Scripts
 The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates (except `generate_chassis_templates.py`, which writes the templates of the chassis plate and the top brace), and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
 
@@ -693,7 +742,8 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_top_brace_speedrun.py` | Geometry data of the original top brace, parameter files of the bulkheads | All files of the speedrun top brace, drawing `photos/cad_top_brace_speedrun_drawing.png`, checks of the outline and of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
 | `generate_shock_towers.py` | Parameter files of the bulkheads and of the shock towers (option `--tower front`, `rear` or `all`) | All files of the speedrun front and rear shock tower, drawings `photos/cad_shock_tower_front_drawing.png` and `photos/cad_shock_tower_rear_drawing.png`, checks of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
 | `generate_pivot_blocks.py` | Parameter file of the pivot blocks, geometry data of the speedrun chassis plate, parameter files of the bulkheads | STEP and STL files of the stock pivot blocks (reference), drawing `photos/cad_pivot_blocks_drawing.png`, checks of the mounting holes and of the clearance to the bulkheads | cadquery, matplotlib |
-| `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, of the shock towers and of the pivot blocks, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
+| `generate_driveshaft.py` | Parameter file of the driveshaft, parameter files of the bulkheads, STEP file of the speedrun chassis plate | STEP and STL files of the stock centre driveshaft and of the cup, drawing `photos/cad_driveshaft_drawing.png`, checks of the play and of the fit | cadquery, matplotlib |
+| `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, of the shock towers, of the pivot blocks and of the driveshaft, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file, geometry checks | cadquery |
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
 | `generate_bulkhead_upper.py` | Parameter files of the upper and the lower bulkhead | STEP and STL file of the upper part, test print STL file, assembly STEP file, interference check, geometry checks | cadquery |
@@ -743,6 +793,7 @@ python scripts/cad/generate_bulkhead_upper_drawings.py
 python scripts/cad/generate_top_brace_speedrun.py
 python scripts/cad/generate_shock_towers.py
 python scripts/cad/generate_pivot_blocks.py
+python scripts/cad/generate_driveshaft.py
 python scripts/cad/generate_speedrun_assembly.py
 ```
 

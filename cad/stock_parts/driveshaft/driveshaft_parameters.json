@@ -1,0 +1,26 @@
+{
+  "part": "Centre driveshaft of the Carten T410R (NHA413) between the pinions of the two bulkheads, with the cup joints on the pinions (cups NBA255). Stock parts, not part of the speedrun design. Modelled for the completeness of the build (assembly of the speedrun chassis).",
+  "units": "mm",
+  "coordinate_system": "Part coordinates: shaft and cup along y, axis at x = 0, z = 0. Shaft from y = 0 to y = length. Cup: back face at y = 0, open end at y = cup_length. Chassis plate coordinates (assembly): pinion axis at x = 0, z = plate thickness + axis_z of the lower bulkhead.",
+  "design": "Round shaft with a ball end and a cross pin at each end. Each end runs in a cup on the pinion shaft of a bulkhead (cup joint): a bore for the ball end with two slots for the cross pin. The shaft is shorter than the distance between the bottoms of the two cups by the axial play, so it can move back and forth.",
+  "derived_from_the_model": "Pinion axis: x = 0, 2.0 + 17.2 = 19.2 above the chassis plate (axis_z of the lower bulkhead). End face of the pinion housing: pinion_seat_y_inner + pinion_seat_length = 18.65 + 9.25 = 27.9 from the origin of the bulkhead, at the bulkheads at y = 21.53 (End B) and 287.36 (End A, rotated by 180 degrees): 49.43 and 259.46 on the chassis plate, 210.03 apart.",
+  "source_codes": {
+    "user": "Information of the owner",
+    "standard": "Typical dimension of the cup joints of 1:10 touring cars, not measured on the car",
+    "derived": "Calculated from other values or from the bulkhead model",
+    "manual": "T410R instruction manual: part numbers and sizes printed in the assembly steps (no dimensions of the shaft and the cups)"
+  },
+  "open_points": "The length of NHA413 is not given in the manual and not found in other sources: to be measured. Manual step 5: on the rear pinion shaft (End B, motor and spur gear), the spur gear (hub NBA205, spur gear NBA252) and a third bearing NBA298 (5x10x4) sit between the pinion housing and the cup. The cup at End B is therefore further from the bulkhead than modelled here (cup_gap at both ends), and the real shaft is shorter than the modelled length. The length of the model is provisional.",
+  "parameters": {
+    "cup_gap": {"value": 0.5, "source": "standard", "note": "Gap between the end face of the pinion housing and the back face of the cup (shims 5x7 on the pinion shaft, manual step 5). Applies to End A; at End B the spur gear and the bearing NBA298 lie between the housing and the cup (see open_points)."},
+    "cup_od": {"value": 9.0, "source": "standard", "note": "Outer diameter of the cup."},
+    "cup_length": {"value": 9.0, "source": "standard", "note": "Length of the cup from the back face to the open end."},
+    "cup_bore_d": {"value": 5.6, "source": "standard", "note": "Bore of the cup for the ball end of the shaft. Manual step 5: an O-ring NBA255 5.8x9.6x1.9 is placed into the cup (not modelled)."},
+    "cup_bore_depth": {"value": 6.0, "source": "standard", "note": "Depth of the bore from the open end. Bottom of the bore: cup_gap + cup_length - cup_bore_depth = 3.5 beyond the end face of the pinion housing."},
+    "cup_slot_w": {"value": 2.1, "source": "standard", "note": "Width of the two slots for the cross pin, over the depth of the bore."},
+    "shaft_d": {"value": 5.0, "source": "standard", "note": "Diameter of the shaft and of its ball ends (radius 2.5). Clearance in the bore of the cup: 0.3 on the radius."},
+    "pin_d": {"value": 2.0, "source": "manual", "note": "Diameter of the cross pins NBA255 2.0x7.6 (manual step 5), 0.1 smaller than the slots."},
+    "pin_length": {"value": 7.6, "source": "manual", "note": "Cross pins NBA255 2.0x7.6 (manual step 5), 0.7 inside the outer diameter of the cup. The pin axis lies at the centre of the ball end."},
+    "axial_play": {"value": 1.0, "source": "user", "note": "Total axial play of the shaft between the bottoms of the two cups (0.5 at each end in the centred position): the shaft can move a little back and forth."}
+  }
+}

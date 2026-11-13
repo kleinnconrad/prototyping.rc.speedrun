@@ -10,6 +10,8 @@ Parts:
 * stock pivot blocks of the wishbones (not part of the speedrun design, modelled for the
   completeness of the build, not in the mass total): long block on H01/H02, short blocks on
   H07/H08, H26/H27 and H32/H33
+* stock centre driveshaft with the cups on the pinions (not part of the speedrun design, modelled
+  for the completeness of the build, not in the mass total)
 
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
@@ -19,7 +21,7 @@ The script checks all pairs of parts for interference and lists the volume and t
 each part.
 
 Usage (from the root directory of the repository, after the scripts of the bulkheads, the
-speedrun top brace, the shock towers and the pivot blocks):
+speedrun top brace, the shock towers, the pivot blocks and the driveshaft):
     python scripts/cad/generate_speedrun_assembly.py
 
 Requires the packages cadquery and matplotlib.
@@ -36,6 +38,7 @@ from cadquery.occ_impl.exporters.assembly import exportAssembly
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_bulkhead_lower import bulkhead_lower, load_params  # noqa: E402
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
+from generate_driveshaft import parts_in_plate as driveshaft_in_plate  # noqa: E402
 from generate_pivot_blocks import blocks_in_plate  # noqa: E402
 from generate_shock_towers import tower_in_bulkhead  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
@@ -47,7 +50,7 @@ OUT_STEP = "cad/assembly/speedrun_chassis_T410R.step"
 OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3),
           "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
-          "pivot": (0.1, 0.1, 0.11)}
+          "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77)}
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
              "lower": ("Lower bulkhead (2 pieces)", {"7075": 2.81}),
@@ -55,7 +58,9 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "brace": ("Speedrun top brace", {"carbon": 1.6, "7075": 2.81}),
              "tower_front": ("Speedrun front shock tower", {"carbon": 1.6, "7075": 2.81}),
              "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81}),
-             "pivot": ("Stock pivot blocks (4 pieces, not part of the speedrun design)", {})}     # no mass
+             "pivot": ("Stock pivot blocks (4 pieces, not part of the speedrun design)", {}),     # no mass
+             "shaft": ("Stock centre driveshaft (not part of the speedrun design)", {}),
+             "cup": ("Stock pinion cups (2 pieces, not part of the speedrun design)", {})}
 
 
 def build():
@@ -87,6 +92,9 @@ def build():
     # design, modelled for the completeness of the build)
     for name, _, s, _ in blocks_in_plate():
         parts.append((f"stock pivot block {name}", "pivot", s))
+    # stock centre driveshaft in the cups on the pinions (not part of the speedrun design)
+    for name, s in driveshaft_in_plate():
+        parts.append((f"stock {name}", "shaft" if name == "centre driveshaft" else "cup", s))
     return parts
 
 
@@ -183,7 +191,7 @@ def main():
         n = sum(1 for p in parts if p[1] == key)
         label, mats = MATERIALS[key]
         if not mats:
-            print(f"  {label}: {n} pieces, stock parts, not in the mass total")
+            print(f"  {label}: {n} piece{'s' if n > 1 else ''}, stock parts, not in the mass total")
             continue
         vol = s.Volume() / 1000
         masses = {m: vol * rho * n for m, rho in mats.items()}
