@@ -80,17 +80,21 @@ def plate_holes():
 def blocks_in_plate(p=None):
     """Pivot blocks placed on the speedrun chassis plate (coordinates of the chassis plate, bottom
     face on the top face of the plate): list of (name, kind, solid, largest offset of the mounting
-    holes to the holes of the plate)."""
+    holes to the holes of the plate). The blind bores open toward the bulkhead: blocks on the far
+    side of their bulkhead (toward -y) are turned by 180 degrees about z."""
     p = p or load_params(PARAMS)
     holes = plate_holes()
     solids = {k: block_solid(p, k) for k in ("long", "short")}
     placed = []
-    for name, kind, (ha, hb), _ in POSITIONS:
+    for name, kind, (ha, hb), end in POSITIONS:
         (xa, ya), (xb, yb) = holes[ha], holes[hb]
         xm, ym = (xa + xb) / 2, (ya + yb) / 2
+        block = solids[kind]
+        if BULKHEAD_Y[end] < ym:                            # bulkhead toward -y: bores open toward -y
+            block = block.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180)
         m = dims(p, kind)[2] / 2
         offset = max(abs((xm - m) - min(xa, xb)), abs((xm + m) - max(xa, xb)), abs(ya - yb) / 2)
-        placed.append((name, kind, solids[kind].translate(cq.Vector(xm, ym, PLATE_T)), offset))
+        placed.append((name, kind, block.translate(cq.Vector(xm, ym, PLATE_T)), offset))
     return placed
 
 
@@ -173,14 +177,14 @@ def drawing(path, p, solids):
                      color="#bbbbbb", lw=0.6, ls="--")
         ax2.annotate("", (length / 2 + 1.2, -w / 2), (length / 2 + 1.2, w / 2), arrowprops=dict(arrowstyle="<->", lw=0.8))
         ax2.text(length / 2 + 1.6, 0, f"{w:.2f}", va="center", fontsize=8)
-        ax2.set_title(f"Top view (blind bores {p['pin_bore_depth']:g} deep dashed, open at the top edge)", fontsize=10,
-                      loc="left")
+        ax2.set_title(f"Top view (blind bores {p['pin_bore_depth']:g} deep dashed, open at the top edge,\n"
+                      "the side that faces the bulkhead)", fontsize=10, loc="left")
         ax2.set_xlim(-length / 2 - 2, length / 2 + 6)
         ax2.set_ylim(-w / 2 - 6, w / 2 + 6)
         ax2.set_aspect("equal")
         ax2.axis("off")
-    fig.text(0.04, 0.008, f"Bores {p['pin_bore_d']:g} x {p['pin_bore_depth']:g} deep (blind) for the hinge pins with "
-             "inserts (inserts not modelled). Mounting holes: tap drill 2.5 for the M3 countersunk screws from below\n"
+    fig.text(0.04, 0.008, f"Bores {p['pin_bore_d']:g} x {p['pin_bore_depth']:g} deep (blind, open toward the bulkhead) for the hinge pins "
+             "with inserts (inserts not modelled). Mounting holes: tap drill 2.5 for the M3 countersunk screws from below\n"
              "through the chassis plate (assumed through). Heights, lengths and bores: measurements of the owner; "
              "shoulder lengths from photos.", fontsize=8, va="bottom")
     fig.savefig(path, dpi=110)

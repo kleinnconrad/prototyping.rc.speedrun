@@ -643,7 +643,7 @@ Both shock towers are verified by the owner. The following points are not requir
 | Width | 5.94 mm | 5.94 mm | Owner |
 | Height at the lobes, at the shoulders, of the bar | 9.0 / 6.4 / 3.8 mm | Same | Owner |
 | Length of the shoulders (from the end of the block) | 15.0 mm | 14.0 mm | Photo |
-| Hinge pin bores | 6.0 mm, 4.7 mm deep (blind holes, wall of 1.24 mm at the bottom), axis 4.6 mm above the bottom face, lobes R4.4 | Same | Owner (depth), derived from the measurements of the owner (diameter, axis, lobes) |
+| Hinge pin bores | 6.0 mm, 4.7 mm deep (blind holes, wall of 1.24 mm at the bottom), open toward the bulkhead, axis 4.6 mm above the bottom face, lobes R4.4 | Same | Owner (depth, side of the opening), derived from the measurements of the owner (diameter, axis, lobes) |
 | Mounting holes | 2.5 mm (tap drill M3), through | Same | Assumption |
 
 * The radius of the lobes follows from the long block: (53.4 - 44.6) / 2 = 4.4 mm. The axis of the bores lies at 9.0 - 4.4 = 4.6 mm above the bottom face.
@@ -659,6 +659,7 @@ Results of the checks of `generate_pivot_blocks.py`:
 | End A, inner | Short | H26/H27 | 0.01 mm | 1.22 mm clearance | 8.67 mm clearance |
 | End A, outer | Short | H32/H33 | 0.02 mm | 0.90 mm clearance | 8.67 mm clearance |
 
+* Orientation: the blind bores open toward the bulkhead. The blocks at End B, inner and End A, outer are turned by 180 degrees compared with the other two.
 * The long block at End B lies closer to the bulkhead (16.5 mm from the centre of the bulkhead) than the short block at End A, outer (19.1 mm). Its shoulders (6.4 mm) reach 0.38 mm into the outer chamfer of the lower bulkhead, which starts at 6.0 mm above the chassis plate at the side of the block that faces the bulkhead (|x| from 11.7 to 17.0 mm).
 * The test prints of the lower bulkhead were made with the previous shape. The outer chamfers came with the new shape after the second test print, so this point is not checked on the car.
 
@@ -674,7 +675,6 @@ All files are stored in the directory `/stock_parts/pivot_block`. They are gener
 ### Open points of the pivot blocks
 * Overlap at End B, outer: check on the car whether the long pivot block touches the outer chamfer of the lower bulkhead, or measure the height of the shoulders at the side of the block that faces the bulkhead. If they touch, the outer chamfer of the lower bulkhead can be raised at this place (outer shape; the inside of the bulkhead is not changed).
 * Mounting holes: depth (through or blind) not measured.
-* Hinge pin bores: the side of the opening on the car (toward the end of the car or toward the middle) is not measured. In the model, all bores open to the same side (toward End A). The outer shape and the clearance checks do not depend on it.
 
 ## Scripts
 The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates (except `generate_chassis_templates.py`, which writes the templates of the chassis plate and the top brace), and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.

@@ -19,7 +19,7 @@
     "long_pin_spacing": {"value": 44.6, "source": "user", "note": "Long block: distance of the centres of the two hinge pin bores (outer edges 50.6 minus bore 6.0)."},
     "short_pin_spacing": {"value": 41.4, "source": "user", "note": "Short block: distance of the centres of the two hinge pin bores (outer edges 47.4 minus bore 6.0). Three pieces: inner block of the rear axle, both blocks of the front axle."},
     "pin_bore_d": {"value": 6.0, "source": "derived", "note": "Bore of the hinge pin seat (with an insert, not modelled): the owner measured the bore distances over the outer edges and subtracted 6.0."},
-    "pin_bore_depth": {"value": 4.7, "source": "user", "note": "Depth of the bores: blind holes, not through the block. Wall at the bottom of the bore: width 5.94 - 4.7 = 1.24. In block coordinates the bores open at y = +width/2; the side of the opening on the car is not measured."},
+    "pin_bore_depth": {"value": 4.7, "source": "user", "note": "Depth of the bores: blind holes, not through the block. Wall at the bottom of the bore: width 5.94 - 4.7 = 1.24. The bores open toward the bulkhead (owner). In block coordinates they open at y = +width/2; on the chassis plate, each block is turned so that this side faces its bulkhead."},
     "lobe_r": {"value": 4.4, "source": "derived", "note": "Radius of the lobes around the bores: (long_length - long_pin_spacing) / 2 = (53.4 - 44.6) / 2. Wall around the bore: 4.4 - 3.0 = 1.4."},
     "pin_h": {"value": 4.6, "source": "derived", "note": "Height of the bore axis above the bottom face: height_max - lobe_r = 9.0 - 4.4."},
     "short_length": {"value": 50.2, "source": "derived", "note": "Total length of the short block: short_pin_spacing + 2 x lobe_r = 41.4 + 8.8. Photo: approx. 49.6 to 50.3."},
