@@ -7,16 +7,18 @@ Parts:
 * speedrun top brace on both upper bulkheads (end with the obround at End B)
 * speedrun shock towers on the upper bulkheads: front tower at End A (assumed to be the front),
   rear tower at End B
+* stock pivot blocks of the wishbones (reference parts, not in the mass total): long block on
+  H01/H02, short blocks on H07/H08, H26/H27 and H32/H33
 
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
-* photos/cad_speedrun_chassis_assembly.png: 3D view, side view and top view
+* photos/cad_speedrun_chassis_assembly.png: 3D view, side view, top view and close-ups of both ends
 
 The script checks all pairs of parts for interference and lists the volume and the mass of
 each part.
 
 Usage (from the root directory of the repository, after the scripts of the bulkheads, the
-speedrun top brace and the shock towers):
+speedrun top brace, the shock towers and the pivot blocks):
     python scripts/cad/generate_speedrun_assembly.py
 
 Requires the packages cadquery and matplotlib.
@@ -33,6 +35,7 @@ from cadquery.occ_impl.exporters.assembly import exportAssembly
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_bulkhead_lower import bulkhead_lower, load_params  # noqa: E402
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
+from generate_pivot_blocks import blocks_in_plate  # noqa: E402
 from generate_shock_towers import tower_in_bulkhead  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
@@ -42,14 +45,16 @@ UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
 OUT_STEP = "cad/assembly/speedrun_chassis_T410R.step"
 OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3),
-          "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23)}
+          "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
+          "pivot": (0.1, 0.1, 0.11)}
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
              "lower": ("Lower bulkhead (2 pieces)", {"7075": 2.81}),
              "upper": ("Upper bulkhead (2 pieces)", {"7075": 2.81}),
              "brace": ("Speedrun top brace", {"carbon": 1.6, "7075": 2.81}),
              "tower_front": ("Speedrun front shock tower", {"carbon": 1.6, "7075": 2.81}),
-             "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81})}
+             "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81}),
+             "pivot": ("Stock pivot blocks (4 pieces, reference)", {})}     # stock parts: no mass
 
 
 def build():
@@ -77,6 +82,9 @@ def build():
                   front.translate(cq.Vector(0, BULKHEAD_Y["front"], plate_t))))
     parts.append(("speedrun rear shock tower End B", "tower_rear",
                   tower_in_bulkhead(lp, up, "rear").translate(cq.Vector(0, BULKHEAD_Y["rear"], plate_t))))
+    # stock pivot blocks of the wishbones on the holes of the chassis plate (reference parts)
+    for name, _, s, _ in blocks_in_plate():
+        parts.append((f"stock pivot block {name}", "pivot", s))
     return parts
 
 
@@ -172,6 +180,9 @@ def main():
         seen.add(key)
         n = sum(1 for p in parts if p[1] == key)
         label, mats = MATERIALS[key]
+        if not mats:
+            print(f"  {label}: {n} pieces, stock parts, not in the mass total")
+            continue
         vol = s.Volume() / 1000
         masses = {m: vol * rho * n for m, rho in mats.items()}
         for m, v in masses.items():

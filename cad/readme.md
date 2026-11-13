@@ -42,6 +42,11 @@
   * [Fit to the upper bulkhead](#fit-to-the-upper-bulkhead)
   * [Files of the speedrun shock towers](#files-of-the-speedrun-shock-towers)
   * [Open points of the speedrun shock towers](#open-points-of-the-speedrun-shock-towers)
+* [Pivot blocks (stock parts)](#pivot-blocks-stock-parts)
+  * [Dimensions of the pivot blocks](#dimensions-of-the-pivot-blocks)
+  * [Position and fit on the speedrun chassis](#position-and-fit-on-the-speedrun-chassis)
+  * [Files of the pivot blocks](#files-of-the-pivot-blocks)
+  * [Open points of the pivot blocks](#open-points-of-the-pivot-blocks)
 * [Scripts](#scripts)
   * [Regenerating the files](#regenerating-the-files)
   * [DXF generation](#dxf-generation)
@@ -63,7 +68,8 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/top_brace_speedrun`**: New design of the top brace that matches the bulkheads of this project (STEP, STL, DXF, PDF templates, geometry data, hole table, test print STL files)
 * **`/bulkhead`**: CAD data of the bulkheads (gear boxes): lower bulkhead, upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets).
 * **`/shock_tower`**: New design of the front and the rear shock tower that match the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
-* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers (STEP).
+* **`/pivot_block`**: Stock pivot blocks of the wishbones as reference models for the assembly (STEP, STL, parameter file).
+* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, with the stock pivot blocks as reference parts (STEP).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
@@ -90,7 +96,8 @@ The speedrun chassis combines the parts that are designed in this project for sp
 
 ### Assembly file
 * `assembly/speedrun_chassis_T410R.step`: assembly of all 8 parts in the coordinate system of the chassis plate (STEP AP214, one solid per part).
-* The interference check of all pairs of parts gives 0 mm³.
+* The assembly also contains the 4 stock pivot blocks of the wishbones as reference parts (see [pivot blocks](#pivot-blocks-stock-parts)). They are not in the mass total.
+* The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [position and fit on the speedrun chassis](#position-and-fit-on-the-speedrun-chassis)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
 * The image shows an overall view, a side view, a top view and close-ups of both ends: bulkheads, shock tower and end of the top brace, seen from the outer end.
 
@@ -480,6 +487,7 @@ Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The insid
 * The outer end face of the stock part has small holes. Their function is unknown, so they are not modelled.
 * Upper bulkhead: see [upper bulkhead (new design)](#upper-bulkhead-new-design).
 * Front and rear: End A of the chassis plate is assumed to be the front (bumper holes H34 to H36), End B the rear (motor window).
+* Pivot block at End B, outer: the model of the long stock pivot block overlaps the outer chamfer of the lower bulkhead by 0.38 mm (see [open points of the pivot blocks](#open-points-of-the-pivot-blocks)).
 
 ## Upper bulkhead (new design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -595,7 +603,7 @@ Results of the checks of `generate_shock_towers.py` (same for both towers):
 | Edge distance of the holes | Mounting holes 2.9 mm, camber link holes 1.9 mm, damper holes 1.9 mm (front) and 5.3 mm (rear), body post bores 1.9 mm and 2.9 mm |
 | Thin slits and walls | None |
 
-* Both towers are part of the assembly of the speedrun chassis: the front tower at End A (assumed front), the rear tower at End B. The interference check of all parts gives 0 mm³.
+* Both towers are part of the assembly of the speedrun chassis: the front tower at End A (assumed front), the rear tower at End B. The interference check gives 0 mm³ for both towers.
 
 ### Files of the speedrun shock towers
 All files are stored in the directory `/shock_tower`. They are generated with `generate_shock_towers.py` (see [scripts](#scripts)). The file names start with `shock_tower_front` or `shock_tower_rear`.
@@ -617,6 +625,55 @@ Both shock towers are verified by the owner. The following points are not requir
 * Rod ends of the camber links: size and position behind the towers are not measured (the zone with a radius of 4.0 mm is an estimate). It sets the width of the shock tower wall of the upper bulkhead (parameters `rod_end_clearance_r` of the towers and `wall_half_width` of the upper bulkhead).
 * Holes of the stock towers: the conversion of the measurements assumes holes of 3.2 mm.
 
+## Pivot blocks (stock parts)
+* **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
+* **Description:** Reference models of the stock pivot blocks of the Carten T410R. The pivot blocks hold the hinge pins of the wishbones and are screwed to the chassis plate from below (countersunk screws M3). They are stock parts and are not manufactured in this project. The models are used in the assembly of the speedrun chassis and for the check of the space below the bulkheads.
+* **Status:** Reference model. The dimensions are measurements of the owner, the distances of the mounting holes are taken from the hole pattern of the speedrun chassis plate, the lengths of the shoulders are estimates from photos.
+
+![Pivot blocks: sections and top views](../photos/cad_pivot_blocks_drawing.png)
+
+### Dimensions of the pivot blocks
+| Dimension | Long block | Short block | Source |
+|:---|:---|:---|:---|
+| Quantity and position | 1: End B, outer (H01/H02) | 3: End B, inner (H07/H08), End A, inner (H26/H27), End A, outer (H32/H33) | Owner, chassis plate |
+| Total length | 53.4 mm | 50.2 mm | Owner (long block), derived (short block: 41.4 + 2 x 4.4) |
+| Distance of the hinge pin bores | 44.6 mm | 41.4 mm | Owner |
+| Distance of the mounting holes | 31.82 mm | 29.12 mm | Chassis plate (short block: mean of 3 hole pairs; photo of the underside approx. 29.2 mm) |
+| Width | 5.94 mm | 5.94 mm | Owner |
+| Height at the lobes, at the shoulders, of the bar | 9.0 / 6.4 / 3.8 mm | Same | Owner |
+| Length of the shoulders (from the end of the block) | 15.0 mm | 14.0 mm | Photo |
+| Hinge pin bores | 6.0 mm, axis 4.6 mm above the bottom face, lobes R4.4 | Same | Derived from the measurements of the owner |
+| Mounting holes | 2.5 mm (tap drill M3), through | Same | Assumption |
+
+* The radius of the lobes follows from the long block: (53.4 - 44.6) / 2 = 4.4 mm. The axis of the bores lies at 9.0 - 4.4 = 4.6 mm above the bottom face.
+* Not modelled: the inserts in the bores and the small tabs on top of the shoulders.
+
+### Position and fit on the speedrun chassis
+Results of the checks of `generate_pivot_blocks.py`:
+
+| Position | Block | Holes of the chassis plate | Offset of the mounting holes | Lower bulkhead | Upper bulkhead |
+|:---|:---|:---|:---|:---|:---|
+| End B, outer | Long | H01/H02 | 0.00 mm | Overlap 0.82 mm³ (0.38 mm deep) | 9.18 mm clearance |
+| End B, inner | Short | H07/H08 | 0.03 mm | 2.13 mm clearance | 8.67 mm clearance |
+| End A, inner | Short | H26/H27 | 0.01 mm | 1.22 mm clearance | 8.67 mm clearance |
+| End A, outer | Short | H32/H33 | 0.02 mm | 0.90 mm clearance | 8.67 mm clearance |
+
+* The long block at End B lies closer to the bulkhead (16.5 mm from the centre of the bulkhead) than the short block at End A, outer (19.1 mm). Its shoulders (6.4 mm) reach 0.38 mm into the outer chamfer of the lower bulkhead, which starts at 6.0 mm above the chassis plate at the side of the block that faces the bulkhead (|x| from 11.7 to 17.0 mm).
+* The test prints of the lower bulkhead were made with the previous shape. The outer chamfers came with the new shape after the second test print, so this point is not checked on the car.
+
+### Files of the pivot blocks
+All files are stored in the directory `/pivot_block`. They are generated with `generate_pivot_blocks.py` (see [scripts](#scripts)).
+
+| File | Format | Use |
+|:---|:---|:---|
+| `pivot_block_long_T410R.step`, `pivot_block_short_T410R.step` | STEP (AP214) | Solid models in block coordinates: x along the block, y along the hinge pins, z = 0 bottom face |
+| `pivot_block_long_T410R.stl`, `pivot_block_short_T410R.stl` | STL (binary) | Triangle meshes |
+| `pivot_block_parameters.json` | JSON | All dimensions, each with its source and a note |
+
+### Open points of the pivot blocks
+* Overlap at End B, outer: check on the car whether the long pivot block touches the outer chamfer of the lower bulkhead, or measure the height of the shoulders at the side of the block that faces the bulkhead. If they touch, the outer chamfer of the lower bulkhead can be raised at this place (outer shape; the inside of the bulkhead is not changed).
+* Mounting holes: depth (through or blind) not measured.
+
 ## Scripts
 The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates (except `generate_chassis_templates.py`, which writes the templates of the chassis plate and the top brace), and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
 
@@ -633,7 +690,8 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_chassis_templates.py` | Geometry data of the chassis plate and the top brace | Print templates `chassis_plate_T410R_1to1_A3.pdf`, `chassis_plate_T410R_1to1_A4x2.pdf`, `top_brace_T410R_1to1_A4.pdf` and the drawing `photos/cad_chassis_drawing.png`. The options `--print-scale` and `--suffix` generate pre-scaled templates (for example `_print97`). | matplotlib, reportlab |
 | `generate_top_brace_speedrun.py` | Geometry data of the original top brace, parameter files of the bulkheads | All files of the speedrun top brace, drawing `photos/cad_top_brace_speedrun_drawing.png`, checks of the outline and of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
 | `generate_shock_towers.py` | Parameter files of the bulkheads and of the shock towers (option `--tower front`, `rear` or `all`) | All files of the speedrun front and rear shock tower, drawings `photos/cad_shock_tower_front_drawing.png` and `photos/cad_shock_tower_rear_drawing.png`, checks of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
-| `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads and of the shock towers, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
+| `generate_pivot_blocks.py` | Parameter file of the pivot blocks, geometry data of the speedrun chassis plate, parameter files of the bulkheads | STEP and STL files of the stock pivot blocks (reference), drawing `photos/cad_pivot_blocks_drawing.png`, checks of the mounting holes and of the clearance to the bulkheads | cadquery, matplotlib |
+| `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, of the shock towers and of the pivot blocks, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file, geometry checks | cadquery |
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
 | `generate_bulkhead_upper.py` | Parameter files of the upper and the lower bulkhead | STEP and STL file of the upper part, test print STL file, assembly STEP file, interference check, geometry checks | cadquery |
@@ -682,6 +740,7 @@ python scripts/cad/generate_bulkhead_upper.py
 python scripts/cad/generate_bulkhead_upper_drawings.py
 python scripts/cad/generate_top_brace_speedrun.py
 python scripts/cad/generate_shock_towers.py
+python scripts/cad/generate_pivot_blocks.py
 python scripts/cad/generate_speedrun_assembly.py
 ```
 
