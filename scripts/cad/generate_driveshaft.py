@@ -47,6 +47,7 @@ UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
 PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
 PARTS = "cad/parts"
 DRAWING = "photos/cad_driveshaft_drawing.png"
+ASSEMBLY_DRAWING = "photos/cad_drive_line_assembly.png"
 PLATE_T = 2.0
 INCH = 25.4
 
@@ -576,7 +577,7 @@ def drawing(path, p, lay, items):
     z = lay["z"]
     fig = plt.figure(figsize=(15, 10))
     fig.suptitle("Centre driveshaft with the drive line (own design, re-engineered from the T410R; measures "
-                 "qualified, no 3D print verification)", fontsize=12, y=0.985)
+                 "qualified, no 3D print verification; motor mount: completely unqualified)", fontsize=12, y=0.985)
     ax = fig.add_axes([0.04, 0.57, 0.92, 0.36])
     draw(ax)
     y0, y1 = lay["shaft"]
@@ -748,6 +749,100 @@ def diff_drawing(p, lp, path=DIFF_DRAWING):
     plt.close(fig)
 
 
+def drive_assembly_drawing(p, lp, path=ASSEMBLY_DRAWING):
+    """Assembly pictures of the rear drive (End B) and the front drive (End A): the assembled parts in the lower
+    bulkhead (upper bulkhead not shown) with the differential or the spool, and an exploded view along the pinion
+    axis with the names of the parts."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.colors import to_rgb
+    from mesh_views import subdivide, draw_mesh, iso_basis
+    parts = {n: s for n, _, s in parts_in_plate(p, lp)}
+    lower = bulkhead_lower(lp).val()
+    low_b = lower.translate(cq.Vector(0, BULKHEAD_Y["rear"], PLATE_T))
+    low_a = lower.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180).translate(cq.Vector(0, BULKHEAD_Y["front"], PLATE_T))
+    shaft = parts["centre driveshaft"]
+    seg = lambda y0, y1: shaft.intersect(cq.Solid.makeBox(20, y1 - y0, 20, cq.Vector(-10, y0, 10)))
+    C = {"pinion": "#c8962e", "bearing": "#a0a6ad", "shaft": "#6b7078", "spur": "#7d8590", "mount": "#c9ccd1",
+         "cap": "#b3b8bf", "pin": "#2e6da4", "cup": "#b8bcc2", "drive": "#c0392b", "bulkhead": "#8c96a3",
+         "ring": "#9a9da3", "diff": "#3f4349"}
+    rear = [("pinion", "pinion 17T", "pinion", (0, -24, 0), "u"),
+            ("bearing in the bulkhead, inner", "bearing 5x10x4, inner", "bearing", (0, -16, 0), "d"),
+            ("bearing in the bulkhead, outer", "bearing 5x10x4, outer", "bearing", (0, -8, 0), "u"),
+            ("rear pinion shaft with flange", "rear pinion shaft with flange", "shaft", (0, 0, 0), "d"),
+            ("spur gear", "spur gear 72T 48DP", "spur", (0, 8, 0), "u"),
+            ("bearing in the motor mount", "bearing 5x10x4 (motor mount)", "bearing", (0, 18, 0), "d"),
+            ("motor mount", "motor mount", "mount", (0, 28, 0), "d"),
+            ("cap of the motor mount", "cap of the motor mount", "cap", (0, 28, 16), "u"),
+            ("retaining pin of the cup joint End B", "retaining pin 2x7.6", "pin", (0, 40, 14), "u"),
+            ("cup joint End B", "cup joint", "cup", (0, 40, 0), "d"),
+            (seg(75.0, 96.0), "centre driveshaft", "drive", (0, 48, 0), "u")]
+    front = [("pinion End A", "pinion 17T", "pinion", (0, 22, 0), "u"),
+             ("bearing in the bulkhead End A, inner", "bearing 5x10x4, inner", "bearing", (0, 15, 0), "d"),
+             ("bearing in the bulkhead End A, outer", "bearing 5x10x4, outer", "bearing", (0, 8, 0), "u"),
+             ("front pinion shaft End A", "front pinion shaft", "shaft", (0, 0, 0), "d"),
+             ("retaining pin of the cup joint End A", "retaining pin 2x7.6", "pin", (0, -14, 14), "u"),
+             ("cup joint End A", "cup joint", "cup", (0, -14, 0), "d"),
+             (seg(228.0, 249.0), "centre driveshaft", "drive", (0, -24, 0), "u")]
+    ctx_b = [(low_b, "bulkhead"), (parts["diff case End B"], "diff"), (parts["ring gear 42T End B"], "ring"),
+             (parts["diff bearing End B ring gear side"], "bearing"), (parts["diff bearing End B case side"], "bearing")]
+    ctx_a = [(low_a, "bulkhead"), (parts["spool End A"], "diff"), (parts["ring gear 42T End A"], "ring"),
+             (parts["diff bearing End A ring gear side"], "bearing"), (parts["diff bearing End A case side"], "bearing")]
+
+    def solid(key):
+        return parts[key] if isinstance(key, str) else key
+
+    def tris_of(s, colour, tol=0.03):
+        v, idx = s.tessellate(tol, 0.2)
+        t = subdivide(np.array([[q.x, q.y, q.z] for q in v])[np.array(idx)], 1.0)
+        return t, np.tile(to_rgb(C[colour]), (len(t), 1))
+
+    def render(ax, items, view, labels=()):
+        tt, cc = zip(*[tris_of(s, colour) for s, colour in items])
+        lo, hi = draw_mesh(ax, np.concatenate(tt), view, tri_colors=np.concatenate(cc), depth_cue=0.2)
+        _, r, u = view
+        top, bottom = hi[1] + 3, lo[1] - 3
+        count = {"u": 0, "d": 0}
+        for s, text, pos in labels:                             # labels above (u) and below (d), 2 levels each
+            bb = s.BoundingBox()
+            above, level = pos == "u", count[pos] % 2
+            count[pos] += 1
+            a = np.array([(bb.xmin + bb.xmax) / 2, (bb.ymin + bb.ymax) / 2, bb.zmax if above else bb.zmin])
+            x2, y2 = a @ r, a @ u
+            yt = hi[1] + 4 + 7 * level if above else lo[1] - 4 - 7 * level
+            ax.plot([x2, x2], [y2, yt - 1 if above else yt + 1], color="#555", lw=0.6)
+            ax.text(x2, yt, text, fontsize=8, ha="center", va="bottom" if above else "top")
+            top, bottom = max(top, yt + 6), min(bottom, yt - 6)
+        ax.set_xlim(lo[0] - 4, hi[0] + 4)
+        ax.set_ylim(bottom, top)
+        ax.set_aspect("equal")
+        ax.axis("off")
+
+    fig = plt.figure(figsize=(16, 12.5))
+    fig.suptitle("Rear drive and front drive (own design, re-engineered from the T410R): assembled and exploded views",
+                 fontsize=13, y=0.99)
+    for row, (name, lst, ctx, az) in enumerate((("Rear drive (End B)", rear, ctx_b, -35), ("Front drive (End A)", front, ctx_a, 35))):
+        y0 = 0.52 - row * 0.48
+        ax = fig.add_axes([0.01, y0, 0.44, 0.39])
+        render(ax, ctx + [(solid(k), c) for k, _, c, _, _ in lst], iso_basis(az, 32))
+        ax.set_title(f"{name}, assembled: pinion 17T in the lower bulkhead (upper bulkhead not shown), meshing\nwith the "
+                     f"ring gear 42T of the {'differential' if row == 0 else 'spool'}; "
+                     + ("bearings, flange with the spur gear, motor mount, cup joint" if row == 0 else "bearings, cup joint")
+                     + " on the shaft", fontsize=9.5, loc="left")
+        ax = fig.add_axes([0.47, y0, 0.52, 0.39])
+        moved = [(solid(k).translate(cq.Vector(*off)), lab, c, pos) for k, lab, c, off, pos in lst]
+        render(ax, [(s, c) for s, _, c, _ in moved], iso_basis(-12 if row == 0 else 12, 22),
+               [(s, lab, pos) for s, lab, _, pos in moved])
+        ax.set_title(f"{name}, exploded along the pinion axis: parts in the order on the shaft, from the pinion in the "
+                     "bulkhead\nto the centre driveshaft", fontsize=9.5, loc="left")
+    fig.text(0.01, 0.012, "Status: pinion shafts, pinions, spur gear, bearings and retaining pins measures qualified, no 3D print "
+             "verification; motor mount with cap, cup joints: completely unqualified. CAD files: cad/parts (rear_drive, "
+             "front_drive, motor_mount, driveshaft).", fontsize=8.5)
+    fig.savefig(path, dpi=100)
+    plt.close(fig)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate the centre driveshaft and the drive line of the speedrun "
                                                  "chassis.")
@@ -810,6 +905,8 @@ def main():
     drawing(DRAWING, p, lay, items)
     diff_drawing(p, lp)
     print(f"Wrote {DIFF_DRAWING}")
+    drive_assembly_drawing(p, lp)
+    print(f"Wrote {ASSEMBLY_DRAWING}")
     print(f"Wrote {DRAWING}")
 
     print("layout on the chassis plate (y along the car, End B at y = 0)")

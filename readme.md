@@ -74,23 +74,23 @@ Re-engineered parts (own design, re-engineered from the T410R, not in the mass t
 | Cup joints of the centre driveshaft | 2 | $\color{red}\times$ Completely unqualified | `cad/parts/driveshaft` |
 | Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/parts/rear_drive` |
 | Front pinion shaft with pinion 17T, bearings and retaining pin | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/parts/front_drive` |
-| Motor mount with cap | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/parts/motor_mount` |
+| Motor mount with cap | 1 | $\color{red}\times$ Completely unqualified | `cad/parts/motor_mount` |
 | Differential (End B) with ring gear 42T, inner gears and bearings | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/parts/diff` |
 | Spool (End A) with ring gear 42T and bearings | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/parts/diff` |
 | Diff outdrives | 4 | $\color{red}\times$ Completely unqualified | `cad/parts/diff_outdrive` |
-| Front wishbones | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/parts/wishbone` |
-| Rear wishbones | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/parts/wishbone` |
+| Front wishbones | 2 | $\color{red}\times$ Completely unqualified | `cad/parts/wishbone` |
+| Rear wishbones | 2 | $\color{red}\times$ Completely unqualified | `cad/parts/wishbone` |
 | Inner hinge pins of the wishbones (3x42) | 4 | $\color{red}\times$ Completely unqualified | `cad/parts/wishbone` |
 | Camber links: turnbuckle M3x37 with rod ends and ball studs | 4 | $\color{red}\times$ Completely unqualified | `cad/parts/camber_link` |
-| Front C-hubs with 10 degrees caster and steering knuckles | 2 + 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/running_gear` |
-| Rear hub carriers | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/running_gear` |
-| Axles with joint cup, hex hubs 12 mm | 4 + 4 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/running_gear` |
-| CVD drive shafts | 4 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/running_gear` |
-| Steering: posts, bellcranks, bridge, steering links, servo link, servo horn, servo mount | 1 set | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/running_gear` |
-| Sway bars with holders, ball ends and drop links | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/running_gear` |
-| Dampers (standard 1:10 on-road, purchased) | 4 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | Assembly only |
+| Front C-hubs with 10 degrees caster and steering knuckles | 2 + 2 | $\color{red}\times$ Completely unqualified | `cad/running_gear/front_corner` |
+| Rear hub carriers | 2 | $\color{red}\times$ Completely unqualified | `cad/running_gear/rear_corner` |
+| Axles with joint cup, hex hubs 12 mm | 4 + 4 | $\color{red}\times$ Completely unqualified | `cad/running_gear/front_corner`, `cad/running_gear/rear_corner` |
+| CVD drive shafts | 4 | $\color{red}\times$ Completely unqualified | `cad/running_gear/cvd_drive_shafts` |
+| Steering: posts, bellcranks, bridge, steering links, servo link, servo horn, servo mount | 1 set | $\color{red}\times$ Completely unqualified | `cad/running_gear/steering`, `cad/running_gear/servo_mount` |
+| Sway bars with holders, ball ends and drop links | 2 | $\color{red}\times$ Completely unqualified | `cad/running_gear/sway_bars` |
+| Dampers (standard 1:10 on-road, purchased) | 4 | $\color{red}\times$ Completely unqualified | Assembly only |
 
-* Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. All parts of the speedrun design are verified. Of the re-engineered parts, the pivot blocks are verified with a 3D printed prototype; the motor mount, the centre driveshaft, the drive lines, the differentials and the wishbones are qualified by measurements (caliper and photos of the owner); the running gear is designed from the measured parts and needs no further measurements (no 3D print verification yet); the other parts are not qualified. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#design-of-the-lower-bulkhead)). The original shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the original towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
+* Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. All parts of the speedrun design are verified. Of the re-engineered parts, the pivot blocks are verified with a 3D printed prototype; the centre driveshaft, the drive lines (pinion shafts, pinions, spur gear) and the differentials are qualified by measurements (caliper and photos of the owner); the motor mount, the wishbones, the running gear and the other parts are not qualified. The parts marked red are first designs: they still need a lot of refinement (dimensions, strength, fit and function on the car) and are not ready for manufacturing. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#design-of-the-lower-bulkhead)). The original shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the original towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
 * The legend lists the colours of the speedrun parts and of the re-engineered parts. The inset at the right of the 3D view shows the differential at End B in section with the pinion (the design of the differential: [CAD readme](cad/readme.md#differentials)). The bottom row shows close-ups of End A and End B from the outer end and of the drive line at End B (spur gear, motor mount with cap, cup joint) from the middle of the car, without the top brace and the shock tower. The design of the running gear (caster, steering, Ackermann): [CAD readme](cad/readme.md#running-gear).
 * The assembly is available as a STEP file (`cad/assembly/speedrun_chassis_T410R.step`).
 
@@ -110,7 +110,7 @@ Re-engineered parts (own design, re-engineered from the T410R, not in the mass t
     * **`/diff_outdrive`**: Diff outdrive (STEP, STL)
     * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file)
     * **`/camber_link`**: Camber links: turnbuckle, rod end, ball stud (STEP, STL, parameter file)
-  * **`/running_gear`**: C-hubs, steering knuckles, hub carriers, axles, hex hubs, CVD drive shafts, steering, servo mount, sway bars (STEP, STL, parameter file)
+  * **`/running_gear`**: parameter file of the running gear and one folder per group (STEP, STL): `/front_corner` (C-hubs, steering knuckles, axles and hex hubs at End A), `/rear_corner` (hub carriers, axles and hex hubs at End B), `/cvd_drive_shafts`, `/steering`, `/servo_mount`, `/sway_bars`
   * **`/chassis`**: Chassis plate, wide speedrun chassis plate, top brace and speedrun top brace with one subdirectory per part (STEP, STL, DXF, OpenSCAD, 1:1 templates, test print files)
 * **`/docs`**: Static web dashboard for visualizing the latest setup configurations
 * **`/photos`**: Central directory for all image files
