@@ -1,8 +1,8 @@
-"""Measurement sheet of the stock parts that are not measured yet (wishbones, bearing seat of the motor mount).
+"""Measurement sheet of the re-engineered parts that are not measured yet (wishbones, bearing seat of the motor mount).
 
 The sheet shows each caliper measurement as a dimension line with a letter on drawings of the
 models, explains how to measure it and lists the current value of the model with an empty field
-for the measured value. The stock parts are not part of the speedrun design.
+for the measured value. The parts are the own design of the owner, re-engineered from the T410R.
 
 * page 1: front wishbone (plan view and side view)
 * page 2: rear wishbone (plan view and side view)
@@ -12,7 +12,7 @@ for the measured value. The stock parts are not part of the speedrun design.
 Usage (from the root directory of the repository):
     python scripts/cad/generate_measurement_sheets.py
 
-Output: cad/stock_parts/stock_parts_measurement_sheet.pdf (A4). Requires cadquery and matplotlib.
+Output: cad/parts/parts_measurement_sheet.pdf (A4). Requires cadquery and matplotlib.
 """
 import os
 import sys
@@ -30,8 +30,8 @@ from generate_bulkhead_lower import load_params  # noqa: E402
 from generate_wishbones import PARAMS as ARM_PARAMS, arm_solid, tess  # noqa: E402
 from mesh_views import draw_mesh, subdivide  # noqa: E402
 
-OUT = "cad/stock_parts/stock_parts_measurement_sheet.pdf"
-DRIVE = "cad/stock_parts/driveshaft/driveshaft_parameters.json"
+OUT = "cad/parts/parts_measurement_sheet.pdf"
+DRIVE = "cad/parts/driveshaft/driveshaft_parameters.json"
 RED = "#b42318"
 A4 = (8.27, 11.69)
 
@@ -69,7 +69,7 @@ def arm_page(pdf, p, kind, solid):
     fig = plt.figure(figsize=A4)
     name = "Front wishbone (End A, 2 pieces)" if kind == "front" else "Rear wishbone (End B, 2 pieces)"
     fig.text(0.06, 0.965, f"Measurement sheet: {name}", fontsize=13, fontweight="bold")
-    fig.text(0.06, 0.945, "Stock part of the Carten T410R (NHA402), not part of the speedrun design. Dimensions in mm. "
+    fig.text(0.06, 0.945, "Own design, re-engineered from the T410R. Dimensions in mm. "
              "The drawing is the current model (estimate from the photos).", fontsize=7.5)
     length, half = p[f"{kind}_arm_length"], p["inner_width"] / 2
     yi, yo = p[f"{kind}_rail_y"]
@@ -233,8 +233,8 @@ def table_page(pdf, p):
 
 def motor_mount_page(pdf, d):
     fig = plt.figure(figsize=A4)
-    fig.text(0.06, 0.965, "Measurement sheet: bearing seat of the motor mount (NBA201)", fontsize=13, fontweight="bold")
-    fig.text(0.06, 0.945, "Stock part, not part of the speedrun design. Bearing NBA298 5x10x4 (manual step 5). "
+    fig.text(0.06, 0.965, "Measurement sheet: bearing seat of the motor mount", fontsize=13, fontweight="bold")
+    fig.text(0.06, 0.945, "Own design, re-engineered from the T410R. Bearing 5x10x4 (manual step 5). "
              "Dimensions in mm.", fontsize=7.5)
     z = 2.0 + 17.2
     low, cap_h, cap_w = d["mount_low_top"], d["cap_h"], d["cap_w"]

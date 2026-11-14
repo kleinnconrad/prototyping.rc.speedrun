@@ -1,22 +1,25 @@
-"""Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers.
+"""Assembly of the speedrun chassis: chassis plate, bulkheads, top brace, shock towers, drive line,
+wishbones and running gear.
 
-Parts:
+Parts (the parts besides the speedrun chassis are the owner's own design, re-engineered from the
+T410R; they are not in the mass total):
 * speedrun chassis plate (wide) with the longer motor window
 * lower and upper bulkhead at End B (centre of H03 to H06) and at End A (centre of H28 to H31,
   rotated by 180 degrees); the pinions point to the middle of the car
 * speedrun top brace on both upper bulkheads (end with the obround at End B)
 * speedrun shock towers on the upper bulkheads: front tower at End A (assumed to be the front),
   rear tower at End B
-* stock pivot blocks of the wishbones (not part of the speedrun design, modelled for the
-  completeness of the build, not in the mass total): long block on H01/H02, short blocks on
-  H07/H08, H26/H27 and H32/H33
-* stock centre driveshaft with the fixed metal pins (not part of the speedrun design, modelled for
-  the completeness of the build, not in the mass total)
-* stock cup joints, rear pinion shaft with the spur gear and the bearing, motor mount with its cap
-  and diff outdrives (not part of the speedrun design, not in the mass total)
-* stock camber links (turnbuckles M3x37 with rod ends) on the ball studs of the shock towers
-* stock lower wishbones (front arms at End A, rear arms at End B) with their inner hinge pins on
-  the pivot blocks (not part of the speedrun design, not in the mass total)
+* pivot blocks of the wishbones: long block on H01/H02, short blocks on H07/H08, H26/H27 and
+  H32/H33
+* centre driveshaft with the fixed metal pins, cup joints, front and rear pinion shaft with the
+  pinions, the spur gear and the bearings, motor mount with its cap, differential, spool and diff
+  outdrives
+* camber links (turnbuckles M3x37 with rod ends) on the ball studs of the shock towers
+* lower wishbones (front arms at End A, rear arms at End B) with their inner hinge pins on the
+  pivot blocks
+* running gear (scripts/cad/generate_running_gear.py): C-hubs with caster, steering knuckles, rear
+  hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the servo mount, dampers,
+  sway bars
 
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
@@ -48,6 +51,7 @@ from generate_pivot_blocks import blocks_in_plate  # noqa: E402
 from generate_shock_towers import tower_in_bulkhead  # noqa: E402
 from generate_wishbones import arms_in_plate  # noqa: E402
 from generate_camber_links import links_in_plate  # noqa: E402
+from generate_running_gear import build as running_gear  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
 PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
@@ -59,7 +63,10 @@ COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8
           "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
           "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77),
           "drive": (0.45, 0.47, 0.5), "mount": (0.6, 0.63, 0.68), "arm": (0.4, 0.34, 0.52),
-          "diff": (0.16, 0.16, 0.18), "rodend": (0.12, 0.12, 0.13), "link": (0.78, 0.79, 0.82)}
+          "diff": (0.16, 0.16, 0.18), "rodend": (0.12, 0.12, 0.13), "link": (0.78, 0.79, 0.82),
+          "upright": (0.86, 0.45, 0.12), "axle": (0.62, 0.64, 0.68), "cvd": (0.5, 0.52, 0.56),
+          "steer": (0.3, 0.45, 0.75), "damper": (0.75, 0.2, 0.2), "spring": (0.95, 0.8, 0.2),
+          "servo": (0.2, 0.2, 0.22), "swaybar": (0.35, 0.65, 0.4)}
 PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
@@ -68,15 +75,23 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "brace": ("Speedrun top brace", {"carbon": 1.6, "7075": 2.81}),
              "tower_front": ("Speedrun front shock tower", {"carbon": 1.6, "7075": 2.81}),
              "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81}),
-             "pivot": ("Stock pivot blocks (4 pieces)", {}),     # no mass
-             "shaft": ("Stock centre driveshaft with fixed pins", {}),
-             "cup": ("Stock cup joints, diff outdrives, hinge pins", {}),
-             "drive": ("Stock pinion shafts, pinions, spur gear, bearings", {}),
-             "mount": ("Stock motor mount with cap", {}),
-             "arm": ("Stock wishbones (4 pieces)", {}),
-             "diff": ("Stock differential case and spool (ring gear grey)", {}),
-             "rodend": ("Stock rod ends of the camber links", {}),
-             "link": ("Stock turnbuckles and ball studs of the camber links", {})}
+             "pivot": ("Pivot blocks (4 pieces)", {}),     # no mass
+             "shaft": ("Centre driveshaft with fixed pins", {}),
+             "cup": ("Cup joints, outdrives, inner hinge pins", {}),
+             "drive": ("Pinion shafts, pinions, spur gear, bearings", {}),
+             "mount": ("Motor mount with cap", {}),
+             "arm": ("Wishbones (4 pieces)", {}),
+             "diff": ("Differential case and spool (ring gear grey)", {}),
+             "rodend": ("Rod ends", {}),
+             "link": ("Turnbuckles, ball studs and nuts", {}),
+             "upright": ("C-hubs (caster 10 deg), knuckles, hub carriers", {}),
+             "axle": ("Axles, hex hubs, pins, wheel bearings", {}),
+             "cvd": ("CVD drive shafts", {}),
+             "steer": ("Steering, servo mount, sway bar holders", {}),
+             "damper": ("Dampers (standard 1:10 on-road)", {}),
+             "spring": ("Damper springs", {}),
+             "servo": ("Servo (low profile)", {}),
+             "swaybar": ("Sway bars 1.4", {})}
 
 
 def build():
@@ -104,19 +119,21 @@ def build():
                   front.translate(cq.Vector(0, BULKHEAD_Y["front"], plate_t))))
     parts.append(("speedrun rear shock tower End B", "tower_rear",
                   tower_in_bulkhead(lp, up, "rear").translate(cq.Vector(0, BULKHEAD_Y["rear"], plate_t))))
-    # stock pivot blocks of the wishbones on the holes of the chassis plate (not part of the speedrun
-    # design, modelled for the completeness of the build)
+    # pivot blocks of the wishbones on the holes of the chassis plate
     for name, _, s, _ in blocks_in_plate():
-        parts.append((f"stock pivot block {name}", "pivot", s))
-    # stock centre driveshaft with the fixed metal pins, cup joints, rear drive line, motor mount with
-    # cap and diff outdrives (not part of the speedrun design)
+        parts.append((f"pivot block {name}", "pivot", s))
+    # centre driveshaft with the fixed metal pins, cup joints, drive lines, motor mount with cap,
+    # differential, spool and diff outdrives
     for name, kind, s in driveshaft_in_plate():
-        parts.append((f"stock {name}" if kind == "shaft" else name, kind, s))
-    # stock lower wishbones with the inner hinge pins on the pivot blocks (not part of the speedrun design)
+        parts.append((name, kind, s))
+    # lower wishbones with the inner hinge pins on the pivot blocks
     for name, kind, s in arms_in_plate():
         parts.append((name, "arm" if kind == "arm" else "cup", s))
-    # stock camber links: turnbuckles with rod ends on the ball studs of the shock towers
+    # camber links: turnbuckles with rod ends on the ball studs of the shock towers
     parts += links_in_plate()
+    # running gear: wheel suspension, axles, CVD drive shafts, steering, servo, dampers, sway bars
+    rg, _ = running_gear()
+    parts += [(f"running gear {name}", kind, s) for name, kind, s in rg]
     return parts
 
 
@@ -139,12 +156,12 @@ def image(parts, path):
         cols.append(np.tile(COLORS[key], (len(t), 1)))
     tris, cols = np.concatenate(tris), np.concatenate(cols)
     fig = plt.figure(figsize=(16, 15))
-    fig.suptitle("Speedrun chassis of the Carten T410R: chassis plate, bulkheads, top brace and shock towers", fontsize=13, y=0.987)
+    fig.suptitle("Speedrun chassis (own design, re-engineered from the T410R): complete build with the running gear", fontsize=13, y=0.987)
     top = 1 / 3                                             # overview in the upper 2/3, close-ups below
 
     def upper(rect):
         return [rect[0], top + rect[1] * (1 - top), rect[2], rect[3] * (1 - top)]
-    views = [(upper([0.0, 0.3, 0.68, 0.64]), iso_basis(-35, 28), ""),
+    views = [(upper([0.0, 0.27, 0.68, 0.57]), iso_basis(-35, 28), ""),
              (upper([0.0, 0.0, 0.68, 0.3]), ((-1, 0, 0), (0, 1, 0), (0, 0, 1)), "Side view"),
              (upper([0.66, 0.02, 0.34, 0.88]), ((0, 0, -1), (1, 0, 0), (0, 1, 0)), "Top view")]
     for rect, view, title in views:
@@ -168,11 +185,11 @@ def image(parts, path):
             ax.set_ylim(lo[1] - 2, hi[1] + 8)
     # close-ups: both ends seen from the outer end (bulkheads, shock tower, end of the top brace) and the drive
     # line at End B seen from the middle of the car (top brace and shock towers left out, they hide the spur gear)
-    closeups = (("End A (front): front shock tower on the bulkheads,\nview from the outer end",
-                 (-62, BULKHEAD_Y["front"] - 32, -5, 124, 64, 90), (), 55, 22),
-                ("End B (rear): rear shock tower on the bulkheads,\nview from the outer end",
-                 (-62, BULKHEAD_Y["rear"] - 32, -5, 124, 64, 90), (), -125, 22),
-                ("End B: stock drive line (spur gear, motor mount with cap, cup joint),\n"
+    closeups = (("End A (front): shock tower, C-hubs with knuckles, dampers,\nsway bar, view from the outer end",
+                 (-92, BULKHEAD_Y["front"] - 32, -5, 184, 64, 90), (), 55, 22),
+                ("End B (rear): shock tower, hub carriers, dampers, sway bar,\nview from the outer end",
+                 (-92, BULKHEAD_Y["rear"] - 32, -5, 184, 64, 90), (), -125, 22),
+                ("End B: drive line (spur gear, motor mount with cap, cup joint),\n"
                  "view from the middle of the car, top brace and shock tower not shown",
                  (-38, -8, -5, 105, 110, 65), ("brace", "tower_front", "tower_rear"), 125, 28))
     for k, (title, (x0, y0, z0, dx, dy, dz), hidden, azim, elev) in enumerate(closeups):
@@ -196,7 +213,7 @@ def image(parts, path):
         ax.set_aspect("equal")
         ax.axis("off")
         ax.set_title(title, fontsize=10, loc="left")
-    # picture in picture: section through the differential at End B (stock part) with the pinion
+    # picture in picture: section through the differential at End B with the pinion
     yd = BULKHEAD_Y["rear"] + load_params(LOWER)["diff_axis_y"]
     keep = cq.Solid.makeBox(80, 40, 80, cq.Vector(-40, yd - 40, -20))        # half on the side away from the pinion
     tris_d, cols_d = [], []
@@ -224,14 +241,14 @@ def image(parts, path):
     for sp in ax.spines.values():
         sp.set_color("#6b7078")
         sp.set_linewidth(0.8)
-    ax.text(0.02, 0.97, "Differential End B in section (stock part): ring gear 42T,\nside gears 14T, spider gears 9T on the "
+    ax.text(0.02, 0.97, "Differential End B in section: ring gear 42T,\nside gears 14T, spider gears 9T on the "
             "cross pin,\nshims (yellow), bearings (blue), outdrives. End A: spool", transform=ax.transAxes, va="top",
             fontsize=7.5)
     handles = [Patch(color=np.clip(np.asarray(COLORS[k]) + 0.08, 0, 1), label=MATERIALS[k][0]) for k in COLORS]
-    fig.legend(handles=handles, loc="upper left", bbox_to_anchor=(0.01, top + 0.95 * (1 - top)), fontsize=9,
-               frameon=False, ncol=2, columnspacing=1.5)
-    fig.text(0.013, top + 0.95 * (1 - top) - 0.122, "Stock parts: not part of the speedrun design, not verified, work in progress, "
-             "not in the mass total", fontsize=8.5, color="#4a4f57")
+    fig.legend(handles=handles, loc="upper left", bbox_to_anchor=(0.01, top + 0.95 * (1 - top)), fontsize=8.3,
+               frameon=False, ncol=3, columnspacing=1.2)
+    fig.text(0.013, top + 0.95 * (1 - top) - 0.13, "Parts without a material in the list: modelled for the completeness of the "
+             "build, not in the mass total", fontsize=8.5, color="#4a4f57")
     fig.savefig(path, dpi=100)
     plt.close(fig)
 
@@ -255,7 +272,7 @@ def main():
         n = sum(1 for p in parts if p[1] == key)
         label, mats = MATERIALS[key]
         if not mats:
-            note = "simple bodies, picture only" if key in PICTURE_ONLY else "stock parts"
+            note = "simple bodies, picture only" if key in PICTURE_ONLY else "no material given"
             print(f"  {label}: {n} piece{'s' if n > 1 else ''}, {note}, not in the mass total")
             continue
         vol = s.Volume() / 1000
@@ -266,7 +283,12 @@ def main():
     first = {k: list(v.values())[0] for k, v in total.items()}
     print(f"  total with the first material of each part: {sum(first.values()):.0f} g")
     worst = 0.0
-    for (na, _, a), (nb, _, b) in itertools.combinations(parts, 2):
+    boxes = [s.BoundingBox() for _, _, s in parts]
+    for (ia, (na, _, a)), (ib, (nb, _, b)) in itertools.combinations(enumerate(parts), 2):
+        ba, bb = boxes[ia], boxes[ib]
+        if ba.xmin > bb.xmax or bb.xmin > ba.xmax or ba.ymin > bb.ymax or bb.ymin > ba.ymax or ba.zmin > bb.zmax \
+                or bb.zmin > ba.zmax:
+            continue                                         # bounding boxes apart: no overlap possible
         v = a.intersect(b).Volume()
         worst = max(worst, v)
         if v > 1e-4:

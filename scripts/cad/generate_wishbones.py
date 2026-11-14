@@ -1,18 +1,17 @@
-"""Generate the lower wishbones of the Carten T410R (stock parts, not part of the speedrun design).
+"""Generate the lower wishbones of the speedrun chassis (own design, re-engineered from the T410R).
 
-The wishbones (suspension arms NHA402, manual step 7 and parts list) are stock parts: they are
-not part of the speedrun design and are not manufactured in this project. They are modelled for
-the completeness of the build: the assembly of the speedrun chassis contains them, so that the
-space beside the bulkheads can be checked.
+The wishbones (suspension arms) are the owner's own design, re-engineered from the T410R (manual
+step 7 and parts list, measurements of the owner). The assembly of the speedrun chassis contains
+them, so that the space beside the bulkheads can be checked.
 
 * front arm: 2 pieces, End A, left and right (the same part, turned by 180 degrees about z)
 * rear arm: 2 pieces, End B, left and right (the same part, turned by 180 degrees about z)
-* inner hinge pin NHA423 3x42: 4 pieces, between the pivot blocks
+* inner hinge pin 3x42: 4 pieces, between the pivot blocks
 
 The manual has no dimensions. The values come from the manual (screws and pins), from the
 other parts of the model (pivot blocks, bulkheads), from photos of the owner or are assumptions;
 each value has its source
-in cad/stock_parts/wishbone/wishbone_parameters.json. The drawing names the measurements that
+in cad/parts/wishbone/wishbone_parameters.json. The drawing names the measurements that
 replace the assumptions with letters.
 
 Arm coordinates: x from the axis of the inner hinge pin toward the wheel, y along the inner
@@ -41,8 +40,8 @@ from generate_bulkhead_lower import box, cyl_y, cyl_z, load_params  # noqa: E402
 from generate_pivot_blocks import PARAMS as PIVOT, POSITIONS, PLATE_T, plate_holes  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y  # noqa: E402
 
-PARAMS = "cad/stock_parts/wishbone/wishbone_parameters.json"
-OUT = "cad/stock_parts/wishbone"
+PARAMS = "cad/parts/wishbone/wishbone_parameters.json"
+OUT = "cad/parts/wishbone"
 DRAWING = "photos/cad_wishbones_drawing.png"
 PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
 KINDS = ("front", "rear")
@@ -105,6 +104,9 @@ def arm_solid(p, kind):
     for part in parts:
         s = part if s is None else s.fuse(part)
     s = s.intersect(box(-10, length + 20, -half, half, -20, 20))           # nothing beyond the inner lugs in y
+    # the side rails end at the outer lugs: no material in the gap between the outer lugs (the C-hub or the
+    # hub carrier and the spacers sit there)
+    s = s.cut(box(length - p["outer_lug_d"] / 2 - 0.3, length + p["outer_lug_d"] / 2 + 0.2, -gap / 2, gap / 2, -20, 20))
     # bores and holes
     s = s.cut(cyl_y(p["inner_pin_d"] / 2, -half - 1, half + 1, 0, 0))
     s = s.cut(cyl_y(p["outer_pin_d"] / 2, -half - 1, half + 1, length, p["outer_pin_z"]))
@@ -119,7 +121,7 @@ def arm_solid(p, kind):
 
 
 def pin_solid(p):
-    """Inner hinge pin NHA423 along y, centred at y = 0 (arm coordinates)."""
+    """Inner hinge pin along y, centred at y = 0 (arm coordinates)."""
     return cyl_y(p["inner_pin_d"] / 2, -p["inner_pin_length"] / 2, p["inner_pin_length"] / 2, 0, 0)
 
 
@@ -160,6 +162,36 @@ def placement(origin, d, side):
     return math.degrees(phi), cq.Vector(*origin)
 
 
+def arm_frame(end, side, lines=None):
+    """Origin (middle of the inner hinge pin), angle about z and flip of an arm on the chassis. The arms
+    are the same part on both sides (owner: they can be flipped): each arm is placed so that its rail
+    A with the shock plate faces the outer end of the car (the shock tower), so one arm of each axle
+    is upside down (turned by 180 degrees about its own x axis)."""
+    lines = lines or pin_lines()
+    origin, d, _ = lines[(end, side)]
+    phi, _ = placement(origin, d, side)
+    default = 1 if side > 0 else -1                         # local y toward +d (right) or -d (left)
+    out = 1 if end == "front" else -1                       # outer end of the car along y
+    return origin, phi, default != -out
+
+
+def place_arm(solid, end, side, lines=None):
+    """Place a solid given in arm coordinates on the chassis (see arm_frame)."""
+    origin, phi, flip = arm_frame(end, side, lines)
+    s = solid.rotate(cq.Vector(0, 0, 0), cq.Vector(1, 0, 0), 180) if flip else solid
+    return s.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), phi).translate(cq.Vector(*origin))
+
+
+def arm_point(end, side, pt, lines=None):
+    """Point given in arm coordinates in chassis plate coordinates (see arm_frame)."""
+    origin, phi, flip = arm_frame(end, side, lines)
+    x, y, z = pt
+    if flip:
+        y, z = -y, -z
+    c, s_ = math.cos(math.radians(phi)), math.sin(math.radians(phi))
+    return np.array([origin[0] + c * x - s_ * y, origin[1] + s_ * x + c * y, origin[2] + z])
+
+
 def arms_in_plate(p=None, pp=None):
     """Arms and hinge pins placed on the speedrun chassis plate (coordinates of the chassis plate):
     list of (name, kind, solid), kind "arm" or "pin"."""
@@ -172,11 +204,9 @@ def arms_in_plate(p=None, pp=None):
         end = END_OF[kind]
         label = "End A" if end == "front" else "End B"
         for side, sname in ((1, "right"), (-1, "left")):
-            origin, d, _ = lines[(end, side)]
-            phi, t = placement(origin, d, side)
-            for name, k, s in ((f"stock {kind} wishbone {label} {sname}", "arm", arms[kind]),
-                               (f"stock hinge pin {label} {sname}", "pin", pin)):
-                out.append((name, k, s.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), phi).translate(t)))
+            for name, k, s in ((f"{kind} wishbone {label} {sname}", "arm", arms[kind]),
+                               (f"inner hinge pin {label} {sname}", "pin", pin)):
+                out.append((name, k, place_arm(s, end, side, lines)))
     return out
 
 
@@ -202,8 +232,8 @@ def drawing(path, p, solids):
                     arrowprops=dict(arrowstyle="-", lw=0.6, color=color), bbox=dict(fc="white", ec="none", pad=0.4))
 
     fig = plt.figure(figsize=(16, 15.5))
-    fig.suptitle("Carten T410R lower wishbones NHA402 with hinge pin NHA423: stock parts, not part of the speedrun "
-                 "design (not verified, work in progress)", fontsize=12, y=0.992)
+    fig.suptitle("Lower wishbones with hinge pin (own design, re-engineered from the T410R; measures qualified, "
+                 "no 3D print verification)", fontsize=12, y=0.992)
     half, h = p["inner_width"] / 2, p["rail_h"] / 2
     z0, z1 = p["shock_plate_z"]
     for row, kind in enumerate(KINDS):
@@ -325,11 +355,11 @@ def drawing(path, p, solids):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate the wishbones of the T410R (stock parts, not part of the speedrun design).")
+    parser = argparse.ArgumentParser(description="Generate the wishbones of the speedrun chassis (own design, re-engineered from the T410R).")
     parser.parse_args()
     p, pp = load_params(PARAMS), load_params(PIVOT)
     solids = {k: arm_solid(p, k) for k in KINDS}
-    files = [(f"wishbone_{k}_T410R", solids[k]) for k in KINDS] + [("hinge_pin_3x42_NHA423", pin_solid(p))]
+    files = [(f"wishbone_{k}_T410R", solids[k]) for k in KINDS] + [("hinge_pin_3x42", pin_solid(p))]
     for stem, s in files:
         valid, bb, vol = s.isValid(), s.BoundingBox(), s.Volume()
         cq.exporters.export(cq.Workplane().add(s), f"{OUT}/{stem}.step")

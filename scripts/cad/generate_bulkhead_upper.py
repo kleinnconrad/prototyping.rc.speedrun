@@ -1,10 +1,10 @@
 """Generate the upper bulkhead (gear box upper half) of the Carten T410R, new design.
 
-The upper part is a new design. Only its interfaces follow the stock part:
+The upper part is a new design. Only its interfaces follow the original part:
 * parting face, diff and pinion bearing seats, gear cavities and the 4 screws to the
   lower part: taken from the parameter file of the lower bulkhead
 * shock tower: contact face and 4 tapped holes M3 (screws M3x8 through the 3 mm tower)
-* top brace: flat contact face at the height of the stock part with 2 tapped holes M3
+* top brace: flat contact face at the height of the original part with 2 tapped holes M3
 
 Design: the footprint of the lower part, extruded to 4 flat levels along y: a flange for the
 heads of the outer screws, a block over the diff and the ring gear, one shock tower wall

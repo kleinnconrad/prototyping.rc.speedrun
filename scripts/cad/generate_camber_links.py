@@ -1,7 +1,7 @@
-"""Generate the camber links of the Carten T410R (stock parts, not part of the speedrun design).
+"""Generate the camber links of the speedrun chassis (own design, re-engineered from the T410R).
 
 The camber links (upper links, manual page 05 step 4 "C front upper" and "D rear upper", mounted in
-step 21) consist of a turnbuckle NHA417 M3x37 with a rod end NBA247 on each end. The inner rod end
+step 21) consist of a turnbuckle M3x37 with a rod end on each end. The inner rod end
 sits on a ball stud in the camber link hole of the shock tower (behind the tower, wall side), the
 outer rod end on a vertical ball stud of the C-hub (front) or of the hub carrier (rear). The two rod
 ends are turned by 90 degrees about the link axis.
@@ -33,8 +33,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_bulkhead_lower import box, cyl_x, cyl_y, cyl_z, load_params  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y  # noqa: E402
 
-PARAMS = "cad/stock_parts/camber_link/camber_link_parameters.json"
-OUT = "cad/stock_parts/camber_link"
+PARAMS = "cad/parts/camber_link/camber_link_parameters.json"
+OUT = "cad/parts/camber_link"
 LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
 UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
 PLATE_T = 2.0
@@ -81,12 +81,17 @@ def link_parts(p, gap, inner_open=-1, outer_open=-1):
     return inner, outer, tb, L
 
 
-def ball_stud(p, neck_dir, neck_len):
-    """Ball stud: ball at the origin, neck (diameter of the set screw) along neck_dir (unit vector)."""
+def ball_stud(p, neck_dir, neck_len, thread_len=0.0):
+    """Ball stud: ball at the origin, neck (diameter of the set screw) along neck_dir (unit vector), then
+    the thread M3 in a tapped hole (modelled with the core diameter 2.5)."""
     bd, _, nd = p["ball"]
     s = cq.Solid.makeSphere(bd / 2, cq.Vector(0, 0, 0), angleDegrees1=-90, angleDegrees2=90)
     neck = cq.Solid.makeCylinder(nd / 2, neck_len, cq.Vector(0, 0, 0), cq.Vector(*neck_dir))
-    return s.fuse(neck).clean()
+    s = s.fuse(neck)
+    if thread_len:
+        start = cq.Vector(*neck_dir) * neck_len
+        s = s.fuse(cq.Solid.makeCylinder(1.249, thread_len, start, cq.Vector(*neck_dir)))
+    return s.clean()
 
 
 def tower_faces():
@@ -104,6 +109,26 @@ def tower_faces():
         bb = s.translate(cq.Vector(0, BULKHEAD_Y[end], PLATE_T)).BoundingBox()
         sign = 1 if end == "rear" else -1                   # wall side: toward the middle of the car
         out[end] = (bb.ymax if end == "rear" else bb.ymin, sign, PLATE_T + lp["axis_z"] + ch, cx, tp["thickness"])
+    return out
+
+
+def link_points(p=None):
+    """Centres of the inner and outer balls of the camber links: {(end, side): (p1, p2)}."""
+    p = p or load_params(PARAMS)
+    from generate_wishbones import pin_lines
+    lines = pin_lines()
+    faces = tower_faces()
+    off = p["ball"][1]
+    out = {}
+    for end, gap in (("rear", p["gap_rear"]), ("front", p["gap_front"])):
+        yf, sign, zc, cx, tt = faces[end]
+        L = link_parts(p, gap)[3]
+        for side in (1, -1):
+            p1 = np.array([side * cx, yf + sign * off, zc])
+            dy = lines[(end, side)][0][1] - p1[1]
+            dz = p["outer_height_offset"]
+            p2 = p1 + np.array([side * math.sqrt(L ** 2 - dy ** 2 - dz ** 2), dy, dz])
+            out[(end, side)] = (p1, p2)
     return out
 
 
@@ -135,10 +160,10 @@ def links_in_plate(p=None):
                 return sol.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), th).translate(cq.Vector(*p1))
             rods = cq.Compound.makeCompound([place(inner_r), place(outer_r)])
             st_in = ball_stud(p, (0, -sign, 0), off + tt + 1.0).translate(cq.Vector(*p1))
-            st_out = ball_stud(p, (0, 0, -1), p["outer_neck"]).translate(cq.Vector(*p2))
-            out.append((f"stock camber link {label} {sname}: rod ends", "rodend", rods))
-            out.append((f"stock camber link {label} {sname}: turnbuckle M3x37", "link", place(tb)))
-            out.append((f"stock camber link {label} {sname}: ball studs", "link",
+            st_out = ball_stud(p, (0, 0, -1), p["outer_neck"], 3.5).translate(cq.Vector(*p2))
+            out.append((f"camber link {label} {sname}: rod ends", "rodend", rods))
+            out.append((f"camber link {label} {sname}: turnbuckle M3x37", "link", place(tb)))
+            out.append((f"camber link {label} {sname}: ball studs", "link",
                         cq.Compound.makeCompound([st_in, st_out])))
     return out
 
@@ -158,8 +183,8 @@ def drawing(p, path=DRAWING):
         v = np.array([[q.x, q.y, q.z] for q in v])
         return v[np.array(i)]
     fig = plt.figure(figsize=(14, 6.2))
-    fig.suptitle("Carten T410R camber links: turnbuckle NHA417 M3x37 with 2 rod ends NBA247 (stock parts, not part of "
-                 "the speedrun design)", fontsize=11, y=0.98)
+    fig.suptitle("Camber links: turnbuckle M3x37 with 2 rod ends (own design, re-engineered from the T410R)",
+                 fontsize=11, y=0.98)
     e = p["rod_end"][0]
     for row, (name, gap) in enumerate((("Front upper link (C), End A, 2 pieces", p["gap_front"]),
                                        ("Rear upper link (D), End B, 2 pieces", p["gap_rear"]))):
@@ -219,7 +244,7 @@ def drawing(p, path=DRAWING):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate the camber links of the T410R (stock parts).")
+    parser = argparse.ArgumentParser(description="Generate the camber links of the speedrun chassis.")
     parser.parse_args()
     p = load_params(PARAMS)
     os.makedirs(OUT, exist_ok=True)
@@ -227,8 +252,8 @@ def main():
     for name, gap in (("front", p["gap_front"]), ("rear", p["gap_rear"])):
         inner, outer, tb, L = link_parts(p, gap)
         files.append((f"camber_link_{name}_T410R", cq.Compound.makeCompound([inner, outer, tb]), L))
-    files += [("rod_end_NBA247", rod_end(p, "y", -1), None),
-              ("turnbuckle_M3x37_NHA417", link_parts(p, p["gap_front"])[2].translate(
+    files += [("rod_end", rod_end(p, "y", -1), None),
+              ("turnbuckle_M3x37", link_parts(p, p["gap_front"])[2].translate(
                   cq.Vector(-link_parts(p, p["gap_front"])[3] / 2, 0, 0)), None),
               ("ball_stud", ball_stud(p, (0, -1, 0), p["ball"][1] + 4.0), None)]
     for stem, s, L in files:
@@ -244,7 +269,7 @@ def main():
 
     # checks on the speedrun chassis
     import generate_speedrun_assembly as A
-    others = [(n, s) for n, k, s in A.build() if not n.startswith("stock camber link")]
+    others = [(n, s) for n, k, s in A.build() if not n.startswith("camber link")]
     print("checks (camber links on the speedrun chassis)")
     worst = 0.0
     for name, kind, s in links_in_plate(p):

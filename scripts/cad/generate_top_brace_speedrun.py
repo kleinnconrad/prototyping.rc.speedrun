@@ -8,7 +8,7 @@ closed as well. The obround cutout at the end with B07 to B15 is kept unchanged.
 Design (in the style of the bulkheads): straight lines and radii only.
 * End sections as wide as the bulkheads (body_half_width of the lower bulkhead), flush with
   their sides, end corners with radius 4 mm. The flat ends replace the notches of the original
-  top brace, which clear the raised rib on top of the stock upper bulkhead. The upper bulkhead
+  top brace, which clear the raised rib on top of the original upper bulkhead. The upper bulkhead
   of this project has a flat contact face there.
 * Solid bar of the original width (15.09 mm) between the end sections.
 * Transitions at 30 degrees to the y axis on both ends, fillets 3 mm.

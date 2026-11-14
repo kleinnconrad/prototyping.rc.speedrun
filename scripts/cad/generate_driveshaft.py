@@ -1,28 +1,28 @@
-"""Generate the centre driveshaft of the Carten T410R (NHA413) (stock part, not part of the speedrun
-design) and the simple bodies of the drive line around it for the assembly picture.
+"""Generate the centre driveshaft of the speedrun chassis (own design, re-engineered from the T410R)
+and the parts of the drive line around it.
 
 The centre driveshaft connects the cup joints of the two pinion shafts. Each ball end carries a
-metal pin (NBA255 2.0x7.6), which is fixed on the shaft and runs in the slots of the cup joint, so
+metal pin (2.0x7.6), which is fixed on the shaft and runs in the slots of the cup joint, so
 the shaft turns with the cup joints. In the centred position, each pin has half of the axial play
 to the closed end of its slot, so the shaft can move a little back and forth.
 
 * End A: the cup joint sits on the front pinion shaft beside the bulkhead.
-* End B (motor): the rear pinion shaft NBA205 runs from the pinion in the bulkhead through a
-  flange with the spur gear and the bearing NBA298 in the motor mount NBA201 (manual steps 5, 10
+* End B (motor): the rear pinion shaft runs from the pinion in the bulkhead through a
+  flange with the spur gear and the bearing in the motor mount (manual steps 5, 10
   and 12). The cup joint sits on its end beyond the motor mount.
 
 Derived from the models of this project: the pinion axis, the end faces of the pinion housings,
 the motor mount (holes H09/H10 of the chassis plate) and the spur gear (slot of the chassis plate
 below the pinion axis). Cup joints: measurements of the owner. The other dimensions are typical
-values (cad/stock_parts/driveshaft/driveshaft_parameters.json). The shaft is a stock part: it is
-not part of the speedrun design and is modelled for the completeness of the build. The cup
-joints, the rear drive line, the motor mount with its cap and the diff outdrives are stock parts as
-well; the script writes the STEP and STL files of all these parts.
+values (cad/parts/driveshaft/driveshaft_parameters.json). The shaft, the cup
+joints, the drive lines, the motor mount with its cap, the differential, the spool and the diff
+outdrives are the owner's own design, re-engineered from the T410R; the script writes the STEP and
+STL files of all these parts.
 
 Usage (from the root directory of the repository):
     python scripts/cad/generate_driveshaft.py
 
-The script writes the STEP and STL files of all parts (cad/stock_parts/driveshaft, rear_drive,
+The script writes the STEP and STL files of all parts (cad/parts/driveshaft, rear_drive,
 motor_mount and diff_outdrive) and the drawing photos/cad_driveshaft_drawing.png, and checks the
 play and the fit.
 
@@ -41,11 +41,11 @@ from generate_bulkhead_lower import box, bulkhead_lower, cyl_x, cyl_y, cyl_z, lo
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
-PARAMS = "cad/stock_parts/driveshaft/driveshaft_parameters.json"
+PARAMS = "cad/parts/driveshaft/driveshaft_parameters.json"
 LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
 UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
 PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
-STOCK = "cad/stock_parts"
+PARTS = "cad/parts"
 DRAWING = "photos/cad_driveshaft_drawing.png"
 PLATE_T = 2.0
 INCH = 25.4
@@ -191,7 +191,7 @@ def prism_hex(af, z0, z1):
 
 def diff_solids(p, lp):
     """Differential in diff coordinates (x along the diff axis, x = 0 plane of the pinion axis, ring
-    gear on the +x side as in the bulkhead): case, ring gear 42T with hub, 2 bearings NBA299."""
+    gear on the +x side as in the bulkhead): case, ring gear 42T with hub, 2 bearings."""
     rc, lc = p["diff_case_d"] / 2, p["diff_case_len"]
     x_tip = p["diff_ring_tip_x"]
     x_back = p["diff_ring_back_x"]
@@ -203,7 +203,7 @@ def diff_solids(p, lp):
     rh = p["diff_hub_d"] / 2
     xt, rt = p["diff_case_taper_end"]
     x_root_in = rx0 + slope * (r_in - r_od)                 # root of the teeth at the inner radius
-    rj = p["diff_journal_d"] / 2                            # journals of the hubs for the bearings NBA299
+    rj = p["diff_journal_d"] / 2                            # journals of the hubs for the bearings
     case = revolve_x([(-xb1, 0), (-xb1, rj), (-xb0, rj), (-xb0, rh), (xt, rh), (xt, rt), (x_tip - lc, rc), (x_root_in, rc),
                       (x_root_in, 0)])
     ring = revolve_x([(x_root_in, 0), (x_root_in, r_in), (rx0, r_od), (x_back, r_od), (x_back, rh), (xb0, rh),
@@ -292,7 +292,7 @@ def spur_gear_solid(p, lay):
 def rear_drive_line(p, lay):
     """Rear pinion shaft from the inner end of the pinion seat of the bulkhead to the cup joint, with
     the flange, the spur gear, the bearing and the motor mount with its cap (chassis plate
-    coordinates): list of (name, kind, solid), with the pinion NBA207 and the 2 bearings of the bulkhead.
+    coordinates): list of (name, kind, solid), with the pinion and the 2 bearings of the bulkhead.
     Not modelled: the screw of the pinion, the shims between the bearings."""
     z = lay["z"]
     rs = p["pinion_shaft_d"] / 2
@@ -317,9 +317,9 @@ def rear_drive_line(p, lay):
     y_sp = lay["spur"][1] + sl
     shaft = shaft.fuse(cyl_y(sd / 2, lay["flange"][1], y_sp, 0, z))        # spigot through the spur gear
     shaft = shaft.fuse(cyl_y(p["bearing_shoulder_d"] / 2, y_sp, yb, 0, z))  # shoulder against the inner ring of the bearing
-    shaft = shaft.fuse(cyl_y(rs, yb, yb + b, 0, z))                         # bearing NBA298 in the motor mount
+    shaft = shaft.fuse(cyl_y(rs, yb, yb + b, 0, z))                         # bearing in the motor mount
     shaft = shaft.fuse(flats(yb + b, y_end))                                # cup joint seat
-    yp = lay["back"][0] + sum(p["cup_groove"][:2]) / 2                      # retaining pin NBA255 in the groove
+    yp = lay["back"][0] + sum(p["cup_groove"][:2]) / 2                      # retaining pin in the groove
     shaft = shaft.cut(cyl_x(p["cup_pin_d"] / 2, -rs - 1, rs + 1, yp, z))       # cross hole of the retaining pin
     ret_pin = cyl_x(p["cup_pin_d"] / 2, -p["cup_pin_length"] / 2, p["cup_pin_length"] / 2, yp, z)
     shaft = shaft.cut(cyl_y(p["tap_d"] / 2, y0 - 0.1, y0 + p["pinion_thread_depth"], 0, z))  # axial thread M3
@@ -332,17 +332,17 @@ def rear_drive_line(p, lay):
     pinion = pinion_solid(p, lay, y_pin_front, y0)
     bearing = cyl_y(dd / 2, yb, yb + b, 0, z).cut(cyl_y(d / 2, yb - 1, yb + b + 1, 0, z))
     lp = load_params(LOWER)
-    ys = lay["seat"][0]                                     # 2 bearings NBA298 in the pinion seat of the bulkhead
+    ys = lay["seat"][0]                                     # 2 bearings in the pinion seat of the bulkhead
     bulk = [cyl_y(dd / 2, y, y + b, 0, z).cut(cyl_y(d / 2, y - 1, y + b + 1, 0, z))
             for y in (ys, ys + b + lp["pinion_rib_t"])]
     mount = motor_mount_solid(p, lay)
     cap = motor_mount_cap_solid(p, lay)
     return [("rear pinion shaft with flange", "drive", shaft.clean()), ("spur gear", "drive", spur.clean()),
-            ("pinion NBA207", "drive", pinion),
-            ("retaining pin NBA255 of the cup joint End B", "drive", ret_pin),
-            ("bearing NBA298 in the bulkhead, inner", "drive", bulk[0].clean()),
-            ("bearing NBA298 in the bulkhead, outer", "drive", bulk[1].clean()),
-            ("bearing NBA298 in the motor mount", "drive", bearing.clean()), ("motor mount", "mount", mount.clean()),
+            ("pinion", "drive", pinion),
+            ("retaining pin of the cup joint End B", "drive", ret_pin),
+            ("bearing in the bulkhead, inner", "drive", bulk[0].clean()),
+            ("bearing in the bulkhead, outer", "drive", bulk[1].clean()),
+            ("bearing in the motor mount", "drive", bearing.clean()), ("motor mount", "mount", mount.clean()),
             ("cap of the motor mount", "mount", cap)]
 
 
@@ -354,8 +354,8 @@ def flats_section(p, z, y_a, y_b):
 
 
 def front_drive_line(p, lay):
-    """Front pinion shaft NBA205 at End A with the pinion NBA207, the 2 bearings NBA298 of the bulkhead
-    and the retaining pin NBA255 of the cup joint (chassis plate coordinates). Built at End B like the
+    """Front pinion shaft at End A with the pinion, the 2 bearings of the bulkhead
+    and the retaining pin of the cup joint (chassis plate coordinates). Built at End B like the
     rear pinion shaft, without flange, spur gear and motor mount, and turned by 180 degrees about z
     onto End A (the front bulkhead is the same part, turned by 180 degrees)."""
     z = lay["z"]
@@ -382,15 +382,15 @@ def front_drive_line(p, lay):
 
     def to_a(solid):
         return solid.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180).translate(cq.Vector(0, shift, 0))
-    return [("front pinion shaft End A", "drive", to_a(shaft.clean())), ("pinion NBA207 End A", "drive", to_a(pinion)),
-            ("bearing NBA298 in the bulkhead End A, inner", "drive", to_a(bulk[0].clean())),
-            ("bearing NBA298 in the bulkhead End A, outer", "drive", to_a(bulk[1].clean())),
-            ("retaining pin NBA255 of the cup joint End A", "drive", to_a(pin)),
+    return [("front pinion shaft End A", "drive", to_a(shaft.clean())), ("pinion End A", "drive", to_a(pinion)),
+            ("bearing in the bulkhead End A, inner", "drive", to_a(bulk[0].clean())),
+            ("bearing in the bulkhead End A, outer", "drive", to_a(bulk[1].clean())),
+            ("retaining pin of the cup joint End A", "drive", to_a(pin)),
             ("front pinion shaft (End B frame)", "export", shaft.clean())]
 
 
 def pinion_solid(p, lay, y_front, y_shaft):
-    """Pinion NBA207 (chassis plate coordinates): simplified straight bevel gear (tooth profile with
+    """Pinion (chassis plate coordinates): simplified straight bevel gear (tooth profile with
     straight flanks, scaled toward the apex of the pitch cone), back face against the inner bearing of the bulkhead,
     bore with the press fit shape of the shaft, countersink and hole for the screw M3x6 (manual step 5)."""
     z = lay["z"]
@@ -421,8 +421,8 @@ def pinion_solid(p, lay, y_front, y_shaft):
 
 
 def motor_mount_solid(p, lay):
-    """Motor mount NBA201 for 540 motors (manual step 10), chassis plate coordinates:
-    low part on the bulkhead side with a U-shaped notch for the bearing NBA298 at the pinion axis,
+    """Motor mount for 540 motors (manual step 10), chassis plate coordinates:
+    low part on the bulkhead side with a U-shaped notch for the bearing at the pinion axis,
     tall part on the motor side with rounded top corners and three long holes along x: the motor
     shaft (middle, at the height of the pinion axis) and the two motor screws (above and below)."""
     z, (m0, m1) = lay["z"], lay["mount"]
@@ -452,7 +452,7 @@ def motor_mount_solid(p, lay):
 
 
 def motor_mount_cap_solid(p, lay):
-    """Cap of the motor mount (second part of NBA201, manual step 25), chassis plate coordinates,
+    """Cap of the motor mount (second part of the motor mount set, manual step 25), chassis plate coordinates,
     block between the low part of the motor mount and the top brace, with a
     semicircular notch along y in its top face and two through holes for the screws M3x18 from the
     top brace into the motor mount."""
@@ -495,7 +495,7 @@ def parts_in_plate(p=None, lp=None):
             parts.append((f"diff case {label}", "diff", place(ds["case"])))
         parts.append((f"ring gear 42T {label}", "drive", place(ds["ring"])))
         for i, bsol in enumerate(ds["bearings"]):
-            parts.append((f"diff bearing NBA299 {label} {'ring gear side' if i == 0 else 'case side'}", "drive",
+            parts.append((f"diff bearing {label} {'ring gear side' if i == 0 else 'case side'}", "drive",
                           place(bsol)))
         for key, sol in ds["inner"].items():
             if key.startswith("_") or label == "End A":
@@ -575,8 +575,8 @@ def drawing(path, p, lay, items):
 
     z = lay["z"]
     fig = plt.figure(figsize=(15, 10))
-    fig.suptitle("Carten T410R centre driveshaft with the drive line: stock parts, not part of the speedrun design "
-                 "(not verified, work in progress)", fontsize=12, y=0.985)
+    fig.suptitle("Centre driveshaft with the drive line (own design, re-engineered from the T410R; measures "
+                 "qualified, no 3D print verification)", fontsize=12, y=0.985)
     ax = fig.add_axes([0.04, 0.57, 0.92, 0.36])
     draw(ax)
     y0, y1 = lay["shaft"]
@@ -657,14 +657,14 @@ def drawing(path, p, lay, items):
     ax3.grid(True, color="#eeeeee", lw=0.5)
     ax3.set_title("Motor mount from the motor side (section y = 62.48)", fontsize=10, loc="left")
     ax3.set_xlabel("x [mm] (across the car)", fontsize=8)
-    fig.text(0.04, 0.006, f"Shaft {p['shaft_d']:g} mm with ball ends and fixed metal pins NBA255 {p['pin_d']:g} x "
+    fig.text(0.04, 0.006, f"Shaft {p['shaft_d']:g} mm with ball ends and fixed metal pins {p['pin_d']:g} x "
              f"{p['pin_length']:g} mm in the slots of the cup joints; total axial play {p['axial_play']:g} mm (pins to the "
              f"closed ends of the slots). Cup joints {p['cup_od']:g} / {p['cup_bore_d']:g} x {p['cup_length']:g} mm, slots "
              f"{p['cup_slot_len']:g} mm (owner).\nSpur gear {p['spur_teeth']:g}T {p['spur_dp']:g}DP ({lay['spur_od']:.1f} mm) "
              f"in the slot of the chassis plate, motor mount {p['mount_t']:g} mm (owner) for 540 motors on the holes "
              "H09/H10. Thicknesses of the spur gear and the flange, outline of the motor mount and the gaps: typical "
              "values; teeth of the spur gear simplified.\nDashed: slots of the cup joints (across the section). CAD files of all "
-             "parts: cad/stock_parts (driveshaft, rear_drive, motor_mount, diff_outdrive).",
+             "parts: cad/parts (driveshaft, rear_drive, motor_mount, diff_outdrive).",
              fontsize=8, va="bottom")
     fig.savefig(path, dpi=110)
     plt.close(fig)
@@ -674,7 +674,7 @@ DIFF_DRAWING = "photos/cad_differential_drawing.png"
 
 
 def diff_drawing(p, lp, path=DIFF_DRAWING):
-    """Assembly pictures of the differential (stock part): complete with the pinion, section, open case,
+    """Assembly pictures of the differential: complete with the pinion, section, open case,
     exploded view. Diff coordinates: x along the diff axis, pinion toward +y."""
     import matplotlib
     matplotlib.use("Agg")
@@ -691,7 +691,7 @@ def diff_drawing(p, lp, path=DIFF_DRAWING):
     C = {"case": (0.17, 0.17, 0.19), "ring": (0.66, 0.6, 0.5), "gear": (0.62, 0.63, 0.66), "bearing": (0.45, 0.65, 0.85),
          "out": (0.3, 0.3, 0.33), "shim": (0.85, 0.8, 0.55), "pin": (0.8, 0.8, 0.82), "pinion": (0.75, 0.55, 0.3)}
     items = [("case", ds["case"], -16, "case"), ("ring gear 42T", ds["ring"], 12, "ring"),
-             ("bearing NBA299", ds["bearings"][0], 20, "bearing"), ("bearing NBA299", ds["bearings"][1], -26, "bearing"),
+             ("bearing", ds["bearings"][0], 20, "bearing"), ("bearing", ds["bearings"][1], -26, "bearing"),
              ("outdrive", od.translate(cq.Vector(xo, 0, 0)), 28, "out"),
              ("outdrive", od.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180).translate(cq.Vector(-xo, 0, 0)), -34, "out"),
              ("side gear 14T", inner["side gear, ring gear side"], 5, "gear"), ("side gear 14T", inner["side gear, case side"], -6, "gear"),
@@ -700,7 +700,7 @@ def diff_drawing(p, lp, path=DIFF_DRAWING):
              ("cross pin", inner["cross pin"], 0, "pin")]
     items += [("shims 3 x 0.1", sh, (7 + 0.6 * i) if i < 3 else -(8 + 0.6 * (i - 3)), "shim")
               for i, sh in enumerate(inner["side shims"])]
-    pinion = ("pinion 17T", to_local(rear["pinion NBA207"]), 0, "pinion")
+    pinion = ("pinion 17T", to_local(rear["pinion"]), 0, "pinion")
 
     def tess(sol, tol=0.02):
         v, i = sol.tessellate(tol, 0.15)
@@ -726,10 +726,10 @@ def diff_drawing(p, lp, path=DIFF_DRAWING):
         ax.set_title(title, fontsize=10, loc="left")
 
     fig = plt.figure(figsize=(16, 19))
-    fig.suptitle("Carten T410R differential (End B) and spool (End A) (stock parts, not part of the speedrun design; measures qualified, no 3D print "
+    fig.suptitle("Differential (End B) and spool (End A) (own design, re-engineered from the T410R; measures qualified, no 3D print "
                  "verification)", fontsize=12, y=0.99)
     draw(fig.add_axes([0.01, 0.66, 0.48, 0.3]), items + [pinion], iso_basis(125, 30),
-         "Complete differential with bearings NBA299, outdrives and the pinion 17T (brown)")
+         "Complete differential with bearings, outdrives and the pinion 17T (brown)")
     keep = box(-40, 40, -40, 0.0, -40, 40)
     draw(fig.add_axes([0.51, 0.66, 0.48, 0.3]), items, iso_basis(75, 20),
          "Section: case, ring gear, side gears 14T with 3 shims each,\nspider gears 9T with 1 shim each on the cross pin", clip=keep)
@@ -749,8 +749,8 @@ def diff_drawing(p, lp, path=DIFF_DRAWING):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate the centre driveshaft of the T410R (stock part, not part "
-                                                 "of the speedrun design).")
+    parser = argparse.ArgumentParser(description="Generate the centre driveshaft and the drive line of the speedrun "
+                                                 "chassis.")
     parser.parse_args()
     p, lp, up = load_params(PARAMS), load_params(LOWER), load_params(UPPER)
     lay = layout(p, lp)
@@ -761,13 +761,13 @@ def main():
         ("driveshaft", "cup_joint_T410R", cup_solid(p)),
         ("rear_drive", "rear_pinion_shaft_T410R",
          parts["rear pinion shaft with flange"].translate(cq.Vector(0, -lay["housing"][0], -z))),
-        ("rear_drive", "retaining_pin_2x7.6_NBA255",
-         parts["retaining pin NBA255 of the cup joint End B"].translate(cq.Vector(0, -lay["housing"][0], -z))),
+        ("rear_drive", "retaining_pin_2x7.6",
+         parts["retaining pin of the cup joint End B"].translate(cq.Vector(0, -lay["housing"][0], -z))),
         ("front_drive", "front_pinion_shaft_T410R",
          [q for q in front_drive_line(p, lay) if q[1] == "export"][0][2].translate(cq.Vector(0, -lay["housing"][0], -z))),
-        ("rear_drive", f"pinion_{p['pinion'][0]:g}T_NBA207", parts["pinion NBA207"].translate(cq.Vector(0, -lay["housing"][0], -z))),
+        ("rear_drive", f"pinion_{p['pinion'][0]:g}T", parts["pinion"].translate(cq.Vector(0, -lay["housing"][0], -z))),
         ("rear_drive", f"spur_gear_{p['spur_teeth']:g}T_T410R", parts["spur gear"].translate(cq.Vector(0, -lay["spur"][0], -z))),
-        ("rear_drive", "bearing_5x10x4", parts["bearing NBA298 in the motor mount"].translate(cq.Vector(0, -yb, -z))),
+        ("rear_drive", "bearing_5x10x4", parts["bearing in the motor mount"].translate(cq.Vector(0, -yb, -z))),
         ("motor_mount", "motor_mount_T410R", parts["motor mount"].translate(cq.Vector(0, -p["mount_y"], -PLATE_T))),
         ("motor_mount", "motor_mount_cap_T410R",
          parts["cap of the motor mount"].translate(cq.Vector(0, -p["mount_y"], -PLATE_T))),
@@ -780,10 +780,10 @@ def main():
         ("diff", "shim_side_gear", diff_solids(p, lp)["inner"]["_side_shim"]),
         ("diff", "shim_spider_gear", diff_solids(p, lp)["inner"]["_spider_shim"]),
         ("diff", "spool_T410R", diff_solids(p, lp)["spool"]),
-        ("diff", "bearing_10x15x4_NBA299", diff_solids(p, lp)["bearings"][0].translate(cq.Vector(-p["diff_bearing_x"][0], 0, 0)))]
+        ("diff", "bearing_10x15x4", diff_solids(p, lp)["bearings"][0].translate(cq.Vector(-p["diff_bearing_x"][0], 0, 0)))]
     for folder, name, s in exports:
-        os.makedirs(f"{STOCK}/{folder}", exist_ok=True)
-        stem = f"{STOCK}/{folder}/{name}"
+        os.makedirs(f"{PARTS}/{folder}", exist_ok=True)
+        stem = f"{PARTS}/{folder}/{name}"
         valid, bb, vol = s.isValid(), s.BoundingBox(), s.Volume()
         cq.exporters.export(cq.Workplane().add(s), stem + ".step")
         cq.exporters.export(cq.Workplane().add(s), stem + ".stl", tolerance=0.01, angularTolerance=0.1)
@@ -804,7 +804,7 @@ def main():
     items += [(b, "#8c96a3" if k % 2 == 0 else "#d9a35f") for k, b in enumerate(bulkheads)]
     items += [(parts["motor mount"], "#c9ccd1"), (parts["cap of the motor mount"], "#b3b8bf"),
               (parts["rear pinion shaft with flange"], "#6b7078"),
-              (parts["spur gear"], "#7d8590"), (parts["bearing NBA298 in the motor mount"], "#a0a6ad"),
+              (parts["spur gear"], "#7d8590"), (parts["bearing in the motor mount"], "#a0a6ad"),
               (parts["cup joint End B"], "#b8bcc2"), (parts["cup joint End A"], "#b8bcc2"),
               (parts["centre driveshaft"], "#c0392b")]
     drawing(DRAWING, p, lay, items)
