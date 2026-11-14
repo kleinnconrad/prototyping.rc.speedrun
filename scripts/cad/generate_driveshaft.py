@@ -123,6 +123,72 @@ def ring_tooth(x_tip, root, r0, r1, half_tip, half_root, ang):
     return t.rotate(cq.Vector(0, 0, 0), cq.Vector(1, 0, 0), ang)
 
 
+def bevel_gear_z(teeth, m, delta, a_f, a_b, half, phase):
+    """Straight bevel gear along +z with the apex of the pitch cone at the origin (simplified): star
+    profiles in planes z = const (tips on the face cone, roots on the root cone, scaled with z, so the
+    teeth converge to the apex), lofted from z = a_f (front face) to z = a_b (back face) and cut by the
+    back cone (perpendicular to the pitch cone at the large end). Tooth k centred at phase + k * pitch."""
+    n, dl = int(teeth), np.radians(delta)
+    A = m * n / 2 / np.sin(dl)                               # cone distance
+    t_tip, t_root = np.tan(dl + np.arctan(m / A)), np.tan(dl - np.arctan(1.25 * m / A))
+    pitch = 2 * np.pi / n
+
+    def profile(zz):
+        pts = []
+        for k in range(n):
+            a0 = np.radians(phase) + k * pitch
+            for r, da in ((t_root * zz, -half[1]), (t_tip * zz, -half[0]), (t_tip * zz, half[0]), (t_root * zz, half[1])):
+                pts.append((r * np.cos(a0 + da * pitch), r * np.sin(a0 + da * pitch)))
+        return pts
+    star = (cq.Workplane("XY").workplane(offset=a_f).polyline(profile(a_f)).close()
+            .workplane(offset=a_b - a_f).polyline(profile(a_b)).close().loft(ruled=True).val())
+    rb = lambda zz: (A - zz * np.cos(dl)) / np.sin(dl)       # back cone: z cos + r sin <= A
+    cone = cq.Workplane("XZ").polyline([(0, a_f), (rb(a_f), a_f), (rb(a_b), a_b), (0, a_b)]).close() \
+        .revolve(360, (0, 0, 0), (0, 1, 0)).val()
+    return star.intersect(cone)
+
+
+def diff_inner(p):
+    """Inner parts of the differential in diff coordinates (centre of the spider pin at x = xc, pin
+    along z): 2 side gears 14T on the hexagon press fits of the outdrives with 3 shims each, 2 spider
+    gears 9T on the cross pin with 1 shim each. Returns a dict of solids."""
+    xc = p["diff_center_x"]
+    ns, m, af, ab = p["diff_side_gear"]
+    nsp, afs, abs_ = p["diff_spider"]
+    ds_ = np.degrees(np.arctan(ns / nsp))                    # pitch cone angle of the side gears (90 deg shafts)
+    half = p["diff_ring_tooth_half"]
+    side = bevel_gear_z(ns, m, ds_, af, ab, half, 180.0 + 180.0 / ns)
+    side = side.cut(prism_hex(p["diff_press_fit_hex"], af - 1, ab + 1))
+    side_case = bevel_gear_z(ns, m, ds_, af, ab, half, 0.0).cut(prism_hex(p["diff_press_fit_hex"], af - 1, ab + 1))
+    spider = bevel_gear_z(nsp, m, 90.0 - ds_, afs, abs_, half, 0.0)
+    pd, pl = p["diff_pin"]
+    spider = spider.cut(cq.Solid.makeCylinder(pd / 2, abs_ + 2, cq.Vector(0, 0, afs - 1)))
+    ry = lambda sol, ang: sol.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 1, 0), ang)
+    rx = lambda sol, ang: sol.rotate(cq.Vector(0, 0, 0), cq.Vector(1, 0, 0), ang)
+    mv = lambda sol: sol.translate(cq.Vector(xc, 0, 0))
+    n_sh, t_sh, id_sh, od_sh = p["diff_side_shims"]
+    shims = []
+    for sx in (1, -1):
+        for i in range(int(n_sh)):
+            x0 = ab + i * t_sh
+            ring = cyl_x(od_sh / 2, x0, x0 + t_sh, 0, 0).cut(cyl_x(id_sh / 2, x0 - 1, x0 + t_sh + 1, 0, 0))
+            shims.append(mv(ring if sx > 0 else ring.mirror("YZ")))
+    ts, ids, ods = p["diff_spider_shim"]
+    sp_shim = cq.Solid.makeCylinder(ods / 2, ts, cq.Vector(0, 0, abs_)).cut(
+        cq.Solid.makeCylinder(ids / 2, ts + 2, cq.Vector(0, 0, abs_ - 1)))
+    pin = cq.Solid.makeCylinder(pd / 2, pl, cq.Vector(0, 0, -pl / 2))
+    return {"side gear, ring gear side": mv(ry(side, 90)), "side gear, case side": mv(ry(side_case, -90)),
+            "spider gear 1": mv(spider), "spider gear 2": mv(rx(spider, 180)),
+            "spider shim 1": mv(sp_shim), "spider shim 2": mv(rx(sp_shim, 180)), "cross pin": mv(pin),
+            "side shims": shims, "_side_gear": side, "_spider": spider, "_spider_shim": sp_shim,
+            "_side_shim": shims[0].translate(cq.Vector(-xc - ab, 0, 0))}
+
+
+def prism_hex(af, z0, z1):
+    """Hexagon prism along z (width across flats af) from z0 to z1."""
+    return cq.Workplane("XY").workplane(offset=z0).polygon(6, af / np.cos(np.pi / 6)).extrude(z1 - z0).val()
+
+
 def diff_solids(p, lp):
     """Differential in diff coordinates (x along the diff axis, x = 0 plane of the pinion axis, ring
     gear on the +x side as in the bulkhead): case, ring gear 42T with hub, 2 bearings NBA299."""
@@ -137,16 +203,36 @@ def diff_solids(p, lp):
     rh = p["diff_hub_d"] / 2
     xt, rt = p["diff_case_taper_end"]
     x_root_in = rx0 + slope * (r_in - r_od)                 # root of the teeth at the inner radius
-    case = revolve_x([(-xb0, 0), (-xb0, rh), (xt, rh), (xt, rt), (x_tip - lc, rc), (x_root_in, rc), (x_root_in, 0)])
+    rj = p["diff_journal_d"] / 2                            # journals of the hubs for the bearings NBA299
+    case = revolve_x([(-xb1, 0), (-xb1, rj), (-xb0, rj), (-xb0, rh), (xt, rh), (xt, rt), (x_tip - lc, rc), (x_root_in, rc),
+                      (x_root_in, 0)])
     ring = revolve_x([(x_root_in, 0), (x_root_in, r_in), (rx0, r_od), (x_back, r_od), (x_back, rh), (xb0, rh),
-                      (xb0, 0)])
+                      (xb0, rj), (xb1, rj), (xb1, 0)])
     n = int(p["diff_ring_teeth"])
     teeth = [ring_tooth(x_tip, root, r_in, r_od, *p["diff_ring_tooth_half"], (k + 0.5) * 360.0 / n + p["diff_ring_phase"])
              for k in range(n)]
     ring = ring.fuse(*teeth).clean()
+    # inside: opening of the ring gear for the side gear, shoulder for its shims, bore for the outdrive
+    xc = p["diff_center_x"]
+    od_open, x_sh = p["diff_ring_opening"]
+    hex_x = lambda x0, x1: prism_hex(p["diff_press_fit_hex"], x0, x1).rotate(cq.Vector(0, 0, 0), cq.Vector(0, 1, 0), 90)
+    ring = ring.cut(cyl_x(od_open / 2, x_root_in - 1, xc + x_sh, 0, 0)).cut(hex_x(xc + x_sh - 0.1, xb1 + 1))
+    cav_r, cav_flat, x_wall = p["diff_case_cavity"]
+    cavity = cyl_x(cav_r, xc + x_wall, x_root_in + 1, 0, 0).intersect(
+        box(xc + x_wall - 1, x_root_in + 2, -cav_r - 1, cav_r + 1, -cav_flat, cav_flat))
+    case = case.cut(cavity).cut(hex_x(-xb1 - 1, xc + x_wall + 0.1))
+    pd, pl = p["diff_pin"]
+    case = case.cut(cq.Solid.makeCylinder(pd / 2, pl + 0.2, cq.Vector(xc, 0, -pl / 2 - 0.1)))   # bores of the cross pin
+    case = case.cut(box(xc, x_root_in + 1, -pd / 2, pd / 2, -pl / 2 - 0.1, pl / 2 + 0.1))        # slots for mounting
+    nscr, rscr, d_clear, d_tap, dep = p["diff_screws"]
+    for k in range(int(nscr)):
+        a = np.radians(45 + k * 360 / nscr)
+        yy, zz = rscr * np.cos(a), rscr * np.sin(a)
+        ring = ring.cut(cyl_x(d_clear / 2, x_root_in - 1, x_back + 1, yy, zz))
+        case = case.cut(cyl_x(d_tap / 2, x_root_in - dep, x_root_in + 1, yy, zz))
     d, dd, b = p["diff_bearing"]
     brg = [cyl_x(dd / 2, x0, x0 + b, 0, 0).cut(cyl_x(d / 2, x0 - 1, x0 + b + 1, 0, 0)) for x0 in (xb0, -xb1)]
-    return {"case": case.clean(), "ring": ring, "bearings": brg}
+    return {"case": case.clean(), "ring": ring.clean(), "bearings": brg, "inner": diff_inner(p)}
 
 
 def outdrive_solid(p):
@@ -154,8 +240,9 @@ def outdrive_solid(p):
     of the dogbone and two slots for its holding pin (along z, through both walls)."""
     lo, ro = p["outdrive_length"], p["outdrive_od"] / 2
     s = cyl_x(ro, 0, lo, 0, 0)
-    sh = p["outdrive_shank"]                                # shank through the diff bearing to the hub of the diff
-    s = s.fuse(cyl_x(p["outdrive_shank_d"] / 2, -sh, 0.01, 0, 0))
+    sh = p["outdrive_shank"]                                # hexagon shaft: press fit of the side gear, through the hub
+    hx = prism_hex(p["diff_press_fit_hex"], 0, sh + 0.01).rotate(cq.Vector(0, 0, 0), cq.Vector(0, 1, 0), -90)
+    s = s.fuse(hx)
     s = s.cut(cyl_x(p["outdrive_bore_d"] / 2, lo - p["outdrive_bore_depth"], lo + 1, 0, 0))
     s = s.cut(box(lo - p["outdrive_slot_len"], lo + 1, -p["outdrive_slot_w"] / 2, p["outdrive_slot_w"] / 2,
                   -ro - 1, ro + 1))
@@ -397,6 +484,16 @@ def parts_in_plate(p=None, lp=None):
         for i, bsol in enumerate(ds["bearings"]):
             parts.append((f"diff bearing NBA299 {label} {'ring gear side' if i == 0 else 'case side'}", "drive",
                           place(bsol)))
+        for key, sol in ds["inner"].items():
+            if key.startswith("_"):
+                continue
+            if key == "side shims":                          # 3 shims per side gear, one solid per pack in the assembly
+                packs = (ds["inner"]["side shims"][:3], ds["inner"]["side shims"][3:])
+                for side_name, pack in zip(("ring gear side", "case side"), packs):
+                    parts.append((f"diff shims of the side gear {label} {side_name}", "drive",
+                                  place(pack[0].fuse(*pack[1:]).clean())))
+                continue
+            parts.append((f"diff {key} {label}", "drive", place(sol)))
     for label, yd in (("End B", BULKHEAD_Y["rear"] + lp["diff_axis_y"]), ("End A", BULKHEAD_Y["front"] - lp["diff_axis_y"])):
         for sx, side in ((1, "+x"), (-1, "-x")):
             s = od if sx > 0 else od.rotate(*zrot)
@@ -560,6 +657,80 @@ def drawing(path, p, lay, items):
     plt.close(fig)
 
 
+DIFF_DRAWING = "photos/cad_differential_drawing.png"
+
+
+def diff_drawing(p, lp, path=DIFF_DRAWING):
+    """Assembly pictures of the differential (stock part): complete with the pinion, section, open case,
+    exploded view. Diff coordinates: x along the diff axis, pinion toward +y."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from mesh_views import draw_mesh, iso_basis, subdivide
+    ds = diff_solids(p, lp)
+    inner = ds["inner"]
+    xo = lp["body_half_width"] + p["outdrive_gap"]
+    od = outdrive_solid(p)
+    lay = layout(p, lp)
+    yd = BULKHEAD_Y["rear"] + lp["diff_axis_y"]
+    rear = {n: q for n, _, q in rear_drive_line(p, lay)}
+    to_local = lambda sol: sol.translate(cq.Vector(0, -yd, -lay["z"]))
+    C = {"case": (0.17, 0.17, 0.19), "ring": (0.66, 0.6, 0.5), "gear": (0.62, 0.63, 0.66), "bearing": (0.45, 0.65, 0.85),
+         "out": (0.3, 0.3, 0.33), "shim": (0.85, 0.8, 0.55), "pin": (0.8, 0.8, 0.82), "pinion": (0.75, 0.55, 0.3)}
+    items = [("case", ds["case"], -16, "case"), ("ring gear 42T", ds["ring"], 12, "ring"),
+             ("bearing NBA299", ds["bearings"][0], 20, "bearing"), ("bearing NBA299", ds["bearings"][1], -26, "bearing"),
+             ("outdrive", od.translate(cq.Vector(xo, 0, 0)), 28, "out"),
+             ("outdrive", od.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180).translate(cq.Vector(-xo, 0, 0)), -34, "out"),
+             ("side gear 14T", inner["side gear, ring gear side"], 5, "gear"), ("side gear 14T", inner["side gear, case side"], -6, "gear"),
+             ("spider gear 9T", inner["spider gear 1"], 0, "gear"), ("spider gear 9T", inner["spider gear 2"], 0, "gear"),
+             ("shim", inner["spider shim 1"], 0, "shim"), ("shim", inner["spider shim 2"], 0, "shim"),
+             ("cross pin", inner["cross pin"], 0, "pin")]
+    items += [("shims 3 x 0.1", sh, (7 + 0.6 * i) if i < 3 else -(8 + 0.6 * (i - 3)), "shim")
+              for i, sh in enumerate(inner["side shims"])]
+    pinion = ("pinion 17T", to_local(rear["pinion NBA207"]), 0, "pinion")
+
+    def tess(sol, tol=0.02):
+        v, i = sol.tessellate(tol, 0.15)
+        v = np.array([[q.x, q.y, q.z] for q in v])
+        return v[np.array(i)]
+
+    def draw(ax, its, view, title, explode=0.0, clip=None):
+        T, Cc = [], []
+        for _, sol, ex, key in its:
+            sol = sol.translate(cq.Vector(ex * explode, 0, 0)) if explode else sol
+            if clip is not None:
+                sol = sol.intersect(clip)
+                if sol.Volume() < 1e-6:
+                    continue
+            t = subdivide(tess(sol), 0.7)
+            T.append(t)
+            Cc.append(np.tile(C[key], (len(t), 1)))
+        lo, hi = draw_mesh(ax, np.concatenate(T), view, tri_colors=np.concatenate(Cc), depth_cue=0.2)
+        ax.set_xlim(lo[0] - 1, hi[0] + 1)
+        ax.set_ylim(lo[1] - 1, hi[1] + 1)
+        ax.set_aspect("equal")
+        ax.axis("off")
+        ax.set_title(title, fontsize=10, loc="left")
+
+    fig = plt.figure(figsize=(16, 13))
+    fig.suptitle("Carten T410R differential (stock part, not part of the speedrun design; measures qualified, no 3D print "
+                 "verification)", fontsize=12, y=0.99)
+    draw(fig.add_axes([0.01, 0.5, 0.48, 0.44]), items + [pinion], iso_basis(125, 30),
+         "Complete differential with bearings NBA299, outdrives and the pinion 17T (brown)")
+    keep = box(-40, 40, -40, 0.0, -40, 40)
+    draw(fig.add_axes([0.51, 0.5, 0.48, 0.44]), items, iso_basis(75, 20),
+         "Section: case, ring gear, side gears 14T with 3 shims each,\nspider gears 9T with 1 shim each on the cross pin", clip=keep)
+    open_items = [q for q in items if q[3] != "ring" and not (q[2] > 0 and q[3] in ("gear", "shim", "bearing", "out"))]
+    draw(fig.add_axes([0.01, 0.04, 0.4, 0.42]), open_items, iso_basis(15, 35),
+         "Open case (ring gear with its side gear removed), view from the ring gear side")
+    draw(fig.add_axes([0.42, 0.04, 0.57, 0.42]), items, iso_basis(60, 22),
+         "Exploded view along the diff axis (the case side gear and its shims lie in the case)", explode=1.0)
+    fig.text(0.01, 0.005, "Gear teeth simplified (straight flanks, tooth profile scaled toward the apex of the pitch cone). "
+             "Not modelled: ribs of the case, the 4 screws M2 of the ring gear, the O-rings and the oil.", fontsize=8.5)
+    fig.savefig(path, dpi=100)
+    plt.close(fig)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate the centre driveshaft of the T410R (stock part, not part "
                                                  "of the speedrun design).")
@@ -586,6 +757,11 @@ def main():
         ("diff_outdrive", "diff_outdrive_T410R", outdrive_solid(p)),
         ("diff", "diff_case_T410R", diff_solids(p, lp)["case"]),
         ("diff", "ring_gear_42T_T410R", diff_solids(p, lp)["ring"]),
+        ("diff", "side_gear_14T_T410R", diff_solids(p, lp)["inner"]["_side_gear"]),
+        ("diff", "spider_gear_9T_T410R", diff_solids(p, lp)["inner"]["_spider"]),
+        ("diff", "cross_pin_T410R", diff_solids(p, lp)["inner"]["cross pin"].translate(cq.Vector(-p["diff_center_x"], 0, 0))),
+        ("diff", "shim_side_gear", diff_solids(p, lp)["inner"]["_side_shim"]),
+        ("diff", "shim_spider_gear", diff_solids(p, lp)["inner"]["_spider_shim"]),
         ("diff", "bearing_10x15x4_NBA299", diff_solids(p, lp)["bearings"][0].translate(cq.Vector(-p["diff_bearing_x"][0], 0, 0)))]
     for folder, name, s in exports:
         os.makedirs(f"{STOCK}/{folder}", exist_ok=True)
@@ -614,6 +790,8 @@ def main():
               (parts["cup joint End B"], "#b8bcc2"), (parts["cup joint End A"], "#b8bcc2"),
               (parts["centre driveshaft"], "#c0392b")]
     drawing(DRAWING, p, lay, items)
+    diff_drawing(p, lp)
+    print(f"Wrote {DIFF_DRAWING}")
     print(f"Wrote {DRAWING}")
 
     print("layout on the chassis plate (y along the car, End B at y = 0)")

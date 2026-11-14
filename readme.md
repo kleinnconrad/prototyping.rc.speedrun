@@ -75,7 +75,7 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 | Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin (NBA205, NBA207, NBA252, NBA298, NBA255) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/rear_drive` |
 | Front pinion shaft with pinion 17T, bearings and retaining pin (NBA205, NBA207, NBA298, NBA255) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/front_drive` |
 | Motor mount with cap (NBA201) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/motor_mount` |
-| Differentials with ring gear 42T and bearings NBA299 | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/diff` |
+| Differentials with ring gear 42T, inner gears and bearings NBA299 | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/diff` |
 | Diff outdrives | 4 | $\color{red}\times$ Completely unqualified | `cad/stock_parts/diff_outdrive` |
 | Front wishbones (NHA402) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/wishbone` |
 | Rear wishbones (NHA402) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/wishbone` |
