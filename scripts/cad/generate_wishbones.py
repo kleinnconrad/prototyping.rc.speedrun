@@ -10,7 +10,8 @@ space beside the bulkheads can be checked.
 * inner hinge pin NHA423 3x42: 4 pieces, between the pivot blocks
 
 The manual has no dimensions. The values come from the manual (screws and pins), from the
-other parts of the model (pivot blocks, bulkheads) or are assumptions; each value has its source
+other parts of the model (pivot blocks, bulkheads), from photos of the owner or are assumptions;
+each value has its source
 in cad/stock_parts/wishbone/wishbone_parameters.json. The drawing names the measurements that
 replace the assumptions with letters.
 
@@ -48,66 +49,72 @@ KINDS = ("front", "rear")
 END_OF = {"front": "front", "rear": "rear"}       # front arms at End A (front), rear arms at End B (rear)
 
 
-def rail_y(p, kind, x):
-    """y of the centre line of the side rail at y > 0 at the position x (plan view)."""
-    x0, length = p["inner_bar_x"][0], p["arm_length"]
-    yi = p["inner_width"] / 2 - p["rail_w"] / 2                     # inner end: in line with the inner lug
-    yo = p[f"{kind}_outer_gap"] / 2 + p["outer_lug_len"] / 2        # outer end: middle of the outer lug
-    return yi + (yo - yi) * (x - x0) / (length - x0)
-
-
 def prism(pts, z0, z1):
     """Prism from a plan polygon (x, y) between z0 and z1."""
     return cq.Workplane("XY").polyline(pts).close().extrude(z1 - z0).val().translate(cq.Vector(0, 0, z0))
 
 
+def prism_xz(pts, y0, y1):
+    """Prism from a side view polygon (x, z) between y0 and y1."""
+    s = cq.Workplane("XY").polyline(pts).close().extrude(y1 - y0).val()
+    return s.rotate(cq.Vector(0, 0, 0), cq.Vector(1, 0, 0), 90).translate(cq.Vector(0, y1, 0))
+
+
 def arm_solid(p, kind):
-    """Solid of the front or rear arm in arm coordinates (cadquery Solid)."""
-    length, w, half = p["arm_length"], p["rail_w"] / 2, p["inner_width"] / 2
-    zb, zt = -p["pin_above_bottom"], p["rail_top"]
-    gap, lo = p[f"{kind}_outer_gap"], p["outer_lug_len"]
-    x0, xi = p["inner_bar_x"]
+    """Solid of the front or rear arm in arm coordinates (cadquery Solid): frame without a floor."""
+    length, half = p[f"{kind}_arm_length"], p["inner_width"] / 2
+    yi, yo = p[f"{kind}_rail_y"]
+    h = p["rail_h"] / 2
+    gap, lo = p[f"{kind}_outer_gap"], p[f"{kind}_outer_lug_len"]
+    b0, b1 = p[f"{kind}_inner_bar_x"]
     c0, c1 = p[f"{kind}_cross_x"]
-    s = None
+    sx, ylug = p["shoulder_x"], half - p["inner_lug_len"]
+    zd0, zd1 = p["droop_boss_z"]
     parts = []
     for sy in (1, -1):
-        # side rail from the inner bar to the outer lug
-        parts.append(prism([(x0, sy * (rail_y(p, kind, x0) - w)), (x0, sy * (rail_y(p, kind, x0) + w)),
-                            (length, sy * (rail_y(p, kind, length) + w)), (length, sy * (rail_y(p, kind, length) - w))],
-                           zb, zt))
-        parts.append(cyl_y(p["inner_lug_d"] / 2, *sorted((sy * (half - p["inner_lug_len"]), sy * half)), 0, 0))
-        parts.append(cyl_y(p["outer_lug_d"] / 2, *sorted((sy * gap / 2, sy * (gap / 2 + lo))), length, p["outer_pin_z"]))
-        parts.append(cyl_z(p["droop_boss_d"] / 2, zb, zt, p["droop_x"], sy * p["droop_y"]))
-    # inner bar, floor up to the cross bar, cross bar
-    parts.append(box(x0, xi, -half, half, zb, zt))
-    parts.append(prism([(x0, -rail_y(p, kind, x0)), (c1, -rail_y(p, kind, c1)), (c1, rail_y(p, kind, c1)),
-                        (x0, rail_y(p, kind, x0))], zb, zb + p["floor_t"]))
-    parts.append(box(c0, c1, -rail_y(p, kind, c1), rail_y(p, kind, c1), zb, zt))
-    # X-shaped ribs between the inner bar and the cross bar
+        parts.append(cyl_y(p["inner_lug_d"] / 2, *sorted((sy * ylug, sy * half)), 0, 0))                # inner lug
+        parts.append(prism([(0, sy * ylug), (0, sy * half), (sx, sy * yo), (sx, sy * yi)], -h, h))       # shoulder
+        parts.append(box(sx - 0.01, length, *sorted((sy * yi, sy * yo)), -h, h))                         # side rail
+        parts.append(cyl_y(p["outer_lug_d"] / 2, *sorted((sy * gap / 2, sy * (gap / 2 + lo))), length,
+                           p["outer_pin_z"]))                                                            # outer lug
+        parts.append(cyl_z(p["droop_boss_d"] / 2, zd0, zd1, p["droop_x"], sy * p[f"{kind}_droop_y"]))
+    parts.append(box(b0, b1, -yi - 0.01, yi + 0.01, -h, h))                                              # inner cross bar
+    parts.append(box(c0, c1, -yi - 0.01, yi + 0.01, -h, h))                                              # outer cross bar
+    # X-shaped ribs in the open window between the cross bars
     rw = p["rib_w"] / 2
     for sy in (1, -1):
-        ya, yb = sy * (rail_y(p, kind, xi) - w), -sy * (rail_y(p, kind, c0) - w)
-        ang = math.atan2(yb - ya, c0 - xi)
+        ya, yb = sy * yi, -sy * yi
+        ang = math.atan2(yb - ya, c0 - b1)
         dx, dy = -math.sin(ang) * rw, math.cos(ang) * rw
-        parts.append(prism([(xi + dx, ya + dy), (c0 + dx, yb + dy), (c0 - dx, yb - dy), (xi - dx, ya - dy)],
-                           zb, p["rib_top"]))
-    # block for the ball stud of the shock on the side rail at y < 0
-    b0, b1, bt = p[f"{kind}_shock_block"]
-    parts.append(prism([(b0, -(rail_y(p, kind, b0) + w)), (b1, -(rail_y(p, kind, b1) + w)),
-                        (b1, -(rail_y(p, kind, b1) - w)), (b0, -(rail_y(p, kind, b0) - w))], zb, bt))
+        parts.append(prism([(b1 + dx, ya + dy), (c0 + dx, yb + dy), (c0 - dx, yb - dy), (b1 - dx, ya - dy)],
+                           -h, p["rib_top"]))
+    # octagonal plate of the shock ball stud on side rail A (y < 0)
+    q0, q1 = p[f"{kind}_shock_plate_x"]
+    z0, z1 = p["shock_plate_z"]
+    ch = p["shock_plate_chamfer"]
+    parts.append(prism_xz([(q0 + ch, z0), (q1 - ch, z0), (q1, z0 + ch), (q1, z1 - ch), (q1 - ch, z1), (q0 + ch, z1),
+                           (q0, z1 - ch), (q0, z0 + ch)], -yo, -yi))
+    if kind == "front":
+        # thin closed loop beyond the outer lugs
+        l0, l1, ly, lh = p["front_loop"]
+        zc = p["outer_pin_z"]
+        for sy in (1, -1):
+            parts.append(box(length, length + l1, *sorted((sy * (ly - 2.0), sy * ly)), zc - lh / 2, zc + lh / 2))
+        parts.append(box(length + l0, length + l1, -ly, ly, zc - lh / 2, zc + lh / 2))
+    s = None
     for part in parts:
         s = part if s is None else s.fuse(part)
-    s = s.intersect(box(-10, length + 10, -half, half, zb - 1, 20))          # nothing beyond the inner lugs in y
+    s = s.intersect(box(-10, length + 20, -half, half, -20, 20))           # nothing beyond the inner lugs in y
     # bores and holes
     s = s.cut(cyl_y(p["inner_pin_d"] / 2, -half - 1, half + 1, 0, 0))
     s = s.cut(cyl_y(p["outer_pin_d"] / 2, -half - 1, half + 1, length, p["outer_pin_z"]))
     for sy in (1, -1):
-        s = s.cut(cyl_z(p["droop_tap_d"] / 2, zb - 1, zt + 1, p["droop_x"], sy * p["droop_y"]))
+        s = s.cut(cyl_z(p["droop_tap_d"] / 2, zd0 - 1, zd1 + 1, p["droop_x"], sy * p[f"{kind}_droop_y"]))
     rb = p["ball_tap_d"] / 2
     for x, z in p[f"{kind}_shock_holes"]:
-        s = s.cut(cyl_y(rb, -half - 1, -(rail_y(p, kind, x) - w) + 0.01, x, z))
+        s = s.cut(cyl_y(rb, -yo - 1, -yi + 0.01, x, z))
     for x, z in p[f"{kind}_sway_holes"]:
-        s = s.cut(cyl_y(rb, rail_y(p, kind, x) - w - 0.01, half + 1, x, z))
+        s = s.cut(cyl_y(rb, yi - 0.01, yo + 1, x, z))
     return s.clean()
 
 
@@ -197,36 +204,43 @@ def drawing(path, p, solids):
     fig = plt.figure(figsize=(16, 15.5))
     fig.suptitle("Carten T410R lower wishbones NHA402 with hinge pin NHA423: stock parts, not part of the speedrun "
                  "design (not verified, work in progress)", fontsize=12, y=0.992)
-    length, half = p["arm_length"], p["inner_width"] / 2
-    zb, zt = -p["pin_above_bottom"], p["rail_top"]
+    half, h = p["inner_width"] / 2, p["rail_h"] / 2
+    z0, z1 = p["shock_plate_z"]
     for row, kind in enumerate(KINDS):
         s = solids[kind]
+        length = p[f"{kind}_arm_length"]
+        yi, yo = p[f"{kind}_rail_y"]
+        b0, b1 = p[f"{kind}_inner_bar_x"]
+        c0, c1 = p[f"{kind}_cross_x"]
+        q0, q1 = p[f"{kind}_shock_plate_x"]
+        dx, dy = p["droop_x"], p[f"{kind}_droop_y"]
         t = subdivide(tess(s), 1.0)
         y0 = 0.655 - 0.365 * row
         n = "2 pieces: End A left and right" if kind == "front" else "2 pieces: End B left and right"
         # plan view
         ax = fig.add_axes([0.03, y0, 0.45, 0.29])
-        lo, hi = draw_mesh(ax, t, "top", color=(0.5, 0.52, 0.58), depth_cue=0.35)
-        gap, lo_len = p[f"{kind}_outer_gap"], p["outer_lug_len"]
+        draw_mesh(ax, t, "top", color=(0.5, 0.52, 0.58), depth_cue=0.35)
+        gap, lo_len = p[f"{kind}_outer_gap"], p[f"{kind}_outer_lug_len"]
         dim(ax, (-6, -half), (-6, half), "A", off=(-1.6, 0))
-        dim(ax, (0, -half - 4), (length, -half - 4), "J", off=(0, -1.6))
         dim(ax, (-2.5, half - p["inner_lug_len"]), (-2.5, half), "B", off=(-1.6, 0))
-        dim(ax, (length + 5, -gap / 2), (length + 5, gap / 2), "O", off=(1.8, 0))
-        dim(ax, (length + 2, gap / 2), (length + 2, gap / 2 + lo_len), "M", off=(1.8, 0))
-        c0 = p[f"{kind}_cross_x"][0]
+        dim(ax, (0, -half - 4), (length, -half - 4), "J", off=(0, -1.6))
+        dim(ax, (0, 1.2), (b0, 1.2), "G", off=(0, 1.3))
         dim(ax, (0, half + 3), (c0, half + 3), "P", off=(0, 1.4))
-        dim(ax, (p["droop_x"], 0), (p["droop_x"], -p["droop_y"]), "I", off=(1.6, 0))
-        dim(ax, (0, -half - 1.8), (p["droop_x"], -half - 1.8), "H", off=(-4.5, 0))
-        ax.plot([p["droop_x"]] * 2, [-p["droop_y"], -half - 1.8], color="#b42318", lw=0.5)
-        xr = length - 6
-        dim(ax, (xr, rail_y(p, kind, xr) - p["rail_w"] / 2), (xr, rail_y(p, kind, xr) + p["rail_w"] / 2), "F",
-            off=(1.6, 0))
-        b0, b1, _ = p[f"{kind}_shock_block"]
-        tag(ax, ((b0 + b1) / 2, -rail_y(p, kind, (b0 + b1) / 2)), "Q", ((b0 + b1) / 2, -half - 8.5))
+        dim(ax, (length - 9, -yo), (length - 9, yo), "E", off=(1.6, 3.0))
+        dim(ax, ((b1 + c0) / 2, yi), ((b1 + c0) / 2, yo), "F", off=(1.6, 0))
+        dim(ax, (length + 9, -gap / 2), (length + 9, gap / 2), "O", off=(1.8, 0))
+        dim(ax, (length + 4, gap / 2), (length + 4, gap / 2 + lo_len), "M", off=(1.8, 0))
+        dim(ax, (dx, 0), (dx, -dy), "I", off=(1.6, 0))
+        dim(ax, (0, -half - 1.8), (dx, -half - 1.8), "H", off=(-4.5, 0))
+        ax.plot([dx] * 2, [-dy, -half - 1.8], color="#b42318", lw=0.5)
+        tag(ax, ((q0 + q1) / 2, -(yi + yo) / 2), "Q", ((q0 + q1) / 2, -half - 8.5))
         sx = p[f"{kind}_sway_holes"][0][0]
-        tag(ax, (sx, rail_y(p, kind, sx) + 1.5), "S", (sx, half + 8.5))
-        ax.plot([-3, length + 3], [0, 0], color="#888888", lw=0.5, ls="-.")
-        ax.set_xlim(-12, length + 10)
+        tag(ax, (sx, (yi + yo) / 2), "S", (sx, half + 8.5))
+        if kind == "front":
+            l0, l1, ly, _ = p["front_loop"]
+            dim(ax, (length, -1.5), (length + l1, -1.5), "T", off=(0, -1.4))
+        ax.plot([-3, length + 8], [0, 0], color="#888888", lw=0.5, ls="-.")
+        ax.set_xlim(-12, 70)
         ax.set_ylim(-half - 11, half + 11)
         ax.set_aspect("equal")
         ax.axis("off")
@@ -235,20 +249,18 @@ def drawing(path, p, solids):
         # side view (along y): heights
         ax2 = fig.add_axes([0.5, y0 + 0.155, 0.48, 0.135])
         draw_mesh(ax2, t, "end_outer", color=(0.5, 0.52, 0.58), depth_cue=0.35)
-        dim(ax2, (-5, zb), (-5, 0), "D", off=(-1.6, 0))
-        dim(ax2, (-5, 0), (-5, zt), "E", off=(-1.6, 0))
-        dim(ax2, (p["inner_bar_x"][1] + 4, zb), (p["inner_bar_x"][1] + 4, zb + p["floor_t"]), "G", off=(1.6, -0.3))
-        tag(ax2, (0, p["inner_lug_d"] / 2), "C", (2.5, zt + 4.5))
-        tag(ax2, (length, p["outer_pin_z"] + p["outer_lug_d"] / 2), "L", (length - 3, zt + 4.5))
-        tag(ax2, (length, p["outer_pin_z"]), "K", (length + 5.5, p["outer_pin_z"] + 2.5))
-        tag(ax2, (length + p["outer_lug_d"] / 2, p["outer_pin_z"]), "N", (length + 7.5, p["outer_pin_z"] - 2.5))
+        dim(ax2, (-5, -h), (-5, h), "D", off=(-1.6, 0))
+        tag(ax2, (0, p["inner_lug_d"] / 2), "C", (2.5, z1 + 2.5))
+        tag(ax2, (length, p["outer_pin_z"] + p["outer_lug_d"] / 2), "L", (length - 4, z1 + 2.5))
+        tag(ax2, (length, p["outer_pin_z"]), "K", (length + 9, p["outer_pin_z"] + 3))
+        tag(ax2, (length + p["outer_lug_d"] / 2, p["outer_pin_z"]), "N", (length + 9, p["outer_pin_z"] - 3))
+        dim(ax2, (q0 - 2, z0), (q0 - 2, z1), "Q", off=(-1.8, 0))
         for x, z in p[f"{kind}_shock_holes"]:
             ax2.plot(x, z, "+", color="#b42318", ms=6, mew=0.8)
-        tag(ax2, p[f"{kind}_shock_holes"][0], "R", (p[f"{kind}_shock_holes"][0][0] - 6, p[f"{kind}_shock_block"][2] + 2))
-        tag(ax2, (b1, p[f"{kind}_shock_block"][2]), "Q", (b1 + 4, p[f"{kind}_shock_block"][2] + 2))
+        tag(ax2, p[f"{kind}_shock_holes"][0], "R", (q1 + 4, z1 + 1.5))
         ax2.plot([-8, length + 8], [0, 0], color="#888888", lw=0.5, ls="-.")
-        ax2.set_xlim(-12, length + 10)
-        ax2.set_ylim(zb - 2, max(p["front_shock_block"][2], p["rear_shock_block"][2]) + 5)
+        ax2.set_xlim(-12, 70)
+        ax2.set_ylim(z0 - 2, z1 + 4.5)
         ax2.set_aspect("equal")
         ax2.axis("off")
         ax2.set_title("View along the hinge pin (heights; z = 0 axis of the inner hinge pin, dash-dot)", fontsize=10,
@@ -263,36 +275,50 @@ def drawing(path, p, solids):
     rows = [("A", "Length along the inner hinge pin over the outer faces of the inner lugs", "inner_width"),
             ("B", "Length of one inner lug along the hinge pin", "inner_lug_len"),
             ("C", "Outer diameter of the inner lugs", "inner_lug_d"),
-            ("D", "Axis of the inner hinge pin above the flat bottom face of the arm", "pin_above_bottom"),
-            ("E", "Top of the side rails above the axis of the inner hinge pin (D + E = height of the frame)", "rail_top"),
-            ("F", "Width of the side rails", "rail_w"),
-            ("G", "Thickness of the floor", "floor_t"),
+            ("D", "Height of the side rails (and of the cross bars)", "rail_h"),
+            ("E", "Width over the outer faces of the side rails", "{k}_rail_y:E"),
+            ("F", "Width of one side rail", "{k}_rail_y:F"),
+            ("G", "Inner hinge pin to the inner cross bar at the end of the notch between the inner lugs (start, end)",
+             "{k}_inner_bar_x"),
             ("H", "Droop screw bosses: distance of the axis from the axis of the inner hinge pin", "droop_x"),
-            ("I", "Droop screw bosses: distance of the axis from the middle of the arm", "droop_y"),
-            ("J", "Inner hinge pin to outer hinge pin, axis to axis (outer edges minus 1 pin diameter)", "arm_length"),
+            ("I", "Droop screw bosses: distance of the axis from the middle of the arm", "{k}_droop_y"),
+            ("J", "Inner hinge pin to outer hinge pin, axis to axis (outer edges of the bores minus 1 bore diameter)",
+             "{k}_arm_length"),
             ("K", "Diameter of the outer hinge pin", "outer_pin_d"),
             ("L", "Outer diameter of the outer lugs", "outer_lug_d"),
-            ("M", "Length of one outer lug along the outer hinge pin", "outer_lug_len"),
+            ("M", "Length of one outer lug along the outer hinge pin", "{k}_outer_lug_len"),
             ("N", "Height of the outer hinge pin above the inner hinge pin (arm on a flat surface)", "outer_pin_z"),
             ("O", "Gap between the outer lugs (front: C-hub, rear: hub carrier)", "{k}_outer_gap"),
-            ("P", "Inner hinge pin to the cross bar at the open loop (front) or the U (rear)", "{k}_cross_x"),
-            ("Q", "Block of the shock ball stud: start, end (x) and height of the top", "{k}_shock_block"),
+            ("P", "Inner hinge pin to the outer cross bar (start, end)", "{k}_cross_x"),
+            ("Q", "Octagonal plate of the shock ball stud: start, end (x); bottom, top (z)", "{k}_shock_plate_x:Q"),
             ("R", "Holes of the shock ball stud (x, z of each hole)", "{k}_shock_holes"),
-            ("S", "Holes of the sway bar ball stud (x, z of each hole)", "{k}_sway_holes")]
+            ("S", "Holes of the sway bar ball stud (x, z of each hole)", "{k}_sway_holes"),
+            ("T", "Front arm, loop beyond the outer lugs: end bar from, to (beyond the outer pin), half width, height",
+             "front_loop")]
 
     def fmt(v):
         if isinstance(v, list):
             return "/".join(fmt(x) for x in v) if not isinstance(v[0], list) else "  ".join(f"({fmt(x)})" for x in v)
         return f"{v:g}"
+    def value(key, k):
+        key, _, mode = key.partition(":")
+        v = p[key.format(k=k)]
+        if mode == "E":
+            return fmt(2 * v[1])
+        if mode == "F":
+            return fmt(v[1] - v[0])
+        if mode == "Q":
+            return fmt(v) + "; " + fmt(p["shock_plate_z"])
+        return fmt(v)
     lines = []
     for letter, text, key in rows:
         if "{k}" in key:
-            val = f"front {fmt(p[key.format(k='front')])}; rear {fmt(p[key.format(k='rear')])}"
+            val = f"front {value(key, 'front')}; rear {value(key, 'rear')}"
         else:
-            val = fmt(p[key])
+            val = value(key, "")
         lines.append(f"{letter}   {text}:  {val}")
-    fig.text(0.03, 0.005, "Measurements for the caliper (current value in mm in the model, all assumptions or "
-             "estimates except A and C, which follow from the pivot blocks and the bulkhead):\n" + "\n".join(lines),
+    fig.text(0.03, 0.005, "Measurements for the caliper (current value in mm in the model: estimates from the photos "
+             "or assumptions, except A and C, which follow from the pivot blocks and the bulkhead):\n" + "\n".join(lines),
              fontsize=8.5, va="bottom", family="DejaVu Sans", linespacing=1.45)
     fig.savefig(path, dpi=100)
     plt.close(fig)

@@ -766,17 +766,18 @@ All files are stored in the directory `/stock_parts` and are generated with `gen
 | `driveshaft/driveshaft_parameters.json` | All dimensions of these parts, each with its source and a note (JSON) |
 
 ## Wishbones (stock parts, not part of the speedrun design)
-* **Description:** Models of the lower wishbones (suspension arms NHA402) of the Carten T410R with the inner hinge pins NHA423 3 x 42 mm. The manual (step 7 and parts list "Arms (F/R)") shows two different arms: 2 front arms and 2 rear arms. Each arm is used on the left and on the right side of its axle (the same part, turned by 180 degrees). The arms are stock parts: they are not part of the speedrun design and are not manufactured in this project. They are modelled for the completeness of the build: the assembly of the speedrun chassis contains them, so that the space beside the bulkheads can be checked.
-* **Status:** Not verified, work in progress. The manual has no dimensions. The length along the hinge pin and the diameter of the inner lugs follow from the pivot blocks and the lower bulkhead, the arm length is an estimate from the track width, all other dimensions are assumptions (see [measurements for the wishbones](#measurements-for-the-wishbones)).
+* **Description:** Models of the lower wishbones (suspension arms NHA402) of the Carten T410R with the inner hinge pins NHA423 3 x 42 mm. The manual (step 7 and parts list "Arms (F/R)") and the photos of the owner show two different arms: 2 front arms and 2 rear arms. Each arm is used on the left and on the right side of its axle (the same part, turned by 180 degrees). The arms are stock parts: they are not part of the speedrun design and are not manufactured in this project. They are modelled for the completeness of the build: the assembly of the speedrun chassis contains them, so that the space beside the bulkheads can be checked.
+* **Status:** Not verified, work in progress. The manual has no dimensions. The length along the hinge pin (A) and the diameter of the inner lugs (C) follow from the pivot blocks and the lower bulkhead. The other dimensions are estimates from the photos of the owner, scaled with A, or assumptions (see [measurements for the wishbones](#measurements-for-the-wishbones)).
 
 ![Wishbones: plan views, views along the hinge pin and the letters of the measurements](../photos/cad_wishbones_drawing.png)
 
 ### Design of the wishbones
-* Flat frame with a flat bottom face: two inner lugs on the inner hinge pin between the pivot blocks, an inner bar, two side rails, a floor with X-shaped ribs, a cross bar and two outer lugs for the outer hinge pin.
-* Front arm: long open loop between the cross bar and the outer lugs (C-hub NHA403). Rear arm: short U between the cross bar and the outer lugs (hub carrier NHA404).
-* Beside each inner lug a boss with a thread M4 for the droop screw NHA430 M4 x 10 mm (one of the two is used, depending on the side of the car).
-* On one side rail a block with holes M3 for the ball stud of the shock (set screw M3 x 8 mm with ball NBA210): front 3 holes, rear 2 holes. On the other side rail holes M3 for the ball stud of the sway bar drop link: front 2 holes, rear 1 hole (manual step 7, "Front L/R" and "Rear L/R"). The holes go through, so that the ball stud can be set from the side that faces the shock tower.
-* Not modelled: radii, draft angles, ribs below the floor, the pivot balls NBA211 at the ends of the hinge pins, the ball studs, the droop screws and the outer hinge pins.
+* Frame without a floor: two long inner lugs on the inner hinge pin between the pivot blocks, with an open notch between them up to the inner cross bar; a shoulder from each inner lug to its side rail; two parallel side rails; an open window with X-shaped ribs between the inner cross bar and the outer cross bar; two outer lugs at the ends of the side rails for the outer hinge pin.
+* Front arm: side rails 19.5 mm wide over the outer faces, open loop between the outer cross bar and the outer lugs (C-hub NHA403), a thin closed loop beyond the outer lugs.
+* Rear arm: side rails 27 mm wide over the outer faces, longer than the front arm, open U between the outer cross bar and the outer lugs (hub carrier NHA404).
+* Above each shoulder a boss with a thread M4 for the droop screw NHA430 M4 x 10 mm (one of the two is used, depending on the side of the car).
+* On side rail A an octagonal plate that reaches above and below the rail, with holes M3 for the ball stud of the shock (set screw M3 x 8 mm with ball NBA210): front 2 holes, rear 3 holes. On side rail B holes M3 for the ball stud of the sway bar drop link: front 3 holes, rear 1 hole. The holes go through, so that the ball stud can be set from the side that faces the shock tower.
+* Not modelled: radii, draft angles, the pivot balls NBA211 at the ends of the hinge pins, the ball studs, the droop screws and the outer hinge pins.
 
 ### Position and checks of the wishbones
 * The inner hinge pins run through the axes of the bores of the pivot blocks, 4.6 mm above the top face of the chassis plate (6.6 mm above its bottom face). Each arm is centred between the faces of its two pivot blocks.
@@ -788,39 +789,41 @@ Results of `generate_wishbones.py`:
 
 | Check | Result |
 |:---|:---|
-| Solids | Front arm and rear arm: one valid solid each, 50.0 x 33.0 x 10.0 mm |
-| Inner lugs and lower bulkhead | 0 mm³ overlap; 0.46 mm at End A (side face of the bulkhead at x = 17.24 mm, hinge pin at 20.7 mm), 1.57 mm at End B |
-| Inner lugs and pivot blocks | 0 mm³ overlap; 0.14 mm on each side at End A, 0.07 and 0.12 mm at End B (the arm is turned by 2.33 degrees to the faces of the blocks) |
+| Solids | Front arm 58.0 x 33.0 x 11.2 mm, rear arm 61.0 x 33.0 x 11.2 mm: one valid solid each |
+| Arms and lower bulkhead | 0 mm³ overlap; 0.46 mm at End A (side face of the bulkhead at x = 17.24 mm, hinge pin at 20.7 mm), 0.90 mm at End B |
+| Inner lugs and pivot blocks | 0 mm³ overlap; 0.14 mm on each side at End A, 0.12 mm at End B (the arm is turned by 2.33 degrees to the faces of the blocks) |
+| Arms and chassis plate | 0 mm³ overlap; the octagonal plates reach below the top face of the chassis plate, but lie beside its outline |
 | Hinge pins in the bores of the pivot blocks | Play of the ends to the bottoms of the bores: 0.34 mm at End A, 0.45 mm at End B (pin 42 mm) |
 | Assembly | See [assembly file](#assembly-file) |
 
 ### Measurements for the wishbones
-The letters are shown in the drawing. Current values in the model:
+The letters are shown in the drawing. x: distance from the axis of the inner hinge pin toward the wheel; y: distance from the middle of the arm; z: height above the axis of the inner hinge pin. Current values in the model:
 
 | Letter | Measurement | Front arm | Rear arm | Source |
 |:---|:---|---:|---:|:---|
 | A | Length along the inner hinge pin over the outer faces of the inner lugs | 33.0 | 33.0 | Derived from the pivot blocks |
-| B | Length of one inner lug along the hinge pin | 5.0 | 5.0 | Assumption |
+| B | Length of one inner lug along the hinge pin | 10.5 | 10.5 | Photo |
 | C | Outer diameter of the inner lugs | 6.0 | 6.0 | Derived from the lower bulkhead (at most 6.5) |
-| D | Axis of the inner hinge pin above the flat bottom face of the arm | 3.0 | 3.0 | Assumption |
-| E | Top of the side rails above the axis of the inner hinge pin | 2.5 | 2.5 | Assumption |
-| F | Width of the side rails | 4.0 | 4.0 | Assumption |
-| G | Thickness of the floor | 1.5 | 1.5 | Assumption |
-| H | Droop screw bosses: distance of the axis from the axis of the inner hinge pin | 6.5 | 6.5 | Assumption |
-| I | Droop screw bosses: distance of the axis from the middle of the arm | 12.5 | 12.5 | Assumption |
-| J | Inner hinge pin to outer hinge pin, axis to axis | 44.0 | 44.0 | Estimate from the track width 190 mm |
+| D | Height of the side rails and of the cross bars | 5.4 | 5.4 | Photo |
+| E | Width over the outer faces of the side rails | 19.5 | 27.0 | Photo |
+| F | Width of one side rail | 4.45 | 5.5 | Photo |
+| G | Inner hinge pin to the inner cross bar at the end of the notch (start, end) | 11.0, 15.0 | 14.0, 19.0 | Photo |
+| H | Droop screw bosses: distance of the axis from the axis of the inner hinge pin | 6.5 | 6.5 | Photo |
+| I | Droop screw bosses: distance of the axis from the middle of the arm | 7.5 | 10.5 | Photo |
+| J | Inner hinge pin to outer hinge pin, axis to axis | 49.0 | 55.0 | Photo |
 | K | Diameter of the outer hinge pin | 3.0 | 3.0 | Assumption |
-| L | Outer diameter of the outer lugs | 6.0 | 6.0 | Assumption |
-| M | Length of one outer lug along the outer hinge pin | 4.5 | 4.5 | Assumption |
+| L | Outer diameter of the outer lugs | 6.0 | 6.0 | Photo |
+| M | Length of one outer lug along the outer hinge pin | 4.4 | 5.2 | Photo |
 | N | Height of the outer hinge pin above the inner hinge pin (arm on a flat surface) | 0 | 0 | Assumption |
-| O | Gap between the outer lugs | 12.0 | 12.0 | Assumption |
-| P | Inner hinge pin to the cross bar (start, end) | 22.0, 25.0 | 33.0, 36.0 | Assumption |
-| Q | Block of the shock ball stud: start, end, height of the top above the inner hinge pin | 30.0, 39.0, 7.0 | 27.0, 35.0, 7.0 | Assumption |
-| R | Holes of the shock ball stud (x, z) | (32.5, 4.5), (36.5, 4.5), (34.5, 1.0) | (29.0, 4.5), (33.0, 4.5) | Assumption |
-| S | Holes of the sway bar ball stud (x, z) | (17.0, -0.5), (21.0, -0.5) | (20.0, -0.5) | Assumption |
+| O | Gap between the outer lugs | 10.6 | 15.5 | Photo |
+| P | Inner hinge pin to the outer cross bar (start, end) | 26.5, 30.0 | 43.0, 48.0 | Photo |
+| Q | Octagonal plate of the shock ball stud: start, end (x); bottom, top (z) | 29.5, 36.0; -5.6, 5.6 | 38.0, 44.5; -5.6, 5.6 | Photo |
+| R | Holes of the shock ball stud (x, z) | (32.75, 3.3), (32.75, -3.3) | (41.25, 3.3), (41.25, 0), (41.25, -3.3) | Photo |
+| S | Holes of the sway bar ball stud (x, z) | (22.3, 0), (26.5, 0), (30.7, 0) | (27.0, 0) | Photo |
+| T | Loop beyond the outer lugs: end bar from, to (beyond the outer hinge pin), half width, height | 4.0, 6.0, 7.3, 2.0 | - | Photo |
 
-* x: distance from the axis of the inner hinge pin toward the wheel; z: height above the axis of the inner hinge pin.
-* Measure J as the distance of the outer edges of the two hinge pins (or of the bores) minus one pin diameter.
+* Measure J as the distance of the outer edges of the two bores minus one bore diameter.
+* Photo: estimate from the photos of the owner, scaled with A = 33.0 mm; not measured.
 
 ### Files of the wishbones
 All files are stored in the directory `/stock_parts/wishbone`. They are generated with `generate_wishbones.py` from `wishbone_parameters.json` (see [scripts](#scripts)). Part coordinates: x from the axis of the inner hinge pin toward the wheel, y along the hinge pin (y = 0 middle of the arm), z = 0 axis of the inner hinge pin.
