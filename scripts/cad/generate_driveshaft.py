@@ -64,7 +64,7 @@ def layout(p, lp):
     bottom = (open_end[0] - p["cup_bore_depth"], open_end[1] + p["cup_bore_depth"])
     dp = p["pin_d"] / 2 + p["axial_play"] / 2
     pins = (slot_end[0] + dp, slot_end[1] - dp)
-    r = p["shaft_d"] / 2
+    r = p["ball_d"] / 2
     shaft = (pins[0] - r, pins[1] + r)
     spur = (p["spur_centre_y"] - p["spur_t"] / 2, p["spur_centre_y"] + p["spur_t"] / 2)
     flange = (spur[0] - p["flange_t"], spur[0])
@@ -77,8 +77,8 @@ def layout(p, lp):
 def shaft_solid(p, length):
     """Shaft along y from 0 to length (axis x = 0, z = 0): ball ends with the fixed metal pins along x
     at their centres."""
-    r = p["shaft_d"] / 2
-    s = cyl_y(r, r, length - r, 0, 0)
+    r, rr, neck = p["ball_d"] / 2, p["shaft_d"] / 2, 4.0
+    s = cyl_y(r, r, length - r, 0, 0).fuse(cyl_y(rr, r + neck, length - r - neck, 0, 0))   # neck and rod
     for yc in (r, length - r):
         s = s.fuse(cq.Solid.makeSphere(r, cq.Vector(0, yc, 0), angleDegrees1=-90, angleDegrees2=90))
         s = s.fuse(cyl_x(p["pin_d"] / 2, -p["pin_length"] / 2, p["pin_length"] / 2, yc, 0))
@@ -92,6 +92,12 @@ def cup_solid(p):
     s = cyl_y(rc, 0, lc, 0, 0)
     s = s.cut(cyl_y(p["cup_bore_d"] / 2, lc - p["cup_bore_depth"], lc + 1, 0, 0))
     s = s.cut(box(-rc - 1, rc + 1, lc - p["cup_slot_len"], lc + 1, -p["cup_slot_w"] / 2, p["cup_slot_w"] / 2))
+    # back end: bore for the pinion shaft, groove for the O-ring and cross hole for the retaining pin
+    bd, bdep = p["cup_back_bore"]
+    g0, g1, gd = p["cup_groove"]
+    s = s.cut(cyl_y(bd / 2, -1, bdep, 0, 0))
+    s = s.cut(cyl_y(rc + 1, g0, g1, 0, 0).cut(cyl_y(gd / 2, g0, g1, 0, 0)))
+    s = s.cut(cyl_x(p["cup_pin_d"] / 2, -rc - 1, rc + 1, (g0 + g1) / 2, 0))
     return s.clean()
 
 
@@ -138,12 +144,20 @@ def rear_drive_line(p, lay):
     coordinates): list of (name, kind, solid). Not modelled: the pinion NBA207 and its screw."""
     z = lay["z"]
     rs = p["pinion_shaft_d"] / 2
-    shaft = cyl_y(rs, lay["seat"][0], lay["back"][0], 0, z)
+    bd, bdep = p["cup_back_bore"]
+    shaft = cyl_y(rs, lay["seat"][0], lay["back"][0] + bdep - 0.5, 0, z)       # end 0.5 before the bottom of the back bore
+    yp = lay["back"][0] + sum(p["cup_groove"][:2]) / 2                            # retaining pin NBA255 in the groove
+    shaft = shaft.fuse(cyl_x(p["cup_pin_d"] / 2, -p["cup_pin_length"] / 2, p["cup_pin_length"] / 2, yp, z))
     shaft = shaft.fuse(cyl_y(p["flange_d"] / 2, *lay["flange"], 0, z))
+    for k in range(4):     # threads M3 of the 4 screws of the spur gear in the flange (tap drill, through)
+        ang = np.pi / 4 + k * np.pi / 2
+        rs = p["spur_screw_r"]
+        shaft = shaft.cut(cyl_y(p["tap_d"] / 2, lay["flange"][0] - 0.1, lay["flange"][1] + 0.1, rs * np.cos(ang),
+                                z + rs * np.sin(ang)))
     spur = spur_gear_solid(p, lay)
     d, dd, b = p["mount_bearing"]
     m0, m1 = lay["mount"]
-    yb = p["mount_y"] - b / 2
+    yb = m1 - p["mount_lip"][0] - b                         # bearing against the lip (toward End A)
     bearing = cyl_y(dd / 2, yb, yb + b, 0, z).cut(cyl_y(d / 2, yb - 1, yb + b + 1, 0, z))
     mount = motor_mount_solid(p, lay)
     cap = motor_mount_cap_solid(p, lay)
@@ -162,8 +176,9 @@ def motor_mount_solid(p, lay):
     xs, zl, zt = p["mount_step_x"], p["mount_low_top"], p["mount_top"]
     tall = cq.Workplane().add(box(xs, xb, m0, m1, PLATE_T, zt)).edges("|Y and >Z").fillet(p["mount_corner_r"]).val()
     s = box(xa, xs, m0, m1, PLATE_T, zl).fuse(tall)
-    rb = p["mount_bearing"][1] / 2
-    s = s.cut(cyl_y(rb, m0 - 1, m1 + 1, 0, z)).cut(box(-rb, rb, m0 - 1, m1 + 1, z, zl + 1))   # U notch, bearing
+    rb, (lw, ld) = p["mount_notch_d"] / 2, p["mount_lip"]
+    s = s.cut(cyl_y(rb, m0 - 1, m1 - lw, 0, z)).cut(box(-rb, rb, m0 - 1, m1 - lw, z, zl + 1))   # U notch, bearing
+    s = s.cut(cyl_y(ld / 2, m1 - lw - 1, m1 + 1, 0, z)).cut(box(-ld / 2, ld / 2, m1 - lw - 1, m1 + 1, z, zl + 1))  # lip
 
     def long_hole(zc, w):
         """Long hole through the plate: centres of the end radii at motor_slot_x, width w."""
@@ -173,6 +188,12 @@ def motor_mount_solid(p, lay):
     hs = p["motor_screw_spacing"] / 2
     for zc, w in ((z, p["motor_shaft_slot_w"]), (z + hs, p["motor_screw_slot_w"]), (z - hs, p["motor_screw_slot_w"])):
         s = s.cut(long_hole(zc, w))
+    # threads M3 (tap drill): screws from below through the chassis plate (H09, H10) and screws M3x18 of the cap
+    rt, dep = p["tap_d"] / 2, p["mount_tap_depth"]
+    for x, y in p["mount_bottom_screws"]:
+        s = s.cut(cyl_z(rt, PLATE_T - 1, PLATE_T + dep, x, y))
+    for x, y in p["cap_screws"]:
+        s = s.cut(cyl_z(rt, zl - dep, zl + 1, x, y))
     return s.clean()
 
 
@@ -377,7 +398,7 @@ def main():
     p, lp, up = load_params(PARAMS), load_params(LOWER), load_params(UPPER)
     lay = layout(p, lp)
     parts = {name: solid for name, _, solid in parts_in_plate(p, lp)}
-    z, yb = lay["z"], p["mount_y"] - p["mount_bearing"][2] / 2
+    z, yb = lay["z"], lay["mount"][1] - p["mount_lip"][0] - p["mount_bearing"][2]
     exports = [   # (directory, file name, solid in part coordinates)
         ("driveshaft", "driveshaft_T410R", shaft_solid(p, lay["length"])),
         ("driveshaft", "cup_joint_T410R", cup_solid(p)),
@@ -438,7 +459,7 @@ def main():
     for name, solid in parts.items():
         worst = max(solid.intersect(o).Volume() for o in others)
         print(f"  {name} / bulkheads, chassis plate and top brace: largest overlap {worst:.4f} mm3")
-    print(f"  radial clearance of the ball ends in the cup joints: {(p['cup_bore_d'] - p['shaft_d']) / 2:.3f}, pins in "
+    print(f"  radial clearance of the ball ends in the cup joints: {(p['cup_bore_d'] - p['ball_d']) / 2:.3f}, pins in "
           f"the slots: {(p['cup_slot_w'] - p['pin_d']) / 2:.2f} per side, pin ends inside the cup joints: "
           f"{(p['cup_od'] - p['pin_length']) / 2:.2f}")
 

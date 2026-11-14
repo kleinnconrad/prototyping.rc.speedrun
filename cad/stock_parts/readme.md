@@ -1,9 +1,13 @@
 # Stock parts of the Carten T410R
 The files in this directory are models of stock parts of the Carten T410R. They are not part of the speedrun design and are not manufactured in this project. They are modelled for the completeness of the build: the assembly of the speedrun chassis contains them, so that the space around the speedrun parts can be checked.
 
-* **`/pivot_block`**: Pivot blocks of the wishbones, long block (1 piece) and short block (3 pieces), STEP, STL and parameter file. Status: not verified, work in progress. Description and checks: see the [CAD readme](../readme.md#pivot-blocks-stock-parts-not-part-of-the-speedrun-design).
-* **`/driveshaft`**: Centre driveshaft between the pinions of the two bulkheads, with the fixed metal pins, and the cup joints, STEP and STL; parameter file of all drive line parts. Status: not verified, work in progress.
-* **`/rear_drive`**: Rear pinion shaft with flange, spur gear 72T 48DP and bearing 5x10x4 in the motor mount, STEP and STL. Status: not verified, work in progress.
-* **`/motor_mount`**: Motor mount for 540 motors and its cap, STEP and STL. Status: not verified, work in progress.
-* **`/diff_outdrive`**: Diff outdrive with the slots for the holding pin of the dogbones, STEP and STL. Status: not verified, work in progress.
-* The parts of `/driveshaft`, `/rear_drive`, `/motor_mount` and `/diff_outdrive` are generated with `scripts/cad/generate_driveshaft.py`. Description and checks: see the [CAD readme](../readme.md#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design).
+Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
+
+* **`/pivot_block`**: Pivot blocks of the wishbones, long block (1 piece) and short block (3 pieces), STEP, STL and parameter file. Status: $\color{red}\times$ completely unqualified. Description and checks: see the [CAD readme](../readme.md#pivot-blocks).
+* **`/driveshaft`**: Centre driveshaft between the pinions of the two bulkheads, with the fixed metal pins, and the cup joints, STEP and STL; parameter file of all drive line parts. Status: $\color{gold}\blacktriangle$ measures qualified, no 3D print verification (centre driveshaft); cup joints: $\color{red}\times$ completely unqualified.
+* **`/rear_drive`**: Rear pinion shaft with flange, spur gear 72T 48DP and bearing 5x10x4 in the motor mount, STEP and STL. Status: $\color{red}\times$ completely unqualified.
+* **`/motor_mount`**: Motor mount for 540 motors and its cap, STEP and STL. Status: $\color{gold}\blacktriangle$ measures qualified, no 3D print verification.
+* **`/diff_outdrive`**: Diff outdrive with the slots for the holding pin of the dogbones, STEP and STL. Status: $\color{red}\times$ completely unqualified.
+* **`/wishbone`**: Front and rear wishbones (lower suspension arms NHA402, 2 pieces each) and the inner hinge pin NHA423 3x42 (4 pieces), STEP, STL and parameter file, generated with `scripts/cad/generate_wishbones.py`. Status: $\color{gold}\blacktriangle$ measures qualified, no 3D print verification (wishbones); hinge pin: $\color{red}\times$ completely unqualified. Description, checks and the list of the measurements: see the [CAD readme](../readme.md#wishbones).
+* **`stock_parts_measurement_sheet.pdf`**: Measurement sheet (A4, 4 pages) of the dimensions that are not measured yet: front and rear wishbone (letters A to T on drawings, table with the model values and empty fields for the measured values) and the bearing seat of the motor mount (MM1 to MM8). Generated with `scripts/cad/generate_measurement_sheets.py`.
+* The parts of `/driveshaft`, `/rear_drive`, `/motor_mount` and `/diff_outdrive` are generated with `scripts/cad/generate_driveshaft.py`. Description and checks: see the [CAD readme](../readme.md#centre-driveshaft-and-drive-line).
