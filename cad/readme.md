@@ -105,7 +105,7 @@ Re-engineered parts (own design of the owner, re-engineered from the T410R, not 
 | [Axles with joint cup, hex hubs 12 mm](#running-gear) | 4 + 4 | `/running_gear` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [CVD drive shafts](#running-gear) | 4 | `/running_gear` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Steering: posts, bellcranks, bridge, steering links, servo link, servo horn, servo mount](#running-gear) | 1 set | `/running_gear` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Sway bars with holders and cups](#running-gear) | 2 | `/running_gear` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Sway bars with holders, ball ends and drop links](#running-gear) | 2 | `/running_gear` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Dampers (standard 1:10 on-road, purchased)](#running-gear) | 4 | Assembly only | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 
 Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
@@ -115,7 +115,7 @@ Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{g
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
 
 ### Assembly file
-* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and 163 re-engineered parts (pivot blocks, wishbones with hinge pins, camber links, centre driveshaft with cup joints, front and rear drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool, 4 diff outdrives, and the running gear: C-hubs, knuckles, hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the servo mount, dampers, sway bars) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
+* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and 173 re-engineered parts (pivot blocks, wishbones with hinge pins, camber links, centre driveshaft with cup joints, front and rear drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool, 4 diff outdrives, and the running gear: C-hubs, knuckles, hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the floating servo mount, dampers, sway bars with drop links) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
 * The re-engineered parts are not in the mass total (see [re-engineered parts](#re-engineered-parts)).
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [pivot blocks](#pivot-blocks)) and 2.16 mm³ between the lower bulkhead at End A and each front wishbone (inner lugs 0.14 mm into the side face, see [wishbones](#wishbones)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
@@ -945,8 +945,8 @@ All files are stored in the directory `/parts/camber_link` and are generated wit
 
 ### Running gear
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** Wheel suspension (front C-hubs with steering knuckles, rear hub carriers), axles with hex hubs, CVD drive shafts, steering with the servo mount, dampers and sway bars of the speedrun chassis. Own design of the owner, re-engineered from the T410R: the steering, the servo mounting and the sway bars follow the T410R (manual steps 10, 13, 14, 21 and 23, photos of the owner), the other parts are designed for their function and deviate from the original parts. The dampers are standard 1:10 on-road dampers (purchased, simplified model).
-* **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification. The parts are designed from the measured parts (chassis plate, bulkheads, shock towers, wishbones, pivot blocks) and the setup sheet; no further measurements of the owner are needed.
+* **Description:** Wheel suspension (front C-hubs with steering knuckles, rear hub carriers), axles with hex hubs, CVD drive shafts, steering with the servo mount, dampers and sway bars of the speedrun chassis. Own design of the owner, re-engineered from the T410R: the steering, the floating servo mount and the sway bars follow the T410R (manual steps 10, 13, 14, 21, 22 and 23, photos of the owner), the other parts are designed for their function and deviate from the original parts. The dampers are standard 1:10 on-road dampers (purchased, simplified model).
+* **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification. The parts are designed from the measured parts (chassis plate, bulkheads, shock towers, wishbones, pivot blocks) and the setup sheet; no further measurements of the owner are needed for the function. Two values can be confirmed on the car (servo height, length of the drop links, see open points).
 
 ![Running gear: front corner with the kingpin axis, front corner from the front, steering from above, rear corner, 3D view of the front corner](../photos/cad_running_gear_drawing.png)
 
@@ -987,8 +987,9 @@ The steering follows the T410R (manual steps 10, 13, 14 and 21, photos of the ow
 * Two bellcranks on the steering posts on H24/H25 (hexagon 5.5 mm, journal 5 mm with 2 bearings 5x8x2.5 per bellcrank, thread M3 at both ends of the post). Each bellcrank is a straight lever: the ball arm points forward (14 mm, ball at x = ±20.7 mm, on the line of the inner hinge pins against bump steer), the rear arm (12 mm) carries the bridge.
 * The rear arms are joined by a rigid bridge on 2 spacers (collar 7 mm, sleeve 5 mm in the bridge, screws M3x18 into the bellcranks): parallelogram, both bellcranks turn by the same angle, the bridge moves across the car. The bridge lies 1.0 mm above the centre driveshaft.
 * The steering links run from the ball studs of the bellcranks to the steering arms of the knuckles (ball 3 mm outward of the kingpin and 17 mm behind the axle). In the straight-ahead position the steering link is nearly perpendicular to both arms, so that both wheels turn evenly and the inner wheel turns more (Ackermann).
-* Servo (low profile) across the car on the servo mount, output shaft and horn facing forward (End A), clamp horn (aluminium) vertical in the centre position (manual step 10). The horn ball moves across the car; the servo link runs across the car to the ball stud on the back of the bridge (gap 21 mm as the manual, B).
-* Servo mount: base plate on H17/H21 (threads M3 from below) with an upright behind each ear (threads M3 for the screws of the ears, from the front). The chassis plate has no holes for the outer upright, so both uprights stand on the common base plate.
+* Servo (low profile) across the car in the floating servo mount, output shaft and horn facing forward (End A), clamp horn (aluminium) vertical in the centre position (manual step 10). The horn ball moves across the car; the servo link runs across the car to the ball stud on the back of the bridge (gap 21 mm as the manual, B).
+* Floating servo mount as the T410R (manual step 10, photos of the owner): a top plate (2 mm) lies 0.5 mm above the servo on 2 posts. It reaches to 0.5 mm behind the front face of the servo case, so the servo sits nearly flush with the front end of the mount. Only the fixed post at the inner end of the servo is screwed onto the chassis plate (H17 and H21, threads M3 from below); a foot below the inner servo ear reaches H21. The floating post at the output end of the servo hangs from the top plate and ends at the bottom of the servo, 4.5 mm above the chassis plate, so the chassis plate can twist below the servo. The servo ears are screwed to the front faces of both posts (threads M3 from the front), the top plate to the top faces of the posts (threads M3 from above; slots along the car width at the floating post for other servo lengths). The fixed post has a U-notch from the top as the T410R mount.
+* The servo keeps its height of the previous mount (4.5 mm above the chassis plate), so the horn, the servo link and the bridge are unchanged. On the car of the owner the servo hangs approx. 1 mm above the chassis plate (see [open points](#running-gear)).
 
 | Value | Model | Note |
 |:---|:---|:---|
@@ -1001,7 +1002,9 @@ The steering follows the T410R (manual steps 10, 13, 14 and 21, photos of the ow
 **Dampers and sway bars**
 
 * Dampers: standard 1:10 on-road dampers (body 12 mm, 23 mm long, cap 13 mm, spring 15 mm), centre to centre of the balls front 44.6 mm, rear 51.0 mm. Upper ball stud through the damper hole of the shock tower with a nut M3 on the back face, lower ball stud in the lowest hole of the shock plate of the wishbone that is at least 6 mm above the bottom face of the chassis plate.
-* Sway bars 1.4 mm as the T410R (manual step 23, photos of the owner): the straight middle part (±14 mm) lies in the holders on the tabs of the lower bulkheads (screws M3x8 into the threads of the tabs); from there the legs run outward to the arms (trapezoid in the plan view), first down below the CVD drive shafts and the diff outdrives, then beside the bulkhead to the cups. The cups sit on ball studs in the holes of rail B of the wishbones, tilted by 30 degrees toward the middle of the car; the bar ends are fixed in their bores with a grub screw M3.
+* Sway bars 1.4 mm as the T410R (manual steps 22 and 23, photos of the owner): the bar is a plain trapezoid. The straight middle part (±14 mm) lies in the holders on the tabs of the lower bulkheads (screws M3x6 into the threads of the tabs). From there a straight leg runs on each side beside the bulkhead, over the CVD drive shaft, to the ball end above the ball stud of the wishbone (front leg 54.6 mm, rising by 6.7 degrees; rear leg 61.1 mm, rising by 6.0 degrees).
+* Ball ends (aluminium): ball 4.8 mm, neck and collar on the axis of the leg, bore for the bar up to the ball centre, grub screw M3x3 from the top into the collar (manual step 23).
+* Drop links (manual step 22): 2 rod ends on a set screw M3x12 with a gap of 3 mm, vertical from the ball end down to the ball stud in the inner hole of rail B of the wishbone (front 20.0 mm, rear 24.9 mm from the inner hinge pin). With the rod ends of the camber links the ball centres are 21 mm apart; the ball ends lie 27.6 mm above the bottom face of the chassis plate.
 
 **Threads and screws**
 
@@ -1014,9 +1017,9 @@ The steering follows the T410R (manual steps 10, 13, 14 and 21, photos of the ow
 | Steering posts | Both ends: screw from below through the chassis plate, screw with washer on top of the bellcrank |
 | Bellcranks | Ball stud of the steering link, screw of the bridge |
 | Bridge | Ball stud of the servo link (on the back, toward End B) |
-| Servo mount | H17 and H21 from below, 4 screws of the servo ears (from the front) |
+| Servo mount | Fixed post: H17 and H21 from below; both posts: 2 screws of the top plate (from above) and 2 screws of the servo ear (from the front) |
 | Servo horn | Clamp screw, ball stud |
-| Sway bar cups | Grub screw on the sway bar |
+| Sway bar ball ends | Grub screw M3x3 on the sway bar |
 
 **Checks**
 
@@ -1033,15 +1036,17 @@ All files are stored in the directory `/running_gear` and are generated with `ge
 | `axle_with_joint_cup_end_a`, `axle_with_joint_cup_end_b`, `hex_hub_12_end_a`, `hex_hub_12_end_b` | Axles and hex hubs |
 | `cvd_drive_shaft_end_a`, `cvd_drive_shaft_end_b` | CVD drive shafts |
 | `steering_post`, `bellcrank_right`, `bellcrank_left`, `steering_bridge`, `spacers_of_the_bridge` | Steering |
-| `servo_mount`, `servo_horn_aluminium_clamp` | Servo mount and horn |
-| `sway_bar_end_a`, `sway_bar_end_b`, `sway_bar_holder_end_a`, `sway_bar_holder_end_b`, `sway_bar_cup_with_grub_screw_end_a`, `sway_bar_cup_with_grub_screw_end_b` | Sway bars, holders and cups |
+| `servo_mount_top_plate`, `servo_mount_fixed_post`, `servo_mount_floating_post`, `servo_horn_aluminium_clamp` | Floating servo mount (top plate and 2 posts) and horn |
+| `sway_bar_end_a`, `sway_bar_end_b`, `sway_bar_holder_end_a`, `sway_bar_holder_end_b`, `sway_bar_ball_end_end_a`, `sway_bar_ball_end_end_b` | Sway bars, holders and ball ends |
 | `running_gear_parameters.json` | All dimensions, each with its source and a note |
 
-* Purchased parts (bearings, pins, screws, rod ends, turnbuckles, ball studs, dampers, servo) are in the assembly only.
+* Purchased parts (bearings, pins, screws, rod ends, turnbuckles, set screws of the drop links, ball studs, dampers, servo) are in the assembly only.
 
 **Open points of the running gear**
 
 * 3D print verification of the C-hub, the knuckle, the hub carrier, the steering and the servo mount.
+* Servo height: on the car of the owner the servo hangs approx. 1 mm above the chassis plate (photos), in the model 4.5 mm. A lower servo needs a longer horn (approx. 13.5 mm) and moves the servo approx. 3 mm toward End A, because the screw H21 then lies below the servo ear.
+* Drop links of the sway bars: the length is assumed with the rod ends of the camber links (21 mm between the ball centres); a measurement on the car confirms the height of the ball ends.
 * Wheels are not modelled.
 
 ## Scripts
