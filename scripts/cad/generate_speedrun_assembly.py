@@ -17,7 +17,7 @@ Parts:
 
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
-* photos/cad_speedrun_chassis_assembly.png: 3D view, side view, top view and close-ups of both ends
+* photos/cad_speedrun_chassis_assembly.png: 3D view, side view, top view, close-ups of both ends and of the drive line at End B
 
 The script checks all pairs of parts for interference and lists the volume and the mass of
 each part.
@@ -53,7 +53,7 @@ OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3),
           "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
           "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77),
-          "drive": (0.45, 0.47, 0.5), "mount": (0.82, 0.84, 0.87)}
+          "drive": (0.45, 0.47, 0.5), "mount": (0.6, 0.63, 0.68)}
 PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
@@ -151,13 +151,21 @@ def image(parts, path):
             ax.text(lo[0], hi[1] + 1, "End B", ha="left", va="bottom", fontsize=9)
             ax.text(hi[0], hi[1] + 1, "End A", ha="right", va="bottom", fontsize=9)
             ax.set_ylim(lo[1] - 2, hi[1] + 8)
-    # close-ups of both ends, seen from the outer end: bulkheads, shock tower, end of the top brace
-    for k, (end, yb, azim) in enumerate((("End A (front): front shock tower", BULKHEAD_Y["front"], 55),
-                                         ("End B (rear): rear shock tower", BULKHEAD_Y["rear"], -125))):
-        region = cq.Solid.makeBox(124, 64, 90, cq.Vector(-62, yb - 32, -5))
+    # close-ups: both ends seen from the outer end (bulkheads, shock tower, end of the top brace) and the drive
+    # line at End B seen from the middle of the car (top brace and shock towers left out, they hide the spur gear)
+    closeups = (("End A (front): front shock tower on the bulkheads,\nview from the outer end",
+                 (-62, BULKHEAD_Y["front"] - 32, -5, 124, 64, 90), (), 55, 22),
+                ("End B (rear): rear shock tower on the bulkheads,\nview from the outer end",
+                 (-62, BULKHEAD_Y["rear"] - 32, -5, 124, 64, 90), (), -125, 22),
+                ("End B: stock drive line (spur gear, motor mount with cap, cup joint),\n"
+                 "view from the middle of the car, top brace and shock tower not shown",
+                 (-38, -8, -5, 105, 110, 65), ("brace", "tower_front", "tower_rear"), 125, 28))
+    for k, (title, (x0, y0, z0, dx, dy, dz), hidden, azim, elev) in enumerate(closeups):
+        region = cq.Solid.makeBox(dx, dy, dz, cq.Vector(x0, y0, z0))
         tris_e, cols_e = [], []
         for _, key, s in parts:
-            if s.BoundingBox().ymin > yb + 32 or s.BoundingBox().ymax < yb - 32:
+            bb = s.BoundingBox()
+            if key in hidden or bb.ymin > y0 + dy or bb.ymax < y0:
                 continue
             cut = s.intersect(region)
             if cut.Volume() < 1e-3:
@@ -165,14 +173,14 @@ def image(parts, path):
             t = subdivide(tess(cut, 0.02), 4.0 if key == "plate" else 1.2)
             tris_e.append(t)
             cols_e.append(np.tile(COLORS[key], (len(t), 1)))
-        ax = fig.add_axes([0.5 * k, 0.01, 0.5, 0.3])
-        lo, hi = draw_mesh(ax, np.concatenate(tris_e), iso_basis(azim, 22), tri_colors=np.concatenate(cols_e),
+        ax = fig.add_axes([k / 3, 0.01, 1 / 3, 0.3])
+        lo, hi = draw_mesh(ax, np.concatenate(tris_e), iso_basis(azim, elev), tri_colors=np.concatenate(cols_e),
                            depth_cue=0.3)
         ax.set_xlim(lo[0] - 2, hi[0] + 2)
         ax.set_ylim(lo[1] - 2, hi[1] + 2)
         ax.set_aspect("equal")
         ax.axis("off")
-        ax.set_title(f"{end} on the bulkheads, view from the outer end", fontsize=10, loc="left")
+        ax.set_title(title, fontsize=10, loc="left")
     handles = [Patch(color=np.clip(np.asarray(COLORS[k]) + 0.08, 0, 1), label=MATERIALS[k][0]) for k in COLORS]
     fig.legend(handles=handles, loc="upper left", bbox_to_anchor=(0.01, top + 0.95 * (1 - top)), fontsize=9,
                frameon=False, ncol=2, columnspacing=1.5)

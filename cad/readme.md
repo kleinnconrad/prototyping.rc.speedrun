@@ -120,7 +120,9 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 * The assembly also contains the 4 stock pivot blocks of the wishbones (see [pivot blocks](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design)) and the stock centre driveshaft (see [centre driveshaft](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design)). It also contains the stock cup joints, the rear pinion shaft with the spur gear and the bearing, the motor mount with its cap and the diff outdrives. These parts are not part of the speedrun design, are modelled for the completeness of the build and are not in the mass total.
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [position and fit on the speedrun chassis](#position-and-fit-on-the-speedrun-chassis)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
-* The image shows an overall view, a side view, a top view and close-ups of both ends: bulkheads, shock tower and end of the top brace, seen from the outer end.
+* The image shows an overall view, a side view, a top view and three close-ups:
+  * both ends with the bulkheads, the shock tower and the end of the top brace, seen from the outer end;
+  * the stock drive line at End B (spur gear, motor mount with cap, cup joint), seen from the middle of the car, without the top brace and the shock tower.
 
 ## Chassis plate and top brace
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
