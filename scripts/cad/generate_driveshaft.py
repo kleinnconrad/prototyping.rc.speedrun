@@ -200,6 +200,49 @@ def rear_drive_line(p, lay):
             ("cap of the motor mount", "mount", cap)]
 
 
+def flats_section(p, z, y_a, y_b):
+    """Press fit shape of the pinion shafts: round 5.0 with two flats (width across the flats
+    press_fit_flats, normals along z), along y from y_a to y_b."""
+    rs, f = p["pinion_shaft_d"] / 2, p["press_fit_flats"] / 2
+    return cyl_y(rs, y_a, y_b, 0, z).intersect(box(-rs - 1, rs + 1, y_a - 1, y_b + 1, z - f, z + f))
+
+
+def front_drive_line(p, lay):
+    """Front pinion shaft NBA205 at End A with the pinion NBA207, the 2 bearings NBA298 of the bulkhead
+    and the retaining pin NBA255 of the cup joint (chassis plate coordinates). Built at End B like the
+    rear pinion shaft, without flange, spur gear and motor mount, and turned by 180 degrees about z
+    onto End A (the front bulkhead is the same part, turned by 180 degrees)."""
+    z = lay["z"]
+    rs = p["pinion_shaft_d"] / 2
+    bd, bdep = p["cup_back_bore"]
+    d, dd, b = p["mount_bearing"]
+    teeth, od, root_d, plen, cone = p["pinion"]
+    cs_d, cs_h = p["pinion_countersink"]
+    seat = lay["seat"][0]
+    y_front = seat - plen
+    y0 = y_front + cs_h + 0.15
+    back = lay["housing"][0] + p["cup_gap"]                 # back face of the cup joint (End B equivalent)
+    y_end = back + bdep - 0.5
+    shaft = flats_section(p, z, y0, seat).fuse(cyl_y(rs, seat, back, 0, z)).fuse(flats_section(p, z, back, y_end))
+    yp = back + sum(p["cup_groove"][:2]) / 2
+    shaft = shaft.cut(cyl_x(p["cup_pin_d"] / 2, -rs - 1, rs + 1, yp, z))
+    shaft = shaft.cut(cyl_y(p["tap_d"] / 2, y0 - 0.1, y0 + p["pinion_thread_depth"], 0, z))
+    pin = cyl_x(p["cup_pin_d"] / 2, -p["cup_pin_length"] / 2, p["cup_pin_length"] / 2, yp, z)
+    pinion = pinion_solid(p, lay, y_front, y0)
+    lp = load_params(LOWER)
+    bulk = [cyl_y(dd / 2, y, y + b, 0, z).cut(cyl_y(d / 2, y - 1, y + b + 1, 0, z))
+            for y in (seat, seat + b + lp["pinion_rib_t"])]
+    shift = BULKHEAD_Y["front"] + BULKHEAD_Y["rear"]
+
+    def to_a(solid):
+        return solid.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180).translate(cq.Vector(0, shift, 0))
+    return [("front pinion shaft End A", "drive", to_a(shaft.clean())), ("pinion NBA207 End A", "drive", to_a(pinion)),
+            ("bearing NBA298 in the bulkhead End A, inner", "drive", to_a(bulk[0].clean())),
+            ("bearing NBA298 in the bulkhead End A, outer", "drive", to_a(bulk[1].clean())),
+            ("retaining pin NBA255 of the cup joint End A", "drive", to_a(pin)),
+            ("front pinion shaft (End B frame)", "export", shaft.clean())]
+
+
 def pinion_solid(p, lay, y_front, y_shaft):
     """Pinion NBA207 (chassis plate coordinates): simplified straight bevel gear (tooth profile with
     straight flanks, scaled toward the apex of the pitch cone), back face against the inner bearing of the bulkhead,
@@ -291,6 +334,7 @@ def parts_in_plate(p=None, lp=None):
              ("cup joint End B", "cup", cup.translate(cq.Vector(0, lay["back"][0], z))),
              ("cup joint End A", "cup", cup.rotate(*zrot).translate(cq.Vector(0, lay["back"][1], z)))]
     parts += rear_drive_line(p, lay)
+    parts += [q for q in front_drive_line(p, lay) if q[1] != "export"]
     od = outdrive_solid(p)
     xo = lp["body_half_width"] + p["outdrive_gap"]
     for label, yd in (("End B", BULKHEAD_Y["rear"] + lp["diff_axis_y"]), ("End A", BULKHEAD_Y["front"] - lp["diff_axis_y"])):
@@ -471,6 +515,8 @@ def main():
          parts["rear pinion shaft with flange"].translate(cq.Vector(0, -lay["housing"][0], -z))),
         ("rear_drive", "retaining_pin_2x7.6_NBA255",
          parts["retaining pin NBA255 of the cup joint End B"].translate(cq.Vector(0, -lay["housing"][0], -z))),
+        ("front_drive", "front_pinion_shaft_T410R",
+         [q for q in front_drive_line(p, lay) if q[1] == "export"][0][2].translate(cq.Vector(0, -lay["housing"][0], -z))),
         ("rear_drive", f"pinion_{p['pinion'][0]:g}T_NBA207", parts["pinion NBA207"].translate(cq.Vector(0, -lay["housing"][0], -z))),
         ("rear_drive", f"spur_gear_{p['spur_teeth']:g}T_T410R", parts["spur gear"].translate(cq.Vector(0, -lay["spur"][0], -z))),
         ("rear_drive", "bearing_5x10x4", parts["bearing NBA298 in the motor mount"].translate(cq.Vector(0, -yb, -z))),

@@ -73,6 +73,7 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 | Centre driveshaft with fixed metal pins | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/driveshaft` |
 | Cup joints of the centre driveshaft (NBA255) | 2 | $\color{red}\times$ Completely unqualified | `cad/stock_parts/driveshaft` |
 | Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin (NBA205, NBA207, NBA252, NBA298, NBA255) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/rear_drive` |
+| Front pinion shaft with pinion 17T, bearings and retaining pin (NBA205, NBA207, NBA298, NBA255) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/front_drive` |
 | Motor mount with cap (NBA201) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/motor_mount` |
 | Diff outdrives | 4 | $\color{red}\times$ Completely unqualified | `cad/stock_parts/diff_outdrive` |
 | Front wishbones (NHA402) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/wishbone` |
@@ -92,7 +93,8 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
   * **`/stock_parts`**: Models of stock parts of the Carten T410R, not part of the speedrun design, modelled for the completeness of the build
     * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file)
     * **`/driveshaft`**: Centre driveshaft with the fixed metal pins and the cup joints (STEP, STL, parameter file)
-    * **`/rear_drive`**: Rear pinion shaft, spur gear 72T and bearing (STEP, STL)
+    * **`/rear_drive`**: Rear pinion shaft, pinion, spur gear 72T, bearing and retaining pin (STEP, STL)
+    * **`/front_drive`**: Front pinion shaft (STEP, STL)
     * **`/motor_mount`**: Motor mount for 540 motors and its cap (STEP, STL)
     * **`/diff_outdrive`**: Diff outdrive (STEP, STL)
     * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file)

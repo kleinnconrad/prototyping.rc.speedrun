@@ -68,7 +68,7 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "pivot": ("Stock pivot blocks (4 pieces)", {}),     # no mass
              "shaft": ("Stock centre driveshaft with fixed pins", {}),
              "cup": ("Stock cup joints, diff outdrives, hinge pins", {}),
-             "drive": ("Stock rear pinion shaft, spur gear and bearing", {}),
+             "drive": ("Stock pinion shafts, pinions, spur gear, bearings", {}),
              "mount": ("Stock motor mount with cap", {}),
              "arm": ("Stock wishbones (4 pieces)", {})}
 
