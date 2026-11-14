@@ -81,6 +81,7 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 | Front wishbones (NHA402) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/wishbone` |
 | Rear wishbones (NHA402) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/wishbone` |
 | Inner hinge pins of the wishbones (NHA423 3x42) | 4 | $\color{red}\times$ Completely unqualified | `cad/stock_parts/wishbone` |
+| Camber links: turnbuckle NHA417 M3x37 with rod ends NBA247 and ball studs | 4 | $\color{red}\times$ Completely unqualified | `cad/stock_parts/camber_link` |
 
 * Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. All parts of the speedrun design are verified. Of the stock parts, the motor mount, the centre driveshaft, the rear drive line and the wishbones are qualified by measurements (caliper and photos of the owner); the other stock parts are not qualified. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#design-of-the-lower-bulkhead)). The stock shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the stock towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
 * The legend lists the colours of the speedrun parts and of the stock parts. The inset at the right of the 3D view shows the differential at End B in section with the pinion (the design of the differential: [CAD readme](cad/readme.md#differentials)). The bottom row shows close-ups of End A and End B from the outer end and of the stock drive line at End B (spur gear, motor mount with cap, cup joint) from the middle of the car, without the top brace and the shock tower.
@@ -101,6 +102,7 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
     * **`/diff`**: Differential (case, ring gear 42T, inner gears, shims, bearing) and spool (STEP, STL)
     * **`/diff_outdrive`**: Diff outdrive (STEP, STL)
     * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file)
+    * **`/camber_link`**: Camber links: turnbuckle, rod end, ball stud (STEP, STL, parameter file)
   * **`/chassis`**: Chassis plate, wide speedrun chassis plate, top brace and speedrun top brace with one subdirectory per part (STEP, STL, DXF, OpenSCAD, 1:1 templates, test print files)
 * **`/docs`**: Static web dashboard for visualizing the latest setup configurations
 * **`/photos`**: Central directory for all image files

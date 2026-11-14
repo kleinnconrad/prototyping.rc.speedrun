@@ -1,0 +1,18 @@
+{
+  "part": "Camber links (upper links) of the Carten T410R: turnbuckle NHA417 M3x37 with 2 rod ends NBA247 and the ball studs. 2 front links (End A) and 2 rear links (End B). Stock parts, not part of the speedrun design. Files: cad/stock_parts/camber_link, generated with scripts/cad/generate_camber_links.py.",
+  "units": "mm",
+  "coordinate_system": "Link coordinates: x along the link from the centre of the inner ball (x = 0) to the centre of the outer ball, inner rod end with the socket axis along y (ball stud on the shock tower), outer rod end with the socket axis along z (ball stud on the C-hub or the hub carrier).",
+  "design": "Manual page 05 step 4 (set up C front upper, D rear upper) and step 21: turnbuckle M3x37 with right and left hand threads and a hexagon in the middle, a rod end NBA247 on each end, the two rod ends turned by 90 degrees about the link axis. Inner end on a ball stud in the camber link hole of the shock tower (behind the tower, wall side), outer end on a vertical ball stud of the C-hub (front) or of the hub carrier (rear). Simplified: no threads, ball sockets as cylindrical bores.",
+  "source_codes": {"manual": "T410R instruction manual: part numbers, turnbuckle M3x37, gap between the rod ends (page 05, step 4), mounting (step 21)", "derived": "Calculated from other parts of the model (shock towers, wishbones)", "assumption": "Not measured, assumed for the model"},
+  "parameters": {
+    "turnbuckle": {"value": [37.0, 3.0], "source": "manual", "note": "Turnbuckle NHA417 M3x37: length and diameter (M3)."},
+    "turnbuckle_hex": {"value": [4.0, 4.0], "source": "assumption", "note": "Hexagon in the middle of the turnbuckle: width across the flats and length."},
+    "gap_front": {"value": 24.0, "source": "manual", "note": "Front upper link (C): gap between the faces of the two rod ends (manual page 05, set up C)."},
+    "gap_rear": {"value": 25.8, "source": "manual", "note": "Rear upper link (D): gap between the faces of the two rod ends (manual page 05, set up D)."},
+    "rod_end": {"value": [9.0, 7.0, 6.0, 5.5, 7.0], "source": "assumption", "note": "Rod end NBA247 (ball cup, open on one side only, owner; fits RC standard ball studs): centre of the ball to the face toward the turnbuckle, outer diameter and width of the socket ring (along the socket axis), width across the flats of the body, depth of the bore for the turnbuckle (bore 3.0, the turnbuckle cuts its thread into the plastic). Outer diameter of the ring approx. 7 as in the design of the shock towers (space kept free behind the towers: radius 4.0)."},
+    "ball": {"value": [4.8, 3.5, 3.0], "source": "assumption", "note": "Ball studs (RC standard, owner): ball diameter 4.8 (assumed), centre of the inner ball behind the back face of the shock tower (wall side), diameter of the neck (set screw M3 through the tower hole 3.2)."},
+    "outer_neck": {"value": 5.0, "source": "assumption", "note": "Neck of the outer ball stud below the ball (vertical, into the C-hub or hub carrier, which are not modelled)."},
+    "outer_height_offset": {"value": 0.0, "source": "assumption", "note": "Height of the outer ball centre above the inner ball centre (link horizontal; the C-hubs and hub carriers are not modelled)."},
+    "socket_closed": {"value": 3.4, "source": "assumption", "note": "Rod end: centre of the ball to the closed face of the socket (cap 1.0 over the ball); the socket is open on the other side toward the ball stud (owner)."}
+  }
+}

@@ -14,6 +14,7 @@ Parts:
   the completeness of the build, not in the mass total)
 * stock cup joints, rear pinion shaft with the spur gear and the bearing, motor mount with its cap
   and diff outdrives (not part of the speedrun design, not in the mass total)
+* stock camber links (turnbuckles M3x37 with rod ends) on the ball studs of the shock towers
 * stock lower wishbones (front arms at End A, rear arms at End B) with their inner hinge pins on
   the pivot blocks (not part of the speedrun design, not in the mass total)
 
@@ -46,6 +47,7 @@ from generate_driveshaft import parts_in_plate as driveshaft_in_plate  # noqa: E
 from generate_pivot_blocks import blocks_in_plate  # noqa: E402
 from generate_shock_towers import tower_in_bulkhead  # noqa: E402
 from generate_wishbones import arms_in_plate  # noqa: E402
+from generate_camber_links import links_in_plate  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
 PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
@@ -57,7 +59,7 @@ COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8
           "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
           "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77),
           "drive": (0.45, 0.47, 0.5), "mount": (0.6, 0.63, 0.68), "arm": (0.4, 0.34, 0.52),
-          "diff": (0.16, 0.16, 0.18)}
+          "diff": (0.16, 0.16, 0.18), "rodend": (0.12, 0.12, 0.13), "link": (0.78, 0.79, 0.82)}
 PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
@@ -72,7 +74,9 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "drive": ("Stock pinion shafts, pinions, spur gear, bearings", {}),
              "mount": ("Stock motor mount with cap", {}),
              "arm": ("Stock wishbones (4 pieces)", {}),
-             "diff": ("Stock differential case and spool (ring gear grey)", {})}
+             "diff": ("Stock differential case and spool (ring gear grey)", {}),
+             "rodend": ("Stock rod ends of the camber links", {}),
+             "link": ("Stock turnbuckles and ball studs of the camber links", {})}
 
 
 def build():
@@ -111,6 +115,8 @@ def build():
     # stock lower wishbones with the inner hinge pins on the pivot blocks (not part of the speedrun design)
     for name, kind, s in arms_in_plate():
         parts.append((name, "arm" if kind == "arm" else "cup", s))
+    # stock camber links: turnbuckles with rod ends on the ball studs of the shock towers
+    parts += links_in_plate()
     return parts
 
 

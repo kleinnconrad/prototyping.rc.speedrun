@@ -32,6 +32,7 @@
   * [Centre driveshaft and drive line](#centre-driveshaft-and-drive-line)
   * [Differentials](#differentials)
   * [Wishbones](#wishbones)
+  * [Camber links](#camber-links)
 * [Scripts](#scripts)
   * [Regenerating the files](#regenerating-the-files)
   * [DXF generation](#dxf-generation)
@@ -58,6 +59,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/diff`**: Differential case, ring gear 42T and bearing NBA299 (STEP, STL).
   * **`/diff_outdrive`**: Diff outdrive (STEP, STL).
   * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file).
+  * **`/camber_link`**: Camber links: turnbuckle, rod end, ball stud, assembled front and rear link (STEP, STL, parameter file).
 * **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the stock parts: pivot blocks, centre driveshaft and drive line, motor mount, diff outdrives, wishbones with hinge pins (STEP).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
@@ -95,6 +97,7 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 | [Front wishbones (NHA402)](#wishbones) | 2 | `/stock_parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Rear wishbones (NHA402)](#wishbones) | 2 | `/stock_parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Inner hinge pins of the wishbones (NHA423 3x42)](#wishbones) | 4 | `/stock_parts/wishbone` | $\color{red}\times$ Completely unqualified |
+| [Camber links: turnbuckle NHA417 M3x37 with rod ends NBA247 and ball studs](#camber-links) | 4 | `/stock_parts/camber_link` | $\color{red}\times$ Completely unqualified |
 
 Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
 
@@ -103,7 +106,7 @@ Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{g
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
 
 ### Assembly file
-* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and 50 stock parts (pivot blocks, wishbones with hinge pins, centre driveshaft with cup joints, rear and front drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool with the ring gears and bearings, 4 diff outdrives) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
+* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and 62 stock parts (pivot blocks, wishbones with hinge pins, camber links (turnbuckle, rod ends, ball studs), centre driveshaft with cup joints, rear and front drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool with the ring gears and bearings, 4 diff outdrives) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
 * The stock parts are not part of the speedrun design and are not in the mass total (see [stock parts](#stock-parts-not-part-of-the-speedrun-design)).
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [pivot blocks](#pivot-blocks)) and 2.16 mm³ between the lower bulkhead at End A and each front wishbone (inner lugs 0.14 mm into the side face, see [wishbones](#wishbones)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
@@ -901,6 +904,35 @@ All files are stored in the directory `/stock_parts/wishbone`. They are generate
 | `hinge_pin_3x42_NHA423.step`, `hinge_pin_3x42_NHA423.stl` | STEP, STL | Inner hinge pin, along y, centred at y = 0 |
 | `wishbone_parameters.json` | JSON | All dimensions, each with its source, the letter of the measurement and a note |
 
+### Camber links
+* **Description:** Models of the 4 camber links (upper links) of the Carten T410R: turnbuckle NHA417 M3x37 with a rod end NBA247 on each end, on ball studs (manual page 05 step 4, "C front upper" and "D rear upper", mounted in step 21). Stock parts: not part of the speedrun design, modelled for the completeness of the build.
+* **Status:** $\color{red}\times$ Completely unqualified. The gaps between the rod ends are from the manual; the dimensions of the rod ends and the ball studs are assumptions, the outer ends are placed without the C-hubs and hub carriers.
+
+![Camber links: front and rear link with the gap of the manual](../photos/cad_camber_links_drawing.png)
+
+| Item | Model | Source |
+|:---|:---|:---|
+| Turnbuckle NHA417 | M3 x 37 mm (cylinder 3.0 mm, threads not modelled), hexagon 4.0 mm across the flats in the middle | Manual (M3x37), assumption (hexagon) |
+| Gap between the rod ends | Front link (End A) 24.0 mm, rear link (End B) 25.8 mm; ball centres 42.0 and 43.8 mm apart; thread engagement 6.5 and 5.6 mm in each rod end | Manual (set up C and D) |
+| Rod end NBA247 | Ball cup for RC standard ball studs, open on one side only (toward the ball stud), closed by a cap of 1.0 mm on the other side; ball centre 9.0 mm from the face toward the turnbuckle, socket ring 7.0 mm outer diameter and 6.0 mm wide, body 5.5 mm across the flats, bore 3.0 x 7.0 mm for the turnbuckle; the two rod ends are turned by 90 degrees about the link axis: inner socket open toward the shock tower, outer socket open toward the bottom | Owner (open on one side, standard ball studs), manual (shape), assumptions (dimensions; ring as in the design of the shock towers) |
+| Inner ball stud | In the camber link hole of the shock tower (x = +-18.05 mm, 19.1 mm above the parting face), RC standard ball 4.8 mm (assumed), 3.5 mm behind the back face of the tower (wall side), set screw M3 through the tower | Shock towers, assumptions (ball) |
+| Outer ball stud | Vertical, on the C-hub (front) or the hub carrier (rear, not modelled), in the plane of the middle of the wishbone, at the height of the inner ball (link horizontal) | Wishbones, assumption (height) |
+
+* Checks of `generate_camber_links.py`: no overlap with the shock towers, the bulkheads and the wishbones; rod ends 0.30 mm (End B) and 0.44 mm (End A) beside the narrowed wall of the upper bulkhead, ball studs 0.10 mm from the shock tower holes.
+* To be measured for a qualified model: centre of the ball to the face of the rod end, outer diameter and width of the socket ring, ball diameter of the ball studs and their distance from the tower.
+
+**Files of the camber links**
+
+All files are stored in the directory `/stock_parts/camber_link` and are generated with `generate_camber_links.py` from `camber_link_parameters.json` (see [scripts](#scripts)). Link coordinates: x along the link from the centre of the inner ball (x = 0), inner socket axis along y, outer socket axis along z.
+
+| File | Content |
+|:---|:---|
+| `camber_link_front_T410R`, `camber_link_rear_T410R` | Assembled links: 2 rod ends and the turnbuckle (STEP, STL) |
+| `rod_end_NBA247` | Rod end: ball centre at the origin, body toward +x |
+| `turnbuckle_M3x37_NHA417` | Turnbuckle along x, centred at the origin |
+| `ball_stud` | Ball stud: ball at the origin, neck along -y |
+| `camber_link_parameters.json` | All dimensions, each with its source and a note |
+
 ## Scripts
 The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates (except `generate_chassis_templates.py`, which writes the templates of the chassis plate and the top brace), and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
 
@@ -921,6 +953,7 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_driveshaft.py` | Parameter file of the driveshaft, parameter files of the bulkheads, STEP file of the speedrun chassis plate | STEP and STL files of the stock centre driveshaft, cup joint, rear pinion shaft, spur gear, bearing, motor mount with cap and diff outdrive, drawings `photos/cad_driveshaft_drawing.png` and `photos/cad_differential_drawing.png`, checks of the play and of the fit | cadquery, matplotlib |
 | `generate_wishbones.py` | Parameter file of the wishbones, parameter files of the pivot blocks and the bulkheads, geometry data and STEP file of the speedrun chassis plate | STEP and STL files of the stock front and rear wishbones and of the inner hinge pin, drawing `photos/cad_wishbones_drawing.png` with the letters of the measurements, checks of the clearance to the pivot blocks, the bulkheads and the chassis plate and of the play of the hinge pins | cadquery, matplotlib |
 | `generate_measurement_sheets.py` | Parameter files of the wishbones and of the driveshaft | Measurement sheet `stock_parts/stock_parts_measurement_sheet.pdf` of the stock parts that are not measured yet (wishbones, bearing seat of the motor mount) | cadquery, matplotlib |
+| `generate_camber_links.py` | Parameter file of the camber links, parameter files of the shock towers and the bulkheads, wishbones | STEP and STL files of the stock camber links (turnbuckle, rod end, ball stud, assembled links), drawing `photos/cad_camber_links_drawing.png`, checks of the clearance to the shock towers, the bulkheads and the wishbones | cadquery, matplotlib |
 | `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, of the shock towers, of the pivot blocks, of the driveshaft and of the wishbones, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file, geometry checks | cadquery |
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
@@ -973,6 +1006,7 @@ python scripts/cad/generate_shock_towers.py
 python scripts/cad/generate_pivot_blocks.py
 python scripts/cad/generate_driveshaft.py
 python scripts/cad/generate_wishbones.py
+python scripts/cad/generate_camber_links.py
 python scripts/cad/generate_measurement_sheets.py
 python scripts/cad/generate_speedrun_assembly.py
 ```
