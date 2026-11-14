@@ -13,6 +13,7 @@
     "ball": {"value": [4.8, 3.5, 3.0], "source": "assumption", "note": "Ball studs (RC standard, owner): ball diameter 4.8 (assumed), centre of the inner ball behind the back face of the shock tower (wall side), diameter of the neck (set screw M3 through the tower hole 3.2)."},
     "outer_neck": {"value": 5.0, "source": "assumption", "note": "Neck of the outer ball stud below the ball (vertical, into the C-hub or hub carrier, which are not modelled)."},
     "outer_height_offset": {"value": 0.0, "source": "assumption", "note": "Height of the outer ball centre above the inner ball centre (link horizontal; the C-hubs and hub carriers are not modelled)."},
-    "socket_closed": {"value": 3.4, "source": "assumption", "note": "Rod end: centre of the ball to the closed face of the socket (cap 1.0 over the ball); the socket is open on the other side toward the ball stud (owner)."}
+    "socket_closed": {"value": 3.4, "source": "assumption", "note": "Rod end: centre of the ball to the closed face of the socket (cap 1.0 over the ball); the socket is open on the other side toward the ball stud (owner)."},
+    "socket_fit": {"value": [0.03, 4.4], "source": "assumption", "note": "Fit of the rod ends on the balls (owner: they click onto the balls, hold and stay movable): radial clearance of the spherical socket (the rod end turns on the ball) and diameter of the opening on the open side, 0.2 smaller per side than the ball 4.8: the lip wraps the ball beyond its equator and holds it (the plastic widens when the rod end is pressed on). The opening is larger than the neck of the ball stud (3.0): the rod end can tilt on the ball."}
   }
 }

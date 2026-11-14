@@ -49,15 +49,19 @@ def hex_x(af, x0, x1):
 def rod_end(p, axis, open_dir):
     """Rod end (ball cup) in link coordinates: ball centre at the origin, body toward +x, socket axis 'y'
     or 'z', open on one side only (open_dir = +1 or -1 along the socket axis, toward the ball stud),
-    closed by a cap on the other side."""
+    closed by a cap on the other side. Spherical socket with a small clearance (the rod end turns on
+    the ball), opening smaller than the ball: the lip wraps the ball beyond its equator, so the rod
+    end clicks onto the ball and holds."""
     e, ring_d, ring_w, af, depth = p["rod_end"]
     c = p["socket_closed"]                                  # ball centre to the closed face
-    rb = p["ball"][0] / 2 + 0.03
+    clear, d_open = p["socket_fit"]
+    rb = p["ball"][0] / 2 + clear                           # spherical socket: the rod end turns on the ball
     cyl = cyl_y if axis == "y" else cyl_z
     a, b = sorted((open_dir * (ring_w - c), -open_dir * c))
     ring = cyl(ring_d / 2, a, b, 0, 0)
+    # opening smaller than the ball: the lip wraps the ball beyond its equator (snap fit)
     cavity = cq.Solid.makeSphere(rb, cq.Vector(0, 0, 0), angleDegrees1=-90, angleDegrees2=90).fuse(
-        cyl(rb, *sorted((0.0, open_dir * (ring_w - c + 1))), 0, 0))
+        cyl(d_open / 2, *sorted((0.0, open_dir * (ring_w - c + 1))), 0, 0))
     body = hex_x(af, ring_d / 2 - 1.5, e)
     s = ring.fuse(body).cut(cavity).cut(cyl_x(p["turnbuckle"][1] / 2, e - depth, e + 1, 0, 0))
     return s.clean()
@@ -178,15 +182,38 @@ def drawing(p, path=DRAWING):
         ax.set_ylim(-12, 6)
         ax.set_aspect("equal")
         ax.axis("off")
-        ax.set_title(name + ": inner rod end (left) on the ball stud of the shock tower, outer rod end on the C-hub or hub "
-                     "carrier, turned by 90 degrees", fontsize=9, loc="left")
+        ax.set_title(name + ": inner rod end (left) on the shock tower,\nouter rod end on the C-hub or hub carrier, turned by "
+                     "90 degrees", fontsize=9, loc="left")
         ax2 = fig.add_axes([0.68, 0.52 - 0.46 * row, 0.3, 0.36])
-        draw_mesh(ax2, np.concatenate(T), iso_basis(-60, 25), tri_colors=np.concatenate(C), depth_cue=0.2)
+        if row == 0:
+            draw_mesh(ax2, np.concatenate(T), iso_basis(-60, 25), tri_colors=np.concatenate(C), depth_cue=0.2)
+            ax2.set_aspect("equal")
+            ax2.autoscale_view()
+            ax2.axis("off")
+            continue
+        # section through the inner socket on the ball stud (plane z = 0)
+        stud = ball_stud(p, (0, -1, 0), p["ball"][1] + 2.0)
+        cut = box(-6, 14, -8, 6, -6, 0)
+        T2, C2 = [], []
+        for sol, col in ((inner.intersect(cut), (0.15, 0.15, 0.16)), (stud.intersect(cut), (0.78, 0.79, 0.82))):
+            t = subdivide(tess(sol), 0.3)
+            T2.append(t)
+            C2.append(np.tile(col, (len(t), 1)))
+        lo2, hi2 = draw_mesh(ax2, np.concatenate(T2), basis((0, 0, -1), (1, 0, 0), (0, 1, 0)),
+                             tri_colors=np.concatenate(C2), depth_cue=0.1)
+        clear, d_open = p["socket_fit"]
+        ax2.annotate(f"opening {d_open:g} < ball {p['ball'][0]:g}:\nthe lip holds the ball (click on)",
+                     (d_open / 2, -(p["rod_end"][2] - p["socket_closed"])), (6.5, -6.5), fontsize=7.5,
+                     arrowprops=dict(arrowstyle="-", lw=0.6, color="#b42318"), color="#b42318")
+        ax2.annotate(f"spherical socket, {clear:g} clearance:\nturns on the ball", (-1.8, 1.7), (2.5, 4.6), fontsize=7.5,
+                     arrowprops=dict(arrowstyle="-", lw=0.6, color="#b42318"), color="#b42318")
+        ax2.set_xlim(-6, 14)
+        ax2.set_ylim(-8.5, 6.5)
         ax2.set_aspect("equal")
-        ax2.autoscale_view()
         ax2.axis("off")
-    fig.text(0.04, 0.01, "Rod ends: ball cups open on one side only (toward the ball stud), for RC standard ball studs. Dimensions "
-             "assumed (ball centre 9.0 mm from the face, socket 7.0 x 6.0 mm, ball 4.8 mm); threads not modelled.", fontsize=8.5)
+        ax2.set_title("Section through the inner rod end on the ball stud", fontsize=9, loc="left")
+    fig.text(0.04, 0.01, "Rod ends: ball cups open on one side only (toward the ball stud), for RC standard ball studs; they click onto "
+             "the balls (opening smaller than the ball) and turn on them. Dimensions assumed; threads not modelled.", fontsize=8.5)
     fig.savefig(path, dpi=100)
     plt.close(fig)
 

@@ -908,18 +908,18 @@ All files are stored in the directory `/stock_parts/wishbone`. They are generate
 * **Description:** Models of the 4 camber links (upper links) of the Carten T410R: turnbuckle NHA417 M3x37 with a rod end NBA247 on each end, on ball studs (manual page 05 step 4, "C front upper" and "D rear upper", mounted in step 21). Stock parts: not part of the speedrun design, modelled for the completeness of the build.
 * **Status:** $\color{red}\times$ Completely unqualified. The gaps between the rod ends are from the manual; the dimensions of the rod ends and the ball studs are assumptions, the outer ends are placed without the C-hubs and hub carriers.
 
-![Camber links: front and rear link with the gap of the manual](../photos/cad_camber_links_drawing.png)
+![Camber links: front and rear link with the gap of the manual, section through the rod end on the ball](../photos/cad_camber_links_drawing.png)
 
 | Item | Model | Source |
 |:---|:---|:---|
 | Turnbuckle NHA417 | M3 x 37 mm (cylinder 3.0 mm, threads not modelled), hexagon 4.0 mm across the flats in the middle | Manual (M3x37), assumption (hexagon) |
 | Gap between the rod ends | Front link (End A) 24.0 mm, rear link (End B) 25.8 mm; ball centres 42.0 and 43.8 mm apart; thread engagement 6.5 and 5.6 mm in each rod end | Manual (set up C and D) |
-| Rod end NBA247 | Ball cup for RC standard ball studs, open on one side only (toward the ball stud), closed by a cap of 1.0 mm on the other side; ball centre 9.0 mm from the face toward the turnbuckle, socket ring 7.0 mm outer diameter and 6.0 mm wide, body 5.5 mm across the flats, bore 3.0 x 7.0 mm for the turnbuckle; the two rod ends are turned by 90 degrees about the link axis: inner socket open toward the shock tower, outer socket open toward the bottom | Owner (open on one side, standard ball studs), manual (shape), assumptions (dimensions; ring as in the design of the shock towers) |
+| Rod end NBA247 | Ball cup for RC standard ball studs, open on one side only (toward the ball stud), closed by a cap of 1.0 mm on the other side; spherical socket with 0.03 mm clearance (the rod end turns on the ball), opening 4.4 mm, 0.2 mm per side smaller than the ball: the lip wraps the ball beyond its equator, the rod end clicks onto the ball and holds; the opening is larger than the neck of the ball stud (3.0 mm), so the rod end can tilt; ball centre 9.0 mm from the face toward the turnbuckle, socket ring 7.0 mm outer diameter and 6.0 mm wide, body 5.5 mm across the flats, bore 3.0 x 7.0 mm for the turnbuckle; the two rod ends are turned by 90 degrees about the link axis: inner socket open toward the shock tower, outer socket open toward the bottom | Owner (open on one side, standard ball studs), manual (shape), assumptions (dimensions; ring as in the design of the shock towers) |
 | Inner ball stud | In the camber link hole of the shock tower (x = +-18.05 mm, 19.1 mm above the parting face), RC standard ball 4.8 mm (assumed), 3.5 mm behind the back face of the tower (wall side), set screw M3 through the tower | Shock towers, assumptions (ball) |
 | Outer ball stud | Vertical, on the C-hub (front) or the hub carrier (rear, not modelled), in the plane of the middle of the wishbone, at the height of the inner ball (link horizontal) | Wishbones, assumption (height) |
 
 * Checks of `generate_camber_links.py`: no overlap with the shock towers, the bulkheads and the wishbones; rod ends 0.30 mm (End B) and 0.44 mm (End A) beside the narrowed wall of the upper bulkhead, ball studs 0.10 mm from the shock tower holes.
-* To be measured for a qualified model: centre of the ball to the face of the rod end, outer diameter and width of the socket ring, ball diameter of the ball studs and their distance from the tower.
+* To be measured for a qualified model: centre of the ball to the face of the rod end, outer diameter and width of the socket ring, diameter of the opening of the socket, ball diameter of the ball studs and their distance from the tower.
 
 **Files of the camber links**
 
