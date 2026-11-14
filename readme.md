@@ -51,7 +51,7 @@ The speedrun chassis is designed in this project for speeds over 100 km/h. It co
 * Laser cutting: the top brace (2 mm) and the shock towers (3 mm) are flat plates with plain holes, so that they can be laser cut from aluminium or another material of choice (for example carbon). The outline and the holes are taken from the DXF files. The edge and hole chamfers and the relief on the back face of the shock towers (clearance to the root radius of the wall of the upper bulkhead) are a second machining step.
 * Simple design: a further goal is a simplified design of the bulkheads, the shock towers and the top brace with flat faces, straight edges and radii.
 * Chassis plate: apart from the material, the speedrun chassis plate is designed to match the ZooRacing Hellcat body (190 mm). It also gives more space for further developments: a battery with 4S or 6S instead of 3S, a dual motor setup and the custom [telemetry system](#follow-up-project-telemetry-system).
-* Stock parts: the other parts of the car are not modelled. For these parts, the stock parts of the manufacturer are used, since this is the technically and economically reasonable solution. Only the stock parts that are needed for the completeness of the build are modelled (`cad/stock_parts`): the pivot blocks of the wishbones, the centre driveshaft with its cup joints, the rear pinion shaft with the spur gear and the bearing, the motor mount with its cap and the diff outdrives. They are not part of the speedrun design and are modelled for the completeness of the build.
+* Stock parts: the other parts of the car are not modelled. For these parts, the stock parts of the manufacturer are used, since this is the technically and economically reasonable solution. Only the stock parts that are needed for the completeness of the build are modelled (`cad/stock_parts`): the pivot blocks of the wishbones, the centre driveshaft with its cup joints, the rear pinion shaft with the spur gear and the bearing, the motor mount with its cap, the diff outdrives and the wishbones with their hinge pins. They are not part of the speedrun design and are modelled for the completeness of the build.
 
 ![Speedrun chassis: chassis plate, bulkheads, top brace and shock towers](photos/cad_speedrun_chassis_assembly.png)
 
@@ -75,6 +75,9 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 | Rear pinion shaft with spur gear 72T and bearing (NBA205, NBA252, NBA298) | 1 | Not verified, work in progress | `cad/stock_parts/rear_drive` |
 | Motor mount with cap (NBA201) | 1 | Not verified, work in progress | `cad/stock_parts/motor_mount` |
 | Diff outdrives | 4 | Not verified, work in progress | `cad/stock_parts/diff_outdrive` |
+| Front wishbones (NHA402) | 2 | Not verified, work in progress | `cad/stock_parts/wishbone` |
+| Rear wishbones (NHA402) | 2 | Not verified, work in progress | `cad/stock_parts/wishbone` |
+| Inner hinge pins of the wishbones (NHA423 3x42) | 4 | Not verified, work in progress | `cad/stock_parts/wishbone` |
 
 * All parts of the speedrun design are verified. The stock parts are not verified and work in progress. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#edges-of-the-outer-shape)). The stock shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the stock towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
 * The legend lists the colours of the speedrun parts and of the stock parts. The bottom row shows close-ups of End A and End B from the outer end and of the stock drive line at End B (spur gear, motor mount with cap, cup joint) from the middle of the car, without the top brace and the shock tower.
@@ -92,6 +95,7 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
     * **`/rear_drive`**: Rear pinion shaft, spur gear 72T and bearing (STEP, STL)
     * **`/motor_mount`**: Motor mount for 540 motors and its cap (STEP, STL)
     * **`/diff_outdrive`**: Diff outdrive (STEP, STL)
+    * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file)
   * **`/chassis`**: Chassis plate, wide speedrun chassis plate, top brace and speedrun top brace with one subdirectory per part (STEP, STL, DXF, OpenSCAD, 1:1 templates, test print files)
 * **`/docs`**: Static web dashboard for visualizing the latest setup configurations
 * **`/photos`**: Central directory for all image files

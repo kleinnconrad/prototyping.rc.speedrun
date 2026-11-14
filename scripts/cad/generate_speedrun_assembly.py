@@ -14,6 +14,8 @@ Parts:
   the completeness of the build, not in the mass total)
 * stock cup joints, rear pinion shaft with the spur gear and the bearing, motor mount with its cap
   and diff outdrives (not part of the speedrun design, not in the mass total)
+* stock lower wishbones (front arms at End A, rear arms at End B) with their inner hinge pins on
+  the pivot blocks (not part of the speedrun design, not in the mass total)
 
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
@@ -23,7 +25,7 @@ The script checks all pairs of parts for interference and lists the volume and t
 each part.
 
 Usage (from the root directory of the repository, after the scripts of the bulkheads, the
-speedrun top brace, the shock towers, the pivot blocks and the driveshaft):
+speedrun top brace, the shock towers, the pivot blocks, the driveshaft and the wishbones):
     python scripts/cad/generate_speedrun_assembly.py
 
 Requires the packages cadquery and matplotlib.
@@ -43,6 +45,7 @@ from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 from generate_driveshaft import parts_in_plate as driveshaft_in_plate  # noqa: E402
 from generate_pivot_blocks import blocks_in_plate  # noqa: E402
 from generate_shock_towers import tower_in_bulkhead  # noqa: E402
+from generate_wishbones import arms_in_plate  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
 PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
@@ -53,7 +56,7 @@ OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3),
           "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
           "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77),
-          "drive": (0.45, 0.47, 0.5), "mount": (0.6, 0.63, 0.68)}
+          "drive": (0.45, 0.47, 0.5), "mount": (0.6, 0.63, 0.68), "arm": (0.4, 0.34, 0.52)}
 PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
@@ -64,9 +67,10 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81}),
              "pivot": ("Stock pivot blocks (4 pieces)", {}),     # no mass
              "shaft": ("Stock centre driveshaft with fixed pins", {}),
-             "cup": ("Stock cup joints and diff outdrives", {}),
+             "cup": ("Stock cup joints, diff outdrives, hinge pins", {}),
              "drive": ("Stock rear pinion shaft, spur gear and bearing", {}),
-             "mount": ("Stock motor mount with cap", {})}
+             "mount": ("Stock motor mount with cap", {}),
+             "arm": ("Stock wishbones (4 pieces)", {})}
 
 
 def build():
@@ -102,6 +106,9 @@ def build():
     # cap and diff outdrives (not part of the speedrun design)
     for name, kind, s in driveshaft_in_plate():
         parts.append((f"stock {name}" if kind == "shaft" else name, kind, s))
+    # stock lower wishbones with the inner hinge pins on the pivot blocks (not part of the speedrun design)
+    for name, kind, s in arms_in_plate():
+        parts.append((name, "arm" if kind == "arm" else "cup", s))
     return parts
 
 

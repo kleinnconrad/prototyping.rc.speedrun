@@ -52,6 +52,11 @@
   * [Checks of the centre driveshaft](#checks-of-the-centre-driveshaft)
   * [Open points of the centre driveshaft](#open-points-of-the-centre-driveshaft)
   * [Files of the centre driveshaft and the drive line](#files-of-the-centre-driveshaft-and-the-drive-line)
+* [Wishbones (stock parts, not part of the speedrun design)](#wishbones-stock-parts-not-part-of-the-speedrun-design)
+  * [Design of the wishbones](#design-of-the-wishbones)
+  * [Position and checks of the wishbones](#position-and-checks-of-the-wishbones)
+  * [Measurements for the wishbones](#measurements-for-the-wishbones)
+  * [Files of the wishbones](#files-of-the-wishbones)
 * [Scripts](#scripts)
   * [Regenerating the files](#regenerating-the-files)
   * [DXF generation](#dxf-generation)
@@ -79,7 +84,8 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/rear_drive`**: Rear pinion shaft with flange, spur gear 72T and bearing 5x10x4 (STEP, STL).
   * **`/motor_mount`**: Motor mount for 540 motors and its cap (STEP, STL).
   * **`/diff_outdrive`**: Diff outdrive (STEP, STL).
-* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the stock parts: pivot blocks, centre driveshaft and drive line, motor mount, diff outdrives (STEP).
+  * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file).
+* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the stock parts: pivot blocks, centre driveshaft and drive line, motor mount, diff outdrives, wishbones with hinge pins (STEP).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
@@ -110,14 +116,17 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 | [Rear pinion shaft with spur gear 72T and bearing (NBA205, NBA252, NBA298)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 1 | `/stock_parts/rear_drive` | Not verified, work in progress |
 | [Motor mount with cap (NBA201)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 1 | `/stock_parts/motor_mount` | Not verified, work in progress |
 | [Diff outdrives](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 4 | `/stock_parts/diff_outdrive` | Not verified, work in progress |
+| [Front wishbones (NHA402)](#wishbones-stock-parts-not-part-of-the-speedrun-design) | 2 | `/stock_parts/wishbone` | Not verified, work in progress |
+| [Rear wishbones (NHA402)](#wishbones-stock-parts-not-part-of-the-speedrun-design) | 2 | `/stock_parts/wishbone` | Not verified, work in progress |
+| [Inner hinge pins of the wishbones (NHA423 3x42)](#wishbones-stock-parts-not-part-of-the-speedrun-design) | 4 | `/stock_parts/wishbone` | Not verified, work in progress |
 
 * The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³). Screws, bearings and the other parts of the car are not included.
 * The bulkheads are the same parts at both ends. At End A, they are rotated by 180 degrees, so that both pinions point to the middle of the car.
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
 
 ### Assembly file
-* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and the 16 stock parts (4 pivot blocks, centre driveshaft, 2 cup joints, rear pinion shaft, spur gear, bearing, motor mount, cap of the motor mount, 4 diff outdrives) in the coordinate system of the chassis plate (STEP AP214, one solid per part).
-* The assembly also contains the 4 stock pivot blocks of the wishbones (see [pivot blocks](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design)) and the stock centre driveshaft (see [centre driveshaft](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design)). It also contains the stock cup joints, the rear pinion shaft with the spur gear and the bearing, the motor mount with its cap and the diff outdrives. These parts are not part of the speedrun design, are modelled for the completeness of the build and are not in the mass total.
+* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and the 24 stock parts (4 pivot blocks, centre driveshaft, 2 cup joints, rear pinion shaft, spur gear, bearing, motor mount, cap of the motor mount, 4 diff outdrives, 4 wishbones, 4 inner hinge pins) in the coordinate system of the chassis plate (STEP AP214, one solid per part).
+* The assembly also contains the 4 stock pivot blocks of the wishbones (see [pivot blocks](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design)) and the stock centre driveshaft (see [centre driveshaft](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design)). It also contains the stock cup joints, the rear pinion shaft with the spur gear and the bearing, the motor mount with its cap, the diff outdrives and the wishbones with their inner hinge pins (see [wishbones](#wishbones-stock-parts-not-part-of-the-speedrun-design)). These parts are not part of the speedrun design, are modelled for the completeness of the build and are not in the mass total.
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [position and fit on the speedrun chassis](#position-and-fit-on-the-speedrun-chassis)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
 * The image shows an overall view, a side view, a top view and three close-ups:
@@ -756,6 +765,73 @@ All files are stored in the directory `/stock_parts` and are generated with `gen
 | `diff_outdrive/diff_outdrive_T410R` | Diff outdrive (4 pieces): along +x, back face at x = 0, open end at x = 10.0 mm, slots along z |
 | `driveshaft/driveshaft_parameters.json` | All dimensions of these parts, each with its source and a note (JSON) |
 
+## Wishbones (stock parts, not part of the speedrun design)
+* **Description:** Models of the lower wishbones (suspension arms NHA402) of the Carten T410R with the inner hinge pins NHA423 3 x 42 mm. The manual (step 7 and parts list "Arms (F/R)") shows two different arms: 2 front arms and 2 rear arms. Each arm is used on the left and on the right side of its axle (the same part, turned by 180 degrees). The arms are stock parts: they are not part of the speedrun design and are not manufactured in this project. They are modelled for the completeness of the build: the assembly of the speedrun chassis contains them, so that the space beside the bulkheads can be checked.
+* **Status:** Not verified, work in progress. The manual has no dimensions. The length along the hinge pin and the diameter of the inner lugs follow from the pivot blocks and the lower bulkhead, the arm length is an estimate from the track width, all other dimensions are assumptions (see [measurements for the wishbones](#measurements-for-the-wishbones)).
+
+![Wishbones: plan views, views along the hinge pin and the letters of the measurements](../photos/cad_wishbones_drawing.png)
+
+### Design of the wishbones
+* Flat frame with a flat bottom face: two inner lugs on the inner hinge pin between the pivot blocks, an inner bar, two side rails, a floor with X-shaped ribs, a cross bar and two outer lugs for the outer hinge pin.
+* Front arm: long open loop between the cross bar and the outer lugs (C-hub NHA403). Rear arm: short U between the cross bar and the outer lugs (hub carrier NHA404).
+* Beside each inner lug a boss with a thread M4 for the droop screw NHA430 M4 x 10 mm (one of the two is used, depending on the side of the car).
+* On one side rail a block with holes M3 for the ball stud of the shock (set screw M3 x 8 mm with ball NBA210): front 3 holes, rear 2 holes. On the other side rail holes M3 for the ball stud of the sway bar drop link: front 2 holes, rear 1 hole (manual step 7, "Front L/R" and "Rear L/R"). The holes go through, so that the ball stud can be set from the side that faces the shock tower.
+* Not modelled: radii, draft angles, ribs below the floor, the pivot balls NBA211 at the ends of the hinge pins, the ball studs, the droop screws and the outer hinge pins.
+
+### Position and checks of the wishbones
+* The inner hinge pins run through the axes of the bores of the pivot blocks, 4.6 mm above the top face of the chassis plate (6.6 mm above its bottom face). Each arm is centred between the faces of its two pivot blocks.
+* End A (front arms): both pivot blocks are short blocks; the hinge pins are parallel to the axis of the car at x = ±20.7 mm.
+* End B (rear arms): the outer pivot block is the long block (bores at x = ±22.3 mm), the inner block is a short block (±20.7 mm). The hinge pins are turned by 2.33 degrees to the axis of the car; the outer ends of the arms point toward the middle of the car (toe-in of the rear wheels, `spec_cartent410r.yaml`: 2.5 degrees with the rear toe blocks).
+* The model is horizontal: inner and outer hinge pin at the same height. The ride height and the travel of the suspension are not modelled.
+
+Results of `generate_wishbones.py`:
+
+| Check | Result |
+|:---|:---|
+| Solids | Front arm and rear arm: one valid solid each, 50.0 x 33.0 x 10.0 mm |
+| Inner lugs and lower bulkhead | 0 mm³ overlap; 0.46 mm at End A (side face of the bulkhead at x = 17.24 mm, hinge pin at 20.7 mm), 1.57 mm at End B |
+| Inner lugs and pivot blocks | 0 mm³ overlap; 0.14 mm on each side at End A, 0.07 and 0.12 mm at End B (the arm is turned by 2.33 degrees to the faces of the blocks) |
+| Hinge pins in the bores of the pivot blocks | Play of the ends to the bottoms of the bores: 0.34 mm at End A, 0.45 mm at End B (pin 42 mm) |
+| Assembly | See [assembly file](#assembly-file) |
+
+### Measurements for the wishbones
+The letters are shown in the drawing. Current values in the model:
+
+| Letter | Measurement | Front arm | Rear arm | Source |
+|:---|:---|---:|---:|:---|
+| A | Length along the inner hinge pin over the outer faces of the inner lugs | 33.0 | 33.0 | Derived from the pivot blocks |
+| B | Length of one inner lug along the hinge pin | 5.0 | 5.0 | Assumption |
+| C | Outer diameter of the inner lugs | 6.0 | 6.0 | Derived from the lower bulkhead (at most 6.5) |
+| D | Axis of the inner hinge pin above the flat bottom face of the arm | 3.0 | 3.0 | Assumption |
+| E | Top of the side rails above the axis of the inner hinge pin | 2.5 | 2.5 | Assumption |
+| F | Width of the side rails | 4.0 | 4.0 | Assumption |
+| G | Thickness of the floor | 1.5 | 1.5 | Assumption |
+| H | Droop screw bosses: distance of the axis from the axis of the inner hinge pin | 6.5 | 6.5 | Assumption |
+| I | Droop screw bosses: distance of the axis from the middle of the arm | 12.5 | 12.5 | Assumption |
+| J | Inner hinge pin to outer hinge pin, axis to axis | 44.0 | 44.0 | Estimate from the track width 190 mm |
+| K | Diameter of the outer hinge pin | 3.0 | 3.0 | Assumption |
+| L | Outer diameter of the outer lugs | 6.0 | 6.0 | Assumption |
+| M | Length of one outer lug along the outer hinge pin | 4.5 | 4.5 | Assumption |
+| N | Height of the outer hinge pin above the inner hinge pin (arm on a flat surface) | 0 | 0 | Assumption |
+| O | Gap between the outer lugs | 12.0 | 12.0 | Assumption |
+| P | Inner hinge pin to the cross bar (start, end) | 22.0, 25.0 | 33.0, 36.0 | Assumption |
+| Q | Block of the shock ball stud: start, end, height of the top above the inner hinge pin | 30.0, 39.0, 7.0 | 27.0, 35.0, 7.0 | Assumption |
+| R | Holes of the shock ball stud (x, z) | (32.5, 4.5), (36.5, 4.5), (34.5, 1.0) | (29.0, 4.5), (33.0, 4.5) | Assumption |
+| S | Holes of the sway bar ball stud (x, z) | (17.0, -0.5), (21.0, -0.5) | (20.0, -0.5) | Assumption |
+
+* x: distance from the axis of the inner hinge pin toward the wheel; z: height above the axis of the inner hinge pin.
+* Measure J as the distance of the outer edges of the two hinge pins (or of the bores) minus one pin diameter.
+
+### Files of the wishbones
+All files are stored in the directory `/stock_parts/wishbone`. They are generated with `generate_wishbones.py` from `wishbone_parameters.json` (see [scripts](#scripts)). Part coordinates: x from the axis of the inner hinge pin toward the wheel, y along the hinge pin (y = 0 middle of the arm), z = 0 axis of the inner hinge pin.
+
+| File | Format | Content |
+|:---|:---|:---|
+| `wishbone_front_T410R.step`, `wishbone_rear_T410R.step` | STEP (AP214) | Solid models of the front arm and the rear arm |
+| `wishbone_front_T410R.stl`, `wishbone_rear_T410R.stl` | STL (binary) | Triangle meshes |
+| `hinge_pin_3x42_NHA423.step`, `hinge_pin_3x42_NHA423.stl` | STEP, STL | Inner hinge pin, along y, centred at y = 0 |
+| `wishbone_parameters.json` | JSON | All dimensions, each with its source, the letter of the measurement and a note |
+
 ## Scripts
 The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates (except `generate_chassis_templates.py`, which writes the templates of the chassis plate and the top brace), and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
 
@@ -774,7 +850,8 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_shock_towers.py` | Parameter files of the bulkheads and of the shock towers (option `--tower front`, `rear` or `all`) | All files of the speedrun front and rear shock tower, drawings `photos/cad_shock_tower_front_drawing.png` and `photos/cad_shock_tower_rear_drawing.png`, checks of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
 | `generate_pivot_blocks.py` | Parameter file of the pivot blocks, geometry data of the speedrun chassis plate, parameter files of the bulkheads | STEP and STL files of the stock pivot blocks (reference), drawing `photos/cad_pivot_blocks_drawing.png`, checks of the mounting holes and of the clearance to the bulkheads | cadquery, matplotlib |
 | `generate_driveshaft.py` | Parameter file of the driveshaft, parameter files of the bulkheads, STEP file of the speedrun chassis plate | STEP and STL files of the stock centre driveshaft, cup joint, rear pinion shaft, spur gear, bearing, motor mount with cap and diff outdrive, drawing `photos/cad_driveshaft_drawing.png`, checks of the play and of the fit | cadquery, matplotlib |
-| `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, of the shock towers, of the pivot blocks and of the driveshaft, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
+| `generate_wishbones.py` | Parameter file of the wishbones, parameter files of the pivot blocks and the bulkheads, geometry data and STEP file of the speedrun chassis plate | STEP and STL files of the stock front and rear wishbones and of the inner hinge pin, drawing `photos/cad_wishbones_drawing.png` with the letters of the measurements, checks of the clearance to the pivot blocks, the bulkheads and the chassis plate and of the play of the hinge pins | cadquery, matplotlib |
+| `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, of the shock towers, of the pivot blocks, of the driveshaft and of the wishbones, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file, geometry checks | cadquery |
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
 | `generate_bulkhead_upper.py` | Parameter files of the upper and the lower bulkhead | STEP and STL file of the upper part, test print STL file, assembly STEP file, interference check, geometry checks | cadquery |
@@ -825,6 +902,7 @@ python scripts/cad/generate_top_brace_speedrun.py
 python scripts/cad/generate_shock_towers.py
 python scripts/cad/generate_pivot_blocks.py
 python scripts/cad/generate_driveshaft.py
+python scripts/cad/generate_wishbones.py
 python scripts/cad/generate_speedrun_assembly.py
 ```
 
