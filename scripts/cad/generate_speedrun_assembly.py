@@ -13,7 +13,7 @@ Parts:
 * stock centre driveshaft with the fixed metal pins (not part of the speedrun design, modelled for
   the completeness of the build, not in the mass total)
 * picture only (simple bodies, not in the STEP file): cup joints, rear pinion shaft with the spur
-  gear and the bearing, motor mount, diff outdrives
+  gear and the bearing, motor mount with its cap, diff outdrives
 
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
@@ -66,7 +66,7 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "shaft": ("Stock centre driveshaft with fixed pins (not part of the speedrun design)", {}),
              "cup": ("Cup joints and diff outdrives (picture only)", {}),
              "drive": ("Rear pinion shaft with spur gear and bearing (picture only)", {}),
-             "mount": ("Motor mount (picture only)", {})}
+             "mount": ("Motor mount with cap (picture only)", {})}
 
 
 def build():

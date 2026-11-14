@@ -36,7 +36,7 @@ import numpy as np
 import cadquery as cq
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from generate_bulkhead_lower import box, bulkhead_lower, cyl_x, cyl_y, load_params  # noqa: E402
+from generate_bulkhead_lower import box, bulkhead_lower, cyl_x, cyl_y, cyl_z, load_params  # noqa: E402
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
@@ -118,8 +118,10 @@ def rear_drive_line(p, lay):
     yb = p["mount_y"] - b / 2
     bearing = cyl_y(dd / 2, yb, yb + b, 0, z).cut(cyl_y(d / 2, yb - 1, yb + b + 1, 0, z))
     mount = motor_mount_solid(p, lay)
+    cap = motor_mount_cap_solid(p, lay)
     return [("rear pinion shaft with flange", "drive", shaft.clean()), ("spur gear", "drive", spur.clean()),
-            ("bearing NBA298 in the motor mount", "drive", bearing.clean()), ("motor mount", "mount", mount.clean())]
+            ("bearing NBA298 in the motor mount", "drive", bearing.clean()), ("motor mount", "mount", mount.clean()),
+            ("cap of the motor mount", "mount", cap)]
 
 
 def motor_mount_solid(p, lay):
@@ -143,6 +145,20 @@ def motor_mount_solid(p, lay):
     hs = p["motor_screw_spacing"] / 2
     for zc, w in ((z, p["motor_shaft_slot_w"]), (z + hs, p["motor_screw_slot_w"]), (z - hs, p["motor_screw_slot_w"])):
         s = s.cut(long_hole(zc, w))
+    return s.clean()
+
+
+def motor_mount_cap_solid(p, lay):
+    """Cap of the motor mount (second part of NBA201, manual step 25), chassis plate coordinates,
+    picture only: block between the low part of the motor mount and the top brace, with a
+    semicircular notch along y in its top face and two through holes for the screws M3x18 from the
+    top brace into the motor mount."""
+    m0, m1 = lay["mount"]
+    z0 = p["mount_low_top"]
+    z1, w = z0 + p["cap_h"], p["cap_w"] / 2
+    s = box(-w, w, m0, m1, z0, z1).cut(cyl_y(p["cap_notch_r"], m0 - 1, m1 + 1, 0, z1))
+    for x, y in p["cap_screws"]:
+        s = s.cut(cyl_z(p["cap_hole_d"] / 2, z0 - 1, z1 + 1, x, y))
     return s.clean()
 
 
@@ -273,6 +289,8 @@ def drawing(path, p, lay, items):
         if sign > 0:
             m0, m1 = lay["mount"]
             ax2.text(m1 + 0.8, 7.0, "motor\nmount", ha="left", va="center", fontsize=7.5)
+            ax2.text(p["mount_y"], p["mount_low_top"] + (p["cap_h"] - p["cap_notch_r"]) / 2, "cap", ha="center",
+                     va="center", fontsize=7)
             ax2.text(sum(lay["spur"]) / 2, z + lay["spur_od"] / 2 - 4, "spur\ngear", ha="center", fontsize=7.5)
             ax2.text(p["mount_y"], z - 4.2, "bearing", ha="center", va="top", fontsize=7)
             dim(ax2, m1, bk, z + 5.0, f"{p['rear_cup_gap']:g}")
@@ -303,8 +321,10 @@ def drawing(path, p, lay, items):
     ax3.text(0, z + lay["spur_od"] / 2 + 0.6, f"spur gear {p['spur_teeth']:g}T (dashed)", ha="center", va="bottom",
              fontsize=7)
     ax3.text(0, 4.0, "bearing in\nthe U notch", ha="center", va="center", fontsize=7)
+    ax3.annotate("cap of the motor mount (2 x M3x18 from the top brace)", (-p["cap_w"] / 2 + 1, p["mount_low_top"] + 5),
+                 (-23, 48.5), fontsize=7, ha="left", va="center", arrowprops=dict(arrowstyle="-", lw=0.5))
     ax3.set_xlim(-24, 68)
-    ax3.set_ylim(-3, 48)
+    ax3.set_ylim(-3, 52)
     ax3.set_aspect("equal")
     ax3.grid(True, color="#eeeeee", lw=0.5)
     ax3.set_title("Motor mount from the motor side (section y = 62.48)", fontsize=10, loc="left")
@@ -350,7 +370,8 @@ def main():
         cq.Vector(0, c, PLATE_T + lp["axis_z"] + up["deck_h"]))
     items = [(plate, "#5b5f66"), (brace, "#9aa7b8")]
     items += [(b, "#8c96a3" if k % 2 == 0 else "#d9a35f") for k, b in enumerate(bulkheads)]
-    items += [(parts["motor mount"], "#c9ccd1"), (parts["rear pinion shaft with flange"], "#6b7078"),
+    items += [(parts["motor mount"], "#c9ccd1"), (parts["cap of the motor mount"], "#b3b8bf"),
+              (parts["rear pinion shaft with flange"], "#6b7078"),
               (parts["spur gear"], "#7d8590"), (parts["bearing NBA298 in the motor mount"], "#a0a6ad"),
               (parts["cup joint End B"], "#b8bcc2"), (parts["cup joint End A"], "#b8bcc2"),
               (parts["centre driveshaft"], "#c0392b")]
