@@ -232,8 +232,8 @@ def drawing(path, p, solids):
                     arrowprops=dict(arrowstyle="-", lw=0.6, color=color), bbox=dict(fc="white", ec="none", pad=0.4))
 
     fig = plt.figure(figsize=(16, 15.5))
-    fig.suptitle("Lower wishbones with hinge pin (own design, re-engineered from the T410R; completely unqualified, "
-                 "not checked by the owner)", fontsize=12, y=0.992)
+    fig.suptitle("Lower wishbones with hinge pin (own design, re-engineered from the T410R; measures qualified, "
+                 "no 3D print verification)", fontsize=12, y=0.992)
     half, h = p["inner_width"] / 2, p["rail_h"] / 2
     z0, z1 = p["shock_plate_z"]
     for row, kind in enumerate(KINDS):

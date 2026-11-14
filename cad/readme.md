@@ -96,8 +96,8 @@ Re-engineered parts (own design of the owner, re-engineered from the T410R, not 
 | [Differential (End B) with ring gear 42T, inner gears and bearings](#differentials) | 1 | `/parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Spool (End A) with ring gear 42T and bearings](#differentials) | 1 | `/parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Diff outdrives](#centre-driveshaft-and-drive-line) | 4 | `/parts/diff_outdrive` | $\color{red}\times$ Completely unqualified |
-| [Front wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{red}\times$ Completely unqualified |
-| [Rear wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{red}\times$ Completely unqualified |
+| [Front wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Rear wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Inner hinge pins of the wishbones (3x42)](#wishbones) | 4 | `/parts/wishbone` | $\color{red}\times$ Completely unqualified |
 | [Camber links: turnbuckle M3x37 with rod ends and ball studs](#camber-links) | 4 | `/parts/camber_link` | $\color{red}\times$ Completely unqualified |
 | [Front C-hubs with 10 degrees caster and steering knuckles](#running-gear) | 2 + 2 | `/running_gear/front_corner` | $\color{red}\times$ Completely unqualified |
@@ -844,7 +844,7 @@ All files are stored in the directory `/parts/diff` and are generated with `gene
 
 ### Wishbones
 * **Description:** Lower wishbones (suspension arms) of the speedrun chassis (own design, re-engineered from the T410R) with the inner hinge pins 3 x 42 mm. The manual (step 7 and parts list "Arms (F/R)") and the photos of the owner show two different arms: 2 front arms and 2 rear arms. There is no left or right arm (owner): each arm is used on both sides of its axle, flipped so that the shock plate on rail A faces the outer end of the car.
-* **Status:** $\color{red}\times$ Completely unqualified (front and rear wishbone, inner hinge pins): the model is not checked by the owner. The main dimensions are caliper measurements (measurement sheet). The positions of the shock plate and of the holes of the ball studs are estimates from the photos (see the measurement table below).
+* **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification (front and rear wishbone); inner hinge pins: $\color{red}\times$ Completely unqualified. The main dimensions are caliper measurements of the owner (measurement sheet). The positions of the shock plate and of the holes of the ball studs are estimates from the photos (see the measurement table below).
 
 ![Wishbones: plan views, views along the hinge pin and the letters of the measurements](../photos/cad_wishbones_drawing.png)
 
