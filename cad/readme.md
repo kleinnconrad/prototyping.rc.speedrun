@@ -110,7 +110,7 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 
 ### Assembly file
 * `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and the 5 stock parts (4 pivot blocks, centre driveshaft) in the coordinate system of the chassis plate (STEP AP214, one solid per part).
-* The assembly also contains the 4 stock pivot blocks of the wishbones (see [pivot blocks](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design)) and the stock centre driveshaft (see [centre driveshaft](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design)). These parts are not part of the speedrun design, are modelled for the completeness of the build and are not in the mass total. The picture also shows the cups on the pinions and the cups of the diff outdrives as simple bodies; they are not in the STEP file.
+* The assembly also contains the 4 stock pivot blocks of the wishbones (see [pivot blocks](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design)) and the stock centre driveshaft (see [centre driveshaft](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design)). These parts are not part of the speedrun design, are modelled for the completeness of the build and are not in the mass total. The picture also shows the cup joints, the rear pinion shaft with the spur gear and the bearing, the motor mount and the diff outdrives as simple bodies; they are not in the STEP file.
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [position and fit on the speedrun chassis](#position-and-fit-on-the-speedrun-chassis)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
 * The image shows an overall view, a side view, a top view and close-ups of both ends: bulkheads, shock tower and end of the top brace, seen from the outer end.
@@ -691,45 +691,50 @@ All files are stored in the directory `/stock_parts/pivot_block`. They are gener
 
 ## Centre driveshaft (stock parts, not part of the speedrun design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** Model of the centre driveshaft of the Carten T410R (NHA413) between the pinions of the two bulkheads. The shaft has a ball end at each end with a metal pin (NBA255, 2.0 x 7.6 mm), which is fixed on the shaft. The pins run in the slots of the cups on the pinion shafts, so the shaft turns with the cups (cup joint). The shaft is shorter than the distance between the bottoms of the two cups, so it can move a little back and forth. The shaft is a stock part: it is not part of the speedrun design and is not manufactured in this project. It is modelled for the completeness of the build. The cups on the pinions (NBA255) and the cups of the diff outdrives are shown as simple bodies in the assembly picture only; they are not modelled as CAD files.
-* **Status:** Not verified. Not part of the speedrun design (stock part). The position is derived from the models of this project, the length is provisional (see [open points of the centre driveshaft](#open-points-of-the-centre-driveshaft)). The cross pins are taken from the manual, the other dimensions of the cups and the shaft are typical values of 1:10 touring cars and are not measured on the car.
+* **Description:** Model of the centre driveshaft of the Carten T410R (NHA413) between the cup joints of the two pinion shafts. The shaft has a ball end at each end with a metal pin (NBA255, 2.0 x 7.6 mm), which is fixed on the shaft. The pins run in the slots of the cup joints, so the shaft turns with the cup joints. In the centred position, each pin has 0.5 mm to the closed end of its slot, so the shaft can move a little back and forth. At End A, the cup joint sits on the front pinion shaft beside the bulkhead. At End B (motor), the rear pinion shaft NBA205 runs from the pinion in the bulkhead through a flange with the spur gear and the bearing NBA298 in the motor mount NBA201 (manual steps 5, 10 and 12); the cup joint sits on its end beyond the motor mount. The shaft is a stock part: it is not part of the speedrun design and is not manufactured in this project. It is modelled for the completeness of the build. The cup joints, the rear pinion shaft with the spur gear and the bearing, the motor mount and the diff outdrives are shown as simple bodies in the assembly picture only; they are not modelled as CAD files.
+* **Status:** Not verified. Not part of the speedrun design (stock part). The cup joints are measured by the owner, the positions of the motor mount and the spur gear are derived from the chassis plate, the thicknesses of the motor mount, the spur gear and the flange and the gaps are typical values (see [open points of the centre driveshaft](#open-points-of-the-centre-driveshaft)).
 
-![Centre driveshaft with the cup joints](../photos/cad_driveshaft_drawing.png)
+![Centre driveshaft with the drive line](../photos/cad_driveshaft_drawing.png)
 
 ### Dimensions of the centre driveshaft
+Positions y along the car on the chassis plate (End B at y = 0).
+
 | Dimension | Value | Source |
 |:---|:---|:---|
 | Pinion axis | x = 0, 19.2 mm above the bottom face of the chassis plate (2.0 + 17.2) | Lower bulkhead (`axis_z`), chassis plate |
-| End faces of the pinion housings | y = 49.43 mm (End B) and 259.46 mm (End A), 210.03 mm apart | Lower bulkhead (pinion seat 18.65 + 9.25 = 27.9 mm), positions of the bulkheads on the chassis plate |
-| Cups on the pinions (picture only) | 9.0 mm outer diameter, 9.0 mm long, 0.5 mm from the end face of the pinion housing; bore 5.6 x 6.0 mm, 2 slots 2.1 mm wide | Typical values |
-| Bottoms of the cups | 3.5 mm beyond the end faces of the pinion housings, 203.03 mm apart | Derived |
-| Shaft | 5.0 mm, ball ends with a radius of 2.5 mm | Typical values |
-| Metal pins | 2.0 x 7.6 mm (NBA255), fixed on the shaft at the centres of the ball ends, part of the model of the shaft; they run in the slots of the cups | Manual (step 5) |
-| Cups of the diff outdrives (picture only) | 12.0 mm outer diameter, 10.0 mm long, 0.3 mm beyond the side faces of the bulkheads on the diff axes, bore 7.0 x 7.0 mm | Typical values |
-| Length of the shaft | 202.03 mm (203.03 mm minus the axial play), provisional | Derived |
-| Axial play | 1.0 mm in total, 0.5 mm at each end in the centred position | Owner (a little play), value chosen |
+| End faces of the pinion housings | y = 49.43 mm (End B) and 259.46 mm (End A) | Lower bulkhead (pinion seat 18.65 + 9.25 = 27.9 mm), positions of the bulkheads |
+| Cup joints NBA255 (picture only) | 9.7 mm outer and 6.33 mm inner diameter, 18.3 mm long, 2 slots 7.7 mm long from the open end (2.1 mm wide); bore 10.2 mm deep | Owner (bore depth: slot + 2.5 mm, estimate) |
+| Cup joint End A | From y = 258.96 to 240.66 mm (0.5 mm from the end face of the pinion housing) | Typical value (gap) |
+| Spur gear (picture only) | 68T 48DP, 37.04 mm outer diameter, 4.0 mm thick, y = 51.63 to 55.63 mm, in the slot of the chassis plate below the pinion axis (y = 50.28 to 56.97 mm); flange of the rear pinion shaft 16 x 2 mm on the bulkhead side | Owner (68T 48DP), chassis plate (position), typical values (thicknesses) |
+| Motor mount NBA201 (picture only) | Plate 5 mm thick, y = 59.98 to 64.98 mm, on the holes H09 and H10 (y = 62.48 mm), bearing NBA298 5 x 10 x 4 mm at the pinion axis; the motor window starts at y = 65.63 mm | Chassis plate (position), manual (bearing), typical value (thickness) |
+| Cup joint End B | From y = 65.48 to 83.78 mm (0.5 mm beyond the motor mount, on the end of the rear pinion shaft) | Typical value (gap) |
+| Shaft | 5.0 mm, ball ends with a radius of 2.5 mm (radial clearance 0.665 mm in the cup joints) | Typical value |
+| Metal pins | 2.0 x 7.6 mm (NBA255), fixed on the shaft at the centres of the ball ends, part of the model of the shaft | Manual (step 5) |
+| Pins in the centred position | y = 77.58 mm and 246.86 mm, 169.28 mm apart; 0.5 mm to the closed ends of the slots (y = 76.08 and 248.36 mm) | Derived |
+| Length of the shaft | 174.28 mm (distance of the pins plus 2 x 2.5 mm) | Derived |
+| Axial play | 1.0 mm in total, 0.5 mm at each pin to the closed end of its slot | Owner (a little play), value chosen |
+| Diff outdrives (picture only) | 12.0 mm outer diameter, 10.0 mm long, 0.3 mm beyond the side faces of the bulkheads on the diff axes, bore 9.6 x 8.0 mm (wall 1.2 mm), 2 slots 2.1 x 7.0 mm for the holding pin of the dogbones | Typical values |
 
 ### Checks of the centre driveshaft
 Results of `generate_driveshaft.py`:
 
 | Check | Result |
 |:---|:---|
-| Shaft in the cups | 0 mm³ overlap; radial clearance of the ball ends 0.30 mm, cross pins 0.05 mm per side in the slots, pin ends 0.70 mm inside the cups |
-| Shaft, cups and diff outdrives with the bulkheads and the chassis plate | 0 mm³ overlap |
+| Shaft in the cup joints | 0 mm³ overlap; pins 0.05 mm per side in the slots, pin ends 1.05 mm inside the cup joints |
+| Ends of the shaft | 1.50 mm to the bottoms of the bores (space for the O-rings) |
+| Shaft, cup joints, rear drive line, motor mount and diff outdrives with the bulkheads, the chassis plate and the top brace | 0 mm³ overlap; the spur gear runs through the slot of the chassis plate and below the obround of the top brace |
 
-* Not modelled: the pinion shafts between the bearings and the cups, the spur gear with its mount and the bearing holders on the centre shaft, the O-rings or foam pads in the cups (see `specs/mechanics/carten_t410r/drivetrain/spec_driveshaft_and_joints.yaml`).
+* Not modelled: the motor, the front pinion shaft between the bearing and the cup joint, the O-rings NBA255 5.8 x 9.6 x 1.9 mm (see `specs/mechanics/carten_t410r/drivetrain/spec_driveshaft_and_joints.yaml`).
 
 ### Open points of the centre driveshaft
-* Length: the manual (step 12, parts list) and other sources do not give the length of NHA413. It is to be measured on the car.
-* End B: according to the manual (step 5), the spur gear (hub NBA205, spur gear NBA252) and a third bearing NBA298 (5x10x4) sit on the rear pinion shaft between the pinion housing and the cup. The cup at End B is therefore further from the bulkhead than modelled, and the real shaft is shorter. Required measurement: the distance from the end face of the rear pinion housing to the bottom of the rear cup, or the length of the shaft.
-* Cups on the pinions and diff outdrives: dimensions not measured (typical values, picture only); the O-ring NBA255 5.8 x 9.6 x 1.9 mm in the cup is not modelled.
+* Not measured: thicknesses of the motor mount (5.0 mm), the spur gear (4.0 mm) and the flange (2.0 mm), the gaps between the motor mount or the pinion housing and the cup joints (0.5 mm), depth of the bore of the cup joints. The length of the shaft follows from these values (174.28 mm); it is to be checked against the real NHA413.
 
 ### Files of the centre driveshaft
 All files are stored in the directory `/stock_parts/driveshaft`. They are generated with `generate_driveshaft.py` (see [scripts](#scripts)).
 
 | File | Format | Use |
 |:---|:---|:---|
-| `driveshaft_T410R.step`, `driveshaft_T410R.stl` | STEP (AP214), STL (binary) | Centre driveshaft with the fixed metal pins, along y from 0 to 202.03 mm (provisional length), axis at x = 0, z = 0, pins along x |
+| `driveshaft_T410R.step`, `driveshaft_T410R.stl` | STEP (AP214), STL (binary) | Centre driveshaft with the fixed metal pins, along y from 0 to 174.28 mm, axis at x = 0, z = 0, pins along x |
 | `driveshaft_parameters.json` | JSON | All dimensions, each with its source and a note |
 
 ## Scripts
