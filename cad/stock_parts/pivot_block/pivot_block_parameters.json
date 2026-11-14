@@ -1,5 +1,5 @@
 {
-  "part": "Pivot blocks of the Carten T410R: holders of the hinge pins of the wishbones (suspension arms). Stock parts, not part of the speedrun design. Modelled for the completeness of the build (assembly of the speedrun chassis).",
+  "part": "Pivot blocks of the Carten T410R: holders of the hinge pins of the wishbones (suspension arms). Stock parts, not part of the speedrun design, not verified, work in progress. Modelled for the completeness of the build (assembly of the speedrun chassis).",
   "units": "mm",
   "coordinate_system": "Block coordinates: x along the block (across the car, x = 0 centre of the block), y across the block (along the car, y = 0 centre of the width), z = 0 bottom face (contact face on the chassis plate). The hinge pin bores run along y, the mounting holes along z.",
   "design": "Flat block with a round lobe at each end around the blind bore of the hinge pin, a shoulder beside each lobe with the mounting hole and a lower bar in the middle. Front view (along y): lobes with the radius lobe_r around the bores, shoulders shoulder_h high, bar bar_h high, flat bottom face. The small tabs on top of the shoulders and the inserts in the bores are not modelled.",

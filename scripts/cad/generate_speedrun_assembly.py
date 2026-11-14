@@ -12,8 +12,8 @@ Parts:
   H07/H08, H26/H27 and H32/H33
 * stock centre driveshaft with the fixed metal pins (not part of the speedrun design, modelled for
   the completeness of the build, not in the mass total)
-* picture only (simple bodies, not in the STEP file): cups on the pinions and cups of the diff
-  outdrives
+* stock cup joints, rear pinion shaft with the spur gear and the bearing, motor mount with its cap
+  and diff outdrives (not part of the speedrun design, not in the mass total)
 
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
@@ -52,8 +52,9 @@ OUT_STEP = "cad/assembly/speedrun_chassis_T410R.step"
 OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3),
           "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
-          "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77)}
-PICTURE_ONLY = {"cup"}                 # simple bodies for the picture, not in the STEP file
+          "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77),
+          "drive": (0.45, 0.47, 0.5), "mount": (0.82, 0.84, 0.87)}
+PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
              "lower": ("Lower bulkhead (2 pieces)", {"7075": 2.81}),
@@ -61,9 +62,11 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "brace": ("Speedrun top brace", {"carbon": 1.6, "7075": 2.81}),
              "tower_front": ("Speedrun front shock tower", {"carbon": 1.6, "7075": 2.81}),
              "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81}),
-             "pivot": ("Stock pivot blocks (4 pieces, not part of the speedrun design)", {}),     # no mass
-             "shaft": ("Stock centre driveshaft with fixed metal pins (not part of the speedrun design)", {}),
-             "cup": ("Cup joints on the pinions and diff outdrives (picture only)", {})}
+             "pivot": ("Stock pivot blocks (4 pieces)", {}),     # no mass
+             "shaft": ("Stock centre driveshaft with fixed pins", {}),
+             "cup": ("Stock cup joints and diff outdrives", {}),
+             "drive": ("Stock rear pinion shaft, spur gear and bearing", {}),
+             "mount": ("Stock motor mount with cap", {})}
 
 
 def build():
@@ -95,8 +98,8 @@ def build():
     # design, modelled for the completeness of the build)
     for name, _, s, _ in blocks_in_plate():
         parts.append((f"stock pivot block {name}", "pivot", s))
-    # stock centre driveshaft with the fixed metal pins (not part of the speedrun design); cups on the
-    # pinions and cups of the diff outdrives as simple bodies for the picture only
+    # stock centre driveshaft with the fixed metal pins, cup joints, rear drive line, motor mount with
+    # cap and diff outdrives (not part of the speedrun design)
     for name, kind, s in driveshaft_in_plate():
         parts.append((f"stock {name}" if kind == "shaft" else name, kind, s))
     return parts
@@ -171,8 +174,10 @@ def image(parts, path):
         ax.axis("off")
         ax.set_title(f"{end} on the bulkheads, view from the outer end", fontsize=10, loc="left")
     handles = [Patch(color=np.clip(np.asarray(COLORS[k]) + 0.08, 0, 1), label=MATERIALS[k][0]) for k in COLORS]
-    fig.legend(handles=handles, loc="upper left", bbox_to_anchor=(0.01, top + 0.93 * (1 - top)), fontsize=9,
-               frameon=False)
+    fig.legend(handles=handles, loc="upper left", bbox_to_anchor=(0.01, top + 0.95 * (1 - top)), fontsize=9,
+               frameon=False, ncol=2, columnspacing=1.5)
+    fig.text(0.013, top + 0.95 * (1 - top) - 0.098, "Stock parts: not part of the speedrun design, not verified, work in progress, "
+             "not in the mass total", fontsize=8.5, color="#4a4f57")
     fig.savefig(path, dpi=100)
     plt.close(fig)
 
