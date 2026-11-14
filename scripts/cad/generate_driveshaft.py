@@ -200,16 +200,25 @@ def rear_drive_line(p, lay):
 
 def pinion_solid(p, lay, y_front, y_shaft):
     """Pinion NBA207 (chassis plate coordinates): simplified straight bevel gear (tooth profile with
-    straight flanks, tapered by the cone angle), back face against the inner bearing of the bulkhead,
+    straight flanks, scaled toward the apex of the pitch cone), back face against the inner bearing of the bulkhead,
     bore with the press fit shape of the shaft, countersink and hole for the screw M3x6 (manual step 5)."""
     z = lay["z"]
     teeth, od, root_d, plen, cone = p["pinion"]
-    pts, n = [], int(teeth)
-    for k in range(n):
-        a, pitch = 2 * np.pi * k / n, 2 * np.pi / n
-        for r, da in ((root_d / 2, -0.32), (od / 2, -0.13), (od / 2, 0.13), (root_d / 2, 0.32)):
-            pts.append((r * np.cos(a + da * pitch), r * np.sin(a + da * pitch)))
-    g = cq.Workplane("XY").polyline(pts).close().extrude(plen, taper=cone).val()
+    n = int(teeth)
+    # straight bevel gear: the tooth profile shrinks toward the apex of the pitch cone (teeth converge to the apex)
+    m = od / (n + 2 * np.cos(np.radians(cone)))             # module at the back end
+    apex = (m * n / 2) / np.tan(np.radians(cone))           # back face to the apex of the pitch cone
+    scale = (apex - plen) / apex                             # size of the front profile
+
+    def profile(f):
+        pts = []
+        for k in range(n):
+            a, pitch = 2 * np.pi * k / n, 2 * np.pi / n
+            for r, da in ((root_d / 2, -0.30), (od / 2, -0.11), (od / 2, 0.11), (root_d / 2, 0.30)):
+                pts.append((f * r * np.cos(a + da * pitch), f * r * np.sin(a + da * pitch)))
+        return pts
+    g = (cq.Workplane("XY").polyline(profile(1.0)).close().workplane(offset=plen).polyline(profile(scale)).close()
+         .loft(ruled=True).val())
     g = g.rotate(cq.Vector(0, 0, 0), cq.Vector(1, 0, 0), 90).translate(cq.Vector(0, y_front + plen, z))   # back face at the seat
     rs, f = p["pinion_shaft_d"] / 2, p["press_fit_flats"] / 2
     bore = cyl_y(rs, y_shaft, y_front + plen + 1, 0, z).intersect(box(-rs - 1, rs + 1, y_shaft - 1, y_front + plen + 2,
