@@ -56,7 +56,8 @@ OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3),
           "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
           "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77),
-          "drive": (0.45, 0.47, 0.5), "mount": (0.6, 0.63, 0.68), "arm": (0.4, 0.34, 0.52)}
+          "drive": (0.45, 0.47, 0.5), "mount": (0.6, 0.63, 0.68), "arm": (0.4, 0.34, 0.52),
+          "diff": (0.16, 0.16, 0.18)}
 PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
@@ -68,9 +69,10 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "pivot": ("Stock pivot blocks (4 pieces)", {}),     # no mass
              "shaft": ("Stock centre driveshaft with fixed pins", {}),
              "cup": ("Stock cup joints, diff outdrives, hinge pins", {}),
-             "drive": ("Stock rear pinion shaft, spur gear and bearing", {}),
+             "drive": ("Stock pinion shafts, pinions, spur gear, bearings", {}),
              "mount": ("Stock motor mount with cap", {}),
-             "arm": ("Stock wishbones (4 pieces)", {})}
+             "arm": ("Stock wishbones (4 pieces)", {}),
+             "diff": ("Stock differential case and spool (ring gear grey)", {})}
 
 
 def build():
@@ -188,10 +190,41 @@ def image(parts, path):
         ax.set_aspect("equal")
         ax.axis("off")
         ax.set_title(title, fontsize=10, loc="left")
+    # picture in picture: section through the differential at End B (stock part) with the pinion
+    yd = BULKHEAD_Y["rear"] + load_params(LOWER)["diff_axis_y"]
+    keep = cq.Solid.makeBox(80, 40, 80, cq.Vector(-40, yd - 40, -20))        # half on the side away from the pinion
+    tris_d, cols_d = [], []
+    inset_cols = (("bearing", (0.45, 0.65, 0.85)), ("shim", (0.85, 0.8, 0.55)), ("pin", (0.8, 0.8, 0.82)),
+                  ("outdrive", (0.3, 0.3, 0.33)), ("side gear", (0.62, 0.63, 0.66)), ("spider gear", (0.62, 0.63, 0.66)),
+                  ("ring gear", (0.66, 0.6, 0.5)), ("case", (0.17, 0.17, 0.19)))      # first match counts
+    for name, key, s in parts:
+        if not ("End B" in name and (name.startswith("diff") or name.startswith("ring gear"))):
+            continue
+        s = s.intersect(keep)
+        if s.Volume() < 1e-6:
+            continue
+        t = subdivide(tess(s, 0.015), 0.7)
+        tris_d.append(t)
+        col = next((c for w, c in inset_cols if w in name), (0.62, 0.63, 0.66))   # inner gears: steel
+        cols_d.append(np.tile(col, (len(t), 1)))
+    ax = fig.add_axes([0.4, 0.53, 0.255, 0.175])
+    lo, hi = draw_mesh(ax, np.concatenate(tris_d), iso_basis(75, 20), tri_colors=np.concatenate(cols_d), depth_cue=0.2)
+    ax.set_xlim(lo[0] - 2, hi[0] + 2)
+    ax.set_ylim(lo[1] - 2, hi[1] + 9)
+    ax.set_aspect("equal", adjustable="datalim")
+    ax.set_facecolor("white")
+    ax.set_xticks([])
+    ax.set_yticks([])
+    for sp in ax.spines.values():
+        sp.set_color("#6b7078")
+        sp.set_linewidth(0.8)
+    ax.text(0.02, 0.97, "Differential End B in section (stock part): ring gear 42T,\nside gears 14T, spider gears 9T on the "
+            "cross pin,\nshims (yellow), bearings (blue), outdrives. End A: spool", transform=ax.transAxes, va="top",
+            fontsize=7.5)
     handles = [Patch(color=np.clip(np.asarray(COLORS[k]) + 0.08, 0, 1), label=MATERIALS[k][0]) for k in COLORS]
     fig.legend(handles=handles, loc="upper left", bbox_to_anchor=(0.01, top + 0.95 * (1 - top)), fontsize=9,
                frameon=False, ncol=2, columnspacing=1.5)
-    fig.text(0.013, top + 0.95 * (1 - top) - 0.098, "Stock parts: not part of the speedrun design, not verified, work in progress, "
+    fig.text(0.013, top + 0.95 * (1 - top) - 0.122, "Stock parts: not part of the speedrun design, not verified, work in progress, "
              "not in the mass total", fontsize=8.5, color="#4a4f57")
     fig.savefig(path, dpi=100)
     plt.close(fig)
