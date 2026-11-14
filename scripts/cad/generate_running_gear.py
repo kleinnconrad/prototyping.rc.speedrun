@@ -16,7 +16,7 @@ Usage (from the root directory of the repository):
     python scripts/cad/generate_running_gear.py
 
 The script writes the STEP and STL files of the own parts to manufacture (one file per part, right
-side, in the assembly position: chassis plate coordinates), the drawing
+side, in the assembly position: chassis plate coordinates; one folder per group, see FOLDERS), the drawing
 photos/cad_running_gear_drawing.png, the free steering angle of the front knuckles and checks all
 new parts against each other and against the parts of the assembly (overlap).
 
@@ -224,7 +224,7 @@ def front_corner(p, d, c):
     kd = R[:, 2]
     c["kd"], c["R_k"], c["J"] = kd, R, J
     K = lambda s: place(s, R, J)                                          # kingpin frame -> chassis
-    bx0, bx1, r_pass, gap, t_up, z_seat = p["front_c_hub"]
+    bx0, bx1, r_pass, gap, t_up, z_seat, relief = p["front_c_hub"]
     w_low, w_back, w_arm = p["front_c_hub_width"]
     kz0, kz1, r_piv, r_hous, w_web = p["knuckle"]
     xb = bx1 - J[0]                                                       # inner face of the back plate (local)
@@ -237,7 +237,7 @@ def front_corner(p, d, c):
                K(box(bx0 - J[0], 3.5, -w_arm / 2, w_arm / 2, kz1 + gap, kz1 + gap + t_up)))
     hub = hub.cut(K(box(xb, 30, -30, 30, kz0 - gap, kz1 + gap)))                         # space of the knuckle
     hub = hub.cut(box(bx0 - 1, J[0] - 3.0, yc - 10, yc + 10, z_seat, z_seat + 10))        # seat of the camber stud
-    hub = hub.cut(K(box(xb - 10, xb + 0.1, -12, 0.5, kz0 - gap, -5.5)))                  # clearance of the steering arm
+    hub = hub.cut(K(box(xb - relief, xb + 0.1, -12, 0.5, kz0 - gap, -5.5)))            # relief of the steering arm (pocket)
     hub = hub.cut(cyl_y(1.5, yc - 8, yc + 8, O[0], O[2]))                                  # outer hinge pin
     hub = hub.cut(cyl_x(r_pass, bx0 - 1, bx1 + 1, yc, J[2]))                              # passage of the CVD
     hub = hub.cut(K(cyl_z(1.52, kz1 + gap - 1.0, kz1 + gap + t_up + 2.0, 0, 0)))               # kingpin, top (through)
@@ -735,19 +735,34 @@ MADE = {"upright", "cvd", "steer", "swaybar"}                  # own parts to ma
 MADE_NAMES = ("axle with joint cup", "hex hub 12", "sway bar ball end", "spacers of the bridge")
 
 
+FOLDERS = {"front_corner": ("c_hub_end_a", "steering_knuckle_end_a", "axle_with_joint_cup_end_a", "hex_hub_12_end_a"),
+           "rear_corner": ("hub_carrier_end_b", "axle_with_joint_cup_end_b", "hex_hub_12_end_b"),
+           "cvd_drive_shafts": ("cvd_drive_shaft_end_a", "cvd_drive_shaft_end_b"),
+           "steering": ("steering_post", "bellcrank_right", "bellcrank_left", "steering_bridge", "spacers_of_the_bridge",
+                        "servo_horn_aluminium_clamp"),
+           "servo_mount": ("servo_mount_top_plate", "servo_mount_fixed_post", "servo_mount_floating_post"),
+           "sway_bars": ("sway_bar_end_a", "sway_bar_end_b", "sway_bar_holder_end_a", "sway_bar_holder_end_b",
+                         "sway_bar_ball_end_end_a", "sway_bar_ball_end_end_b")}
+
+
 def write_files(parts):
-    """STEP and STL of the own parts of the right side (assembly position, chassis plate coordinates)."""
+    """STEP and STL of the own parts of the right side (assembly position, chassis plate coordinates), one folder per
+    group of parts (FOLDERS)."""
     import re
-    os.makedirs(OUT, exist_ok=True)
+    folder = {stem: name for name, stems_ in FOLDERS.items() for stem in stems_}
     stems = []
     for name, kind, s in parts:
         if (kind not in MADE and not name.startswith(MADE_NAMES)) or (name.endswith(" left") and "bellcrank" not in name):
             continue
         base = name[:-6] if name.endswith(" right") and "bellcrank" not in name else name
         stem = re.sub(r"[^a-z0-9]+", "_", base.lower().replace("1.4", "")).strip("_")
-        cq.exporters.export(cq.Workplane().add(s), f"{OUT}/{stem}.step")
-        cq.exporters.export(cq.Workplane().add(s), f"{OUT}/{stem}.stl", tolerance=0.01, angularTolerance=0.1)
-        stems.append(stem)
+        if stem not in folder:
+            raise KeyError(f"no folder for the part file {stem} (FOLDERS)")
+        path = f"{OUT}/{folder[stem]}/{stem}"
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        cq.exporters.export(cq.Workplane().add(s), f"{path}.step")
+        cq.exporters.export(cq.Workplane().add(s), f"{path}.stl", tolerance=0.01, angularTolerance=0.1)
+        stems.append(f"{folder[stem]}/{stem}")
     return stems
 
 
