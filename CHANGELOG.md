@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.7.0](https://github.com/kleinnconrad/prototyping.rc.speedrun/compare/v1.6.0...v1.7.0) (2026-11-14)
+
+
+### Features
+
+* add the cap of the motor mount between the motor mount and the top brace ([2ae77fc](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/2ae77fc16f9014ad5948ab477bbf6c1f2add201f))
+* add the stock centre driveshaft (NHA413) with the cup joints as STL and STEP ([44f8460](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/44f846087c2510697e9adfd938e16af68fcdb899))
+* add the stock pivot blocks of the wishbones as reference parts ([4e921c1](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/4e921c1514ae49c3286a28b7077efb13bc66b9f6))
+* CAD files of the stock drive line parts, motor mount and diff outdrives ([800c04e](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/800c04e810d5f4a773028f6f1271b2d17ba0063d))
+* cross holes for metal pins in the centre driveshaft, cup joints and diff outdrives in the assembly picture ([abbdecc](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/abbdecc24e4b67a5551220e1c13298eccd15bdf8))
+* motor mount NBA201 for 540 motors with long holes, 72T spur gear, motor mount 6.2 mm ([230c9b1](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/230c9b19a1caf0c7b84d3782450fef5ea7d23717))
+* rear drive line with spur gear and motor mount, measured cup joints, length of the centre driveshaft ([b12c12b](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/b12c12b24fdb97ac83861100ae37d0d1b47b1b2b))
+
+
+### Bug Fixes
+
+* model the hinge pin bores of the pivot blocks as blind holes 4.7 mm deep ([9b5edce](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/9b5edce3a5eeafbd7128a6840724784aaae6fc19))
+* model the metal pins as fixed on the centre driveshaft ([c1555c6](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/c1555c66d3a7540d00d9a34aed808fc5e0e0e557))
+* turn the pivot blocks so that the hinge pin bores open toward the bulkhead ([a6f28e0](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/a6f28e0854ed5bfa4aed07afada7b0f2a1afd4e2))
+
 ## [1.6.0](https://github.com/kleinnconrad/prototyping.rc.speedrun/compare/v1.5.1...v1.6.0) (2026-11-13)
 
 
