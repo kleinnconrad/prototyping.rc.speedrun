@@ -62,11 +62,11 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "brace": ("Speedrun top brace", {"carbon": 1.6, "7075": 2.81}),
              "tower_front": ("Speedrun front shock tower", {"carbon": 1.6, "7075": 2.81}),
              "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81}),
-             "pivot": ("Stock pivot blocks (4 pieces, not part of the speedrun design)", {}),     # no mass
-             "shaft": ("Stock centre driveshaft with fixed pins (not part of the speedrun design)", {}),
-             "cup": ("Cup joints and diff outdrives (picture only)", {}),
-             "drive": ("Rear pinion shaft with spur gear and bearing (picture only)", {}),
-             "mount": ("Motor mount with cap (picture only)", {})}
+             "pivot": ("Stock pivot blocks (4 pieces)", {}),     # no mass
+             "shaft": ("Stock centre driveshaft with fixed pins", {}),
+             "cup": ("Stock cup joints and diff outdrives (picture only)", {}),
+             "drive": ("Stock rear pinion shaft, spur gear, bearing (picture only)", {}),
+             "mount": ("Stock motor mount with cap (picture only)", {})}
 
 
 def build():
@@ -176,6 +176,8 @@ def image(parts, path):
     handles = [Patch(color=np.clip(np.asarray(COLORS[k]) + 0.08, 0, 1), label=MATERIALS[k][0]) for k in COLORS]
     fig.legend(handles=handles, loc="upper left", bbox_to_anchor=(0.01, top + 0.95 * (1 - top)), fontsize=9,
                frameon=False, ncol=2, columnspacing=1.5)
+    fig.text(0.013, top + 0.95 * (1 - top) - 0.098, "Stock parts: not part of the speedrun design, not verified, not in the "
+             "mass total", fontsize=8.5, color="#4a4f57")
     fig.savefig(path, dpi=100)
     plt.close(fig)
 
