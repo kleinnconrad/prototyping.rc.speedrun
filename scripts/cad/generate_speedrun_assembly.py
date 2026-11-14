@@ -12,8 +12,8 @@ Parts:
   H07/H08, H26/H27 and H32/H33
 * stock centre driveshaft with the fixed metal pins (not part of the speedrun design, modelled for
   the completeness of the build, not in the mass total)
-* picture only (simple bodies, not in the STEP file): cup joints, rear pinion shaft with the spur
-  gear and the bearing, motor mount with its cap, diff outdrives
+* stock cup joints, rear pinion shaft with the spur gear and the bearing, motor mount with its cap
+  and diff outdrives (not part of the speedrun design, not in the mass total)
 
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
@@ -54,7 +54,7 @@ COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8
           "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
           "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77),
           "drive": (0.45, 0.47, 0.5), "mount": (0.82, 0.84, 0.87)}
-PICTURE_ONLY = {"cup", "drive", "mount"}   # simple bodies for the picture, not in the STEP file
+PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
              "lower": ("Lower bulkhead (2 pieces)", {"7075": 2.81}),
@@ -64,9 +64,9 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81}),
              "pivot": ("Stock pivot blocks (4 pieces)", {}),     # no mass
              "shaft": ("Stock centre driveshaft with fixed pins", {}),
-             "cup": ("Stock cup joints and diff outdrives (picture only)", {}),
-             "drive": ("Stock rear pinion shaft, spur gear, bearing (picture only)", {}),
-             "mount": ("Stock motor mount with cap (picture only)", {})}
+             "cup": ("Stock cup joints and diff outdrives", {}),
+             "drive": ("Stock rear pinion shaft, spur gear and bearing", {}),
+             "mount": ("Stock motor mount with cap", {})}
 
 
 def build():
@@ -98,8 +98,8 @@ def build():
     # design, modelled for the completeness of the build)
     for name, _, s, _ in blocks_in_plate():
         parts.append((f"stock pivot block {name}", "pivot", s))
-    # stock centre driveshaft with the fixed metal pins (not part of the speedrun design); cup joints,
-    # rear drive line, motor mount and diff outdrives as simple bodies for the picture only
+    # stock centre driveshaft with the fixed metal pins, cup joints, rear drive line, motor mount with
+    # cap and diff outdrives (not part of the speedrun design)
     for name, kind, s in driveshaft_in_plate():
         parts.append((f"stock {name}" if kind == "shaft" else name, kind, s))
     return parts

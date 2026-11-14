@@ -51,7 +51,7 @@
   * [Dimensions of the centre driveshaft](#dimensions-of-the-centre-driveshaft)
   * [Checks of the centre driveshaft](#checks-of-the-centre-driveshaft)
   * [Open points of the centre driveshaft](#open-points-of-the-centre-driveshaft)
-  * [Files of the centre driveshaft](#files-of-the-centre-driveshaft)
+  * [Files of the centre driveshaft and the drive line](#files-of-the-centre-driveshaft-and-the-drive-line)
 * [Scripts](#scripts)
   * [Regenerating the files](#regenerating-the-files)
   * [DXF generation](#dxf-generation)
@@ -75,8 +75,11 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
 * **`/shock_tower`**: New design of the front and the rear shock tower that match the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
 * **`/stock_parts`**: Models of stock parts of the Carten T410R. They are not part of the speedrun design and are modelled for the completeness of the build.
   * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file).
-  * **`/driveshaft`**: Centre driveshaft with the fixed metal pins of the cup joints (STEP, STL, parameter file).
-* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the stock pivot blocks and the stock centre driveshaft (STEP).
+  * **`/driveshaft`**: Centre driveshaft with the fixed metal pins and the cup joints (STEP, STL, parameter file of all drive line parts).
+  * **`/rear_drive`**: Rear pinion shaft with flange, spur gear 72T and bearing 5x10x4 (STEP, STL).
+  * **`/motor_mount`**: Motor mount for 540 motors and its cap (STEP, STL).
+  * **`/diff_outdrive`**: Diff outdrive (STEP, STL).
+* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the stock parts: pivot blocks, centre driveshaft and drive line, motor mount, diff outdrives (STEP).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
@@ -103,18 +106,18 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 |:---|---:|:---|:---|
 | [Pivot blocks of the wishbones](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design) (long and short block) | 4 | `/stock_parts/pivot_block` | Not verified, work in progress |
 | [Centre driveshaft with fixed metal pins](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 1 | `/stock_parts/driveshaft` | Not verified, work in progress |
-| [Cup joints of the centre driveshaft (NBA255)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 2 | Assembly picture only (no CAD file) | Not verified, work in progress |
-| [Rear pinion shaft with spur gear 72T and bearing (NBA205, NBA252, NBA298)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 1 | Assembly picture only (no CAD file) | Not verified, work in progress |
-| [Motor mount with cap (NBA201)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 1 | Assembly picture only (no CAD file) | Not verified, work in progress |
-| [Diff outdrives](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 4 | Assembly picture only (no CAD file) | Not verified, work in progress |
+| [Cup joints of the centre driveshaft (NBA255)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 2 | `/stock_parts/driveshaft` | Not verified, work in progress |
+| [Rear pinion shaft with spur gear 72T and bearing (NBA205, NBA252, NBA298)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 1 | `/stock_parts/rear_drive` | Not verified, work in progress |
+| [Motor mount with cap (NBA201)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 1 | `/stock_parts/motor_mount` | Not verified, work in progress |
+| [Diff outdrives](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 4 | `/stock_parts/diff_outdrive` | Not verified, work in progress |
 
 * The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³). Screws, bearings and the other parts of the car are not included.
 * The bulkheads are the same parts at both ends. At End A, they are rotated by 180 degrees, so that both pinions point to the middle of the car.
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
 
 ### Assembly file
-* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and the 5 stock parts (4 pivot blocks, centre driveshaft) in the coordinate system of the chassis plate (STEP AP214, one solid per part).
-* The assembly also contains the 4 stock pivot blocks of the wishbones (see [pivot blocks](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design)) and the stock centre driveshaft (see [centre driveshaft](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design)). These parts are not part of the speedrun design, are modelled for the completeness of the build and are not in the mass total. The picture also shows the cup joints, the rear pinion shaft with the spur gear and the bearing, the motor mount with its cap and the diff outdrives as simple bodies; they are not in the STEP file.
+* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and the 16 stock parts (4 pivot blocks, centre driveshaft, 2 cup joints, rear pinion shaft, spur gear, bearing, motor mount, cap of the motor mount, 4 diff outdrives) in the coordinate system of the chassis plate (STEP AP214, one solid per part).
+* The assembly also contains the 4 stock pivot blocks of the wishbones (see [pivot blocks](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design)) and the stock centre driveshaft (see [centre driveshaft](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design)). It also contains the stock cup joints, the rear pinion shaft with the spur gear and the bearing, the motor mount with its cap and the diff outdrives. These parts are not part of the speedrun design, are modelled for the completeness of the build and are not in the mass total.
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [position and fit on the speedrun chassis](#position-and-fit-on-the-speedrun-chassis)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
 * The image shows an overall view, a side view, a top view and close-ups of both ends: bulkheads, shock tower and end of the top brace, seen from the outer end.
@@ -695,8 +698,8 @@ All files are stored in the directory `/stock_parts/pivot_block`. They are gener
 
 ## Centre driveshaft (stock parts, not part of the speedrun design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** Model of the centre driveshaft of the Carten T410R (NHA413) between the cup joints of the two pinion shafts. The shaft has a ball end at each end with a metal pin (NBA255, 2.0 x 7.6 mm), which is fixed on the shaft. The pins run in the slots of the cup joints, so the shaft turns with the cup joints. In the centred position, each pin has 0.5 mm to the closed end of its slot, so the shaft can move a little back and forth. At End A, the cup joint sits on the front pinion shaft beside the bulkhead. At End B (motor), the rear pinion shaft NBA205 runs from the pinion in the bulkhead through a flange with the spur gear and the bearing NBA298 in the motor mount NBA201 (manual steps 5, 10 and 12); the cup joint sits on its end beyond the motor mount. The shaft is a stock part: it is not part of the speedrun design and is not manufactured in this project. It is modelled for the completeness of the build. The cup joints, the rear pinion shaft with the spur gear and the bearing, the motor mount with its cap and the diff outdrives are stock parts as well: not part of the speedrun design and not verified. They are shown as simple bodies in the assembly picture only; they are not modelled as CAD files.
-* **Status:** Not verified, work in progress. Not part of the speedrun design (stock parts: the shaft and all parts of the drive line in the assembly picture). The cup joints, the thickness of the motor mount and the spur gear (72T 48DP) are given by the owner, the positions of the motor mount and the spur gear are derived from the chassis plate, the outline of the motor mount and its cap follow the manual (steps 10 and 25). The thicknesses of the spur gear and the flange and the gaps are typical values (see [open points of the centre driveshaft](#open-points-of-the-centre-driveshaft)).
+* **Description:** Model of the centre driveshaft of the Carten T410R (NHA413) between the cup joints of the two pinion shafts. The shaft has a ball end at each end with a metal pin (NBA255, 2.0 x 7.6 mm), which is fixed on the shaft. The pins run in the slots of the cup joints, so the shaft turns with the cup joints. In the centred position, each pin has 0.5 mm to the closed end of its slot, so the shaft can move a little back and forth. At End A, the cup joint sits on the front pinion shaft beside the bulkhead. At End B (motor), the rear pinion shaft NBA205 runs from the pinion in the bulkhead through a flange with the spur gear and the bearing NBA298 in the motor mount NBA201 (manual steps 5, 10 and 12); the cup joint sits on its end beyond the motor mount. The shaft is a stock part: it is not part of the speedrun design and is not manufactured in this project. It is modelled for the completeness of the build. The cup joints, the rear pinion shaft with the spur gear and the bearing, the motor mount with its cap and the diff outdrives are stock parts as well: not part of the speedrun design and not verified. All these parts are modelled as CAD files (see [files](#files-of-the-centre-driveshaft-and-the-drive-line)).
+* **Status:** Not verified, work in progress. Not part of the speedrun design (stock parts: the shaft and all parts of the drive line). The cup joints, the thickness of the motor mount and the spur gear (72T 48DP) are given by the owner, the positions of the motor mount and the spur gear are derived from the chassis plate, the outline of the motor mount and its cap follow the manual (steps 10 and 25). The thicknesses of the spur gear and the flange and the gaps are typical values (see [open points of the centre driveshaft](#open-points-of-the-centre-driveshaft)).
 
 ![Centre driveshaft with the drive line and the motor mount](../photos/cad_driveshaft_drawing.png)
 
@@ -707,18 +710,19 @@ Positions y along the car on the chassis plate (End B at y = 0).
 |:---|:---|:---|
 | Pinion axis | x = 0, 19.2 mm above the bottom face of the chassis plate (2.0 + 17.2) | Lower bulkhead (`axis_z`), chassis plate |
 | End faces of the pinion housings | y = 49.43 mm (End B) and 259.46 mm (End A) | Lower bulkhead (pinion seat 18.65 + 9.25 = 27.9 mm), positions of the bulkheads |
-| Cup joints NBA255 (picture only) | 9.7 mm outer and 6.33 mm inner diameter, 18.3 mm long, 2 slots 7.7 mm long from the open end (2.1 mm wide); bore 10.2 mm deep | Owner (bore depth: slot + 2.5 mm, estimate) |
+| Cup joints NBA255 | 9.7 mm outer and 6.33 mm inner diameter, 18.3 mm long, 2 slots 7.7 mm long from the open end (2.1 mm wide); bore 10.2 mm deep | Owner (bore depth: slot + 2.5 mm, estimate) |
 | Cup joint End A | From y = 258.96 to 240.66 mm (0.5 mm from the end face of the pinion housing) | Typical value (gap) |
-| Spur gear (picture only) | Standard 72T 48DP, 39.16 mm outer diameter, 4.0 mm thick, y = 51.63 to 55.63 mm, in the slot of the chassis plate below the pinion axis (y = 50.28 to 56.97 mm); it reaches 0.38 mm below the bottom face of the chassis plate. Flange of the rear pinion shaft 16 x 2 mm on the bulkhead side | Owner (72T 48DP), chassis plate (position), typical values (thicknesses) |
-| Motor mount NBA201 for 540 motors (picture only) | Plate 6.2 mm thick, y = 59.38 to 65.58 mm, on the holes H09 and H10 (y = 62.48 mm); the motor window starts at y = 65.63 mm. Low part (x = -11 to 18 mm, 24.6 mm high) with a U-shaped notch, open to the top, for the bearing NBA298 5 x 10 x 4 mm at the pinion axis. Tall part (x = 18 to 52 mm, 37 mm high, top corners R6) beside the end of the top brace, with three long holes along x: motor shaft (13 mm wide, at the height of the pinion axis), motor screws M3 (3.2 mm wide, 12.5 mm above and below; 540 motors: screws 25 mm apart). Motor axis x = 25 to 33 mm: centre distance 27.0 to 31.0 mm for the 72T 48DP spur gear and motor pinions of 30 to 45 teeth, plus 2 mm | Owner (thickness, 540 motors), chassis plate (position), manual step 10 (shape), derived (long holes), typical values (outline) |
-| Cap of the motor mount (second part of NBA201, picture only) | Block 22 x 6.2 x 10 mm on the low part of the motor mount, from 24.6 mm up to the top brace (34.6 mm), above the bearing; semicircular notch R4 along y in its top face below the hole B09 of the top brace; 2 through holes 3.2 mm below the holes B10 and B11 of the top brace (x = +-7.02 mm, y = 62.15 mm). 2 screws M3x18 from the top brace through the cap into the motor mount fix the motor mount to the top brace; set screw M3x3 in the cap (manual step 25) | Manual (steps 25, parts list), top brace (holes), derived (height from the screws M3x18: 18 - 2.0 brace - approx. 6 thread), typical values (width, notch) |
+| Rear pinion shaft NBA205 | 5.0 mm, from the inner end of the pinion seat of the bulkhead (y = 40.18 mm) through the 2 bearings of the bulkhead to the cup joint (y = 66.08 mm), flange 16 x 2 mm for the spur gear; the pinion NBA207 is not modelled | Manual (step 5), derived |
+| Spur gear | Standard 72T 48DP, 39.16 mm outer diameter, teeth with a simplified trapezoidal profile (not involute), centre bore 5.2 mm, 4 screw holes 3.2 mm on a radius of 5.5 mm, 4.0 mm thick, y = 51.63 to 55.63 mm, in the slot of the chassis plate below the pinion axis (y = 50.28 to 56.97 mm); it reaches 0.38 mm below the bottom face of the chassis plate. Flange of the rear pinion shaft 16 x 2 mm on the bulkhead side | Owner (72T 48DP), chassis plate (position), typical values (thicknesses) |
+| Motor mount NBA201 for 540 motors | Plate 6.2 mm thick, y = 59.38 to 65.58 mm, on the holes H09 and H10 (y = 62.48 mm); the motor window starts at y = 65.63 mm. Low part (x = -11 to 18 mm, 24.6 mm high) with a U-shaped notch, open to the top, for the bearing NBA298 5 x 10 x 4 mm at the pinion axis. Tall part (x = 18 to 52 mm, 37 mm high, top corners R6) beside the end of the top brace, with three long holes along x: motor shaft (13 mm wide, at the height of the pinion axis), motor screws M3 (3.2 mm wide, 12.5 mm above and below; 540 motors: screws 25 mm apart). Motor axis x = 25 to 33 mm: centre distance 27.0 to 31.0 mm for the 72T 48DP spur gear and motor pinions of 30 to 45 teeth, plus 2 mm | Owner (thickness, 540 motors), chassis plate (position), manual step 10 (shape), derived (long holes), typical values (outline) |
+| Cap of the motor mount (second part of NBA201) | Block 22 x 6.2 x 10 mm on the low part of the motor mount, from 24.6 mm up to the top brace (34.6 mm), above the bearing; semicircular notch R4 along y in its top face below the hole B09 of the top brace; 2 through holes 3.2 mm below the holes B10 and B11 of the top brace (x = +-7.02 mm, y = 62.15 mm). 2 screws M3x18 from the top brace through the cap into the motor mount fix the motor mount to the top brace; set screw M3x3 in the cap (manual step 25) | Manual (steps 25, parts list), top brace (holes), derived (height from the screws M3x18: 18 - 2.0 brace - approx. 6 thread), typical values (width, notch) |
 | Cup joint End B | From y = 66.08 to 84.38 mm (0.5 mm beyond the motor mount, on the end of the rear pinion shaft) | Typical value (gap) |
 | Shaft | 5.0 mm, ball ends with a radius of 2.5 mm (radial clearance 0.665 mm in the cup joints) | Typical value |
 | Metal pins | 2.0 x 7.6 mm (NBA255), fixed on the shaft at the centres of the ball ends, part of the model of the shaft | Manual (step 5) |
 | Pins in the centred position | y = 78.18 mm and 246.86 mm, 168.68 mm apart; 0.5 mm to the closed ends of the slots (y = 76.68 and 248.36 mm) | Derived |
 | Length of the shaft | 173.68 mm (distance of the pins plus 2 x 2.5 mm) | Derived |
 | Axial play | 1.0 mm in total, 0.5 mm at each pin to the closed end of its slot | Owner (a little play), value chosen |
-| Diff outdrives (picture only) | 12.0 mm outer diameter, 10.0 mm long, 0.3 mm beyond the side faces of the bulkheads on the diff axes, bore 9.6 x 8.0 mm (wall 1.2 mm), 2 slots 2.1 x 7.0 mm for the holding pin of the dogbones | Typical values |
+| Diff outdrives | 12.0 mm outer diameter, 10.0 mm long, 0.3 mm beyond the side faces of the bulkheads on the diff axes, bore 9.6 x 8.0 mm (wall 1.2 mm), 2 slots 2.1 x 7.0 mm for the holding pin of the dogbones | Typical values |
 
 ### Checks of the centre driveshaft
 Results of `generate_driveshaft.py`:
@@ -729,19 +733,26 @@ Results of `generate_driveshaft.py`:
 | Ends of the shaft | 1.50 mm to the bottoms of the bores (space for the O-rings) |
 | Shaft, cup joints, rear drive line, motor mount and diff outdrives with the bulkheads, the chassis plate and the top brace | 0 mm³ overlap; the spur gear runs through the slot of the chassis plate and below the obround of the top brace, the tall part of the motor mount lies 0.76 mm beside the end of the top brace, the cap of the motor mount touches the top brace |
 
-* Not modelled: the motor, the front pinion shaft between the bearing and the cup joint, the O-rings NBA255 5.8 x 9.6 x 1.9 mm (see `specs/mechanics/carten_t410r/drivetrain/spec_driveshaft_and_joints.yaml`).
+* Not modelled: the motor, the pinions NBA207, the front pinion shaft, the bearings in the bulkheads, the lightening holes of the spur gear, the O-rings NBA255 5.8 x 9.6 x 1.9 mm (see `specs/mechanics/carten_t410r/drivetrain/spec_driveshaft_and_joints.yaml`).
 
 ### Open points of the centre driveshaft
 * Not measured: thicknesses of the spur gear (4.0 mm) and the flange (2.0 mm), the gaps between the motor mount or the pinion housing and the cup joints (0.5 mm), depth of the bore of the cup joints, outline of the motor mount (heights, step, long holes) and of its cap (width, notch). The length of the shaft follows from these values (173.68 mm); it is to be checked against the real NHA413.
 * Spur gear: the specifications (`spec_spur_gear.yaml`, `spec_gearing.yaml`) and the setup sheet list a 68T spur gear; the model uses the standard 72T 48DP spur gear of the owner.
 
-### Files of the centre driveshaft
-All files are stored in the directory `/stock_parts/driveshaft`. They are generated with `generate_driveshaft.py` (see [scripts](#scripts)).
+### Files of the centre driveshaft and the drive line
+All files are stored in the directory `/stock_parts` and are generated with `generate_driveshaft.py` from `driveshaft/driveshaft_parameters.json` (see [scripts](#scripts)). Each file has STEP (AP214) and STL (binary) format and its own part coordinates.
 
-| File | Format | Use |
-|:---|:---|:---|
-| `driveshaft_T410R.step`, `driveshaft_T410R.stl` | STEP (AP214), STL (binary) | Centre driveshaft with the fixed metal pins, along y from 0 to 173.68 mm, axis at x = 0, z = 0, pins along x |
-| `driveshaft_parameters.json` | JSON | All dimensions, each with its source and a note |
+| File | Part coordinates and use |
+|:---|:---|
+| `driveshaft/driveshaft_T410R` | Centre driveshaft with the fixed metal pins, along y from 0 to 173.68 mm, axis at x = 0, z = 0, pins along x |
+| `driveshaft/cup_joint_T410R` | Cup joint (2 pieces): along y, back face at y = 0, open end at y = 18.3 mm, slots along x |
+| `rear_drive/rear_pinion_shaft_T410R` | Rear pinion shaft with flange: along y, y = 0 end face of the pinion housing of the bulkhead, from y = -9.25 mm (inside the bulkhead) to 16.65 mm |
+| `rear_drive/spur_gear_72T_T410R` | Spur gear 72T 48DP: along y from y = 0 (face on the flange) to 4.0 mm, axis at x = 0, z = 0 |
+| `rear_drive/bearing_5x10x4` | Bearing NBA298 in the motor mount: along y from y = 0 to 4.0 mm |
+| `motor_mount/motor_mount_T410R` | Motor mount: x = 0 pinion axis, y = 0 middle of the plate, z = 0 bottom face (on the chassis plate) |
+| `motor_mount/motor_mount_cap_T410R` | Cap of the motor mount, in the coordinates of the motor mount |
+| `diff_outdrive/diff_outdrive_T410R` | Diff outdrive (4 pieces): along +x, back face at x = 0, open end at x = 10.0 mm, slots along z |
+| `driveshaft/driveshaft_parameters.json` | All dimensions of these parts, each with its source and a note (JSON) |
 
 ## Scripts
 The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates (except `generate_chassis_templates.py`, which writes the templates of the chassis plate and the top brace), and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
@@ -760,7 +771,7 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_top_brace_speedrun.py` | Geometry data of the original top brace, parameter files of the bulkheads | All files of the speedrun top brace, drawing `photos/cad_top_brace_speedrun_drawing.png`, checks of the outline and of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
 | `generate_shock_towers.py` | Parameter files of the bulkheads and of the shock towers (option `--tower front`, `rear` or `all`) | All files of the speedrun front and rear shock tower, drawings `photos/cad_shock_tower_front_drawing.png` and `photos/cad_shock_tower_rear_drawing.png`, checks of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
 | `generate_pivot_blocks.py` | Parameter file of the pivot blocks, geometry data of the speedrun chassis plate, parameter files of the bulkheads | STEP and STL files of the stock pivot blocks (reference), drawing `photos/cad_pivot_blocks_drawing.png`, checks of the mounting holes and of the clearance to the bulkheads | cadquery, matplotlib |
-| `generate_driveshaft.py` | Parameter file of the driveshaft, parameter files of the bulkheads, STEP file of the speedrun chassis plate | STEP and STL files of the stock centre driveshaft, drawing `photos/cad_driveshaft_drawing.png`, checks of the play and of the fit | cadquery, matplotlib |
+| `generate_driveshaft.py` | Parameter file of the driveshaft, parameter files of the bulkheads, STEP file of the speedrun chassis plate | STEP and STL files of the stock centre driveshaft, cup joint, rear pinion shaft, spur gear, bearing, motor mount with cap and diff outdrive, drawing `photos/cad_driveshaft_drawing.png`, checks of the play and of the fit | cadquery, matplotlib |
 | `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, of the shock towers, of the pivot blocks and of the driveshaft, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file, geometry checks | cadquery |
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |

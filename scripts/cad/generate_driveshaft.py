@@ -16,14 +16,15 @@ the motor mount (holes H09/H10 of the chassis plate) and the spur gear (slot of 
 below the pinion axis). Cup joints: measurements of the owner. The other dimensions are typical
 values (cad/stock_parts/driveshaft/driveshaft_parameters.json). The shaft is a stock part: it is
 not part of the speedrun design and is modelled for the completeness of the build. The cup
-joints, the rear drive line, the motor mount and the diff outdrives are simple bodies for the
-assembly picture only (no CAD files).
+joints, the rear drive line, the motor mount with its cap and the diff outdrives are stock parts as
+well; the script writes the STEP and STL files of all these parts.
 
 Usage (from the root directory of the repository):
     python scripts/cad/generate_driveshaft.py
 
-The script writes the STEP and STL files of the shaft and the drawing
-photos/cad_driveshaft_drawing.png, and checks the play and the fit.
+The script writes the STEP and STL files of all parts (cad/stock_parts/driveshaft, rear_drive,
+motor_mount and diff_outdrive) and the drawing photos/cad_driveshaft_drawing.png, and checks the
+play and the fit.
 
 Requires the packages cadquery and matplotlib.
 """
@@ -44,7 +45,7 @@ PARAMS = "cad/stock_parts/driveshaft/driveshaft_parameters.json"
 LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
 UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
 PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
-OUT = "cad/stock_parts/driveshaft"
+STOCK = "cad/stock_parts"
 DRAWING = "photos/cad_driveshaft_drawing.png"
 PLATE_T = 2.0
 INCH = 25.4
@@ -67,7 +68,8 @@ def layout(p, lp):
     shaft = (pins[0] - r, pins[1] + r)
     spur = (p["spur_centre_y"] - p["spur_t"] / 2, p["spur_centre_y"] + p["spur_t"] / 2)
     flange = (spur[0] - p["flange_t"], spur[0])
-    return {"z": PLATE_T + lp["axis_z"], "housing": housing, "mount": mount, "spur": spur, "flange": flange,
+    seat = (BULKHEAD_Y["rear"] + lp["pinion_seat_y_inner"], BULKHEAD_Y["front"] - lp["pinion_seat_y_inner"])
+    return {"z": PLATE_T + lp["axis_z"], "housing": housing, "seat": seat, "mount": mount, "spur": spur, "flange": flange,
             "spur_od": (p["spur_teeth"] + 2) / p["spur_dp"] * INCH, "back": back, "open": open_end,
             "slot_end": slot_end, "bottom": bottom, "pins": pins, "shaft": shaft, "length": shaft[1] - shaft[0]}
 
@@ -85,7 +87,7 @@ def shaft_solid(p, length):
 
 def cup_solid(p):
     """Cup joint along y: back face at y = 0, open end at y = cup_length, bore for the ball end and
-    two slots for the metal pin (along x, through both walls). Picture only."""
+    two slots for the metal pin (along x, through both walls)."""
     rc, lc = p["cup_od"] / 2, p["cup_length"]
     s = cyl_y(rc, 0, lc, 0, 0)
     s = s.cut(cyl_y(p["cup_bore_d"] / 2, lc - p["cup_bore_depth"], lc + 1, 0, 0))
@@ -95,7 +97,7 @@ def cup_solid(p):
 
 def outdrive_solid(p):
     """Diff outdrive along +x: back face at x = 0, open end at x = outdrive_length, bore for the end
-    of the dogbone and two slots for its holding pin (along z, through both walls). Picture only."""
+    of the dogbone and two slots for its holding pin (along z, through both walls)."""
     lo, ro = p["outdrive_length"], p["outdrive_od"] / 2
     s = cyl_x(ro, 0, lo, 0, 0)
     s = s.cut(cyl_x(p["outdrive_bore_d"] / 2, lo - p["outdrive_bore_depth"], lo + 1, 0, 0))
@@ -104,15 +106,41 @@ def outdrive_solid(p):
     return s.clean()
 
 
+def spur_gear_solid(p, lay):
+    """Spur gear (chassis plate coordinates): teeth with a simplified trapezoidal profile (tip and root
+    circles of the standard gear, not involute), centre bore for the pinion shaft and 4 screw holes
+    for the flange of the rear pinion shaft."""
+    n, m = int(p["spur_teeth"]), INCH / p["spur_dp"]
+    rp = n * m / 2
+    rt, rr = rp + m, rp - 1.25 * m
+    tan20 = np.tan(np.radians(20.0))
+    half_tip = (np.pi * m / 4 - m * tan20) / rt             # angular half widths of a tooth
+    half_root = (np.pi * m / 4 + 1.25 * m * tan20) / rr
+    pts = []
+    for k in range(n):
+        c = 2 * np.pi * k / n
+        for a, r in ((c - half_root, rr), (c - half_tip, rt), (c + half_tip, rt), (c + half_root, rr)):
+            pts.append((r * np.cos(a), r * np.sin(a)))
+    y0, y1 = lay["spur"]
+    gear = cq.Workplane("XY").polyline(pts).close().extrude(y1 - y0).val()
+    gear = gear.rotate(cq.Vector(0, 0, 0), cq.Vector(1, 0, 0), -90)   # axis along +y, from y = 0 to the thickness
+    gear = gear.cut(cyl_y(p["spur_bore_d"] / 2, -1, y1 - y0 + 1, 0, 0))
+    for k in range(4):
+        a = np.pi / 4 + k * np.pi / 2
+        rs = p["spur_screw_r"]
+        gear = gear.cut(cyl_y(p["spur_screw_d"] / 2, -1, y1 - y0 + 1, rs * np.cos(a), rs * np.sin(a)))
+    return gear.clean().translate(cq.Vector(0, y0, lay["z"]))
+
+
 def rear_drive_line(p, lay):
-    """Rear pinion shaft outside the bulkhead with the flange, the spur gear and the bearing, and the
-    motor mount (chassis plate coordinates, picture only): list of (name, kind, solid)."""
+    """Rear pinion shaft from the inner end of the pinion seat of the bulkhead to the cup joint, with
+    the flange, the spur gear, the bearing and the motor mount with its cap (chassis plate
+    coordinates): list of (name, kind, solid). Not modelled: the pinion NBA207 and its screw."""
     z = lay["z"]
     rs = p["pinion_shaft_d"] / 2
-    shaft = cyl_y(rs, lay["housing"][0], lay["back"][0], 0, z)
+    shaft = cyl_y(rs, lay["seat"][0], lay["back"][0], 0, z)
     shaft = shaft.fuse(cyl_y(p["flange_d"] / 2, *lay["flange"], 0, z))
-    spur = cyl_y(lay["spur_od"] / 2, *lay["spur"], 0, z).cut(cyl_y(p["flange_d"] / 2 - 2, lay["spur"][0] - 1,
-                                                                     lay["spur"][1] + 1, 0, z))
+    spur = spur_gear_solid(p, lay)
     d, dd, b = p["mount_bearing"]
     m0, m1 = lay["mount"]
     yb = p["mount_y"] - b / 2
@@ -125,7 +153,7 @@ def rear_drive_line(p, lay):
 
 
 def motor_mount_solid(p, lay):
-    """Motor mount NBA201 for 540 motors (manual step 10), chassis plate coordinates, picture only:
+    """Motor mount NBA201 for 540 motors (manual step 10), chassis plate coordinates:
     low part on the bulkhead side with a U-shaped notch for the bearing NBA298 at the pinion axis,
     tall part on the motor side with rounded top corners and three long holes along x: the motor
     shaft (middle, at the height of the pinion axis) and the two motor screws (above and below)."""
@@ -150,7 +178,7 @@ def motor_mount_solid(p, lay):
 
 def motor_mount_cap_solid(p, lay):
     """Cap of the motor mount (second part of NBA201, manual step 25), chassis plate coordinates,
-    picture only: block between the low part of the motor mount and the top brace, with a
+    block between the low part of the motor mount and the top brace, with a
     semicircular notch along y in its top face and two through holes for the screws M3x18 from the
     top brace into the motor mount."""
     m0, m1 = lay["mount"]
@@ -164,7 +192,7 @@ def motor_mount_cap_solid(p, lay):
 
 def parts_in_plate(p=None, lp=None):
     """Parts in the coordinates of the chassis plate: list of (name, kind, solid). kind: "shaft"
-    (CAD file, with the fixed metal pins); simple bodies for the assembly picture only: "cup" (cup
+    (with the fixed metal pins); "cup" (cup
     joints and diff outdrives), "drive" (rear pinion shaft, spur gear, bearing), "mount" (motor
     mount)."""
     p = p or load_params(PARAMS)
@@ -335,8 +363,8 @@ def drawing(path, p, lay, items):
              f"{p['cup_slot_len']:g} mm (owner).\nSpur gear {p['spur_teeth']:g}T {p['spur_dp']:g}DP ({lay['spur_od']:.1f} mm) "
              f"in the slot of the chassis plate, motor mount {p['mount_t']:g} mm (owner) for 540 motors on the holes "
              "H09/H10. Thicknesses of the spur gear and the flange, outline of the motor mount and the gaps: typical "
-             "values.\nDashed: slots of the cup joints (across the section). Cup joints, drive line and "
-             "motor mount: simple bodies, no CAD files.",
+             "values; teeth of the spur gear simplified.\nDashed: slots of the cup joints (across the section). CAD files of all "
+             "parts: cad/stock_parts (driveshaft, rear_drive, motor_mount, diff_outdrive).",
              fontsize=8, va="bottom")
     fig.savefig(path, dpi=110)
     plt.close(fig)
@@ -348,15 +376,27 @@ def main():
     parser.parse_args()
     p, lp, up = load_params(PARAMS), load_params(LOWER), load_params(UPPER)
     lay = layout(p, lp)
-    s = shaft_solid(p, lay["length"])
-    stem = f"{OUT}/driveshaft_T410R"
-    valid, bb, vol = s.isValid(), s.BoundingBox(), s.Volume()
-    cq.exporters.export(cq.Workplane().add(s), stem + ".step")
-    cq.exporters.export(cq.Workplane().add(s), stem + ".stl", tolerance=0.01, angularTolerance=0.1)
-    print(f"driveshaft: wrote {stem}.step/.stl, solid valid: {valid}, size {bb.xlen:.2f} x {bb.ylen:.2f} x "
-          f"{bb.zlen:.2f} mm, volume {vol / 1000:.2f} cm3, with the fixed metal pins {p['pin_d']:g} x {p['pin_length']:g}")
-
     parts = {name: solid for name, _, solid in parts_in_plate(p, lp)}
+    z, yb = lay["z"], p["mount_y"] - p["mount_bearing"][2] / 2
+    exports = [   # (directory, file name, solid in part coordinates)
+        ("driveshaft", "driveshaft_T410R", shaft_solid(p, lay["length"])),
+        ("driveshaft", "cup_joint_T410R", cup_solid(p)),
+        ("rear_drive", "rear_pinion_shaft_T410R",
+         parts["rear pinion shaft with flange"].translate(cq.Vector(0, -lay["housing"][0], -z))),
+        ("rear_drive", f"spur_gear_{p['spur_teeth']:g}T_T410R", parts["spur gear"].translate(cq.Vector(0, -lay["spur"][0], -z))),
+        ("rear_drive", "bearing_5x10x4", parts["bearing NBA298 in the motor mount"].translate(cq.Vector(0, -yb, -z))),
+        ("motor_mount", "motor_mount_T410R", parts["motor mount"].translate(cq.Vector(0, -p["mount_y"], -PLATE_T))),
+        ("motor_mount", "motor_mount_cap_T410R",
+         parts["cap of the motor mount"].translate(cq.Vector(0, -p["mount_y"], -PLATE_T))),
+        ("diff_outdrive", "diff_outdrive_T410R", outdrive_solid(p))]
+    for folder, name, s in exports:
+        os.makedirs(f"{STOCK}/{folder}", exist_ok=True)
+        stem = f"{STOCK}/{folder}/{name}"
+        valid, bb, vol = s.isValid(), s.BoundingBox(), s.Volume()
+        cq.exporters.export(cq.Workplane().add(s), stem + ".step")
+        cq.exporters.export(cq.Workplane().add(s), stem + ".stl", tolerance=0.01, angularTolerance=0.1)
+        print(f"{name}: wrote {stem}.step/.stl, solid valid: {valid}, size {bb.xlen:.2f} x {bb.ylen:.2f} x "
+              f"{bb.zlen:.2f} mm, volume {vol / 1000:.2f} cm3")
     bulkheads = []
     for end in ("rear", "front"):
         for solid in (bulkhead_lower(lp).val(), bulkhead_upper(lp, up).val()):
