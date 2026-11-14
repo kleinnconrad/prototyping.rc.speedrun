@@ -92,12 +92,12 @@ Re-engineered parts (own design of the owner, re-engineered from the T410R, not 
 | [Cup joints of the centre driveshaft](#centre-driveshaft-and-drive-line) | 2 | `/parts/driveshaft` | $\color{red}\times$ Completely unqualified |
 | [Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin](#centre-driveshaft-and-drive-line) | 1 | `/parts/rear_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Front pinion shaft with pinion 17T, bearings and retaining pin](#centre-driveshaft-and-drive-line) | 1 | `/parts/front_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Motor mount with cap](#centre-driveshaft-and-drive-line) | 1 | `/parts/motor_mount` | $\color{red}\times$ Completely unqualified |
+| [Motor mount with cap](#centre-driveshaft-and-drive-line) | 1 | `/parts/motor_mount` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Differential (End B) with ring gear 42T, inner gears and bearings](#differentials) | 1 | `/parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Spool (End A) with ring gear 42T and bearings](#differentials) | 1 | `/parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Diff outdrives](#centre-driveshaft-and-drive-line) | 4 | `/parts/diff_outdrive` | $\color{red}\times$ Completely unqualified |
-| [Front wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{red}\times$ Completely unqualified |
-| [Rear wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{red}\times$ Completely unqualified |
+| [Front wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Rear wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Inner hinge pins of the wishbones (3x42)](#wishbones) | 4 | `/parts/wishbone` | $\color{red}\times$ Completely unqualified |
 | [Camber links: turnbuckle M3x37 with rod ends and ball studs](#camber-links) | 4 | `/parts/camber_link` | $\color{red}\times$ Completely unqualified |
 | [Front C-hubs with 10 degrees caster and steering knuckles](#running-gear) | 2 + 2 | `/running_gear/front_corner` | $\color{red}\times$ Completely unqualified |
@@ -733,7 +733,7 @@ All files are stored in the directory `/parts/pivot_block`. They are generated w
 ### Centre driveshaft and drive line
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Model of the centre driveshaft of the Carten T410R between the cup joints of the two pinion shafts. The shaft has a ball end at each end with a metal pin (2.0 x 7.6 mm), which is fixed on the shaft. The cup joints are pushed onto the pinion shafts and secured with a retaining pin 2.0 x 7.6 mm through a cross hole; an O-ring in a groove of the cup joint holds the pin. The pins run in the slots of the cup joints, so the shaft turns with the cup joints. In the centred position, each pin has 0.5 mm to the closed end of its slot, so the shaft can move a little back and forth. At End A, the cup joint sits on the front pinion shaft beside the bulkhead. At End B (motor), the rear pinion shaft runs from the pinion in the bulkhead through a flange with the spur gear and the bearing in the motor mount (manual steps 5, 10 and 12); the cup joint sits on its end beyond the motor mount. All these parts are modelled as CAD files (see [files](#centre-driveshaft-and-drive-line)).
-* **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification: centre driveshaft, rear and front drive line (pinion shafts, pinions, spur gear, bearings, retaining pins; some dimensions from photos of the owner). $\color{red}\times$ Completely unqualified: motor mount with cap (not checked by the owner), cup joints and diff outdrives. The cup joints, the thickness of the motor mount and the spur gear (72T 48DP) are given by the owner, the positions of the motor mount and the spur gear are derived from the chassis plate, the outline of the motor mount and its cap follow the manual (steps 10 and 25). The thicknesses of the spur gear and the flange and the gaps are typical values (see [open points of the centre driveshaft](#centre-driveshaft-and-drive-line)).
+* **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification: centre driveshaft, motor mount with cap, rear and front drive line (pinion shafts, pinions, spur gear, bearings, retaining pins; some dimensions from photos of the owner). $\color{red}\times$ Completely unqualified: cup joints and diff outdrives. The cup joints, the thickness of the motor mount and the spur gear (72T 48DP) are given by the owner, the positions of the motor mount and the spur gear are derived from the chassis plate, the outline of the motor mount and its cap follow the manual (steps 10 and 25). The thicknesses of the spur gear and the flange and the gaps are typical values (see [open points of the centre driveshaft](#centre-driveshaft-and-drive-line)).
 
 ![Centre driveshaft with the drive line and the motor mount](../photos/cad_driveshaft_drawing.png)
 
@@ -844,7 +844,7 @@ All files are stored in the directory `/parts/diff` and are generated with `gene
 
 ### Wishbones
 * **Description:** Lower wishbones (suspension arms) of the speedrun chassis (own design, re-engineered from the T410R) with the inner hinge pins 3 x 42 mm. The manual (step 7 and parts list "Arms (F/R)") and the photos of the owner show two different arms: 2 front arms and 2 rear arms. There is no left or right arm (owner): each arm is used on both sides of its axle, flipped so that the shock plate on rail A faces the outer end of the car.
-* **Status:** $\color{red}\times$ Completely unqualified (front and rear wishbone, inner hinge pins): the model is not checked by the owner. The main dimensions are caliper measurements (measurement sheet). The positions of the shock plate and of the holes of the ball studs are estimates from the photos (see the measurement table below).
+* **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification (front and rear wishbone); inner hinge pins: $\color{red}\times$ Completely unqualified. The main dimensions are caliper measurements of the owner (measurement sheet). The positions of the shock plate and of the holes of the ball studs are estimates from the photos (see the measurement table below).
 
 ![Wishbones: plan views, views along the hinge pin and the letters of the measurements](../photos/cad_wishbones_drawing.png)
 
