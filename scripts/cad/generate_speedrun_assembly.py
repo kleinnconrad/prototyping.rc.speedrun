@@ -176,8 +176,8 @@ def image(parts, path):
     handles = [Patch(color=np.clip(np.asarray(COLORS[k]) + 0.08, 0, 1), label=MATERIALS[k][0]) for k in COLORS]
     fig.legend(handles=handles, loc="upper left", bbox_to_anchor=(0.01, top + 0.95 * (1 - top)), fontsize=9,
                frameon=False, ncol=2, columnspacing=1.5)
-    fig.text(0.013, top + 0.95 * (1 - top) - 0.098, "Stock parts: not part of the speedrun design, not verified, not in the "
-             "mass total", fontsize=8.5, color="#4a4f57")
+    fig.text(0.013, top + 0.95 * (1 - top) - 0.098, "Stock parts: not part of the speedrun design, not verified, work in progress, "
+             "not in the mass total", fontsize=8.5, color="#4a4f57")
     fig.savefig(path, dpi=100)
     plt.close(fig)
 

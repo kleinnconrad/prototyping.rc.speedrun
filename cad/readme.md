@@ -101,12 +101,12 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 
 | Stock part | Quantity | Directory | Status |
 |:---|---:|:---|:---|
-| [Pivot blocks of the wishbones](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design) (long and short block) | 4 | `/stock_parts/pivot_block` | Not verified |
-| [Centre driveshaft with fixed metal pins](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 1 | `/stock_parts/driveshaft` | Not verified |
-| [Cup joints of the centre driveshaft (NBA255)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 2 | Assembly picture only (no CAD file) | Not verified |
-| [Rear pinion shaft with spur gear 72T and bearing (NBA205, NBA252, NBA298)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 1 | Assembly picture only (no CAD file) | Not verified |
-| [Motor mount with cap (NBA201)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 1 | Assembly picture only (no CAD file) | Not verified |
-| [Diff outdrives](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 4 | Assembly picture only (no CAD file) | Not verified |
+| [Pivot blocks of the wishbones](#pivot-blocks-stock-parts-not-part-of-the-speedrun-design) (long and short block) | 4 | `/stock_parts/pivot_block` | Not verified, work in progress |
+| [Centre driveshaft with fixed metal pins](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 1 | `/stock_parts/driveshaft` | Not verified, work in progress |
+| [Cup joints of the centre driveshaft (NBA255)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 2 | Assembly picture only (no CAD file) | Not verified, work in progress |
+| [Rear pinion shaft with spur gear 72T and bearing (NBA205, NBA252, NBA298)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 1 | Assembly picture only (no CAD file) | Not verified, work in progress |
+| [Motor mount with cap (NBA201)](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 1 | Assembly picture only (no CAD file) | Not verified, work in progress |
+| [Diff outdrives](#centre-driveshaft-stock-parts-not-part-of-the-speedrun-design) | 4 | Assembly picture only (no CAD file) | Not verified, work in progress |
 
 * The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³). Screws, bearings and the other parts of the car are not included.
 * The bulkheads are the same parts at both ends. At End A, they are rotated by 180 degrees, so that both pinions point to the middle of the car.
@@ -646,7 +646,7 @@ Both shock towers are verified by the owner. The following points are not requir
 ## Pivot blocks (stock parts, not part of the speedrun design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Models of the stock pivot blocks of the Carten T410R. The pivot blocks hold the hinge pins of the wishbones and are screwed to the chassis plate from below (countersunk screws M3). They are stock parts: they are not part of the speedrun design and are not manufactured in this project. They are modelled for the completeness of the build: the assembly of the speedrun chassis contains them, so that the space below the bulkheads can be checked.
-* **Status:** Not verified. Not part of the speedrun design (stock part). The dimensions are measurements of the owner, the distances of the mounting holes are taken from the hole pattern of the speedrun chassis plate, the lengths of the shoulders are estimates from photos.
+* **Status:** Not verified, work in progress. Not part of the speedrun design (stock part). The dimensions are measurements of the owner, the distances of the mounting holes are taken from the hole pattern of the speedrun chassis plate, the lengths of the shoulders are estimates from photos.
 
 ![Pivot blocks: sections and top views](../photos/cad_pivot_blocks_drawing.png)
 
@@ -696,7 +696,7 @@ All files are stored in the directory `/stock_parts/pivot_block`. They are gener
 ## Centre driveshaft (stock parts, not part of the speedrun design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Model of the centre driveshaft of the Carten T410R (NHA413) between the cup joints of the two pinion shafts. The shaft has a ball end at each end with a metal pin (NBA255, 2.0 x 7.6 mm), which is fixed on the shaft. The pins run in the slots of the cup joints, so the shaft turns with the cup joints. In the centred position, each pin has 0.5 mm to the closed end of its slot, so the shaft can move a little back and forth. At End A, the cup joint sits on the front pinion shaft beside the bulkhead. At End B (motor), the rear pinion shaft NBA205 runs from the pinion in the bulkhead through a flange with the spur gear and the bearing NBA298 in the motor mount NBA201 (manual steps 5, 10 and 12); the cup joint sits on its end beyond the motor mount. The shaft is a stock part: it is not part of the speedrun design and is not manufactured in this project. It is modelled for the completeness of the build. The cup joints, the rear pinion shaft with the spur gear and the bearing, the motor mount with its cap and the diff outdrives are stock parts as well: not part of the speedrun design and not verified. They are shown as simple bodies in the assembly picture only; they are not modelled as CAD files.
-* **Status:** Not verified. Not part of the speedrun design (stock parts: the shaft and all parts of the drive line in the assembly picture). The cup joints, the thickness of the motor mount and the spur gear (72T 48DP) are given by the owner, the positions of the motor mount and the spur gear are derived from the chassis plate, the outline of the motor mount and its cap follow the manual (steps 10 and 25). The thicknesses of the spur gear and the flange and the gaps are typical values (see [open points of the centre driveshaft](#open-points-of-the-centre-driveshaft)).
+* **Status:** Not verified, work in progress. Not part of the speedrun design (stock parts: the shaft and all parts of the drive line in the assembly picture). The cup joints, the thickness of the motor mount and the spur gear (72T 48DP) are given by the owner, the positions of the motor mount and the spur gear are derived from the chassis plate, the outline of the motor mount and its cap follow the manual (steps 10 and 25). The thicknesses of the spur gear and the flange and the gaps are typical values (see [open points of the centre driveshaft](#open-points-of-the-centre-driveshaft)).
 
 ![Centre driveshaft with the drive line and the motor mount](../photos/cad_driveshaft_drawing.png)
 

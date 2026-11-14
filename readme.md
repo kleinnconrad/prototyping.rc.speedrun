@@ -69,14 +69,14 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 
 | Stock part | Quantity | Status | Directory |
 |:---|---:|:---|:---|
-| Pivot blocks of the wishbones (long and short block) | 4 | Not verified | `cad/stock_parts/pivot_block` |
-| Centre driveshaft with fixed metal pins | 1 | Not verified | `cad/stock_parts/driveshaft` |
-| Cup joints of the centre driveshaft (NBA255) | 2 | Not verified | Assembly picture only (no CAD file) |
-| Rear pinion shaft with spur gear 72T and bearing (NBA205, NBA252, NBA298) | 1 | Not verified | Assembly picture only (no CAD file) |
-| Motor mount with cap (NBA201) | 1 | Not verified | Assembly picture only (no CAD file) |
-| Diff outdrives | 4 | Not verified | Assembly picture only (no CAD file) |
+| Pivot blocks of the wishbones (long and short block) | 4 | Not verified, work in progress | `cad/stock_parts/pivot_block` |
+| Centre driveshaft with fixed metal pins | 1 | Not verified, work in progress | `cad/stock_parts/driveshaft` |
+| Cup joints of the centre driveshaft (NBA255) | 2 | Not verified, work in progress | Assembly picture only (no CAD file) |
+| Rear pinion shaft with spur gear 72T and bearing (NBA205, NBA252, NBA298) | 1 | Not verified, work in progress | Assembly picture only (no CAD file) |
+| Motor mount with cap (NBA201) | 1 | Not verified, work in progress | Assembly picture only (no CAD file) |
+| Diff outdrives | 4 | Not verified, work in progress | Assembly picture only (no CAD file) |
 
-* All parts of the speedrun design are verified. The stock parts are not verified. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#edges-of-the-outer-shape)). The stock shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the stock towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
+* All parts of the speedrun design are verified. The stock parts are not verified and work in progress. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#edges-of-the-outer-shape)). The stock shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the stock towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
 * The assembly is available as a STEP file (`cad/assembly/speedrun_chassis_T410R.step`).
 
 ## Repository structure
