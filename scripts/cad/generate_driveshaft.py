@@ -66,8 +66,8 @@ def layout(p, lp):
     pins = (slot_end[0] + dp, slot_end[1] - dp)
     r = p["ball_d"] / 2
     shaft = (pins[0] - r, pins[1] + r)
-    spur = (p["spur_centre_y"] - p["spur_t"] / 2, p["spur_centre_y"] + p["spur_t"] / 2)
-    flange = (spur[0] - p["flange_t"], spur[0])
+    flange = (housing[0] + p["flange_gap"], housing[0] + p["flange_gap"] + p["flange_t"])
+    spur = (flange[1], flange[1] + p["spur_t"])           # spur gear on the collar, against the flange
     seat = (BULKHEAD_Y["rear"] + lp["pinion_seat_y_inner"], BULKHEAD_Y["front"] - lp["pinion_seat_y_inner"])
     return {"z": PLATE_T + lp["axis_z"], "housing": housing, "seat": seat, "mount": mount, "spur": spur, "flange": flange,
             "spur_od": (p["spur_teeth"] + 2) / p["spur_dp"] * INCH, "back": back, "open": open_end,
@@ -95,7 +95,8 @@ def cup_solid(p):
     # back end: bore for the pinion shaft, groove for the O-ring and cross hole for the retaining pin
     bd, bdep = p["cup_back_bore"]
     g0, g1, gd = p["cup_groove"]
-    s = s.cut(cyl_y(bd / 2, -1, bdep, 0, 0))
+    f = p["press_fit_flats"] / 2                           # press fit shape of the pinion shaft: bore with two flats
+    s = s.cut(cyl_y(bd / 2, -1, bdep, 0, 0).intersect(box(-bd / 2 - 1, bd / 2 + 1, -2, bdep + 1, -f, f)))
     s = s.cut(cyl_y(rc + 1, g0, g1, 0, 0).cut(cyl_y(gd / 2, g0, g1, 0, 0)))
     s = s.cut(cyl_x(p["cup_pin_d"] / 2, -rc - 1, rc + 1, (g0 + g1) / 2, 0))
     return s.clean()
@@ -135,35 +136,88 @@ def spur_gear_solid(p, lay):
         a = np.pi / 4 + k * np.pi / 2
         rs = p["spur_screw_r"]
         gear = gear.cut(cyl_y(p["spur_screw_d"] / 2, -1, y1 - y0 + 1, rs * np.cos(a), rs * np.sin(a)))
+    for r, dh, n, off in p["spur_holes"]:                  # lightening holes
+        for k in range(int(n)):
+            a = np.radians(off) + k * 2 * np.pi / n
+            gear = gear.cut(cyl_y(dh / 2, -1, y1 - y0 + 1, r * np.cos(a), r * np.sin(a)))
     return gear.clean().translate(cq.Vector(0, y0, lay["z"]))
 
 
 def rear_drive_line(p, lay):
     """Rear pinion shaft from the inner end of the pinion seat of the bulkhead to the cup joint, with
     the flange, the spur gear, the bearing and the motor mount with its cap (chassis plate
-    coordinates): list of (name, kind, solid). Not modelled: the pinion NBA207 and its screw."""
+    coordinates): list of (name, kind, solid), with the pinion NBA207 and the 2 bearings of the bulkhead.
+    Not modelled: the screw of the pinion, the shims between the bearings."""
     z = lay["z"]
     rs = p["pinion_shaft_d"] / 2
     bd, bdep = p["cup_back_bore"]
-    shaft = cyl_y(rs, lay["seat"][0], lay["back"][0] + bdep - 0.5, 0, z)       # end 0.5 before the bottom of the back bore
-    yp = lay["back"][0] + sum(p["cup_groove"][:2]) / 2                            # retaining pin NBA255 in the groove
+    d, dd, b = p["mount_bearing"]
+    m0, m1 = lay["mount"]
+    yb = m1 - p["mount_lip"][0] - b                         # bearing against the lip (toward End A)
+    teeth, od, root_d, plen, cone = p["pinion"]
+    cs_d, cs_h = p["pinion_countersink"]
+    y_pin_front = lay["seat"][0] - plen                     # pinion against the inner bearing of the bulkhead
+    y0 = y_pin_front + cs_h + 0.15                          # end of the shaft below the head of the pinion screw
+    y_end = lay["back"][0] + bdep - 0.5                     # end in the cup joint, 0.5 before the bottom of its bore
+
+    def flats(y_a, y_b):
+        """Press fit shape: round shaft with two flats (width across flats press_fit_flats, normals along z)."""
+        f = p["press_fit_flats"] / 2
+        return cyl_y(rs, y_a, y_b, 0, z).intersect(box(-rs - 1, rs + 1, y_a - 1, y_b + 1, z - f, z + f))
+    shaft = flats(y0, lay["seat"][0])                                       # pinion seat
+    shaft = shaft.fuse(cyl_y(rs, lay["seat"][0], lay["flange"][0], 0, z))   # 2 bearings of the bulkhead
+    shaft = shaft.fuse(cyl_y(p["flange_d"] / 2, *lay["flange"], 0, z))      # flange (mounting plate of the spur gear)
+    sd, sl = p["spur_spigot"]
+    y_sp = lay["spur"][1] + sl
+    shaft = shaft.fuse(cyl_y(sd / 2, lay["flange"][1], y_sp, 0, z))        # spigot through the spur gear
+    shaft = shaft.fuse(cyl_y(p["bearing_shoulder_d"] / 2, y_sp, yb, 0, z))  # shoulder against the inner ring of the bearing
+    shaft = shaft.fuse(cyl_y(rs, yb, yb + b, 0, z))                         # bearing NBA298 in the motor mount
+    shaft = shaft.fuse(flats(yb + b, y_end))                                # cup joint seat
+    yp = lay["back"][0] + sum(p["cup_groove"][:2]) / 2                      # retaining pin NBA255 in the groove
     shaft = shaft.fuse(cyl_x(p["cup_pin_d"] / 2, -p["cup_pin_length"] / 2, p["cup_pin_length"] / 2, yp, z))
-    shaft = shaft.fuse(cyl_y(p["flange_d"] / 2, *lay["flange"], 0, z))
+    shaft = shaft.cut(cyl_y(p["tap_d"] / 2, y0 - 0.1, y0 + p["pinion_thread_depth"], 0, z))  # axial thread M3
     for k in range(4):     # threads M3 of the 4 screws of the spur gear in the flange (tap drill, through)
         ang = np.pi / 4 + k * np.pi / 2
         rs = p["spur_screw_r"]
         shaft = shaft.cut(cyl_y(p["tap_d"] / 2, lay["flange"][0] - 0.1, lay["flange"][1] + 0.1, rs * np.cos(ang),
                                 z + rs * np.sin(ang)))
     spur = spur_gear_solid(p, lay)
-    d, dd, b = p["mount_bearing"]
-    m0, m1 = lay["mount"]
-    yb = m1 - p["mount_lip"][0] - b                         # bearing against the lip (toward End A)
+    pinion = pinion_solid(p, lay, y_pin_front, y0)
     bearing = cyl_y(dd / 2, yb, yb + b, 0, z).cut(cyl_y(d / 2, yb - 1, yb + b + 1, 0, z))
+    lp = load_params(LOWER)
+    ys = lay["seat"][0]                                     # 2 bearings NBA298 in the pinion seat of the bulkhead
+    bulk = [cyl_y(dd / 2, y, y + b, 0, z).cut(cyl_y(d / 2, y - 1, y + b + 1, 0, z))
+            for y in (ys, ys + b + lp["pinion_rib_t"])]
     mount = motor_mount_solid(p, lay)
     cap = motor_mount_cap_solid(p, lay)
     return [("rear pinion shaft with flange", "drive", shaft.clean()), ("spur gear", "drive", spur.clean()),
+            ("pinion NBA207", "drive", pinion),
+            ("bearing NBA298 in the bulkhead, inner", "drive", bulk[0].clean()),
+            ("bearing NBA298 in the bulkhead, outer", "drive", bulk[1].clean()),
             ("bearing NBA298 in the motor mount", "drive", bearing.clean()), ("motor mount", "mount", mount.clean()),
             ("cap of the motor mount", "mount", cap)]
+
+
+def pinion_solid(p, lay, y_front, y_shaft):
+    """Pinion NBA207 (chassis plate coordinates): simplified straight bevel gear (tooth profile with
+    straight flanks, tapered by the cone angle), back face against the inner bearing of the bulkhead,
+    bore with the press fit shape of the shaft, countersink and hole for the screw M3x6 (manual step 5)."""
+    z = lay["z"]
+    teeth, od, root_d, plen, cone = p["pinion"]
+    pts, n = [], int(teeth)
+    for k in range(n):
+        a, pitch = 2 * np.pi * k / n, 2 * np.pi / n
+        for r, da in ((root_d / 2, -0.32), (od / 2, -0.13), (od / 2, 0.13), (root_d / 2, 0.32)):
+            pts.append((r * np.cos(a + da * pitch), r * np.sin(a + da * pitch)))
+    g = cq.Workplane("XY").polyline(pts).close().extrude(plen, taper=cone).val()
+    g = g.rotate(cq.Vector(0, 0, 0), cq.Vector(1, 0, 0), 90).translate(cq.Vector(0, y_front + plen, z))   # back face at the seat
+    rs, f = p["pinion_shaft_d"] / 2, p["press_fit_flats"] / 2
+    bore = cyl_y(rs, y_shaft, y_front + plen + 1, 0, z).intersect(box(-rs - 1, rs + 1, y_shaft - 1, y_front + plen + 2,
+                                                                       z - f, z + f))
+    cs_d, cs_h = p["pinion_countersink"]
+    g = g.cut(bore).cut(cyl_y(1.6, y_front - 1, y_shaft + 0.1, 0, z))
+    g = g.cut(cq.Solid.makeCone(cs_d / 2, 1.6, cs_h, cq.Vector(0, y_front - 0.001, z), cq.Vector(0, 1, 0)))
+    return g.clean()
 
 
 def motor_mount_solid(p, lay):
@@ -404,6 +458,7 @@ def main():
         ("driveshaft", "cup_joint_T410R", cup_solid(p)),
         ("rear_drive", "rear_pinion_shaft_T410R",
          parts["rear pinion shaft with flange"].translate(cq.Vector(0, -lay["housing"][0], -z))),
+        ("rear_drive", f"pinion_{p['pinion'][0]:g}T_NBA207", parts["pinion NBA207"].translate(cq.Vector(0, -lay["housing"][0], -z))),
         ("rear_drive", f"spur_gear_{p['spur_teeth']:g}T_T410R", parts["spur gear"].translate(cq.Vector(0, -lay["spur"][0], -z))),
         ("rear_drive", "bearing_5x10x4", parts["bearing NBA298 in the motor mount"].translate(cq.Vector(0, -yb, -z))),
         ("motor_mount", "motor_mount_T410R", parts["motor mount"].translate(cq.Vector(0, -p["mount_y"], -PLATE_T))),
