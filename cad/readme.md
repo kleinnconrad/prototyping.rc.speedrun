@@ -27,11 +27,13 @@
 * [Speedrun shock towers](#speedrun-shock-towers)
   * [Design and fit of the speedrun shock towers](#design-and-fit-of-the-speedrun-shock-towers)
   * [Files and open points of the speedrun shock towers](#files-and-open-points-of-the-speedrun-shock-towers)
-* [Stock parts (not part of the speedrun design)](#stock-parts-not-part-of-the-speedrun-design)
+* [Re-engineered parts](#re-engineered-parts)
   * [Pivot blocks](#pivot-blocks)
   * [Centre driveshaft and drive line](#centre-driveshaft-and-drive-line)
   * [Differentials](#differentials)
   * [Wishbones](#wishbones)
+  * [Camber links](#camber-links)
+  * [Running gear](#running-gear)
 * [Scripts](#scripts)
   * [Regenerating the files](#regenerating-the-files)
   * [DXF generation](#dxf-generation)
@@ -49,24 +51,26 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/top_brace_speedrun`**: New design of the top brace that matches the bulkheads of this project (STEP, STL, DXF, PDF templates, geometry data, hole table, test print STL files)
 * **`/bulkhead`**: CAD data of the bulkheads (gear boxes): lower bulkhead, upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets).
 * **`/shock_tower`**: New design of the front and the rear shock tower that match the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
-* **`/stock_parts`**: Models of stock parts of the Carten T410R. They are not part of the speedrun design and are modelled for the completeness of the build.
+* **`/parts`**: Drive line, pivot blocks, wishbones and camber links: own design of the owner, re-engineered from the T410R.
   * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file).
   * **`/driveshaft`**: Centre driveshaft with the fixed metal pins and the cup joints (STEP, STL, parameter file of all drive line parts).
   * **`/rear_drive`**: Rear pinion shaft with flange, pinion 17T, spur gear 72T, bearing 5x10x4 and retaining pin (STEP, STL).
   * **`/front_drive`**: Front pinion shaft (STEP, STL).
   * **`/motor_mount`**: Motor mount for 540 motors and its cap (STEP, STL).
-  * **`/diff`**: Differential case, ring gear 42T and bearing NBA299 (STEP, STL).
+  * **`/diff`**: Differential case, ring gear 42T and bearing (STEP, STL).
   * **`/diff_outdrive`**: Diff outdrive (STEP, STL).
   * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file).
-* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the stock parts: pivot blocks, centre driveshaft and drive line, motor mount, diff outdrives, wishbones with hinge pins (STEP).
+  * **`/camber_link`**: Camber links: turnbuckle, rod end, ball stud, assembled front and rear link (STEP, STL, parameter file).
+* **`/running_gear`**: C-hubs with caster, steering knuckles, rear hub carriers, axles, hex hubs, CVD drive shafts, steering, servo mount and sway bars (STEP, STL, parameter file).
+* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the re-engineered parts: pivot blocks, drive line, wishbones, camber links and running gear (STEP).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
 
 ## Speedrun chassis
-The speedrun chassis combines the parts that are designed in this project for speeds over 100 km/h. The parts share their interfaces: the bulkheads are mounted on the hole patterns of the chassis plate, the top brace on the contact faces of both upper bulkheads, the shock towers on the shock tower walls of the upper bulkheads (front tower at End A, rear tower at End B).
+The speedrun chassis combines the parts that are designed in this project for speeds over 100 km/h; the assembly completes them with the re-engineered parts (drive line, wishbones, running gear). The parts share their interfaces: the bulkheads are mounted on the hole patterns of the chassis plate, the top brace on the contact faces of both upper bulkheads, the shock towers on the shock tower walls of the upper bulkheads (front tower at End A, rear tower at End B).
 
-![Speedrun chassis: chassis plate, bulkheads, top brace and shock towers](../photos/cad_speedrun_chassis_assembly.png)
+![Speedrun chassis: complete build with the drive line, the wishbones and the running gear](../photos/cad_speedrun_chassis_assembly.png)
 
 ### Parts of the speedrun chassis
 | Part | Quantity | Directory | Status | Material | Mass |
@@ -79,22 +83,30 @@ The speedrun chassis combines the parts that are designed in this project for sp
 | [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
 | **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace and shock towers carbon | **417 g** |
 
-Stock parts of the Carten T410R, modelled for the completeness of the build (not part of the speedrun design, not in the mass total):
+Re-engineered parts (own design of the owner, re-engineered from the T410R, not in the mass total):
 
-| Stock part | Quantity | Directory | Status |
+| Part | Quantity | Directory | Status |
 |:---|---:|:---|:---|
-| [Pivot blocks of the wishbones](#pivot-blocks) (long and short block) | 4 | `/stock_parts/pivot_block` | $\color{red}\times$ Completely unqualified |
-| [Centre driveshaft with fixed metal pins](#centre-driveshaft-and-drive-line) | 1 | `/stock_parts/driveshaft` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Cup joints of the centre driveshaft (NBA255)](#centre-driveshaft-and-drive-line) | 2 | `/stock_parts/driveshaft` | $\color{red}\times$ Completely unqualified |
-| [Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin (NBA205, NBA207, NBA252, NBA298, NBA255)](#centre-driveshaft-and-drive-line) | 1 | `/stock_parts/rear_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Front pinion shaft with pinion 17T, bearings and retaining pin (NBA205, NBA207, NBA298, NBA255)](#centre-driveshaft-and-drive-line) | 1 | `/stock_parts/front_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Motor mount with cap (NBA201)](#centre-driveshaft-and-drive-line) | 1 | `/stock_parts/motor_mount` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Differential (End B) with ring gear 42T, inner gears and bearings NBA299](#differentials) | 1 | `/stock_parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Spool (End A) with ring gear 42T and bearings NBA299](#differentials) | 1 | `/stock_parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Diff outdrives](#centre-driveshaft-and-drive-line) | 4 | `/stock_parts/diff_outdrive` | $\color{red}\times$ Completely unqualified |
-| [Front wishbones (NHA402)](#wishbones) | 2 | `/stock_parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Rear wishbones (NHA402)](#wishbones) | 2 | `/stock_parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Inner hinge pins of the wishbones (NHA423 3x42)](#wishbones) | 4 | `/stock_parts/wishbone` | $\color{red}\times$ Completely unqualified |
+| [Pivot blocks of the wishbones](#pivot-blocks) (long and short block) | 4 | `/parts/pivot_block` | $\color{green}\checkmark$ Verified |
+| [Centre driveshaft with fixed metal pins](#centre-driveshaft-and-drive-line) | 1 | `/parts/driveshaft` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Cup joints of the centre driveshaft](#centre-driveshaft-and-drive-line) | 2 | `/parts/driveshaft` | $\color{red}\times$ Completely unqualified |
+| [Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin](#centre-driveshaft-and-drive-line) | 1 | `/parts/rear_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Front pinion shaft with pinion 17T, bearings and retaining pin](#centre-driveshaft-and-drive-line) | 1 | `/parts/front_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Motor mount with cap](#centre-driveshaft-and-drive-line) | 1 | `/parts/motor_mount` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Differential (End B) with ring gear 42T, inner gears and bearings](#differentials) | 1 | `/parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Spool (End A) with ring gear 42T and bearings](#differentials) | 1 | `/parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Diff outdrives](#centre-driveshaft-and-drive-line) | 4 | `/parts/diff_outdrive` | $\color{red}\times$ Completely unqualified |
+| [Front wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Rear wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Inner hinge pins of the wishbones (3x42)](#wishbones) | 4 | `/parts/wishbone` | $\color{red}\times$ Completely unqualified |
+| [Camber links: turnbuckle M3x37 with rod ends and ball studs](#camber-links) | 4 | `/parts/camber_link` | $\color{red}\times$ Completely unqualified |
+| [Front C-hubs with 10 degrees caster and steering knuckles](#running-gear) | 2 + 2 | `/running_gear` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Rear hub carriers](#running-gear) | 2 | `/running_gear` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Axles with joint cup, hex hubs 12 mm](#running-gear) | 4 + 4 | `/running_gear` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [CVD drive shafts](#running-gear) | 4 | `/running_gear` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Steering: posts, bellcranks, bridge, steering links, servo link, servo horn, servo mount](#running-gear) | 1 set | `/running_gear` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Sway bars with holders and cups](#running-gear) | 2 | `/running_gear` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Dampers (standard 1:10 on-road, purchased)](#running-gear) | 4 | Assembly only | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 
 Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
 
@@ -103,13 +115,13 @@ Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{g
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
 
 ### Assembly file
-* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and 50 stock parts (pivot blocks, wishbones with hinge pins, centre driveshaft with cup joints, rear and front drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool with the ring gears and bearings, 4 diff outdrives) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
-* The stock parts are not part of the speedrun design and are not in the mass total (see [stock parts](#stock-parts-not-part-of-the-speedrun-design)).
+* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and 163 re-engineered parts (pivot blocks, wishbones with hinge pins, camber links, centre driveshaft with cup joints, front and rear drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool, 4 diff outdrives, and the running gear: C-hubs, knuckles, hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the servo mount, dampers, sway bars) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
+* The re-engineered parts are not in the mass total (see [re-engineered parts](#re-engineered-parts)).
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [pivot blocks](#pivot-blocks)) and 2.16 mm³ between the lower bulkhead at End A and each front wishbone (inner lugs 0.14 mm into the side face, see [wishbones](#wishbones)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
 * The image shows an overall view with an inset of the differential at End B in section (with the pinion), a side view, a top view and three close-ups:
-  * both ends with the bulkheads, the shock tower and the end of the top brace, seen from the outer end;
-  * the stock drive line at End B (spur gear, motor mount with cap, cup joint), seen from the middle of the car, without the top brace and the shock tower.
+  * both ends with the bulkheads, the shock tower, the corners of the running gear, the dampers and the sway bar, seen from the outer end;
+  * the drive line at End B (spur gear, motor mount with cap, cup joint), seen from the middle of the car, without the top brace and the shock tower.
 
 ## Chassis plate and top brace
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -292,10 +304,10 @@ The assembly with the chassis plate and the bulkheads is shown in the section [s
 | Volume | 7.84 cm³ | 8.78 cm³ |
 | Mass | 12.5 g in carbon (1.6 g/cm³) | 14.0 g in carbon, 24.7 g in 7075 (2.81 g/cm³) |
 
-* The notches at the ends of the original top brace most likely clear the raised rib on top of the stock upper bulkhead. The upper bulkhead of this project has a flat contact face there. The speedrun top brace therefore fits only the bulkheads of this project. With the stock bulkheads, the original top brace is used.
+* The notches at the ends of the original top brace most likely clear the raised rib on top of the original upper bulkhead. The upper bulkhead of this project has a flat contact face there. The speedrun top brace therefore fits only the bulkheads of this project. With the original bulkheads, the original top brace is used.
 * The new outline lies within the outline of the original top brace, except at the ends: the closed notches and the wider ends (222 mm² in total) lie on the contact faces of the bulkheads. Outside the contact faces, the new outline does not exceed the original outline (0 mm², checked by the script).
 * The obround is kept unchanged, because it lies in the area of the spur gear.
-* The closed holes and slots make the middle part stiffer. The manual (step 25) shows a part NHA410 with a screw M3x6 in the middle part of the top brace. It has no mounting hole on the speedrun top brace.
+* The closed holes and slots make the middle part stiffer. The manual (step 25) shows a part with a screw M3x6 in the middle part of the top brace. It has no mounting hole on the speedrun top brace.
 
 **Fit to the bulkheads**
 
@@ -331,25 +343,25 @@ All files are stored in the directory `/chassis/top_brace_speedrun`. They are ge
 
 **Open points of the speedrun top brace**
 
-* **Spacing B01 to B02:** 26.10 mm in the geometry data of the original top brace, 25.65 mm between B14 and B15 and 25.6 mm between the top brace screws of the stock upper bulkhead (U7). Both bulkheads are the same part, so both ends of the top brace should have the same spacing. With a hole of 3.2 mm, a screw M3 has approx. 0.1 mm radial clearance, so an offset of 0.25 mm per side can block the screws. The verification of the speedrun top brace shows that the screws fit. A measurement of the spacing B01 to B02 on the carbon top brace can still confirm the value of the geometry data.
-* Function of the part NHA410 (manual step 25) in the middle part of the original top brace.
+* **Spacing B01 to B02:** 26.10 mm in the geometry data of the original top brace, 25.65 mm between B14 and B15 and 25.6 mm between the top brace screws of the original upper bulkhead (U7). Both bulkheads are the same part, so both ends of the top brace should have the same spacing. With a hole of 3.2 mm, a screw M3 has approx. 0.1 mm radial clearance, so an offset of 0.25 mm per side can block the screws. The verification of the speedrun top brace shows that the screws fit. A measurement of the spacing B01 to B02 on the carbon top brace can still confirm the value of the geometry data.
+* Function of the part (manual step 25) in the middle part of the original top brace.
 
 ## Lower bulkhead
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** CAD model of the lower half of the gear box (bulkhead) of the Carten T410R. The stock part is the plastic part NBA249 ("Gear box"), which is used at the front and at the rear. The model is the basis for a CNC part made of 7075-T6. The interfaces to the chassis plate, the bearings, the gears, the upper bulkhead and the sway bar follow the stock part. The shape is designed to match the [upper bulkhead](#upper-bulkhead-new-design) (see [design of the lower bulkhead](#design-of-the-lower-bulkhead)).
-* **Status:** $\color{green}\checkmark$ Verified (test prints: see [test print of the lower bulkhead](#measurement-basis-and-test-print-of-the-lower-bulkhead)). The interfaces are based on caliper measurements of the stock part. Some positions are taken from photos (accuracy approx. +-0.5 mm) or derived from the caliper values (see [measurement basis of the lower bulkhead](#measurement-basis-and-test-print-of-the-lower-bulkhead)).
+* **Description:** CAD model of the lower half of the gear box (bulkhead) of the Carten T410R. The original part is the plastic part ("Gear box"), which is used at the front and at the rear. The model is the basis for a CNC part made of 7075-T6. The interfaces to the chassis plate, the bearings, the gears, the upper bulkhead and the sway bar follow the original part. The shape is designed to match the [upper bulkhead](#upper-bulkhead-new-design) (see [design of the lower bulkhead](#design-of-the-lower-bulkhead)).
+* **Status:** $\color{green}\checkmark$ Verified (test prints: see [test print of the lower bulkhead](#measurement-basis-and-test-print-of-the-lower-bulkhead)). The interfaces are based on caliper measurements of the original part. Some positions are taken from photos (accuracy approx. +-0.5 mm) or derived from the caliper values (see [measurement basis of the lower bulkhead](#measurement-basis-and-test-print-of-the-lower-bulkhead)).
 
 ![Views of the lower bulkhead](../photos/cad_bulkhead_lower_preview.png)
 
 ### Interfaces and files of the lower bulkhead
-| Interface | Stock parts | Model |
+| Interface | Original parts | Model |
 |:---|:---|:---|
 | Chassis plate | 4 countersunk screws M3x8 from below through the 2 mm chassis plate | 4 M3 holes (tap drill 2.5 mm, 8 mm deep), spacing 28.0 x 20.0 mm |
 | Upper bulkhead | 2 button head screws M3x10 on the pinion side, 2 button head screws M3x8 on the outer side | 4 bosses 4.86 mm, 2.42 mm above the parting face, M3 holes (tap drill 2.5 mm, 7 mm deep). Spacing across 18.7 mm (pinion side) and 21.6 mm (outer side), spacing along 42.6 mm |
-| Diff | 2 bearings 10x15x4 (NBA299) | Per side: outer lip 1.89 mm thick (opening 12.28 mm) and seat 15 x 4 mm, open toward the gear cavity. Inner faces of the lips 30.7 mm apart |
-| Pinion shaft | 2 bearings 5x10x4 (NBA298) | Seat 10 mm, 9.25 mm long: 2 seats of 4 mm (outer seat 4.35 mm) with a rib of 0.9 mm between the bearings, 0.3 mm high (opening 9.4 mm). The rib is the only axial stop: no shoulder at the inner end, open at the housing end face |
-| Ring gear (42T, 31.93 mm) and diff case | Gear diff NBA230 | Cavity with a radius of 13.5 mm for the diff case (test print), deepening with a radius of 16.4 mm for the ring gear on the ring gear side, with a through opening in the floor (test print) |
-| Pinion gear (17T, 14.1 mm) | Pinion NBA207 | Pocket with a radius of 8.25 mm (test print) in a rectangular block, wall 1.5 mm |
+| Diff | 2 bearings 10x15x4 | Per side: outer lip 1.89 mm thick (opening 12.28 mm) and seat 15 x 4 mm, open toward the gear cavity. Inner faces of the lips 30.7 mm apart |
+| Pinion shaft | 2 bearings 5x10x4 | Seat 10 mm, 9.25 mm long: 2 seats of 4 mm (outer seat 4.35 mm) with a rib of 0.9 mm between the bearings, 0.3 mm high (opening 9.4 mm). The rib is the only axial stop: no shoulder at the inner end, open at the housing end face |
+| Ring gear (42T, 31.93 mm) and diff case | Gear diff | Cavity with a radius of 13.5 mm for the diff case (test print), deepening with a radius of 16.4 mm for the ring gear on the ring gear side, with a through opening in the floor (test print) |
+| Pinion gear (17T, 14.1 mm) | Pinion | Pocket with a radius of 8.25 mm (test print) in a rectangular block, wall 1.5 mm |
 | Sway bar | 2 M3 screws | 2 tabs, 4.35 mm thick, with M3 holes (tap drill 2.5 mm), spacing 16.2 mm |
 
 * The diff axis and the pinion axis lie in the parting face, 17.2 mm above the bottom face. The upper bulkhead holds the bearings from above.
@@ -388,7 +400,7 @@ Each parameter in `bulkhead_lower_parameters.json` has a source code:
 
 | Source code | Meaning | Parameters |
 |:---|:---|:---|
-| `caliper` | Caliper measurement of the stock part (number of the measurement sheet in the note) | Hole spacings, heights, widths, lips, seat lengths, boss and tab sizes |
+| `caliper` | Caliper measurement of the original part (number of the measurement sheet in the note) | Hole spacings, heights, widths, lips, seat lengths, boss and tab sizes |
 | `derived` | Calculated from caliper values and part sizes | Positions along y, deepening, floor thickness, pocket radii |
 | `manual` | T410R instruction manual (not stored in this repository, see [sources](#sources)) | Bearing sizes |
 | `user` | Information from the owner of the car | Screw sizes, function of the sway bar holes, deepening for the ring gear, diff bearing seat limited only by the outer lip |
@@ -396,7 +408,7 @@ Each parameter in `bulkhead_lower_parameters.json` has a source code:
 | `design` | Free design choice | Tap drill diameters, hole depths, openings that were not measured |
 
 * The caliper values 7, 8 and 9 (top boss holes) agree with the top view photo within 0.3 mm. The ratio of the bottom hole spacings (28.0 / 20.0) agrees with the bottom view photo within 0.3 %.
-* The stock part measures 15.6 mm (diff) and 10.5 mm (pinion) across the half bores at the parting face. The model uses the bearing diameters 15.0 mm and 10.0 mm for the bearing fit.
+* The original part measures 15.6 mm (diff) and 10.5 mm (pinion) across the half bores at the parting face. The model uses the bearing diameters 15.0 mm and 10.0 mm for the bearing fit.
 * The positions along y are calculated from the caliper values 16, 17 and 19 with the seat edge (15.6 mm) as the reference. With this reference, the inner pinion bearing is 18.15 mm from the diff axis. The photo with the diff installed shows approx. 18.3 mm.
 * The photo with the diff installed shows the ring gear between 5.0 and 9.4 mm from the diff centre. The back face of the ring gear is approx. 1.9 mm from the inner face of the bearing.
 * The lip thickness is 1.89 mm (no. 13, measured twice as no. 15). With the inner faces of the lips 30.7 mm apart (no. 14), the width over the outer faces is 34.48 mm. The caliper value no. 10 is 34.2 mm. The model keeps no. 13 and no. 14, because they set the position of the bearings.
@@ -416,21 +428,21 @@ The measurement sheet `bulkhead_lower_measurement_sheet.pdf` documents the calip
 * `testprint_bulkhead_lower.stl` differs from the solid model in two points: the bearing seats are 0.2 mm larger in diameter (15.2 mm and 10.2 mm), and all M3 holes have a diameter of 2.7 mm for self-tapping screws. The test print file contains the radii and edge chamfers of the solid model.
 * Print orientation: bottom face on the print bed. The boss columns below the chamfers and the sway bar tabs need supports.
 * The floor below the ring gear deepening has an opening of 6.85 x 5 mm. Around the opening, the floor is 0.8 mm thick and increases toward the ends of the deepening.
-* Checks: the 4 bottom holes on the chassis plate, the diff and the pinion shaft with their bearings in the seats, the mesh of the gears, the fit of the stock upper bulkhead and the clearance to the suspension arms and pivot blocks.
+* Checks: the 4 bottom holes on the chassis plate, the diff and the pinion shaft with their bearings in the seats, the mesh of the gears, the fit of the original upper bulkhead and the clearance to the suspension arms and pivot blocks.
 
 Result of the first test print (diff with ring gear and pinion shaft installed):
 
 | Observation | Change |
 |:---|:---|
 | The diff case touches the wall of the cavity on the outer side (opposite the pinion). | Radius of the diff case cavity 12.5 mm -> 13.5 mm, in the lower and the upper part. |
-| The ring gear does not rotate freely in its deepening. The stock part has an extra deepening of approx. 5 mm length with approx. 0.7 mm more space below the ring gear. | Through opening in the floor below the deepening, 6.85 x 5 mm (x by y, centred below the diff axis), corner radius 1.5 mm. The chassis plate closes it. The lowest tooth of the ring gear is 1.23 mm above the chassis plate (before: 0.43 mm above the floor). The radius of the deepening (16.4 mm) is not increased: a larger radius would break through the side faces of the narrow lower section. |
+| The ring gear does not rotate freely in its deepening. The original part has an extra deepening of approx. 5 mm length with approx. 0.7 mm more space below the ring gear. | Through opening in the floor below the deepening, 6.85 x 5 mm (x by y, centred below the diff axis), corner radius 1.5 mm. The chassis plate closes it. The lowest tooth of the ring gear is 1.23 mm above the chassis plate (before: 0.43 mm above the floor). The radius of the deepening (16.4 mm) is not increased: a larger radius would break through the side faces of the narrow lower section. |
 | The pinion needs more space to rotate. | Radius of the pinion pocket 7.75 mm -> 8.25 mm (clearance to the 14.1 mm pinion 1.2 mm), in the lower and the upper part. Below the pocket of the lower part, the wall is 1.5 mm (before: 0.35 mm at the pinion seat). |
 
 Result of the second test print:
 
 | Observation | Change |
 |:---|:---|
-| The rib between the two pinion bearings is too high and too thick. The stock part has a rib of only a fraction of a millimetre, just enough to keep the bearings apart. | Rib height 0.75 mm -> 0.3 mm (opening 8.5 mm -> 9.4 mm), rib width 1.25 mm -> 0.9 mm, in the lower and the upper part. The face toward the pinion is not moved, so the gear mesh does not change. |
+| The rib between the two pinion bearings is too high and too thick. The original part has a rib of only a fraction of a millimetre, just enough to keep the bearings apart. | Rib height 0.75 mm -> 0.3 mm (opening 8.5 mm -> 9.4 mm), rib width 1.25 mm -> 0.9 mm, in the lower and the upper part. The face toward the pinion is not moved, so the gear mesh does not change. |
 | The part is functional. The shape is to match the upper part. | New shape of the lower part (see [design of the lower bulkhead](#design-of-the-lower-bulkhead)). The interfaces are not changed. |
 
 ### Design of the lower bulkhead
@@ -455,8 +467,8 @@ The lower part has the same design as the upper part: the footprint of the upper
 **Design notes**
 
 * The body is solid apart from the gear cavity. Pockets to reduce the mass are possible after the test print.
-* Each diff bearing seat is limited only by the outer lip. The half bore of 15 mm runs 4.0 mm inward from the lip and then opens into the gear cavity. On the inner side, the diff holds the bearings. The diff with both bearings measures 30.0 mm, the lips are 30.7 mm apart: the diff has 0.7 mm axial play, as on the stock part.
-* The gear cavity has two depths. Between the bearing seats, a cylinder with a radius of 13.5 mm holds the diff case (floor 3.7 mm thick). The test print with a radius of 12.5 mm showed that the diff case touches the wall on the outer side. On the ring gear side, a deepening with a radius of 16.4 mm from x = 4.5 mm to the inner end of the bearing seat (x = 11.35 mm) holds the ring gear (radial clearance 0.43 mm). Below the ring gear, the floor has a through opening of 6.85 x 5 mm (extra deepening of the stock part, approx. 5 mm long). The chassis plate closes the gear box from below. The wall between the deepening and the bottom holes is 1.4 mm thick.
+* Each diff bearing seat is limited only by the outer lip. The half bore of 15 mm runs 4.0 mm inward from the lip and then opens into the gear cavity. On the inner side, the diff holds the bearings. The diff with both bearings measures 30.0 mm, the lips are 30.7 mm apart: the diff has 0.7 mm axial play, as on the original part.
+* The gear cavity has two depths. Between the bearing seats, a cylinder with a radius of 13.5 mm holds the diff case (floor 3.7 mm thick). The test print with a radius of 12.5 mm showed that the diff case touches the wall on the outer side. On the ring gear side, a deepening with a radius of 16.4 mm from x = 4.5 mm to the inner end of the bearing seat (x = 11.35 mm) holds the ring gear (radial clearance 0.43 mm). Below the ring gear, the floor has a through opening of 6.85 x 5 mm (extra deepening of the original part, approx. 5 mm long). The chassis plate closes the gear box from below. The wall between the deepening and the bottom holes is 1.4 mm thick.
 * The ring gear is on the +x side. Seen from the pinion housing, the deepening is on the left. The bulkhead is the same part at the front and at the rear and is rotated by 180 degrees. Both pinions point to the centre shaft, so the ring gear is on the same side of the bulkhead at both ends.
 * The STEP files contain no threads. All M3 threads are modelled as holes with the tap drill diameter of 2.5 mm (ISO metric thread M3 x 0.5). For CNC manufacturing, the threads are specified in the comment field of the order:
 
@@ -469,7 +481,7 @@ The lower part has the same design as the upper part: the footprint of the upper
 | Upper bulkhead | 4 holes in the shock tower wall | M3 | Through (6.0 mm) | Through | M3x8 button head through the shock tower |
 
 * All other holes of the speedrun parts are clearance holes Ø3.2 mm without a thread: chassis plate (countersunk from below), top brace, shock towers, and the holes of the upper bulkhead for the screws into the lower bulkhead.
-* Stock parts: the motor mount has M3 threads (tap drill 2.5 mm, 7.0 mm deep) for the screws from below through the holes H09 and H10 and for the 2 screws M3x18 of the cap; the flange of the rear pinion shaft has 4 M3 threads for the screws of the spur gear; the pivot blocks have M3 threads for the countersunk screws from below; the wishbones have M3 threads for the ball studs and M4 threads for the droop screws.
+* Re-engineered parts: the motor mount has M3 threads (tap drill 2.5 mm, 7.0 mm deep) for the screws from below through the holes H09 and H10 and for the 2 screws M3x18 of the cap; the flange of the rear pinion shaft has 4 M3 threads for the screws of the spur gear; the pivot blocks have M3 threads for the countersunk screws from below; the wishbones have M3 threads for the ball studs and M4 threads for the droop screws.
 
 **Edges of the outer shape**
 
@@ -496,7 +508,7 @@ Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The insid
 * Lower part: 18 edges with full edge chamfers (178 mm), 18 edges with stopped edge chamfers (154 mm), 12 short edges left as they are (25 mm: edges of the small inside radii and of the narrow block under the pinion).
 * The generators list all edges that are left as they are.
 
-**Shock tower wall:** the root radius changes the interface to the shock tower. In front of the contact face, the zone above 19.8 mm is kept free (block 17.8 mm plus the root radius). Beside the narrowed wall, the zones above the side steps are kept free for the camber link lobes of the towers and the rod ends of the camber links. The stock shock tower plate reaches down to approx. 17.8 mm and does not fit. The [speedrun shock towers](#speedrun-shock-towers) are designed for the upper bulkhead.
+**Shock tower wall:** the root radius changes the interface to the shock tower. In front of the contact face, the zone above 19.8 mm is kept free (block 17.8 mm plus the root radius). Beside the narrowed wall, the zones above the side steps are kept free for the camber link lobes of the towers and the rod ends of the camber links. The original shock tower plate reaches down to approx. 17.8 mm and does not fit. The [speedrun shock towers](#speedrun-shock-towers) are designed for the upper bulkhead.
 
 **Unchanged inside:** the generators build the outer shape with the edge treatment first and then cut all functional voids: gear cavity, floor opening, bearing seats, lip openings, pinion pocket, rib, holes, counterbores, recesses and the keep-out zones of the upper part (top brace, shock tower, rod ends beside the wall). A comparison with the model without edge treatment, which has the verified inside, gives:
 
@@ -512,34 +524,34 @@ Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The insid
 * The interference of the lower and the upper part, and of all parts of the speedrun chassis, is 0 mm³. The top brace fits the upper bulkheads unchanged.
 
 ### Open points of the lower bulkhead
-* **Chassis plate:** the bottom holes of the stock bulkhead are 28.0 x 20.0 mm apart. The chassis plate and the speedrun chassis plates have 28.17 x 20.22 mm (H03 to H06) and 28.13 x 20.19 mm (H28 to H31). Countersunk screws center themselves in the countersinks, so the difference of approx. 0.1 mm per hole is not compensated by clearance. The hole spacings of the carbon chassis plate are to be measured before the aluminium plate is ordered.
+* **Chassis plate:** the bottom holes of the original bulkhead are 28.0 x 20.0 mm apart. The chassis plate and the speedrun chassis plates have 28.17 x 20.22 mm (H03 to H06) and 28.13 x 20.19 mm (H28 to H31). Countersunk screws center themselves in the countersinks, so the difference of approx. 0.1 mm per hole is not compensated by clearance. The hole spacings of the carbon chassis plate are to be measured before the aluminium plate is ordered.
 * Open caliper values of the measurement sheet (nos. 21, 26, 30 to 36, 38 to 41).
 * The value 22 (5 mm) is interpreted as the height of the end faces of the contact block, and the value 25 (4.35 mm) as the thickness of the sway bar tabs with the top face in the parting face.
 * Width over the outer faces of the diff bearing walls: 34.48 mm in the model, 34.2 mm measured (no. 10).
-* The outer end face of the stock part has small holes. Their function is unknown, so they are not modelled.
+* The outer end face of the original part has small holes. Their function is unknown, so they are not modelled.
 * Upper bulkhead: see [upper bulkhead (new design)](#upper-bulkhead-new-design).
 * Front and rear: End A of the chassis plate is assumed to be the front (bumper holes H34 to H36), End B the rear (motor window).
-* Pivot block at End B, outer: the model of the long stock pivot block overlaps the outer chamfer of the lower bulkhead by 0.38 mm (see [open points of the pivot blocks](#pivot-blocks)).
+* Pivot block at End B, outer: the model of the long pivot block overlaps the outer chamfer of the lower bulkhead by 0.38 mm (see [open points of the pivot blocks](#pivot-blocks)).
 
 ## Upper bulkhead (new design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** CAD model of a new upper half of the gear box (bulkhead) of the Carten T410R for CNC manufacturing from 7075-T6. The shape is a new design. The interfaces follow the stock part: the lower bulkhead, the diff and pinion bearings, the shock tower and the top brace.
-* **Status:** $\color{green}\checkmark$ Verified with a test print. The interfaces to the lower part and the bearings are taken from the parameter file of the lower bulkhead. The shock tower hole pattern and its height, the spacing of the top brace screws and the height of the top brace face are caliper values (U1 to U4, U7, U9, U10). The position of the shock tower contact face is an estimate from photos (U5, U6), and the position of the top brace screws along y is derived from the top brace and the chassis plate (U8). The test print confirms the part (see [measurement sheet of the stock upper bulkhead](#files-and-measurement-sheet-of-the-upper-bulkhead)). The root radius of the shock tower wall was added after the test print: the stock shock tower plate does not fit, the [speedrun shock towers](#speedrun-shock-towers) are designed for the upper bulkhead. Also after the test print, the shock tower wall was narrowed to 28.0 mm with side steps beside it (request of the owner): the camber link holes of the towers are at the stock position, and the rod ends of the camber links sit beside the wall. The inside of the part and the 4 tapped holes of the shock tower are not changed.
+* **Description:** CAD model of a new upper half of the gear box (bulkhead) of the Carten T410R for CNC manufacturing from 7075-T6. The shape is a new design. The interfaces follow the original part: the lower bulkhead, the diff and pinion bearings, the shock tower and the top brace.
+* **Status:** $\color{green}\checkmark$ Verified with a test print. The interfaces to the lower part and the bearings are taken from the parameter file of the lower bulkhead. The shock tower hole pattern and its height, the spacing of the top brace screws and the height of the top brace face are caliper values (U1 to U4, U7, U9, U10). The position of the shock tower contact face is an estimate from photos (U5, U6), and the position of the top brace screws along y is derived from the top brace and the chassis plate (U8). The test print confirms the part (see [measurement sheet of the original upper bulkhead](#files-and-measurement-sheet-of-the-upper-bulkhead)). The root radius of the shock tower wall was added after the test print: the original shock tower plate does not fit, the [speedrun shock towers](#speedrun-shock-towers) are designed for the upper bulkhead. Also after the test print, the shock tower wall was narrowed to 28.0 mm with side steps beside it (request of the owner): the camber link holes of the towers are at the original position, and the rod ends of the camber links sit beside the wall. The inside of the part and the 4 tapped holes of the shock tower are not changed.
 
 ![Views and sections of the upper bulkhead](../photos/cad_bulkhead_upper_preview.png)
 
 The preview shows the upper part, the assemblies at End A (front) and End B (rear) with the lower part, the [speedrun shock towers](#speedrun-shock-towers) and the end of the [speedrun top brace](#speedrun-top-brace) (dark grey), and two sections of the assembly at End A. The bearings (light grey), the gears (yellow) and the diff case (dark grey) are simplified bodies that show the positions only.
 
 ### Interfaces and design of the upper bulkhead
-| Interface | Stock parts | Model | Source |
+| Interface | Original parts | Model | Source |
 |:---|:---|:---|:---|
 | Lower bulkhead | Parting face, 4 bosses of the lower part (4.86 mm, 2.42 mm high) | Flat underside, 4 recesses 5.06 x 2.52 mm for the bosses (locating the two halves) | Lower part |
 | Screws to the lower part | 2 button head screws M3x8 on the outer side, 2 button head screws M3x10 on the pinion side | Clearance holes 3.2 mm. Head seats 4.92 mm (outer side, on the flange) and 6.92 mm (pinion side, counterbore 6.5 mm) above the parting face: 5.5 mm thread engagement in the lower part | User, lower part |
 | Diff bearings (10x15x4) | Clamped between the two halves | Upper half bores 15 x 4 mm, limited only by the outer lips (opening 12.28 mm, 1.89 mm thick) | Lower part |
 | Pinion bearings (5x10x4) | Clamped between the two halves | Upper half bores 10 mm with the rib (0.9 mm wide, 0.3 mm high) between the bearings as the only axial stop, open toward the pinion pocket and at the housing end face | Lower part, user |
 | Gears | Ring gear 42T (31.93 mm), pinion 17T (14.1 mm) | Same cavities as the lower part: diff case radius 13.5 mm, ring gear radius 16.4 mm on the ring gear side (from x = 4.5 mm to 10.4 mm, 1 mm beyond the back face of the ring gear), pinion pocket radius 8.25 mm | Lower part, photo |
-| Shock tower | 3 mm carbon, 4 button head screws M3x8 (manual steps 19 and 20). Stock holes 2.9 mm, through the 5.8 mm ears | Flat contact face facing the outer side at y = -5.3 mm, 4 tapped holes M3 (through the 6 mm wall) at x = +-9.55 mm and 22.5 / 28.6 mm above the parting face. Root radius 2.0 mm on both sides of the wall. In front of the face, no material above 19.8 mm: the stock plate does not fit, the [speedrun shock towers](#speedrun-shock-towers) fit. Wall 28.0 mm wide (x = +-14.0 mm) with side steps 15.0 mm above the parting face beside it: space for the rod ends of the camber links (x = +-18.05 mm, 19.1 mm) | Caliper (holes), photo (contact face), owner (camber links) |
-| Top brace (NHA432) | 2 button head screws M3x8 per bulkhead (manual step 25) into 2 raised bosses | Flat contact face 15.4 mm above the parting face, from y = 10.5 mm to the pinion end, 2 tapped holes M3 at x = +-12.8 mm, y = 14.85 mm | Caliper (height, spacing), top brace and chassis plate (y, see [fit to the bulkheads](#design-and-fit-of-the-speedrun-top-brace)) |
+| Shock tower | 3 mm carbon, 4 button head screws M3x8 (manual steps 19 and 20). Original holes 2.9 mm, through the 5.8 mm ears | Flat contact face facing the outer side at y = -5.3 mm, 4 tapped holes M3 (through the 6 mm wall) at x = +-9.55 mm and 22.5 / 28.6 mm above the parting face. Root radius 2.0 mm on both sides of the wall. In front of the face, no material above 19.8 mm: the original plate does not fit, the [speedrun shock towers](#speedrun-shock-towers) fit. Wall 28.0 mm wide (x = +-14.0 mm) with side steps 15.0 mm above the parting face beside it: space for the rod ends of the camber links (x = +-18.05 mm, 19.1 mm) | Caliper (holes), photo (contact face), owner (camber links) |
+| Top brace | 2 button head screws M3x8 per bulkhead (manual step 25) into 2 raised bosses | Flat contact face 15.4 mm above the parting face, from y = 10.5 mm to the pinion end, 2 tapped holes M3 at x = +-12.8 mm, y = 14.85 mm | Caliper (height, spacing), top brace and chassis plate (y, see [fit to the bulkheads](#design-and-fit-of-the-speedrun-top-brace)) |
 | Sway bar holders | M3x6 from above onto the tabs of the lower part (manual step 23) | The upper part ends at y = -25.5 mm, 3.2 mm before the sway bar holes | Photo |
 
 * The pinion side screws (M3x10) sit below the top brace. The top brace has access holes above them (B03/B04 and B12/B13, spacing 19.1 mm, 6.94 mm and 6.58 mm from the top brace screws).
@@ -563,7 +575,7 @@ The upper part is a prismatic block: the footprint of the lower part (34.48 mm w
 * The interference check of the assembly of the lower and the upper part gives 0 mm³.
 * The ring gear cavity of the upper part ends at x = 10.4 mm (lower part: 11.35 mm). Up to 11.35 mm, the wall to the tapped hole of the top brace screw was only 0.2 mm. It is now 1.15 mm.
 * Size 34.48 x 53.4 x 31.5 mm, volume 18.8 cm³, mass 53 g in 7075 (2.81 g/cm³), 23 g in PLA.
-* The wall is 6 mm thick: the screws M3x8 through the 3 mm shock tower have 5 mm thread engagement. The material above the thread of the upper holes is 1.4 mm (wall top at the height of the stock ears, U10).
+* The wall is 6 mm thick: the screws M3x8 through the 3 mm shock tower have 5 mm thread engagement. The material above the thread of the upper holes is 1.4 mm (wall top at the height of the original ears, U10).
 * The block over the ring gear is 17.8 mm high. In front of the wall, the zone above 19.8 mm (block plus root radius) is kept free for the shock tower. The cover over the ring gear cavity is 1.4 mm directly behind the wall and 2.5 mm at the contact face.
 * The mass is higher than with shells that follow the gears. Straight pockets in the flat faces can reduce it, if required.
 * Manufacturing: 3 setups on a 3-axis machine (underside with the bores and cavities, top with the levels and the vertical holes, outer side with the 4 shock tower holes). The STEP file contains no threads: the tapped holes are modelled with the tap drill diameter of 2.5 mm. Radii and edge chamfers: see [edges of the outer shape](#design-of-the-lower-bulkhead).
@@ -578,42 +590,42 @@ All files are stored in the directory `/bulkhead`. The files are generated from 
 | `testprint_bulkhead_upper.stl` | STL (binary) | Test print variant: bearing seats 0.2 mm larger, tapped holes 2.7 mm for self-tapping screws. Print with the parting face on the print bed. |
 | `bulkhead_assembly_T410R.step` | STEP (AP214) | Assembly of the lower and the upper part |
 | `bulkhead_upper_parameters.json` | JSON | Dimensions of the upper part, each with its source and a note. The shared dimensions are read from `bulkhead_lower_parameters.json`. |
-| `bulkhead_upper_measurement_sheet.pdf` | PDF (A4, 2 pages) | Measurement sheet of the stock upper part (see below) |
+| `bulkhead_upper_measurement_sheet.pdf` | PDF (A4, 2 pages) | Measurement sheet of the original upper part (see below) |
 
-**Measurement sheet of the stock upper bulkhead**
+**Measurement sheet of the original upper bulkhead**
 
-The measurement sheet `bulkhead_upper_measurement_sheet.pdf` shows the interfaces of the stock upper part on 3 photos (end view, side view, top view) with the numbers U1 to U14. Page 2 lists the values of the model and the caliper values (U1 to U4, U7, U9, U10 measured):
+The measurement sheet `bulkhead_upper_measurement_sheet.pdf` shows the interfaces of the original upper part on 3 photos (end view, side view, top view) with the numbers U1 to U14. Page 2 lists the values of the model and the caliper values (U1 to U4, U7, U9, U10 measured):
 * **U1 to U6, U11, U13:** shock tower: hole pattern, height of the holes, position of the contact face, lowest edge of the shock tower plates.
 * **U7 to U9:** top brace: hole spacing, position along y, height of the contact face.
-* **U10, U12:** height of the ears, outer end of the stock part.
-* **U14:** use of the 2 screws M3x18 with the block NBA201 at the rear end of the top brace (manual step 25).
+* **U10, U12:** height of the ears, outer end of the original part.
+* **U14:** use of the 2 screws M3x18 with the block at the rear end of the top brace (manual step 25).
 * A scan of both shock towers on the flatbed scanner (U13) is the most accurate source for the hole pattern.
 * The photos are stored as `photos/bulkhead_upper_stock_end_view.jpg`, `photos/bulkhead_upper_stock_side_view.jpg` and `photos/bulkhead_upper_stock_top_view.jpg`.
 
 ### Open points of the upper bulkhead
-* Caliper values of the stock upper part that are not measured: U5, U6 (position of the shock tower contact face), U8 (position of the top brace screws along y), U11 (lowest edge of the shock towers), U12 to U14. The test print confirms the part, so these values are not required for manufacturing.
-* Shock tower: the stock shock tower plate does not fit. The [speedrun shock towers](#speedrun-shock-towers) (front and rear) are designed for the upper bulkhead.
+* Caliper values of the original upper part that are not measured: U5, U6 (position of the shock tower contact face), U8 (position of the top brace screws along y), U11 (lowest edge of the shock towers), U12 to U14. The test print confirms the part, so these values are not required for manufacturing.
+* Shock tower: the original shock tower plate does not fit. The [speedrun shock towers](#speedrun-shock-towers) (front and rear) are designed for the upper bulkhead.
 * Mass: 53 g in 7075. Straight pockets in the flat faces can reduce the mass.
 
 ## Speedrun shock towers
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** New front and rear shock towers for the speedrun upper bulkhead. Flat carbon plates of 3 mm (as the stock shock towers) on the contact face of the shock tower wall, each fixed with 4 button head screws M3x8 in the tapped holes of the wall. The dampers are mounted on the front face (outer end), the rod ends of the camber links on the back face (wall side), as on the car. The rear tower also carries the body post mounts.
-* **Status:** $\color{green}\checkmark$ Verified by the owner (front and rear shock tower). The damper, camber link (wheel mount) and body post positions are based on measurements of the stock shock towers by the owner. After the verification, the camber link holes were moved back to the stock position (the owner found them about 3 mm too far outward), and the shock tower wall of the upper bulkhead was narrowed for the rod ends (see [design of the speedrun shock towers](#design-and-fit-of-the-speedrun-shock-towers)). The space for the rod ends is an estimate from photos.
+* **Description:** New front and rear shock towers for the speedrun upper bulkhead. Flat carbon plates of 3 mm (as the original shock towers) on the contact face of the shock tower wall, each fixed with 4 button head screws M3x8 in the tapped holes of the wall. The dampers are mounted on the front face (outer end), the rod ends of the camber links on the back face (wall side), as on the car. The rear tower also carries the body post mounts.
+* **Status:** $\color{green}\checkmark$ Verified by the owner (front and rear shock tower). The damper, camber link (wheel mount) and body post positions are based on measurements of the original shock towers by the owner. After the verification, the camber link holes were moved back to the original position (the owner found them about 3 mm too far outward), and the shock tower wall of the upper bulkhead was narrowed for the rod ends (see [design of the speedrun shock towers](#design-and-fit-of-the-speedrun-shock-towers)). The space for the rod ends is an estimate from photos.
 
 ![Speedrun front shock tower on the speedrun bulkheads](../photos/cad_shock_tower_front_drawing.png)
 
 ![Speedrun rear shock tower on the speedrun bulkheads](../photos/cad_shock_tower_rear_drawing.png)
 
 ### Design and fit of the speedrun shock towers
-Positions in the plane of the tower: x across the car, height above the parting face of the bulkheads. The measurements of the owner refer to the edges of the holes of the stock towers; the model assumes holes of 3.2 mm in the stock towers (parameter `stock_hole_d`).
+Positions in the plane of the tower: x across the car, height above the parting face of the bulkheads. The measurements of the owner refer to the edges of the holes of the original towers; the model assumes holes of 3.2 mm in the original towers (parameter `stock_hole_d`).
 
 | Element | Front shock tower | Rear shock tower | Basis |
 |:---|:---|:---|:---|
 | Mounting holes T1 to T4 | x = ±9.55 mm, 22.5 mm and 28.6 mm, Ø3.2 mm | Same | Tapped holes of the upper bulkhead (U1 to U3) |
-| Camber link holes C1, C2 (wheel mounts) | x = ±18.05 mm, 19.1 mm, Ø3.2 mm | Same | Stock towers: 8.5 mm outward and 5 mm down from the top of the lower mounting hole (owner) |
-| Damper holes D1, D2 | x = ±31.65 mm, 30.6 mm, Ø3.2 mm | x = ±36.15 mm, 30.6 mm, Ø3.2 mm | Stock towers, from the outer end of the upper mounting hole to the centre of the damper hole: front 20.5 mm outward and 2 mm up, rear 25 mm outward and 2 mm up (owner) |
-| Body post bores B1, B2 | – | x = ±51.65 mm, 31.2 mm, Ø5.2 mm | Stock rear tower: bottom of the bore 40.5 mm outward from the outer end of the upper mounting hole (owner) |
-| Body post screw bores S1, S2 | – | x = ±51.65 mm, 37.85 mm, Ø3.2 mm | Stock rear tower: bottom of the bore 2.45 mm above the top of the 5.2 mm bore (owner) |
+| Camber link holes C1, C2 (wheel mounts) | x = ±18.05 mm, 19.1 mm, Ø3.2 mm | Same | Original towers: 8.5 mm outward and 5 mm down from the top of the lower mounting hole (owner) |
+| Damper holes D1, D2 | x = ±31.65 mm, 30.6 mm, Ø3.2 mm | x = ±36.15 mm, 30.6 mm, Ø3.2 mm | Original towers, from the outer end of the upper mounting hole to the centre of the damper hole: front 20.5 mm outward and 2 mm up, rear 25 mm outward and 2 mm up (owner) |
+| Body post bores B1, B2 | – | x = ±51.65 mm, 31.2 mm, Ø5.2 mm | Original rear tower: bottom of the bore 40.5 mm outward from the outer end of the upper mounting hole (owner) |
+| Body post screw bores S1, S2 | – | x = ±51.65 mm, 37.85 mm, Ø3.2 mm | Original rear tower: bottom of the bore 2.45 mm above the top of the 5.2 mm bore (owner) |
 | Thickness | 3.0 mm carbon | 3.0 mm carbon | Owner. The upper bulkhead is designed for it: screws M3x8, 5 mm thread engagement |
 | Outline | Straight top edge 34.1 mm high, round ends R3.5 around the damper holes, straight edges down to the camber link lobes | Straight top edge 32.1 mm high over the width of the bulkhead, corners R6, rising straight edges to round ends R4.5 around the body post bores, straight edges down to the camber link lobes; the damper holes lie in the wings | Design |
 | Common outline | Round lobes R3.5 around the camber link holes beside the narrowed block, straight bottom edge 0.2 mm above the block in front of the wall, inside corners R1 | Same | Design |
@@ -621,7 +633,7 @@ Positions in the plane of the tower: x across the car, height above the parting 
 
 * Edges of both towers: chamfer 0.5 mm on both faces (as the edge chamfers of the bulkheads), chamfers of 0.3 mm on the holes. No sharp corners: all outside corners are radii.
 * Relief on the back face: along the bottom edge, the edge chamfer increases to 45 degrees with legs of 2.05 mm and runs out to the edge chamfer over 1.5 mm beside the wall. It clears the root radius of the wall (2.0 mm) by 0.18 mm.
-* Camber link holes: at the stock position (x = ±18.05 mm). The rod ends sit behind the tower beside the shock tower wall of the upper bulkhead. For this, the wall and the gear block of the upper bulkhead are narrowed to 28.0 mm (x = ±14.0 mm), with side steps 15.0 mm above the parting face beside them (see [design of the upper bulkhead](#interfaces-and-design-of-the-upper-bulkhead)). A zone with a radius of 4.0 mm around the ball stud (rod end with clearance, estimate) is 0.05 mm clear of the side faces of the wall: 18.05 - 4.0 - 0.05 = 14.0 mm.
+* Camber link holes: at the original position (x = ±18.05 mm). The rod ends sit behind the tower beside the shock tower wall of the upper bulkhead. For this, the wall and the gear block of the upper bulkhead are narrowed to 28.0 mm (x = ±14.0 mm), with side steps 15.0 mm above the parting face beside them (see [design of the upper bulkhead](#interfaces-and-design-of-the-upper-bulkhead)). A zone with a radius of 4.0 mm around the ball stud (rod end with clearance, estimate) is 0.05 mm clear of the side faces of the wall: 18.05 - 4.0 - 0.05 = 14.0 mm.
 * The bottom edge lies 0.2 mm above the block in front of the wall (17.8 mm). The camber link lobes reach down to 15.6 mm beside the narrowed block, 0.6 mm above the side steps. The edge distance below the lower mounting holes is 2.9 mm, around the other holes at least 1.9 mm.
 
 **Fit to the upper bulkhead**
@@ -648,7 +660,7 @@ All files are stored in the directory `/shock_tower`. They are generated with `g
 | `shock_tower_front_T410R_speedrun.step`, `shock_tower_rear_T410R_speedrun.step` | STEP (AP214) | Solid models with the edge chamfers and the relief, for CNC manufacturing. Plate coordinates: x across the car, y height above the parting face, z = 0 back face |
 | `shock_tower_front_T410R_speedrun.stl`, `shock_tower_rear_T410R_speedrun.stl` | STL (binary) | Triangle meshes, also for test prints |
 | `shock_tower_front_T410R_speedrun.dxf`, `shock_tower_rear_T410R_speedrun.dxf` | DXF | 2D drawings with the layers `OUTLINE` and `HOLE_THROUGH` (outline without the chamfers) |
-| `..._1to1_A4.pdf`, `..._1to1_A4_print97.pdf` | PDF (A4) | 1:1 templates of each tower (100 % and 97 %) to compare the holes with the stock towers and the bulkhead |
+| `..._1to1_A4.pdf`, `..._1to1_A4_print97.pdf` | PDF (A4) | 1:1 templates of each tower (100 % and 97 %) to compare the holes with the original towers and the bulkhead |
 | `shock_tower_front_geometry.json`, `shock_tower_rear_geometry.json` | JSON | Geometry data: outline and holes (holes with another diameter than 3.2 mm carry their own diameter) |
 | `shock_tower_front_parameters.json`, `shock_tower_rear_parameters.json` | JSON | All dimensions, each with its source and a note |
 | `shock_tower_front_hole_table.csv`, `shock_tower_rear_hole_table.csv` | CSV | Hole tables with diameter and use |
@@ -659,15 +671,15 @@ All files are stored in the directory `/shock_tower`. They are generated with `g
 
 Both shock towers are verified by the owner. The following points are not required for manufacturing. They are relevant for later changes of the design.
 * Rod ends of the camber links: size and position behind the towers are not measured (the zone with a radius of 4.0 mm is an estimate). It sets the width of the shock tower wall of the upper bulkhead (parameters `rod_end_clearance_r` of the towers and `wall_half_width` of the upper bulkhead).
-* Holes of the stock towers: the conversion of the measurements assumes holes of 3.2 mm.
+* Holes of the original towers: the conversion of the measurements assumes holes of 3.2 mm.
 
-## Stock parts (not part of the speedrun design)
-Models of stock parts of the Carten T410R, modelled for the completeness of the build: the assembly of the speedrun chassis contains them, so that the space around the speedrun parts can be checked. They are not part of the speedrun design and are not manufactured in this project. Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
+## Re-engineered parts
+The drive line, the pivot blocks, the wishbones, the camber links and the running gear are the owner's own design, re-engineered from the Carten T410R: the interfaces (bearings, gears, screws) follow the T410R, the shapes deviate from the original parts where the function or the speedrun chassis requires it. The assembly of the speedrun chassis contains them, so that the space around the speedrun parts and the function of the build can be checked. Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
 
 ### Pivot blocks
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** Models of the stock pivot blocks of the Carten T410R. The pivot blocks hold the hinge pins of the wishbones and are screwed to the chassis plate from below (countersunk screws M3).
-* **Status:** $\color{red}\times$ Completely unqualified. Not part of the speedrun design (stock part). The dimensions are measurements of the owner, the distances of the mounting holes are taken from the hole pattern of the speedrun chassis plate, the lengths of the shoulders are estimates from photos.
+* **Description:** Pivot blocks of the speedrun chassis (own design, re-engineered from the T410R). The pivot blocks hold the hinge pins of the wishbones and are screwed to the chassis plate from below (countersunk screws M3).
+* **Status:** $\color{green}\checkmark$ Verified with a 3D printed prototype of the owner (bores 5.0 mm for the hinge pins, distances of the bores 44.6 and 41.4 mm confirmed). The dimensions are measurements of the owner, the distances of the mounting holes are taken from the hole pattern of the speedrun chassis plate, the lengths of the shoulders are estimates from photos.
 
 ![Pivot blocks: sections and top views](../photos/cad_pivot_blocks_drawing.png)
 
@@ -677,12 +689,12 @@ Models of stock parts of the Carten T410R, modelled for the completeness of the 
 |:---|:---|:---|:---|
 | Quantity and position | 1: End B, outer (H01/H02) | 3: End B, inner (H07/H08), End A, inner (H26/H27), End A, outer (H32/H33) | Owner, chassis plate |
 | Total length | 53.4 mm | 50.2 mm | Owner (long block), derived (short block: 41.4 + 2 x 4.4) |
-| Distance of the hinge pin bores | 44.6 mm | 41.4 mm | Owner |
+| Distance of the hinge pin bores | 44.6 mm | 41.4 mm | Owner, confirmed by the 3D printed prototype |
 | Distance of the mounting holes | 31.82 mm | 29.12 mm | Chassis plate (short block: mean of 3 hole pairs; photo of the underside approx. 29.2 mm) |
 | Width | 5.94 mm | 5.94 mm | Owner |
 | Height at the lobes, at the shoulders, of the bar | 9.0 / 6.4 / 3.8 mm | Same | Owner |
 | Length of the shoulders (from the end of the block) | 15.0 mm | 14.0 mm | Photo |
-| Hinge pin bores | 6.0 mm, 4.7 mm deep (blind holes, wall of 1.24 mm at the bottom), open toward the bulkhead, axis 4.6 mm above the bottom face, lobes R4.4 | Same | Owner (depth, side of the opening), derived from the measurements of the owner (diameter, axis, lobes) |
+| Hinge pin bores | 5.0 mm, 4.7 mm deep (blind holes, wall of 1.24 mm at the bottom), open toward the bulkhead, axis 4.6 mm above the bottom face, lobes R4.4 | Same | Owner (diameter 5.0 mm after the 3D printed prototype, depth, side of the opening), derived from the measurements of the owner (axis, lobes) |
 | Mounting holes | 2.5 mm (tap drill M3), through | Same | Assumption |
 
 * The radius of the lobes follows from the long block: (53.4 - 44.6) / 2 = 4.4 mm. The axis of the bores lies at 9.0 - 4.4 = 4.6 mm above the bottom face.
@@ -705,7 +717,7 @@ Results of the checks of `generate_pivot_blocks.py`:
 
 **Files of the pivot blocks**
 
-All files are stored in the directory `/stock_parts/pivot_block`. They are generated with `generate_pivot_blocks.py` (see [scripts](#scripts)).
+All files are stored in the directory `/parts/pivot_block`. They are generated with `generate_pivot_blocks.py` (see [scripts](#scripts)).
 
 | File | Format | Use |
 |:---|:---|:---|
@@ -720,8 +732,8 @@ All files are stored in the directory `/stock_parts/pivot_block`. They are gener
 
 ### Centre driveshaft and drive line
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** Model of the centre driveshaft of the Carten T410R (NHA413) between the cup joints of the two pinion shafts. The shaft has a ball end at each end with a metal pin (2.0 x 7.6 mm), which is fixed on the shaft. The cup joints are pushed onto the pinion shafts and secured with a retaining pin NBA255 2.0 x 7.6 mm through a cross hole; an O-ring in a groove of the cup joint holds the pin. The pins run in the slots of the cup joints, so the shaft turns with the cup joints. In the centred position, each pin has 0.5 mm to the closed end of its slot, so the shaft can move a little back and forth. At End A, the cup joint sits on the front pinion shaft beside the bulkhead. At End B (motor), the rear pinion shaft NBA205 runs from the pinion in the bulkhead through a flange with the spur gear and the bearing NBA298 in the motor mount NBA201 (manual steps 5, 10 and 12); the cup joint sits on its end beyond the motor mount. All these parts are modelled as CAD files (see [files](#centre-driveshaft-and-drive-line)).
-* **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification: centre driveshaft, motor mount with cap rear and front drive line (pinion shafts, pinions, spur gear, bearings, retaining pins; some dimensions from photos of the owner). $\color{red}\times$ Completely unqualified: cup joints and diff outdrives. Not part of the speedrun design (stock parts). The cup joints, the thickness of the motor mount and the spur gear (72T 48DP) are given by the owner, the positions of the motor mount and the spur gear are derived from the chassis plate, the outline of the motor mount and its cap follow the manual (steps 10 and 25). The thicknesses of the spur gear and the flange and the gaps are typical values (see [open points of the centre driveshaft](#centre-driveshaft-and-drive-line)).
+* **Description:** Model of the centre driveshaft of the Carten T410R between the cup joints of the two pinion shafts. The shaft has a ball end at each end with a metal pin (2.0 x 7.6 mm), which is fixed on the shaft. The cup joints are pushed onto the pinion shafts and secured with a retaining pin 2.0 x 7.6 mm through a cross hole; an O-ring in a groove of the cup joint holds the pin. The pins run in the slots of the cup joints, so the shaft turns with the cup joints. In the centred position, each pin has 0.5 mm to the closed end of its slot, so the shaft can move a little back and forth. At End A, the cup joint sits on the front pinion shaft beside the bulkhead. At End B (motor), the rear pinion shaft runs from the pinion in the bulkhead through a flange with the spur gear and the bearing in the motor mount (manual steps 5, 10 and 12); the cup joint sits on its end beyond the motor mount. All these parts are modelled as CAD files (see [files](#centre-driveshaft-and-drive-line)).
+* **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification: centre driveshaft, motor mount with cap rear and front drive line (pinion shafts, pinions, spur gear, bearings, retaining pins; some dimensions from photos of the owner). $\color{red}\times$ Completely unqualified: cup joints and diff outdrives. The cup joints, the thickness of the motor mount and the spur gear (72T 48DP) are given by the owner, the positions of the motor mount and the spur gear are derived from the chassis plate, the outline of the motor mount and its cap follow the manual (steps 10 and 25). The thicknesses of the spur gear and the flange and the gaps are typical values (see [open points of the centre driveshaft](#centre-driveshaft-and-drive-line)).
 
 ![Centre driveshaft with the drive line and the motor mount](../photos/cad_driveshaft_drawing.png)
 
@@ -733,19 +745,19 @@ Positions y along the car on the chassis plate (End B at y = 0).
 |:---|:---|:---|
 | Pinion axis | x = 0, 19.2 mm above the bottom face of the chassis plate (2.0 + 17.2) | Lower bulkhead (`axis_z`), chassis plate |
 | End faces of the pinion housings | y = 49.43 mm (End B) and 259.46 mm (End A) | Lower bulkhead (pinion seat 18.65 + 9.25 = 27.9 mm), positions of the bulkheads |
-| Cup joints NBA255 | 9.7 mm outer and 6.33 mm inner diameter, 18.3 mm long, 2 slots 7.7 mm long from the open end (2.1 mm wide); bore 10.2 mm deep. Back end: bore 5.0 mm for the pinion shaft (7.5 mm deep), groove 4.6 to 6.8 mm from the back face (7.4 mm diameter) for the O-ring 5.8 x 9.6 x 1.9 mm, cross hole 2.0 mm in the groove for the retaining pin | Owner (dimensions, mounting, photos with a ruler), manual step 5 (pin, O-ring), estimates (bore depths) |
+| Cup joints | 9.7 mm outer and 6.33 mm inner diameter, 18.3 mm long, 2 slots 7.7 mm long from the open end (2.1 mm wide); bore 10.2 mm deep. Back end: bore 5.0 mm for the pinion shaft (7.5 mm deep), groove 4.6 to 6.8 mm from the back face (7.4 mm diameter) for the O-ring 5.8 x 9.6 x 1.9 mm, cross hole 2.0 mm in the groove for the retaining pin | Owner (dimensions, mounting, photos with a ruler), manual step 5 (pin, O-ring), estimates (bore depths) |
 | Cup joint End A | From y = 258.96 to 240.66 mm (0.5 mm from the end face of the pinion housing) | Typical value (gap) |
-| Rear pinion shaft NBA205 | Sections from the pinion: press fit shape for the pinion (5.0 mm with two flats, 4.2 mm across the flats) with an axial M3 thread (tap drill 2.5 mm, 6.0 mm deep) for the pinion screw M3x6; 5.0 mm for the 2 bearings NBA298 of the bulkhead (y = 40.18 to 49.08 mm, rib 0.9 mm); flange 21.7 x 2.5 mm (mounting plate of the spur gear, y = 49.63 to 52.13 mm) with 4 M3 threads on a radius of 8.8 mm; spigot 9.3 mm through the spur gear, 2.2 mm beyond it; shoulder 6.7 mm against the inner ring of the bearing in the motor mount; 5.0 mm for this bearing; press fit shape for the cup joint with a cross hole 2.0 mm for the retaining pin NBA255 2.0 x 7.6 mm (separate part; end of the shaft at y = 72.98 mm, 7.0 mm in the cup joint) | Manual (step 5), owner (press fit shapes, screws, photos), bulkhead (seat), estimates (flats, lengths) |
+| Rear pinion shaft | Sections from the pinion: press fit shape for the pinion (5.0 mm with two flats, 4.2 mm across the flats) with an axial M3 thread (tap drill 2.5 mm, 6.0 mm deep) for the pinion screw M3x6; 5.0 mm for the 2 bearings of the bulkhead (y = 40.18 to 49.08 mm, rib 0.9 mm); flange 21.7 x 2.5 mm (mounting plate of the spur gear, y = 49.63 to 52.13 mm) with 4 M3 threads on a radius of 8.8 mm; spigot 9.3 mm through the spur gear, 2.2 mm beyond it; shoulder 6.7 mm against the inner ring of the bearing in the motor mount; 5.0 mm for this bearing; press fit shape for the cup joint with a cross hole 2.0 mm for the retaining pin 2.0 x 7.6 mm (separate part; end of the shaft at y = 72.98 mm, 7.0 mm in the cup joint) | Manual (step 5), owner (press fit shapes, screws, photos), bulkhead (seat), estimates (flats, lengths) |
 | Spur gear | Standard 72T 48DP, 39.16 mm outer diameter, teeth with a simplified trapezoidal profile (not involute), 4.0 mm thick, y = 52.13 to 56.13 mm, in the slot of the chassis plate below the pinion axis (y = 50.28 to 56.97 mm); centre bore 9.4 mm on the spigot of the shaft; 4 holes 3.2 mm on a radius of 8.8 mm for the screws M3 into the flange; lightening holes 4 x 3.2 mm on a radius of 8.8 mm and 8 x 3.5 mm on a radius of 12.5 mm | Owner (72T 48DP, photos), chassis plate (position), typical value (thickness) |
-| Motor mount NBA201 for 540 motors | Plate 6.0 mm thick, y = 59.48 to 65.48 mm, on the holes H09 and H10 (y = 62.48 mm); the motor window starts at y = 65.63 mm. Low part (x = -11 to 18 mm, 24.4 mm high) with a U-shaped notch 10.6 mm wide, open to the top, for the bearing NBA298 5 x 10 x 4 mm at the pinion axis; on the side toward End A a lip 1.0 mm wide (opening 8.0 mm) against which the bearing lies. Tall part (x = 18 to 52 mm, 37 mm high, top corners R6) beside the end of the top brace, with three long holes along x: motor shaft (13 mm wide, at the height of the pinion axis), motor screws M3 (3.2 mm wide, 12.5 mm above and below; 540 motors: screws 25 mm apart). Motor axis x = 25 to 33 mm: centre distance 27.0 to 31.0 mm for the 72T 48DP spur gear and motor pinions of 30 to 45 teeth, plus 2 mm | Owner (thickness, notch, lip, measurement sheet), chassis plate (position), derived (height of the low part: top brace minus cap), manual step 10 (shape), typical values (outline, opening of the lip) |
-| Cap of the motor mount (second part of NBA201) | Block 22 x 6.0 x 10.2 mm on the low part of the motor mount, from 24.4 mm up to the top brace (34.6 mm), 0.2 mm above the bearing; semicircular notch R4 along y in its top face below the hole B09 of the top brace; 2 through holes 3.2 mm below the holes B10 and B11 of the top brace (x = +-7.02 mm, y = 62.15 mm). 2 screws M3x18 from the top brace through the cap into the motor mount fix the motor mount to the top brace; set screw M3x3 in the cap (manual step 25) | Owner (height), manual (steps 25, parts list), top brace (holes), typical values (width, notch) |
-| Pinion NBA207 | 17 teeth, 14.1 mm outer diameter at the large end, 4.1 mm long, large end against the inner bearing of the bulkhead (y = 36.08 to 40.18 mm, in the pinion pocket of the bulkhead); simplified straight bevel gear: the teeth converge to the apex of the pitch cone (pitch cone angle 22 degrees); bore with the press fit shape of the shaft, countersink for the screw M3x6 | Owner (teeth, side photo with the bearing as scale: length, large end at the bearing), bulkhead (no. 29: outer diameter), gear ratio 42/17 (cone angle), estimate (tooth profile) |
-| Front pinion shaft NBA205 (End A) | Same sections as the rear pinion shaft without flange, spur gear and motor mount: press fit shape for the pinion with the axial M3 thread, 5.0 mm through the 2 bearings of the bulkhead (y = 268.71 to 259.81 mm), press fit shape for the cup joint with the cross hole of the retaining pin; 19.15 mm long, end 7.0 mm in the cup joint (y = 251.96 mm). Pinion NBA207, bearings and retaining pin as at End B, turned by 180 degrees with the bulkhead | Manual (step 5), owner (photos), bulkhead (seat) |
+| Motor mount for 540 motors | Plate 6.0 mm thick, y = 59.48 to 65.48 mm, on the holes H09 and H10 (y = 62.48 mm); the motor window starts at y = 65.63 mm. Low part (x = -11 to 18 mm, 24.4 mm high) with a U-shaped notch 10.6 mm wide, open to the top, for the bearing 5 x 10 x 4 mm at the pinion axis; on the side toward End A a lip 1.0 mm wide (opening 8.0 mm) against which the bearing lies. Tall part (x = 18 to 52 mm, 37 mm high, top corners R6) beside the end of the top brace, with three long holes along x: motor shaft (13 mm wide, at the height of the pinion axis), motor screws M3 (3.2 mm wide, 12.5 mm above and below; 540 motors: screws 25 mm apart). Motor axis x = 25 to 33 mm: centre distance 27.0 to 31.0 mm for the 72T 48DP spur gear and motor pinions of 30 to 45 teeth, plus 2 mm | Owner (thickness, notch, lip, measurement sheet), chassis plate (position), derived (height of the low part: top brace minus cap), manual step 10 (shape), typical values (outline, opening of the lip) |
+| Cap of the motor mount (second part of the motor mount set) | Block 22 x 6.0 x 10.2 mm on the low part of the motor mount, from 24.4 mm up to the top brace (34.6 mm), 0.2 mm above the bearing; semicircular notch R4 along y in its top face below the hole B09 of the top brace; 2 through holes 3.2 mm below the holes B10 and B11 of the top brace (x = +-7.02 mm, y = 62.15 mm). 2 screws M3x18 from the top brace through the cap into the motor mount fix the motor mount to the top brace; set screw M3x3 in the cap (manual step 25) | Owner (height), manual (steps 25, parts list), top brace (holes), typical values (width, notch) |
+| Pinion | 17 teeth, 14.1 mm outer diameter at the large end, 4.1 mm long, large end against the inner bearing of the bulkhead (y = 36.08 to 40.18 mm, in the pinion pocket of the bulkhead); simplified straight bevel gear: the teeth converge to the apex of the pitch cone (pitch cone angle 22 degrees); bore with the press fit shape of the shaft, countersink for the screw M3x6 | Owner (teeth, side photo with the bearing as scale: length, large end at the bearing), bulkhead (no. 29: outer diameter), gear ratio 42/17 (cone angle), estimate (tooth profile) |
+| Front pinion shaft (End A) | Same sections as the rear pinion shaft without flange, spur gear and motor mount: press fit shape for the pinion with the axial M3 thread, 5.0 mm through the 2 bearings of the bulkhead (y = 268.71 to 259.81 mm), press fit shape for the cup joint with the cross hole of the retaining pin; 19.15 mm long, end 7.0 mm in the cup joint (y = 251.96 mm). Pinion, bearings and retaining pin as at End B, turned by 180 degrees with the bulkhead | Manual (step 5), owner (photos), bulkhead (seat) |
 | Differentials | See [differentials](#differentials) | |
-| Bearings NBA298 in the bulkhead | 2 x 5 x 10 x 4 mm in the pinion seat, y = 40.18 to 44.18 mm and 45.08 to 49.08 mm (rib 0.9 mm between them) | Manual (step 5), bulkhead (seat) |
+| Bearings in the bulkhead | 2 x 5 x 10 x 4 mm in the pinion seat, y = 40.18 to 44.18 mm and 45.08 to 49.08 mm (rib 0.9 mm between them) | Manual (step 5), bulkhead (seat) |
 | Cup joint End B | From y = 65.98 to 84.28 mm (0.5 mm beyond the motor mount, on the end of the rear pinion shaft) | Typical value (gap) |
 | Shaft | Rod 6.0 mm, ball ends 5.0 mm (radial clearance 0.665 mm in the cup joints), neck of 5.0 mm up to 4.0 mm from the centres of the balls | Owner (rod), ruler photo (ball ends) |
-| Metal pins | 2.0 x 7.6 mm, fixed on the shaft at the centres of the ball ends, part of the model of the shaft | Owner (fixed pins), size as NBA255 |
+| Metal pins | 2.0 x 7.6 mm, fixed on the shaft at the centres of the ball ends, part of the model of the shaft | Owner (fixed pins), size as the retaining pin of the cup joints |
 | Pins in the centred position | y = 78.47 mm and 246.47 mm, 168.00 mm apart (ruler: 167.9 mm); 0.89 mm to the closed ends of the slots (y = 76.58 and 248.36 mm) | Derived |
 | Length of the shaft | 173.00 mm over the ball ends | Owner (ruler) |
 | Axial play | 1.78 mm in total, 0.89 mm at each pin to the closed end of its slot: follows from the measured length of the shaft and the positions of the cup joints | Derived |
@@ -761,7 +773,7 @@ Results of `generate_driveshaft.py`:
 | Ends of the shaft | 1.89 mm to the bottoms of the bores |
 | Shaft, cup joints, rear drive line, motor mount and diff outdrives with the bulkheads, the chassis plate and the top brace | 0 mm³ overlap; the spur gear runs through the slot of the chassis plate and below the obround of the top brace, the tall part of the motor mount lies 0.76 mm beside the end of the top brace, the cap of the motor mount touches the top brace |
 
-* Not modelled: the motor, the screws of the pinions, the shims between the bearings, the O-rings NBA255 5.8 x 9.6 x 1.9 mm in the grooves of the cup joints (see `specs/mechanics/carten_t410r/drivetrain/spec_driveshaft_and_joints.yaml`).
+* Not modelled: the motor, the screws of the pinions, the shims between the bearings, the O-rings 5.8 x 9.6 x 1.9 mm in the grooves of the cup joints (see `specs/mechanics/carten_t410r/drivetrain/spec_driveshaft_and_joints.yaml`).
 
 **Open points of the centre driveshaft**
 
@@ -772,7 +784,7 @@ Results of `generate_driveshaft.py`:
 
 **Files of the centre driveshaft and the drive line**
 
-All files are stored in the directory `/stock_parts` and are generated with `generate_driveshaft.py` from `driveshaft/driveshaft_parameters.json` (see [scripts](#scripts)). Each file has STEP (AP214) and STL (binary) format and its own part coordinates.
+All files are stored in the directory `/parts` and are generated with `generate_driveshaft.py` from `driveshaft/driveshaft_parameters.json` (see [scripts](#scripts)). Each file has STEP (AP214) and STL (binary) format and its own part coordinates.
 
 | File | Part coordinates and use |
 |:---|:---|
@@ -780,17 +792,17 @@ All files are stored in the directory `/stock_parts` and are generated with `gen
 | `driveshaft/cup_joint_T410R` | Cup joint (2 pieces): along y, back face at y = 0, open end at y = 18.3 mm, slots and cross hole of the retaining pin along x |
 | `rear_drive/rear_pinion_shaft_T410R` | Rear pinion shaft with flange: along y, y = 0 end face of the pinion housing of the bulkhead, from y = -11.65 mm (inside the bulkhead) to 23.55 mm, with the cross hole of the retaining pin |
 | `front_drive/front_pinion_shaft_T410R` | Front pinion shaft (End A), in the same coordinates as the rear pinion shaft: y = 0 end face of the pinion housing, y > 0 toward the cup joint; pinion, bearings and retaining pin as the files in `rear_drive` |
-| `rear_drive/retaining_pin_2x7.6_NBA255` | Retaining pin of the cup joint (2.0 x 7.6 mm), in the coordinates of the rear pinion shaft |
-| `rear_drive/pinion_17T_NBA207` | Pinion NBA207 17T, in the coordinates of the rear pinion shaft |
+| `rear_drive/retaining_pin_2x7.6` | Retaining pin of the cup joint (2.0 x 7.6 mm), in the coordinates of the rear pinion shaft |
+| `rear_drive/pinion_17T` | Pinion 17T, in the coordinates of the rear pinion shaft |
 | `rear_drive/spur_gear_72T_T410R` | Spur gear 72T 48DP: along y from y = 0 (face on the flange) to 4.0 mm, axis at x = 0, z = 0 |
-| `rear_drive/bearing_5x10x4` | Bearing NBA298 in the motor mount: along y from y = 0 to 4.0 mm |
+| `rear_drive/bearing_5x10x4` | Bearing in the motor mount: along y from y = 0 to 4.0 mm |
 | `motor_mount/motor_mount_T410R` | Motor mount: x = 0 pinion axis, y = 0 middle of the plate, z = 0 bottom face (on the chassis plate) |
 | `motor_mount/motor_mount_cap_T410R` | Cap of the motor mount, in the coordinates of the motor mount |
 | `diff_outdrive/diff_outdrive_T410R` | Diff outdrive (4 pieces): along +x, back face at x = 0, open end at x = 10.0 mm, slots along z |
 | `driveshaft/driveshaft_parameters.json` | All dimensions of these parts, each with its source and a note (JSON) |
 
 ### Differentials
-* **Description:** Models of the differential at End B (rear) with the ring gear 42T, the inner gears, the shims, the bearings NBA299 and the outdrives, and of the spool at End A (front, owner: a spool is installed) with the same ring gear, bearings and outdrives. Stock parts: not part of the speedrun design, modelled for the completeness of the build.
+* **Description:** Models of the differential at End B (rear) with the ring gear 42T, the inner gears, the shims, the bearings and the outdrives, and of the spool at End A (front, owner: a spool is installed) with the same ring gear, bearings and outdrives. Own design, re-engineered from the T410R.
 * **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification. Main dimensions and the design of the inner parts from the owner (measurements, photos, description), the position from the verified bulkhead.
 
 ![Differential: complete with the pinion, section, open case, exploded view; spool](../photos/cad_differential_drawing.png)
@@ -803,7 +815,7 @@ All files are stored in the directory `/stock_parts` and are generated with `gen
 | Side gears 14T (2 pieces) | Module 1.0, pitch cone angle 57.3 degrees, 15.1 mm outer diameter, back face 6.5 mm from the centre; hexagon bore 5.6 mm on the press fit of the outdrive; 3 shims 0.1 x 6.6 x 12.0 mm behind each side gear | Owner (14T, press fit, 3 shims), photo (diameter), estimates (shim sizes) |
 | Spider gears 9T (2 pieces) | Module 1.0, pitch cone angle 32.7 degrees, 10.6 mm outer diameter, on the cross pin, back face 7.9 mm from the centre; 1 shim 0.3 x 4.1 x 9.2 mm behind each spider gear against the flat wall of the case | Owner (2 spider gears, 9T, 1 shim each, photos) |
 | Cross pin | 4.0 x 23.3 mm, through the spider gears and the case wall | Photo of the owner |
-| Bearings NBA299 | 10 x 15 x 4 mm on the journals of the ring gear and the case hub, x = +-11.0 to +-15.0 mm (30.0 mm over both bearings, 0.35 mm to each lip of the bulkhead) | Manual, bulkhead (no. 28) |
+| Bearings | 10 x 15 x 4 mm on the journals of the ring gear and the case hub, x = +-11.0 to +-15.0 mm (30.0 mm over both bearings, 0.35 mm to each lip of the bulkhead) | Manual, bulkhead (no. 28) |
 | Spool (End A) | Instead of the case and the inner gears: solid body 15.0 mm, flange 25.0 x 2.0 mm with 4 tap holes M2 for the ring gear, spigot 15.8 mm in the opening of the ring gear, hub 12.0 mm and journal 10.0 mm for the bearing, hexagon bores 5.6 mm for the shafts of both outdrives (up to x = +-2.85 mm). Same ring gear, bearings and outdrives as the differential; shape of the body assumed (inside the envelope of the differential) | Owner (spool), assumption (body) |
 | Outdrives | Hexagon shaft 5.6 mm from the front face of the side gear (x = 2.9 mm) through the hub to the cup (see [centre driveshaft and drive line](#centre-driveshaft-and-drive-line)) | Owner (press fit) |
 
@@ -813,7 +825,7 @@ All files are stored in the directory `/stock_parts` and are generated with `gen
 
 **Files of the differentials**
 
-All files are stored in the directory `/stock_parts/diff` and are generated with `generate_driveshaft.py` (see [scripts](#scripts)). Diff coordinates: x along the diff axis, x = 0 centre of the inner gears (plane of the pinion axis), ring gear side toward +x; each file has STEP (AP214) and STL (binary) format.
+All files are stored in the directory `/parts/diff` and are generated with `generate_driveshaft.py` (see [scripts](#scripts)). Diff coordinates: x along the diff axis, x = 0 centre of the inner gears (plane of the pinion axis), ring gear side toward +x; each file has STEP (AP214) and STL (binary) format.
 
 | File | Part coordinates and use |
 |:---|:---|
@@ -824,10 +836,10 @@ All files are stored in the directory `/stock_parts/diff` and are generated with
 | `cross_pin_T410R` | Cross pin, along z, centred at the origin |
 | `shim_side_gear`, `shim_spider_gear` | Shims (side gear: along x from x = 0; spider gear: along z from z = 7.9 mm) |
 | `spool_T410R` | Spool (End A), in the coordinates of the diff case |
-| `bearing_10x15x4_NBA299` | Bearing NBA299 of the differential: along x from x = 0 to 4.0 mm |
+| `bearing_10x15x4` | Bearing of the differential: along x from x = 0 to 4.0 mm |
 
 ### Wishbones
-* **Description:** Models of the lower wishbones (suspension arms NHA402) of the Carten T410R with the inner hinge pins NHA423 3 x 42 mm. The manual (step 7 and parts list "Arms (F/R)") and the photos of the owner show two different arms: 2 front arms and 2 rear arms. Each arm is used on the left and on the right side of its axle (the same part, turned by 180 degrees).
+* **Description:** Lower wishbones (suspension arms) of the speedrun chassis (own design, re-engineered from the T410R) with the inner hinge pins 3 x 42 mm. The manual (step 7 and parts list "Arms (F/R)") and the photos of the owner show two different arms: 2 front arms and 2 rear arms. There is no left or right arm (owner): each arm is used on both sides of its axle, flipped so that the shock plate on rail A faces the outer end of the car.
 * **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification (front and rear wishbone); inner hinge pins: $\color{red}\times$ Completely unqualified. The main dimensions are caliper measurements of the owner (measurement sheet). The positions of the shock plate and of the holes of the ball studs are estimates from the photos (see the measurement table below).
 
 ![Wishbones: plan views, views along the hinge pin and the letters of the measurements](../photos/cad_wishbones_drawing.png)
@@ -835,11 +847,12 @@ All files are stored in the directory `/stock_parts/diff` and are generated with
 **Design of the wishbones**
 
 * Frame without a floor: two long inner lugs on the inner hinge pin between the pivot blocks, with an open notch between them up to the inner cross bar; a shoulder from each inner lug to its side rail; two parallel side rails; an open window with X-shaped ribs between the inner cross bar and the outer cross bar; two outer lugs at the ends of the side rails for the outer hinge pin.
-* Front arm: side rails 22.8 mm wide over the outer faces, open loop between the outer cross bar and the outer lugs (C-hub NHA403), a thin closed loop beyond the outer lugs.
-* Rear arm: side rails 24.7 mm wide over the outer faces, 2 mm longer than the front arm, open U between the outer cross bar and the outer lugs (hub carrier NHA404).
-* Above each shoulder a boss with a thread M4 for the droop screw NHA430 M4 x 10 mm (one of the two is used, depending on the side of the car).
-* On side rail A an octagonal plate that reaches above and below the rail, with holes M3 for the ball stud of the shock (set screw M3 x 8 mm with ball NBA210): front 2 holes, rear 3 holes. On side rail B holes M3 for the ball stud of the sway bar drop link: front 3 holes, rear 1 hole. The holes go through, so that the ball stud can be set from the side that faces the shock tower.
-* Not modelled: radii, draft angles, the pivot balls NBA211 at the ends of the hinge pins, the ball studs, the droop screws and the outer hinge pins.
+* Front arm: side rails 22.8 mm wide over the outer faces, open loop between the outer cross bar and the outer lugs (C-hub), a thin closed loop beyond the outer lugs.
+* Rear arm: side rails 24.7 mm wide over the outer faces, 2 mm longer than the front arm, open U between the outer cross bar and the outer lugs (hub carrier).
+* Above each shoulder a boss with a thread M4 for the droop screw M4 x 10 mm (one of the two is used, depending on the side of the car).
+* On side rail A an octagonal plate that reaches above and below the rail, with holes M3 for the ball stud of the shock (set screw M3 x 8 mm with ball): front 2 holes, rear 3 holes. On side rail B holes M3 for the ball stud of the sway bar drop link: front 3 holes, rear 1 hole. The holes go through, so that the ball stud can be set from the side that faces the shock tower.
+* Between the outer lugs, the side rails end 0.3 mm before the lug of the C-hub (front) or of the hub carrier (rear), which sits on the outer hinge pin between the outer lugs (see [running gear](#running-gear)).
+* Not modelled: radii, draft angles, the pivot balls at the ends of the hinge pins, the ball studs and the droop screws. The outer hinge pins are part of the running gear.
 
 **Position and checks of the wishbones**
 
@@ -861,7 +874,7 @@ Results of `generate_wishbones.py`:
 
 **Measurements for the wishbones**
 
-The letters are shown in the drawing and in the measurement sheet `stock_parts/stock_parts_measurement_sheet.pdf` (A4, 4 pages: drawings of both arms with dimension lines, a table with empty fields for the measured values, and the bearing seat of the motor mount). x: distance from the axis of the inner hinge pin toward the wheel; y: distance from the middle of the arm; z: height above the axis of the inner hinge pin. Current values in the model:
+The letters are shown in the drawing and in the measurement sheet `parts/parts_measurement_sheet.pdf` (A4, 4 pages: drawings of both arms with dimension lines, a table with empty fields for the measured values, and the bearing seat of the motor mount). x: distance from the axis of the inner hinge pin toward the wheel; y: distance from the middle of the arm; z: height above the axis of the inner hinge pin. Current values in the model:
 
 | Letter | Measurement | Front arm | Rear arm | Source |
 |:---|:---|---:|---:|:---|
@@ -892,14 +905,144 @@ The letters are shown in the drawing and in the measurement sheet `stock_parts/s
 
 **Files of the wishbones**
 
-All files are stored in the directory `/stock_parts/wishbone`. They are generated with `generate_wishbones.py` from `wishbone_parameters.json` (see [scripts](#scripts)). Part coordinates: x from the axis of the inner hinge pin toward the wheel, y along the hinge pin (y = 0 middle of the arm), z = 0 axis of the inner hinge pin.
+All files are stored in the directory `/parts/wishbone`. They are generated with `generate_wishbones.py` from `wishbone_parameters.json` (see [scripts](#scripts)). Part coordinates: x from the axis of the inner hinge pin toward the wheel, y along the hinge pin (y = 0 middle of the arm), z = 0 axis of the inner hinge pin.
 
 | File | Format | Content |
 |:---|:---|:---|
 | `wishbone_front_T410R.step`, `wishbone_rear_T410R.step` | STEP (AP214) | Solid models of the front arm and the rear arm |
 | `wishbone_front_T410R.stl`, `wishbone_rear_T410R.stl` | STL (binary) | Triangle meshes |
-| `hinge_pin_3x42_NHA423.step`, `hinge_pin_3x42_NHA423.stl` | STEP, STL | Inner hinge pin, along y, centred at y = 0 |
+| `hinge_pin_3x42.step`, `hinge_pin_3x42.stl` | STEP, STL | Inner hinge pin, along y, centred at y = 0 |
 | `wishbone_parameters.json` | JSON | All dimensions, each with its source, the letter of the measurement and a note |
+
+### Camber links
+* **Description:** Models of the 4 camber links (upper links) of the speedrun chassis (own design, re-engineered from the T410R): turnbuckle M3x37 with a rod end on each end, on ball studs (manual page 05 step 4, "C front upper" and "D rear upper", mounted in step 21).
+* **Status:** $\color{red}\times$ Completely unqualified. The gaps between the rod ends are from the manual; the dimensions of the rod ends and the ball studs are assumptions, the outer ball studs are screwed into the C-hubs and hub carriers of the [running gear](#running-gear).
+
+![Camber links: front and rear link with the gap of the manual, section through the rod end on the ball](../photos/cad_camber_links_drawing.png)
+
+| Item | Model | Source |
+|:---|:---|:---|
+| Turnbuckle | M3 x 37 mm (cylinder 3.0 mm, threads not modelled), hexagon 4.0 mm across the flats in the middle | Manual (M3x37), assumption (hexagon) |
+| Gap between the rod ends | Front link (End A) 24.0 mm, rear link (End B) 25.8 mm; ball centres 42.0 and 43.8 mm apart; thread engagement 6.5 and 5.6 mm in each rod end | Manual (set up C and D) |
+| Rod end | Ball cup for RC standard ball studs, open on one side only (toward the ball stud), closed by a cap of 1.0 mm on the other side; spherical socket with 0.03 mm clearance (the rod end turns on the ball), opening 4.4 mm, 0.2 mm per side smaller than the ball: the lip wraps the ball beyond its equator, the rod end clicks onto the ball and holds; the opening is larger than the neck of the ball stud (3.0 mm), so the rod end can tilt; ball centre 9.0 mm from the face toward the turnbuckle, socket ring 7.0 mm outer diameter and 6.0 mm wide, body 5.5 mm across the flats, bore 3.0 x 7.0 mm for the turnbuckle; the two rod ends are turned by 90 degrees about the link axis: inner socket open toward the shock tower, outer socket open toward the bottom | Owner (open on one side, standard ball studs), manual (shape), assumptions (dimensions; ring as in the design of the shock towers) |
+| Inner ball stud | In the camber link hole of the shock tower (x = +-18.05 mm, 19.1 mm above the parting face), RC standard ball 4.8 mm (assumed), 3.5 mm behind the back face of the tower (wall side), set screw M3 through the tower | Shock towers, assumptions (ball) |
+| Outer ball stud | Vertical, screwed into the thread M3 on top of the C-hub (front) or the hub carrier (rear), z = 34.5 mm: neck 3.8 mm, thread 3.5 mm; in the plane of the middle of the wishbone, at the height of the inner ball (link horizontal) | Wishbones, running gear |
+
+* Checks of `generate_camber_links.py`: no overlap with the shock towers, the bulkheads and the wishbones; rod ends 0.30 mm (End B) and 0.44 mm (End A) beside the narrowed wall of the upper bulkhead, ball studs 0.10 mm from the shock tower holes.
+* To be measured for a qualified model: centre of the ball to the face of the rod end, outer diameter and width of the socket ring, diameter of the opening of the socket, ball diameter of the ball studs and their distance from the tower.
+
+**Files of the camber links**
+
+All files are stored in the directory `/parts/camber_link` and are generated with `generate_camber_links.py` from `camber_link_parameters.json` (see [scripts](#scripts)). Link coordinates: x along the link from the centre of the inner ball (x = 0), inner socket axis along y, outer socket axis along z.
+
+| File | Content |
+|:---|:---|
+| `camber_link_front_T410R`, `camber_link_rear_T410R` | Assembled links: 2 rod ends and the turnbuckle (STEP, STL) |
+| `rod_end` | Rod end: ball centre at the origin, body toward +x |
+| `turnbuckle_M3x37` | Turnbuckle along x, centred at the origin |
+| `ball_stud` | Ball stud: ball at the origin, neck along -y |
+| `camber_link_parameters.json` | All dimensions, each with its source and a note |
+
+### Running gear
+* **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
+* **Description:** Wheel suspension (front C-hubs with steering knuckles, rear hub carriers), axles with hex hubs, CVD drive shafts, steering with the servo mount, dampers and sway bars of the speedrun chassis. Own design of the owner, re-engineered from the T410R: the steering, the servo mounting and the sway bars follow the T410R (manual steps 10, 13, 14, 21 and 23, photos of the owner), the other parts are designed for their function and deviate from the original parts. The dampers are standard 1:10 on-road dampers (purchased, simplified model).
+* **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification. The parts are designed from the measured parts (chassis plate, bulkheads, shock towers, wishbones, pivot blocks) and the setup sheet; no further measurements of the owner are needed.
+
+![Running gear: front corner with the kingpin axis, front corner from the front, steering from above, rear corner, 3D view of the front corner](../photos/cad_running_gear_drawing.png)
+
+**Layout**
+
+| Item | Model | Source |
+|:---|:---|:---|
+| Ride height | 10 mm front, 15 mm rear: axle 22.0 mm and 17.0 mm above the bottom face of the chassis plate | Setup sheet 4 |
+| Wheel centres | x = ±80 mm (overall width 190 mm with tyres of 30 mm), wheel radius 32 mm; wheels not modelled | Owner, `spec_tires.yaml` |
+| Wishbones | Horizontal at this ride height: inner and outer hinge pins 6.6 mm above the bottom face of the chassis plate; each arm is used on both sides (flipped, the shock plate on rail A faces the outer end of the car) | Owner, wishbones |
+| Caster | 10 degrees at the front, in the C-hub | Setup sheet 4 |
+| Rear toe | 2.33 degrees toe-in from the pivot blocks | Pivot blocks |
+
+**Front corner: C-hub with caster and steering knuckle**
+
+* The caster of 10 degrees is in the C-hub: the kingpin axis is tilted by 10 degrees (top toward the middle of the car) and passes through the centre of the outer CVD joint at the height of the axle (x = 67 mm). The kingpin bores and the faces of the C-hub toward the knuckle are square to this axis, so the knuckle turns with a constant gap of 0.5 mm at the top and at the bottom. The arms of the wishbones stay horizontal; the pivot blocks need no shims for the caster.
+* C-hub: lug on the outer hinge pin 3x26 between the outer lugs of the wishbone (grub screw M3 on the groove of the pin), lower arm and back plate between the rails of the wishbone, passage of the CVD drive shaft (radius 4.2 mm), upper arm square to the kingpin axis, flat seat with a thread M3 for the outer ball stud of the camber link (z = 34.5 mm).
+* Knuckle, built in the frame of the kingpin axis: pivot body (radius 5.0 mm around the kingpin, 0.5 mm clear of the back plate of the C-hub at every steering angle), web, bearing housing for 2 bearings 5x10x4, steering arm below the CVD joint with a thread M3 for the ball stud (along the kingpin axis).
+* Kingpins: 2 pins of 3 mm (3x8 from below, 3x6 from the top), pressed into the C-hub (bore 3.04 mm); the knuckle turns on them (bore 3.1 mm). The lower pin is inserted before the outer hinge pin, which then holds it.
+* Free steering angle (check of the generator: knuckle, axle, hex hub, steering ball stud and the rod end of the steering link turned about the kingpin axis against the C-hub, the kingpins, the hinge pin, the CVD drive shaft and the wishbone): 45 degrees or more in both directions (limit of the check); required 25 degrees.
+
+**Rear corner**
+
+* Hub carrier on the outer hinge pin 3x26 between 2 spacers 3x7x3 (manual step 18), built in the frame of the rear wishbone (toe from the pivot blocks): bearing housing for 2 bearings 5x10x4, thread M3 on top for the outer ball stud of the camber link, grub screw M3 on the hinge pin.
+
+**Axles, hex hubs and CVD drive shafts**
+
+| Item | Model | Source |
+|:---|:---|:---|
+| Axles | 5 mm in the bearings 5x10x4, joint cup 9.6 mm with 2 slots 2.1 mm for the cross pin of the CVD drive shaft, thread M4 for the wheel nut | Manual (bearings, M4), design |
+| Hex hubs | 12 mm across the flats, 6 mm (front) and 7 mm (rear) wide, pin 2x10 through the axle in a slot of the hub, grub screw M3 | `spec_tires.yaml`, manual |
+| CVD drive shafts | Bone 4 mm with balls 6 mm, cross pins 2x11 in the slots of the diff outdrives and 2x8 in the joint cups of the axles; centre to centre of the joints: front 43.6 mm, rear 39.9 mm | Design |
+
+**Steering and servo mounting (as the T410R)**
+
+The steering follows the T410R (manual steps 10, 13, 14 and 21, photos of the owner):
+
+* Two bellcranks on the steering posts on H24/H25 (hexagon 5.5 mm, journal 5 mm with 2 bearings 5x8x2.5 per bellcrank, thread M3 at both ends of the post). Each bellcrank is a straight lever: the ball arm points forward (14 mm, ball at x = ±20.7 mm, on the line of the inner hinge pins against bump steer), the rear arm (12 mm) carries the bridge.
+* The rear arms are joined by a rigid bridge on 2 spacers (collar 7 mm, sleeve 5 mm in the bridge, screws M3x18 into the bellcranks): parallelogram, both bellcranks turn by the same angle, the bridge moves across the car. The bridge lies 1.0 mm above the centre driveshaft.
+* The steering links run from the ball studs of the bellcranks to the steering arms of the knuckles (ball 3 mm outward of the kingpin and 17 mm behind the axle). In the straight-ahead position the steering link is nearly perpendicular to both arms, so that both wheels turn evenly and the inner wheel turns more (Ackermann).
+* Servo (low profile) across the car on the servo mount, output shaft and horn facing forward (End A), clamp horn (aluminium) vertical in the centre position (manual step 10). The horn ball moves across the car; the servo link runs across the car to the ball stud on the back of the bridge (gap 21 mm as the manual, B).
+* Servo mount: base plate on H17/H21 (threads M3 from below) with an upright behind each ear (threads M3 for the screws of the ears, from the front). The chassis plate has no holes for the outer upright, so both uprights stand on the common base plate.
+
+| Value | Model | Note |
+|:---|:---|:---|
+| Steering link to the knuckle arm and to the bellcrank arm | 5.3 and 11.5 degrees from the perpendicular | Straight ahead |
+| Ackermann | 78, 85 and 93 % at 15, 20 and 25 degrees of the inner wheel (outer wheel 13.6, 17.5 and 20.9 degrees) | Plan view; 100 % = ideal Ackermann for the wheelbase of 260 mm and the kingpin distance of 134 mm |
+| Ratio | Inner wheel 25 degrees at 28.1 degrees of the bellcranks: bridge 5.7 mm across the car, servo approx. 35 degrees (horn 10 mm) | The end points are set in the transmitter |
+| Gaps between the rod ends | Steering links 33.2 mm, servo link 21.0 mm | Manual: 15.4 mm (A) and 21 mm (B); the steering posts on H24/H25 lie 44 mm behind the front axle |
+| Free movement | Bellcranks, bridge and the rod ends of the steering links turned by ±31.1 degrees (25 degrees of the inner wheel plus 3): no contact with the bulkheads, the front cup joint, the centre driveshaft, the posts and the servo | Check of the generator |
+
+**Dampers and sway bars**
+
+* Dampers: standard 1:10 on-road dampers (body 12 mm, 23 mm long, cap 13 mm, spring 15 mm), centre to centre of the balls front 44.6 mm, rear 51.0 mm. Upper ball stud through the damper hole of the shock tower with a nut M3 on the back face, lower ball stud in the lowest hole of the shock plate of the wishbone that is at least 6 mm above the bottom face of the chassis plate.
+* Sway bars 1.4 mm as the T410R (manual step 23, photos of the owner): the straight middle part (±14 mm) lies in the holders on the tabs of the lower bulkheads (screws M3x8 into the threads of the tabs); from there the legs run outward to the arms (trapezoid in the plan view), first down below the CVD drive shafts and the diff outdrives, then beside the bulkhead to the cups. The cups sit on ball studs in the holes of rail B of the wishbones, tilted by 30 degrees toward the middle of the car; the bar ends are fixed in their bores with a grub screw M3.
+
+**Threads and screws**
+
+| Part | Threads M3 (tap drill 2.5 mm) |
+|:---|:---|
+| C-hub | Camber ball stud (top), grub screw on the outer hinge pin |
+| Steering knuckle | Ball stud of the steering arm |
+| Hub carrier | Camber ball stud (top), grub screw on the outer hinge pin |
+| Hex hubs | Grub screw on the axle pin |
+| Steering posts | Both ends: screw from below through the chassis plate, screw with washer on top of the bellcrank |
+| Bellcranks | Ball stud of the steering link, screw of the bridge |
+| Bridge | Ball stud of the servo link (on the back, toward End B) |
+| Servo mount | H17 and H21 from below, 4 screws of the servo ears (from the front) |
+| Servo horn | Clamp screw, ball stud |
+| Sway bar cups | Grub screw on the sway bar |
+
+**Checks**
+
+* Results of `generate_running_gear.py`: all solids valid; overlap of all parts of the running gear with each other and with all parts of the assembly: 0 mm³.
+
+**Files of the running gear**
+
+All files are stored in the directory `/running_gear` and are generated with `generate_running_gear.py` from `running_gear_parameters.json` (see [scripts](#scripts)). One STEP and one STL file per own part of the right side in the assembly position (chassis plate coordinates; the parts of the left side are mirrored):
+
+| File | Content |
+|:---|:---|
+| `c_hub_end_a`, `steering_knuckle_end_a` | Front C-hub with caster, steering knuckle |
+| `hub_carrier_end_b` | Rear hub carrier |
+| `axle_with_joint_cup_end_a`, `axle_with_joint_cup_end_b`, `hex_hub_12_end_a`, `hex_hub_12_end_b` | Axles and hex hubs |
+| `cvd_drive_shaft_end_a`, `cvd_drive_shaft_end_b` | CVD drive shafts |
+| `steering_post`, `bellcrank_right`, `bellcrank_left`, `steering_bridge`, `spacers_of_the_bridge` | Steering |
+| `servo_mount`, `servo_horn_aluminium_clamp` | Servo mount and horn |
+| `sway_bar_end_a`, `sway_bar_end_b`, `sway_bar_holder_end_a`, `sway_bar_holder_end_b`, `sway_bar_cup_with_grub_screw_end_a`, `sway_bar_cup_with_grub_screw_end_b` | Sway bars, holders and cups |
+| `running_gear_parameters.json` | All dimensions, each with its source and a note |
+
+* Purchased parts (bearings, pins, screws, rod ends, turnbuckles, ball studs, dampers, servo) are in the assembly only.
+
+**Open points of the running gear**
+
+* 3D print verification of the C-hub, the knuckle, the hub carrier, the steering and the servo mount.
+* Wheels are not modelled.
 
 ## Scripts
 The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates (except `generate_chassis_templates.py`, which writes the templates of the chassis plate and the top brace), and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
@@ -917,15 +1060,17 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_chassis_templates.py` | Geometry data of the chassis plate and the top brace | Print templates `chassis_plate_T410R_1to1_A3.pdf`, `chassis_plate_T410R_1to1_A4x2.pdf`, `top_brace_T410R_1to1_A4.pdf` and the drawing `photos/cad_chassis_drawing.png`. The options `--print-scale` and `--suffix` generate pre-scaled templates (for example `_print97`). | matplotlib, reportlab |
 | `generate_top_brace_speedrun.py` | Geometry data of the original top brace, parameter files of the bulkheads | All files of the speedrun top brace, drawing `photos/cad_top_brace_speedrun_drawing.png`, checks of the outline and of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
 | `generate_shock_towers.py` | Parameter files of the bulkheads and of the shock towers (option `--tower front`, `rear` or `all`) | All files of the speedrun front and rear shock tower, drawings `photos/cad_shock_tower_front_drawing.png` and `photos/cad_shock_tower_rear_drawing.png`, checks of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
-| `generate_pivot_blocks.py` | Parameter file of the pivot blocks, geometry data of the speedrun chassis plate, parameter files of the bulkheads | STEP and STL files of the stock pivot blocks (reference), drawing `photos/cad_pivot_blocks_drawing.png`, checks of the mounting holes and of the clearance to the bulkheads | cadquery, matplotlib |
-| `generate_driveshaft.py` | Parameter file of the driveshaft, parameter files of the bulkheads, STEP file of the speedrun chassis plate | STEP and STL files of the stock centre driveshaft, cup joint, rear pinion shaft, spur gear, bearing, motor mount with cap and diff outdrive, drawings `photos/cad_driveshaft_drawing.png` and `photos/cad_differential_drawing.png`, checks of the play and of the fit | cadquery, matplotlib |
-| `generate_wishbones.py` | Parameter file of the wishbones, parameter files of the pivot blocks and the bulkheads, geometry data and STEP file of the speedrun chassis plate | STEP and STL files of the stock front and rear wishbones and of the inner hinge pin, drawing `photos/cad_wishbones_drawing.png` with the letters of the measurements, checks of the clearance to the pivot blocks, the bulkheads and the chassis plate and of the play of the hinge pins | cadquery, matplotlib |
-| `generate_measurement_sheets.py` | Parameter files of the wishbones and of the driveshaft | Measurement sheet `stock_parts/stock_parts_measurement_sheet.pdf` of the stock parts that are not measured yet (wishbones, bearing seat of the motor mount) | cadquery, matplotlib |
-| `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, of the shock towers, of the pivot blocks, of the driveshaft and of the wishbones, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
+| `generate_pivot_blocks.py` | Parameter file of the pivot blocks, geometry data of the speedrun chassis plate, parameter files of the bulkheads | STEP and STL files of the pivot blocks, drawing `photos/cad_pivot_blocks_drawing.png`, checks of the mounting holes and of the clearance to the bulkheads | cadquery, matplotlib |
+| `generate_driveshaft.py` | Parameter file of the driveshaft, parameter files of the bulkheads, STEP file of the speedrun chassis plate | STEP and STL files of the centre driveshaft, cup joint, rear pinion shaft, spur gear, bearing, motor mount with cap and diff outdrive, drawings `photos/cad_driveshaft_drawing.png` and `photos/cad_differential_drawing.png`, checks of the play and of the fit | cadquery, matplotlib |
+| `generate_wishbones.py` | Parameter file of the wishbones, parameter files of the pivot blocks and the bulkheads, geometry data and STEP file of the speedrun chassis plate | STEP and STL files of the front and rear wishbones and of the inner hinge pin, drawing `photos/cad_wishbones_drawing.png` with the letters of the measurements, checks of the clearance to the pivot blocks, the bulkheads and the chassis plate and of the play of the hinge pins | cadquery, matplotlib |
+| `generate_measurement_sheets.py` | Parameter files of the wishbones and of the driveshaft | Measurement sheet `parts/parts_measurement_sheet.pdf` of the re-engineered parts that are not measured yet (wishbones, bearing seat of the motor mount) | cadquery, matplotlib |
+| `generate_camber_links.py` | Parameter file of the camber links, parameter files of the shock towers and the bulkheads, wishbones | STEP and STL files of the camber links (turnbuckle, rod end, ball stud, assembled links), drawing `photos/cad_camber_links_drawing.png`, checks of the clearance to the shock towers, the bulkheads and the wishbones | cadquery, matplotlib |
+| `generate_running_gear.py` | Parameter file of the running gear, parameter files of the driveshaft, the bulkheads, the shock towers and the camber links, wishbones | STEP and STL files of the own parts of the running gear, drawing `photos/cad_running_gear_drawing.png`, free steering angle, Ackermann, overlap check of all parts against each other and against the assembly (option `--no-check`) | cadquery, matplotlib |
+| `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, of the shock towers, of the pivot blocks, of the driveshaft, of the wishbones, of the camber links and of the running gear, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file, geometry checks | cadquery |
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
 | `generate_bulkhead_upper.py` | Parameter files of the upper and the lower bulkhead | STEP and STL file of the upper part, test print STL file, assembly STEP file, interference check, geometry checks | cadquery |
-| `generate_bulkhead_upper_drawings.py` | Parameter files, photos of the stock upper part | Preview image `photos/cad_bulkhead_upper_preview.png` and measurement sheet of the stock upper part (PDF) | cadquery, matplotlib |
+| `generate_bulkhead_upper_drawings.py` | Parameter files, photos of the original upper part | Preview image `photos/cad_bulkhead_upper_preview.png` and measurement sheet of the original upper part (PDF) | cadquery, matplotlib |
 | `mesh_views.py` | None | Helper module: shaded views of STL files and assemblies, used by the drawing scripts of the bulkheads | matplotlib |
 
 ### Regenerating the files
@@ -973,7 +1118,9 @@ python scripts/cad/generate_shock_towers.py
 python scripts/cad/generate_pivot_blocks.py
 python scripts/cad/generate_driveshaft.py
 python scripts/cad/generate_wishbones.py
+python scripts/cad/generate_camber_links.py
 python scripts/cad/generate_measurement_sheets.py
+python scripts/cad/generate_running_gear.py
 python scripts/cad/generate_speedrun_assembly.py
 ```
 

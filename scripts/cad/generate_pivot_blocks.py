@@ -1,15 +1,15 @@
-"""Generate the pivot blocks of the Carten T410R (stock parts, not part of the speedrun design).
+"""Generate the pivot blocks of the speedrun chassis (own design, re-engineered from the T410R).
 
-The pivot blocks hold the hinge pins of the wishbones (suspension arms). They are stock parts:
-they are not part of the speedrun design and are not manufactured in this project. They are
-modelled for the completeness of the build: the assembly of the speedrun chassis contains them,
-so that the space below the bulkheads can be checked.
+The pivot blocks hold the hinge pins of the wishbones (suspension arms). They are the owner's own
+design, re-engineered from the T410R, and verified with a 3D printed prototype (bores 5.0 for the
+hinge pins). The assembly of the speedrun chassis contains them, so that the space below the
+bulkheads can be checked.
 
 * long block: 1 piece, at the outer end of the rear axle (End B), on the holes H01/H02
 * short block: 3 pieces, inner block of the rear axle (H07/H08) and both blocks of the front
   axle (H26/H27, H32/H33)
 
-The dimensions are measurements of the owner (cad/stock_parts/pivot_block/pivot_block_parameters.json).
+The dimensions are measurements of the owner (cad/parts/pivot_block/pivot_block_parameters.json).
 The distances of the mounting holes are taken from the hole pattern of the speedrun chassis
 plate. Block coordinates: x along the block (across the car), y across the block (along the
 car), z = 0 bottom face.
@@ -36,11 +36,11 @@ from generate_bulkhead_lower import box, bulkhead_lower, cyl_y, cyl_z, load_para
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y  # noqa: E402
 
-PARAMS = "cad/stock_parts/pivot_block/pivot_block_parameters.json"
+PARAMS = "cad/parts/pivot_block/pivot_block_parameters.json"
 PLATE_GEOM = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
 LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
 UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
-OUT = "cad/stock_parts/pivot_block"
+OUT = "cad/parts/pivot_block"
 DRAWING = "photos/cad_pivot_blocks_drawing.png"
 PLATE_T = 2.0
 # positions on the speedrun chassis plate: (name, kind, holes of the chassis plate, end of the car)
@@ -134,8 +134,7 @@ def drawing(path, p, solids):
         return out
 
     fig = plt.figure(figsize=(15, 9.5))
-    fig.suptitle("Carten T410R pivot blocks: stock parts, not part of the speedrun design (not verified, work in "
-                 "progress)",
+    fig.suptitle("Pivot blocks (own design, re-engineered from the T410R; verified with a 3D printed prototype)",
                  fontsize=12, y=0.985)
     w = p["width"]
     for row, kind in enumerate(("long", "short")):
@@ -192,7 +191,7 @@ def drawing(path, p, solids):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate the pivot blocks of the T410R (stock parts, not part of the speedrun design).")
+    parser = argparse.ArgumentParser(description="Generate the pivot blocks of the speedrun chassis.")
     parser.parse_args()
     p = load_params(PARAMS)
     assert abs(p["lobe_r"] - (p["long_length"] - p["long_pin_spacing"]) / 2) < 1e-9

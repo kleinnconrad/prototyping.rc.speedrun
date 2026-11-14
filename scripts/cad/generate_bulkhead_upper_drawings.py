@@ -3,7 +3,7 @@
 The preview shows the upper part alone, the assemblies at End A (front shock tower) and End B
 (rear shock tower) with the lower part, the speedrun shock towers and the ends of the speedrun top
 brace, and two sections of the assembly at End A. The bearings, the gears and the diff case are
-simplified bodies. The measurement sheet shows the interfaces of the stock upper part on
+simplified bodies. The measurement sheet shows the interfaces of the original upper part on
 photos with numbered dimensions and lists the estimates of the model.
 
 Usage (from the root directory of the repository):
@@ -200,7 +200,7 @@ ROWS = [
     ("U12", "B", "Outer end face to the centre of the outer screw holes (y)", "depth rod, plus d/2", "4.2", ""),
     ("U13", "A", "Scan of both shock towers with a ruler on the glass (gives U1, U2 and U11 directly)",
      "flatbed scanner, 600 to 1200 dpi", "-", ""),
-    ("U14", "A", "Rear end of the top brace: where do the 2 screws M3x18 with the block NBA201 go?",
+    ("U14", "A", "Rear end of the top brace: where do the 2 screws M3x18 with the block go?",
      "look (manual step 25)", "open", ""),
 ]
 
@@ -208,9 +208,9 @@ ROWS = [
 def sheet(path, photos):
     with PdfPages(path) as pdf:
         fig = plt.figure(figsize=A4_LANDSCAPE)
-        fig.text(0.04, 0.955, "Measurement sheet - stock upper bulkhead - page 1: interfaces",
+        fig.text(0.04, 0.955, "Measurement sheet - original upper bulkhead - page 1: interfaces",
                  fontsize=14, fontweight="bold")
-        fig.text(0.04, 0.925, "Interfaces of the stock upper part that the new design must keep: shock tower "
+        fig.text(0.04, 0.925, "Interfaces of the original upper part that the new design must keep: shock tower "
                  "(4 screws M3x8) and top brace (2 screws M3x8). Parting face = face on the lower part.",
                  fontsize=8.5, color="#444")
         ax = photo_ax(fig, [0.02, 0.06, 0.3, 0.82], photos["end_view"], "View from the outer side")
@@ -254,7 +254,7 @@ def sheet(path, photos):
                  "U13 (scan of the shock towers) is the",
                  "most accurate source for U1, U2, U11.",
                  "U14: the manual shows 2 screws M3x18",
-                 "and a block NBA201 at the rear end of",
+                 "and a block at the rear end of",
                  "the top brace (step 25)."]
         for i, t in enumerate(notes):
             fig.text(0.77, 0.83 - i * 0.025, t, fontsize=7.6)
@@ -264,7 +264,7 @@ def sheet(path, photos):
         plt.close(fig)
 
         fig = plt.figure(figsize=A4_LANDSCAPE)
-        fig.text(0.04, 0.955, "Measurement sheet - stock upper bulkhead - page 2: values", fontsize=14,
+        fig.text(0.04, 0.955, "Measurement sheet - original upper bulkhead - page 2: values", fontsize=14,
                  fontweight="bold")
         fig.text(0.04, 0.925, "Priority A: interfaces of the new design. Priority B: shape and checks. "
                  "Rows without a caliper value are open, their model values are estimates from photos. Values in mm.", fontsize=8.5, color="#444")

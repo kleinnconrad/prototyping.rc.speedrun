@@ -1,0 +1,876 @@
+"""Generate the running gear of the speedrun chassis (own design, re-engineered from the Carten T410R).
+
+The running gear completes the build: wheel suspension (front C-hubs with steering knuckles, rear
+hub carriers), axles with hex hubs, CVD drive shafts, steering (posts, bellcranks joined by a
+rigid bridge, steering links, servo link), servo across the car with the horn facing forward on
+the servo mount, dampers and sway bars (trapezoid as the T410R). The design
+follows the principle of the T410R and deviates from it where the function requires. All values
+with their source: cad/running_gear/running_gear_parameters.json.
+
+Placement (chassis plate coordinates): ride height 10 mm front / 15 mm rear (setup sheet 4), wheel
+centres at +-80 mm (overall width 190 mm), caster 10 degrees front, rear toe from the pivot blocks.
+The wishbones are horizontal at this ride height. The parts of the right side are built and
+mirrored to the left side.
+
+Usage (from the root directory of the repository):
+    python scripts/cad/generate_running_gear.py
+
+The script writes the STEP and STL files of the own parts to manufacture (one file per part, right
+side, in the assembly position: chassis plate coordinates), the drawing
+photos/cad_running_gear_drawing.png, the free steering angle of the front knuckles and checks all
+new parts against each other and against the parts of the assembly (overlap).
+
+Requires the packages cadquery and matplotlib.
+"""
+import argparse
+import itertools
+import math
+import os
+import sys
+
+import numpy as np
+import cadquery as cq
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from generate_bulkhead_lower import box, cyl_x, cyl_y, cyl_z, load_params  # noqa: E402
+from generate_top_brace_speedrun import BULKHEAD_Y  # noqa: E402
+import generate_camber_links as CL  # noqa: E402
+import generate_wishbones as W  # noqa: E402
+
+PARAMS = "cad/running_gear/running_gear_parameters.json"
+DRIVE = "cad/parts/driveshaft/driveshaft_parameters.json"
+LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
+UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
+OUT = "cad/running_gear"
+DRAWING = "photos/cad_running_gear_drawing.png"
+PLATE_T = 2.0
+TAP = 2.5                                                    # tap drill M3
+AXIS_Z = PLATE_T + 17.2                                      # diff axes
+
+
+# ------------------------------------------------------------------ helpers
+def unit(v):
+    v = np.asarray(v, float)
+    return v / np.linalg.norm(v)
+
+
+def frame(xdir, zdir):
+    """Rotation matrix with the columns x', y', z' (x' made perpendicular to z')."""
+    z = unit(zdir)
+    x = np.asarray(xdir, float)
+    x = unit(x - np.dot(x, z) * z)
+    return np.column_stack([x, np.cross(z, x), z])
+
+
+def place(solid, R, t):
+    """Rigid transformation: rotation matrix R (columns = new axes), translation t."""
+    from OCP.gp import gp_Trsf
+    from OCP.BRepBuilderAPI import BRepBuilderAPI_Transform
+    tr = gp_Trsf()
+    R = np.asarray(R, float)
+    tr.SetValues(*[float(v) for v in (R[0, 0], R[0, 1], R[0, 2], t[0], R[1, 0], R[1, 1], R[1, 2], t[1],
+                                      R[2, 0], R[2, 1], R[2, 2], t[2])])
+    return cq.Shape.cast(BRepBuilderAPI_Transform(solid.wrapped, tr, True).Shape())
+
+
+def cyl_between(r, a, b):
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    d = b - a
+    return cq.Solid.makeCylinder(r, float(np.linalg.norm(d)), cq.Vector(*a), cq.Vector(*unit(d)))
+
+
+def sphere(r, c):
+    return cq.Solid.makeSphere(r, cq.Vector(*c), angleDegrees1=-90, angleDegrees2=90)
+
+
+def fuse(*solids):
+    s = solids[0]
+    for o in solids[1:]:
+        s = s.fuse(o)
+    return s.clean()
+
+
+def hex_z(af, z0, z1, x=0.0, y=0.0):
+    return cq.Workplane("XY").workplane(offset=z0).center(x, y).polygon(6, af / math.cos(math.pi / 6)) \
+        .extrude(z1 - z0).val()
+
+
+def hex_x(af, x0, x1, y=0.0, z=0.0):
+    return cq.Workplane("YZ").workplane(offset=x0).center(y, z).polygon(6, af / math.cos(math.pi / 6)) \
+        .extrude(x1 - x0).val()
+
+
+def prism_z(pts, z0, z1):
+    return cq.Workplane("XY").workplane(offset=z0).polyline(pts).close().extrude(z1 - z0).val()
+
+
+def mirror_x(solid):
+    return solid.mirror("YZ")
+
+
+# ------------------------------------------------------------------ ball joints
+def rod_end_canon(e, bore_d, bore_depth, cl):
+    """Rod end (ball cup) in canonical coordinates: ball centre at the origin, body toward +x, socket
+    axis z, opening toward +z (snap fit on the ball, see camber link parameters)."""
+    _, ring_d, ring_w, af, _ = cl["rod_end"]
+    c = cl["socket_closed"]
+    clear, d_open = cl["socket_fit"]
+    rb = cl["ball"][0] / 2 + clear
+    ring = cyl_z(ring_d / 2, -c, ring_w - c, 0, 0)
+    body = hex_x(af, ring_d / 2 - 1.5, e)
+    cavity = sphere(rb, (0, 0, 0)).fuse(cyl_z(d_open / 2, 0, ring_w - c + 1, 0, 0))
+    s = ring.fuse(body).cut(cavity)
+    if bore_d:
+        s = s.cut(cyl_x(bore_d / 2, e - bore_depth, e + 1, 0, 0))
+    return s.clean()
+
+
+def rod_end_at(ball, opening, body_dir, e, cl, bore_d=3.0, bore_depth=7.0):
+    """Rod end on a ball: body exactly along body_dir (the link), socket axis as close as possible to
+    the opening direction (the cup tilts on the ball)."""
+    u = unit(body_dir)
+    o = np.asarray(opening, float)
+    o = unit(o - np.dot(o, u) * u)
+    R = np.column_stack([u, np.cross(o, u), o])
+    return place(rod_end_canon(e, bore_d, bore_depth, cl), R, np.asarray(ball, float))
+
+
+def stud(ball, out, free, thread, ball_d=4.8):
+    """Ball stud: ball, neck 3.0 (free length from the face of the part to the ball centre), thread M3
+    into the part (modelled with the core diameter 2.5 in the tap hole 2.5)."""
+    ball, out = np.asarray(ball, float), unit(out)
+    face = ball - out * free
+    return fuse(sphere(ball_d / 2, ball), cyl_between(1.5, ball, face), cyl_between(TAP / 2 - 0.001, face,
+                                                                                    face - out * thread))
+
+
+def link(a, open_a, b, open_b, e, cl, hex_af=4.0):
+    """Turnbuckle link between the balls a and b: 2 rod ends and the turnbuckle (M3, 5 mm in each rod
+    end). Returns (rod ends, turnbuckle, gap between the rod ends)."""
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    u = unit(b - a)
+    L = np.linalg.norm(b - a)
+    rods = cq.Compound.makeCompound([rod_end_at(a, open_a, u, e, cl), rod_end_at(b, open_b, -u, e, cl)])
+    t0, t1 = a + u * (e - 5.0), b - u * (e - 5.0)
+    tb = cyl_between(1.5, t0, t1)
+    mid = (a + b) / 2
+    if L - 2 * e > 6:
+        R = frame(np.cross(u, [0, 0, 1]) if abs(u[2]) < 0.9 else [1, 0, 0], u)
+        tb = tb.fuse(place(hex_z(hex_af, -2, 2), R, mid)).clean()
+    return rods, tb, L - 2 * e
+
+
+# ------------------------------------------------------------------ geometry of the car
+def corners(p, lp):
+    """Points of the right side: outer hinge pins, axle heights, damper and sway ball positions."""
+    lines = W.pin_lines()
+    ap = W.load_params(W.PARAMS)
+    links = CL.link_points()
+    faces = CL.tower_faces()
+    import generate_shock_towers as T
+    rf, rr = p["ride_height"]
+    out = {}
+    for end, kind, ride in (("front", "front", rf), ("rear", "rear", rr)):
+        J = ap[f"{kind}_arm_length"]
+        yi, yo = ap[f"{kind}_rail_y"]
+        O = W.arm_point(end, 1, (J, 0, 0), lines)
+        ex = unit(W.arm_point(end, 1, (J + 1, 0, 0), lines) - O)          # along the arm (horizontal)
+        ey = np.array([-ex[1], ex[0], 0.0])                              # along the outer hinge pin
+        tp = load_params(T.TOWERS[end]["params"])
+        dx_t, dz_t = T.layout(tp, lp, load_params(UPPER))["damper"]
+        yb, sign, _, _, tt = faces[end]
+        y_front = yb - sign * tt                                         # damper side of the tower
+        outw = -sign                                                     # toward the outer end of the car
+        # damper: lower ball on the outer face of the shock plate (hole with the lowest position >= 6)
+        # damper in the plane 8.3 in front of the tower (collar 15); lower ball on a stud along the hole of
+        # the shock plate (hole with the lowest position >= 6 above the bottom face of the chassis plate)
+        y_d = y_front + outw * p["damper_plane"]
+        faces_a = sorted([(W.arm_point(end, 1, (hx, -yo, hz), lines), W.arm_point(end, 1, (hx, -yo - 1, hz), lines))
+                          for hx, hz in ap[f"{kind}_shock_holes"]], key=lambda f: f[0][2])
+        fa, fa1 = [f for f in faces_a if f[0][2] >= 6.0][0]
+        n_a = unit(fa1 - fa)
+        t_a = (y_d - fa[1]) / n_a[1]
+        bot = fa + n_a * t_a
+        top = np.array([dx_t, y_d, PLATE_T + lp["axis_z"] + dz_t])
+        sx, sz = ap[f"{kind}_sway_holes"][0]
+        fb = W.arm_point(end, 1, (sx, yo, sz), lines)
+        n_b = unit(W.arm_point(end, 1, (sx, yo + 1, sz), lines) - fb)
+        sway = fb + n_b * p["ball_offset"]
+        out[end] = {"O": O, "ex": ex, "ey": ey, "axle_z": ride * -1 + p["wheel_r"], "camber": links[(end, 1)][1],
+                    "damper_top": top, "damper_bot": bot, "tower_front": y_front, "outw": outw, "sway": sway,
+                    "n_a": n_a, "t_a": t_a, "n_b": n_b,
+                    "plate_face": W.arm_point(end, 1, (ap[f"{kind}_shock_holes"][0][0], -yo, 0), lines)[1],
+                    "rail_b_face": W.arm_point(end, 1, (sx, yo, 0), lines)[1], "tt": tt, "yo": yo}
+    return out
+
+
+# ------------------------------------------------------------------ front corner
+def kingpin_frame(p, c):
+    """Frame of the front kingpin: origin in the centre of the outer CVD joint (on the kingpin axis at the
+    height of the axle), x along the axle, z along the kingpin axis (caster: top toward the middle of the
+    car). The knuckle is built in this frame; its faces toward the C-hub are square to the kingpin axis."""
+    a = math.radians(p["caster"]) * c["outw"]
+    R = np.array([[1.0, 0, 0], [0, math.cos(a), -math.sin(a)], [0, math.sin(a), math.cos(a)]])
+    J = np.array([p["kingpin_x"], c["O"][1], c["axle_z"]])
+    return R, J
+
+
+def front_corner(p, d, c):
+    """Front right corner (End A): C-hub with 10 degrees caster, knuckle, kingpins, outer hinge pin, axle,
+    bearings, hex hub, pin; returns dict name -> (kind, solid), the joint centre and the steering ball."""
+    O = c["O"]
+    yc = O[1]
+    R, J = kingpin_frame(p, c)
+    kd = R[:, 2]
+    c["kd"], c["R_k"], c["J"] = kd, R, J
+    K = lambda s: place(s, R, J)                                          # kingpin frame -> chassis
+    bx0, bx1, r_pass, gap, t_up, z_seat = p["front_c_hub"]
+    w_low, w_back, w_arm = p["front_c_hub_width"]
+    kz0, kz1, r_piv, r_hous, w_web = p["knuckle"]
+    xb = bx1 - J[0]                                                       # inner face of the back plate (local)
+    # C-hub: lug on the outer hinge pin, lower arm and back plate (chassis coordinates, between the rails
+    # of the wishbone), upper arm square to the kingpin; space of the knuckle square to the kingpin
+    hub = fuse(cyl_y(3.6, yc - 6.5, yc + 6.5, O[0], O[2]),
+               box(bx0, O[0], yc - w_low / 2, yc + w_low / 2, O[2], J[2] - 5.0),
+               box(bx0, bx1, yc - w_low / 2, yc + w_low / 2, O[2], 10.5),
+               box(bx0, bx1, yc - w_back / 2, yc + w_back / 2, 10.0, z_seat),
+               K(box(bx0 - J[0], 3.5, -w_arm / 2, w_arm / 2, kz1 + gap, kz1 + gap + t_up)))
+    hub = hub.cut(K(box(xb, 30, -30, 30, kz0 - gap, kz1 + gap)))                         # space of the knuckle
+    hub = hub.cut(box(bx0 - 1, J[0] - 3.0, yc - 10, yc + 10, z_seat, z_seat + 10))        # seat of the camber stud
+    hub = hub.cut(K(box(xb - 10, xb + 0.1, -12, 0.5, kz0 - gap, -5.5)))                  # clearance of the steering arm
+    hub = hub.cut(cyl_y(1.5, yc - 8, yc + 8, O[0], O[2]))                                  # outer hinge pin
+    hub = hub.cut(cyl_x(r_pass, bx0 - 1, bx1 + 1, yc, J[2]))                              # passage of the CVD
+    hub = hub.cut(K(cyl_z(1.52, kz1 + gap - 1.0, kz1 + gap + t_up + 2.0, 0, 0)))               # kingpin, top (through)
+    hub = hub.cut(K(cyl_z(1.52, -21.0, kz0 - gap + 1.0, 0, 0)))                                # kingpin, bottom (through)
+    cam = c["camber"]
+    hub = hub.cut(cyl_z(TAP / 2, z_seat - 6.0, z_seat + 1, cam[0], cam[1]))               # thread M3, camber stud
+    hub = hub.cut(cyl_z(TAP / 2, O[2] - 5, O[2], O[0], yc))                               # thread M3, grub screw
+    # knuckle (kingpin frame): pivot body around the kingpin, web, bearing housing, steering arm
+    sax, say, sa_top, sa_w = p["steering_arm_ball"]
+    kb_l = np.array([sax - J[0], say * c["outw"], sa_top + p["ball_offset"]])
+    u = unit(np.array([kb_l[0], kb_l[1]]))
+    n = np.array([-u[1], u[0]])
+    arm = prism_z([tuple(n * sa_w), tuple(kb_l[:2] + n * 3.5), tuple(kb_l[:2] - n * 3.5), tuple(-n * sa_w)], kz0, sa_top)
+    knu = fuse(cyl_z(r_piv, kz0, kz1, 0, 0), box(0, 7.0, -w_web / 2, w_web / 2, kz0, kz1), cyl_x(r_hous, -1.0, 14.5, 0, 0),
+               arm, cyl_z(3.5, kz0, sa_top, kb_l[0], kb_l[1]))
+    knu = knu.cut(cyl_x(5.6, -10.0, 4.5, 0, 0))                                          # space of the joint cup
+    knu = knu.cut(cyl_x(5.0, 4.9, 9.0, 0, 0)).cut(cyl_x(5.0, 10.0, 15.0, 0, 0))          # bearing seats
+    knu = knu.cut(cyl_x(3.5, 3.0, 15.0, 0, 0))
+    knu = knu.cut(cyl_z(1.55, kz0 - 1, kz0 + 3.6, 0, 0)).cut(cyl_z(1.55, kz1 - 3.2, kz1 + 1, 0, 0))  # kingpins (turns)
+    knu = knu.cut(cyl_z(TAP / 2, kz0 - 1, sa_top + 0.1, kb_l[0], kb_l[1]))               # thread M3, steering ball
+    pins = cq.Compound.makeCompound([K(cyl_z(1.5, -14.0, kz0 + 3.0, 0, 0)),                    # 3x8, from below
+                                     K(cyl_z(1.5, kz1 - 2.6, kz1 + gap + t_up - 0.3, 0, 0))])  # 3x6, from the top
+    kb = J + R @ kb_l
+    c["kb"] = kb
+    hinge = cyl_y(1.5, yc - 13, yc + 13, O[0], O[2])
+    parts = {"C-hub": ("upright", hub.clean()), "steering knuckle": ("upright", K(knu.clean())), "kingpins": ("axle", pins),
+             "outer hinge pin 3x26": ("axle", hinge)}
+    parts.update(axle_group(p, d, J, np.array([1.0, 0, 0]), (J[0] + 5.0, J[0] + 10.0), J[0] + 15.5, p["hex_hub"][1]))
+    parts["ball stud of the steering arm"] = ("link", stud(kb, kd, p["ball_offset"], sa_top - kz0))
+    return parts, J.copy(), kb
+
+
+def steering_lock(p, c, parts, fixed):
+    """Free steering angle of the front knuckle: the knuckle, the axle group and the steering ball stud turn
+    about the kingpin axis; returns the largest angle (each direction, step 2.5 degrees) without overlap
+    with the fixed parts (C-hub, CVD drive shaft, wishbone, hinge pin)."""
+    turning = [parts[k][1] for k in ("steering knuckle", "ball stud of the steering arm", "hex hub 12", "wheel bearings 5x10x4")]
+    kb, kd0 = c["kb"], c["kd"]
+    turning.append(cyl_between(3.5, kb - kd0 * 3.0, kb + kd0 * 3.4))                         # rod end of the steering link
+    axle = parts["axle with joint cup"][1]
+    J, kd = c["J"], c["kd"]
+    res = {}
+    for sgn in (1, -1):
+        free = 0.0
+        for ang in np.arange(2.5, 45.1, 2.5):
+            rot = lambda s: s.rotate(cq.Vector(*J), cq.Vector(*(J + kd)), sgn * ang)
+            hit = False
+            for s in turning + [axle]:
+                rs = rot(s)
+                for name, f in fixed:
+                    if s is axle and name.startswith("CVD"):
+                        continue                                                       # joint: ball and pin in the cup
+                    if rs.intersect(f).Volume() > 1e-3:
+                        hit = True
+                        break
+                if hit:
+                    break
+            if hit:
+                break
+            free = float(ang)
+        res["steering arm toward the outside" if sgn > 0 else "steering arm toward the middle"] = free
+    return res
+
+
+def axle_group(p, d, joint, ax_dir, bearings, hub_x0, hub_w):
+    """Axle with the joint cup, 2 bearings 5x10x4, hex hub with pin and grub screw thread, along ax_dir
+    from the joint centre (positions as x along the axle relative to x = 0 of the front axle frame)."""
+    ad, thr, cup_d, cup_l = p["axle"]
+    hex_af = p["hex_hub"][0]
+    pin_d = p["hex_hub"][3]
+    j = joint[0]
+    a = fuse(cyl_x(cup_d / 2, j - 4.5, j + 4.0, 0, 0), cyl_x(ad / 2, j + 3.9, hub_x0 + hub_w + 0.5, 0, 0),
+             cyl_x(thr / 2, hub_x0 + hub_w + 0.4, hub_x0 + hub_w + 5.5, 0, 0))
+    a = a.cut(cyl_x(3.3, j - 5, j + 3.3, 0, 0)).cut(box(j - 5, j + 3.3, -1.05, 1.05, -6, 6))   # bore and slots
+    xp = hub_x0 + 2.0
+    a = a.cut(cyl_z(pin_d / 2, -3, 3, xp, 0))
+    hub = hex_x(hex_af, hub_x0, hub_x0 + hub_w).cut(cyl_x(ad / 2, hub_x0 - 1, hub_x0 + hub_w + 1, 0, 0))
+    hub = hub.cut(box(hub_x0 - 1, xp + pin_d / 2 + 0.05, -1.05, 1.05, -7, 7))               # slot for the pin
+    hub = hub.cut(cyl_y(TAP / 2, 0, 7, xp + 2.5, 0))                                      # thread M3, grub screw
+    brg = cq.Compound.makeCompound([cyl_x(5.0, b0, b0 + 4, 0, 0).cut(cyl_x(2.5, b0 - 1, b0 + 5, 0, 0)) for b0 in bearings])
+    pin = cyl_z(pin_d / 2 - 0.001, -5, 5, xp, 0)
+    R = frame(ax_dir, (0, 0, 1))
+    # parts built along x with the joint at x = joint[0]; place: rotate about the joint, translate to y, z
+    T = lambda s: place(s.translate(cq.Vector(-j, 0, 0)), R, joint)
+    return {"axle with joint cup": ("axle", T(a)), "hex hub 12": ("axle", T(hub)), "wheel bearings 5x10x4": ("axle", T(brg)),
+            "axle pin 2x10": ("axle", T(pin))}
+
+
+# ------------------------------------------------------------------ rear corner
+def rear_corner(p, d, c):
+    """Rear right corner (End B): hub carrier in the frame of the rear arm (origin on the outer hinge pin,
+    x along the arm, y along the pin: toe), outer hinge pin, spacers 3x7x3, axle group."""
+    O, ex, ey = c["O"], c["ex"], c["ey"]
+    za = c["axle_z"] - O[2]
+    w0, w1, ztop = p["rear_carrier"]
+    zt = ztop - O[2]
+    R = np.column_stack([ex, ey, [0, 0, 1.0]])
+    cam = np.linalg.solve(R, c["camber"] - O)
+    car = fuse(cyl_y(3.6, -4.6, 4.6, 0, 0), box(-3.0, 3.0, -4.0, 4.0, 0, za - 5.0), cyl_x(6.5, -13.5, 5.5, 0, za),
+               box(w0, w1, -4.0, 4.0, za, zt), box(cam[0] - 3.5, w1 + 0.5, -4.0, 4.0, zt - 3.5, zt))
+    car = car.cut(cyl_y(1.5, -6, 6, 0, 0))
+    car = car.cut(cyl_x(5.6, -15, -4.4, 0, za))                                           # space of the joint cup
+    car = car.cut(cyl_x(5.0, -4.0, 0.05, 0, za)).cut(cyl_x(5.0, 0.95, 6, 0, za)).cut(cyl_x(3.5, -5, 6, 0, za))
+    car = car.cut(cyl_z(TAP / 2, zt - 4.5, zt + 1, cam[0], cam[1]))                        # thread M3, camber stud
+    car = car.cut(cyl_z(TAP / 2, -5, 0, 0, 0))                                            # thread M3, grub pin
+    spacers = cq.Compound.makeCompound([cyl_y(3.5, s0, s0 + 3.0, 0, 0).cut(cyl_y(1.5, s0 - 1, s0 + 4, 0, 0))
+                                        for s0 in (4.7, -7.7)])
+    hinge = cyl_y(1.5, -13, 13, 0, 0)
+    to_w = lambda s: place(s, R, O)
+    parts = {"hub carrier": ("upright", to_w(car.clean())), "spacers 3x7x3": ("axle", to_w(spacers)),
+             "outer hinge pin 3x26": ("axle", to_w(hinge))}
+    ag = axle_group(p, d, np.array([-9.0, 0, 0]), np.array([1.0, 0, 0]), (-4.0, 1.0), 5.5, p["hex_hub"][2])
+    for k, (kind, s) in ag.items():
+        parts[k] = (kind, to_w(s.translate(cq.Vector(0, 0, za))))
+    return parts, O + R @ np.array([-9.0, 0, za])
+
+
+# ------------------------------------------------------------------ CVD
+def cvd(p, inner, outer):
+    bone_d, ball_d, pin_d, pin_l = p["cvd"]
+    s = fuse(cyl_between(bone_d / 2, inner, outer), sphere(ball_d / 2, inner), sphere(ball_d / 2, outer),
+             cyl_between(pin_d / 2, inner - [0, 0, 5.5], inner + [0, 0, 5.5]),
+             cyl_between(pin_d / 2, outer - [0, 0, pin_l / 2], outer + [0, 0, pin_l / 2]))
+    return s
+
+
+# ------------------------------------------------------------------ dampers
+def spring(r_coil, wire_r, length, n):
+    helix = cq.Wire.makeHelix(length / n, length, r_coil)                 # r_coil: centre line of the wire
+    prof = cq.Wire.makeCircle(wire_r, helix.startPoint(), helix.tangentAt(0))
+    return cq.Solid.sweep(prof, [], helix, isFrenet=True)
+
+
+def damper(p, cl, top, bot, outw):
+    """Standard 1:10 on-road damper between the ball studs top (tower) and bot (shock plate)."""
+    bd, cd, sd, shd, bl, wire = p["damper"]
+    e = 6.5
+    a = unit(bot - top)
+    L = float(np.linalg.norm(bot - top))
+    R = frame([0, 1.0, 0], a)                       # z' along the damper axis, x' along y
+    R = np.column_stack([R[:, 0], R[:, 1], R[:, 2]])
+    ax = lambda s0, s1, r: place(cyl_z(r, s0, s1, 0, 0), R, top)
+    opening = np.array([0, -outw * 1.0, 0])
+    rods = cq.Compound.makeCompound([rod_end_at(top, opening, a, e, cl, bore_d=3.0, bore_depth=4.0),
+                                     rod_end_at(bot, opening, -a, e, cl, bore_d=3.0, bore_depth=4.0)])
+    body = fuse(ax(e, e + 3.0, cd / 2), ax(e + 3.0, e + 3.0 + bl, bd / 2), ax(e + 4.0, e + 6.0, sd / 2))
+    shaft = ax(e + 3.0 + bl, L - e + 3.5, shd / 2)
+    retainer = place(cyl_z(sd / 2 - 0.5, L - e - 1.0, L - e, 0, 0).cut(cyl_z(shd / 2 + 0.2, L - e - 2, L - e + 1, 0, 0)), R, top)
+    sp_len = (L - e - 1.6) - (e + 6.6)
+    try:
+        spr = place(spring(sd / 2 - wire / 2, wire / 2, sp_len, 7).translate(cq.Vector(0, 0, e + 6.6)), R, top)
+    except Exception:
+        spr = place(cyl_z(sd / 2, e + 6.0, L - e - 1.0, 0, 0).cut(cyl_z(sd / 2 - wire, e + 5, L, 0, 0)), R, top)
+    return {"damper rod ends": ("rodend", rods), "damper body with collar": ("damper", body),
+            "damper shaft": ("axle", shaft), "damper spring": ("spring", spr), "spring retainer": ("damper", retainer)}, L
+
+
+# ------------------------------------------------------------------ build
+def build(p=None):
+    """All parts of the running gear in chassis plate coordinates: list of (name, kind, solid)."""
+    p = p or load_params(PARAMS)
+    d = load_params(DRIVE)
+    lp = load_params(LOWER)
+    cl = load_params(CL.PARAMS)
+    c = corners(p, lp)
+    out = []
+
+    def both(name, kind, solid, label):
+        out.append((f"{name} {label} right", kind, solid))
+        out.append((f"{name} {label} left", kind, mirror_x(solid)))
+
+    xo_cup = lp["body_half_width"] + d["outdrive_gap"] + d["outdrive_length"] - 4.0       # inner pin of the CVD
+    info = {}
+    for end, label, yd in (("front", "End A", BULKHEAD_Y["front"] - lp["diff_axis_y"]),
+                           ("rear", "End B", BULKHEAD_Y["rear"] + lp["diff_axis_y"])):
+        cc = c[end]
+        if end == "front":
+            parts, joint, kb = front_corner(p, d, cc)
+            info["kb"] = kb
+        else:
+            parts, joint = rear_corner(p, d, cc)
+        for name, (kind, s) in parts.items():
+            both(name, kind, s, label)
+        inner = np.array([xo_cup, yd, AXIS_Z])
+        both("CVD drive shaft", "cvd", cvd(p, inner, joint), label)
+        info[end] = (inner, joint, float(np.linalg.norm(joint - inner)))
+        # damper
+        dparts, L = damper(p, cl, cc["damper_top"], cc["damper_bot"], cc["outw"])
+        for name, (kind, s) in dparts.items():
+            both(name, kind, s, label)
+        info[f"damper {end}"] = L
+        top, bot = cc["damper_top"], cc["damper_bot"]
+        outw = np.array([0, cc["outw"] * 1.0, 0])
+        tf = cc["tower_front"]
+        st_top = fuse(sphere(2.4, top), cyl_between(1.5, top, np.array([top[0], tf - cc["outw"] * (cc["tt"] + 3.5), top[2]])))
+        ny = tf - cc["outw"] * cc["tt"]
+        nut = place(hex_z(5.5, 0, 2.4), frame([1, 0, 0], -outw), np.array([top[0], ny, top[2]])).cut(
+            cyl_between(1.5, np.array([top[0], ny + 5 * cc["outw"], top[2]]), np.array([top[0], ny - 5 * cc["outw"], top[2]])))
+        st_bot = stud(bot, cc["n_a"], cc["t_a"], 5.0)
+        both("damper ball studs", "link", cq.Compound.makeCompound([st_top, st_bot]), label)
+        both("nut M3 of the damper ball stud", "link", nut, label)
+    # sway bars
+    sp = p["sway_bar"]
+    bar_d, z_bar, y_hold = sp[:3]
+    for end, label in (("front", "End A"), ("rear", "End B")):
+        cc = c[end]
+        yb0 = BULKHEAD_Y[end]
+        loc = (lambda x, y: (-x, yb0 - y)) if end == "front" else (lambda x, y: (x, yb0 + y))
+        inward = -cc["outw"]
+        sw = cc["sway"]
+        yb = loc(0, y_hold)[1]
+        z_mid, z_c, tilt = p["sway_lever"][0 if end == "front" else 1]
+        bd = np.array([-math.sin(math.radians(tilt)), 0.0, math.cos(math.radians(tilt))])   # body of the cup (bore)
+        corner = sw + bd * (z_c - sw[2]) / bd[2]                                       # bend into the bore of the cup
+        x0 = p["sway_bar"][3]                                                           # end of the part in the holders
+        dpl = unit(corner[:2] - np.array([x0, yb]))
+        p1 = np.array([x0 + dpl[0] * 8.0, yb + dpl[1] * 8.0, z_mid])                    # leg: down below the CVD
+        p2 = np.array([*(p1[:2] + (corner[:2] - p1[:2]) * 0.85), z_mid])               # low past the diff outdrive
+        pts = [np.array([x0, yb, z_bar]), p1, p2, corner, sw + bd * (7.0 - 4.0)]
+        xe = x0
+        segs = [cyl_between(bar_d / 2, np.array([-xe, yb, z_bar]), pts[0])]
+        segs += [cyl_between(bar_d / 2, a, b) for a, b in zip(pts[:-1], pts[1:])]
+        segs += [sphere(bar_d / 2, q) for q in pts[:-1]]
+        lmir = [np.array([-q[0], q[1], q[2]]) for q in pts]
+        segs += [cyl_between(bar_d / 2, a, b) for a, b in zip(lmir[:-1], lmir[1:])] + [sphere(bar_d / 2, q) for q in lmir[:-1]]
+        out.append((f"sway bar 1.4 {label}", "swaybar", fuse(*segs)))
+        for sx in (1, -1):
+            hx, hy = loc(sx * lp["swaybar_hole_x"], lp["swaybar_hole_y"])
+            y0, y1 = sorted((loc(0, -33.0)[1], loc(0, -26.0)[1]))
+            hold = box(hx - 3.2, hx + 3.2, y0, y1, AXIS_Z, AXIS_Z + 4.0)
+            hold = hold.cut(cyl_z(1.6, AXIS_Z - 1, AXIS_Z + 5, hx, hy)).cut(cyl_x(bar_d / 2 + 0.05, hx - 4, hx + 4, yb, z_bar))
+            out.append((f"sway bar holder {label} {'right' if sx > 0 else 'left'}", "steer", hold.clean()))
+        # cup on the ball stud of the arm, tilted toward the middle of the car, bar end in its bore, grub screw M3x3
+        opening = -cc["n_b"]
+        cup = rod_end_at(sw, opening, bd, 7.0, cl, bore_d=bar_d + 0.05, bore_depth=4.0)
+        q = np.array([bd[2], 0.0, -bd[0]])                                                # across the body
+        cup = cup.cut(cyl_between(TAP / 2, sw + bd * 5.0 - q * 6, sw + bd * 5.0 + q * 6))
+        both("sway bar cup with grub screw", "rodend", cup, label)
+        both("sway ball stud", "link", stud(sw, cc["n_b"], p["ball_offset"], 5.0), label)
+    # steering
+    st = steering(p, cl, c, info["kb"])
+    out += st
+    return out, info
+
+
+def plan_knuckle(Kp, K0, S, L):
+    """Plan view: knuckle angle d (counterclockwise, rad) with |Kp + R(d)(K0 - Kp) - S| = L, nearest to 0."""
+    v, w = K0 - Kp, S - Kp
+    r, dw = np.linalg.norm(v), np.linalg.norm(w)
+    cc = (r * r + dw * dw - L * L) / (2 * r * dw)
+    if abs(cc) > 1:
+        return None
+    base, a0 = math.atan2(w[1], w[0]), math.atan2(v[1], v[0])
+    sols = [((base + sg * math.acos(cc) - a0 + math.pi) % (2 * math.pi)) - math.pi for sg in (1, -1)]
+    return min(sols, key=abs)
+
+
+def ackermann(P, S, Kp, K, rear_axle_y):
+    """Plan view of the steering (right side, the left side mirrored, both bellcranks turn by the same angle
+    through the bridge): deviation of the steering link from the perpendicular to the knuckle arm and to the
+    bellcrank arm, Ackermann percentage at 15, 20 and 25 degrees of the inner wheel and the bellcrank angle."""
+    P, S, Kp, K = (np.asarray(q, float)[:2] for q in (P, S, Kp, K))
+    L = np.linalg.norm(K - S)
+    track, wb = 2 * Kp[0], Kp[1] - rear_axle_y
+    ln = (K - S) / L
+    dev_k = 90 - math.degrees(math.acos(abs(unit(K - Kp) @ ln)))
+    dev_s = 90 - math.degrees(math.acos(abs(unit(S - P) @ ln)))
+    m = np.array([-1.0, 1.0])
+    rows = []
+    for th in np.radians(np.arange(-45, 45.01, 0.1)):
+        c_, s_ = math.cos(th), math.sin(th)
+        Rm = np.array([[c_, -s_], [s_, c_]])
+        dr = plan_knuckle(Kp, K, P + Rm @ (S - P), L)
+        dl = plan_knuckle(Kp * m, K * m, P * m + Rm @ ((S - P) * m), L)
+        if dr is not None and dl is not None:
+            rows.append((math.degrees(th), math.degrees(dr), math.degrees(dl)))
+    rows = np.array(rows)
+    res = {"dev_k": round(dev_k, 1), "dev_s": round(dev_s, 1)}
+    for inner in (15, 20, 25):
+        th, dr, dl = rows[np.argmin(abs(rows[:, 2] - inner))]              # left turn: left wheel inside
+        ideal = math.degrees(math.atan(1 / (1 / math.tan(math.radians(dl)) + track / wb)))
+        res[f"ackermann {inner}"] = round((dl - dr) / (dl - ideal) * 100, 0)
+        res[f"outer {inner}"] = round(dr, 1)
+        res[f"bellcrank {inner}"] = round(abs(th), 1)
+    return res
+
+
+def steering(p, cl, c, kb):
+    """Steering as the T410R (manual steps 10, 13, 14, 21): 2 bellcranks (straight levers) on the posts H24/H25
+    with 2 bearings 5x8x2.5 each: ball arm forward for the steering link, rear arm to a rigid bridge
+    (parallelogram: both bellcranks turn by the same angle, the bridge moves across the car); steering links
+    from the bellcranks to the steering arms of the knuckles; servo across the car on the servo mount
+    (H17/H21) with the output shaft and the horn facing forward (End A); servo link across the car from the
+    horn to the ball of the bridge."""
+    out = []
+    af, hpost, jd = p["post"]
+    bz0, bz1, r_s, a_s, r_b = p["bellcrank"]
+    zb0, tb, wb, db = p["bridge"]
+    P = np.array([21.7, 242.69])
+    sv_l, sv_w, sv_h, sx0 = p["servo"]
+    hl, hw, ht = p["servo_horn"]
+    zt = bz1 + p["ball_offset"]
+    K = kb
+    pts = {}
+    for side in (1, -1):
+        Pp = np.array([side * P[0], P[1]])
+        pts[side] = (Pp, Pp + np.array([side * a_s, r_s]), Pp + np.array([0.0, -r_b]))   # post, ball arm, bridge arm
+    S = np.array([*pts[1][1], zt])
+
+    def bellcrank(side):
+        Pp, Sp, Bp = pts[side]
+        s = cyl_z(6.0, bz0, bz1, Pp[0], Pp[1])
+        for q in (Sp, Bp):
+            dv = unit(q - Pp)
+            nv = np.array([-dv[1], dv[0]])
+            poly = [tuple(Pp + nv * 3.0), tuple(q + nv * 3.5), tuple(q - nv * 3.5), tuple(Pp - nv * 3.0)]
+            s = s.fuse(prism_z(poly, bz0, bz1)).fuse(cyl_z(3.5, bz0, bz1, q[0], q[1]))
+        s = s.cut(cyl_z(4.0, bz0 - 1, bz1 + 1, Pp[0], Pp[1]))                                # 2 bearings 5x8x2.5
+        for q in (Sp, Bp):
+            s = s.cut(cyl_z(TAP / 2, bz0 - 1, bz1 + 1, q[0], q[1]))                            # threads M3
+        return s.clean()
+    post = fuse(hex_z(af, PLATE_T, PLATE_T + hpost, P[0], P[1]), cyl_z(jd / 2, PLATE_T + hpost - 0.1, bz1 + 0.25, P[0], P[1]))
+    post = post.cut(cyl_z(TAP / 2, PLATE_T - 1, PLATE_T + 6, P[0], P[1])).cut(cyl_z(TAP / 2, bz1 - 5, bz1 + 1, P[0], P[1]))
+    brg = cq.Compound.makeCompound([cyl_z(4.0, z0, z0 + 2.5, P[0], P[1]).cut(cyl_z(2.5, z0 - 1, z0 + 4, P[0], P[1]))
+                                    for z0 in (PLATE_T + hpost, PLATE_T + hpost + 2.5)])
+    washer = cyl_z(4.0, bz1 + 0.25, bz1 + 0.75, P[0], P[1]).cut(cyl_z(1.6, bz1, bz1 + 1, P[0], P[1]))
+    for name, kind, sol in (("steering post", "steer", post), ("bellcrank bearings 5x8x2.5", "axle", brg),
+                            ("washer of the bellcrank", "axle", washer)):
+        out += [(f"{name} right", kind, sol), (f"{name} left", kind, mirror_x(sol))]
+    bc = bellcrank(1)
+    out += [("bellcrank right", "steer", bc), ("bellcrank left", "steer", mirror_x(bc))]
+    # servo across the car, output shaft and horn toward +y (End A), horn vertical in the centre position
+    yb = P[1] - r_b                                                                              # axis of the bridge
+    zs0 = PLATE_T + 4.0 + 0.5                                                                    # servo on the mount
+    zs = zs0 + sv_w / 2                                                                          # output shaft
+    zc = zs + hl                                                                                 # balls of the servo link
+    yball = yb - wb / 2 - db - p["ball_offset"]                                                  # ball of the bridge
+    case_d = sv_h - 3.4
+    ycf = yball - p["ball_offset"] - ht - 3.4                                                    # front face of the case
+    xs = sx0 + sv_l - 10.2                                                                       # output shaft (outer end)
+    horn_ball = np.array([xs, yball, zc])
+    BL, BR = pts[-1][2], pts[1][2]
+    xbb = horn_ball[0] - (21.0 + 18.0)                                                           # link gap 21 (manual)
+    bball = np.array([xbb, yball, zc])
+    bridge = fuse(box(BL[0], BR[0], yb - wb / 2, yb + wb / 2, zb0, zb0 + tb),
+                  cyl_z(wb / 2, zb0, zb0 + tb, BL[0], BL[1]), cyl_z(wb / 2, zb0, zb0 + tb, BR[0], BR[1]),
+                  box(xbb - 3.0, xbb + 3.0, yb - wb / 2 - db, yb, zc - 2.5, zc + 2.5))                 # boss of the ball stud
+    for q in (BL, BR):
+        bridge = bridge.cut(cyl_z(2.55, zb0 - 1, zb0 + tb + 2, q[0], q[1]))                 # sleeves of the spacers
+    bridge = bridge.cut(cyl_y(TAP / 2, yb - wb / 2 - db - 0.1, yb - wb / 2 - db + 4.0, xbb, zc))  # thread M3, ball stud
+    spacers = []
+    for q in (BL, BR):
+        sp = fuse(cyl_z(3.5, bz1, zb0, q[0], q[1]), cyl_z(2.5, zb0 - 0.1, zb0 + tb, q[0], q[1]),
+                  cyl_z(4.0, zb0 + tb, zb0 + tb + 0.5, q[0], q[1]))
+        spacers.append(sp.cut(cyl_z(1.6, bz1 - 1, zb0 + tb + 1, q[0], q[1])))
+    out += [("steering bridge", "steer", bridge.clean()), ("spacers of the bridge", "axle", cq.Compound.makeCompound(spacers)),
+            ("ball stud of the bridge", "link", stud(bball, (0, -1.0, 0), p["ball_offset"], 3.5))]
+    up = np.array([0, 0, 1.0])
+    st0 = stud(S, up, p["ball_offset"], 4.5)
+    out += [("bellcrank ball stud right", "link", st0), ("bellcrank ball stud left", "link", mirror_x(st0))]
+    rods, tb_, gap_a = link(S, -up, K, -c["front"]["kd"], 9.0, cl)                          # ball stud along the kingpin
+    out += [("steering link rod ends right", "rodend", rods), ("steering link turnbuckle right", "link", tb_),
+            ("steering link rod ends left", "rodend", mirror_x(rods)), ("steering link turnbuckle left", "link", mirror_x(tb_))]
+    rods, tb_, gap_v = link(horn_ball, np.array([0, -1.0, 0]), bball, np.array([0, 1.0, 0]), 9.0, cl)
+    out += [("servo link rod ends", "rodend", rods), ("servo link turnbuckle", "link", tb_)]
+    # servo: case, ears at both ends (flange 7.5 behind the front face), output spline
+    yf = ycf - 7.5                                                                               # front face of the ears
+    case = box(sx0, sx0 + sv_l, ycf - case_d, ycf, zs0, zs0 + sv_w)
+    ears = [box(sx0 - 6.5, sx0, yf - 2.5, yf, zs0, zs0 + sv_w), box(sx0 + sv_l, sx0 + sv_l + 6.5, yf - 2.5, yf, zs0, zs0 + sv_w)]
+    servo = fuse(case, *ears, cyl_y(2.95, ycf - 0.1, ycf + 3.4, xs, zs))
+    ear_holes = [(xx, zz) for xx in (sx0 - 3.25, sx0 + sv_l + 3.25) for zz in (zs - 5.0, zs + 5.0)]
+    for xx, zz in ear_holes:
+        servo = servo.cut(cyl_y(1.6, yf - 3.5, yf + 1, xx, zz))
+    yh0 = ycf + 3.4
+    horn = fuse(cyl_y(5.5, yh0, yh0 + ht, xs, zs), box(xs - hw / 2, xs + hw / 2, yh0, yh0 + ht, zs, zc),
+                cyl_y(hw / 2, yh0, yh0 + ht, xs, zc))
+    horn = horn.cut(cyl_y(2.95, yh0 - 1, yh0 + ht + 1, xs, zs)).cut(cyl_y(TAP / 2, yh0 - 1, yh0 + ht + 1, xs, zc))
+    horn = horn.cut(cyl_x(TAP / 2, xs - 6, xs + 6, yh0 + ht / 2, zs - 3.8))                      # clamp screw M3
+    # servo mount: base plate on H17/H21 (threads M3 from below) with an upright behind each ear
+    # (threads M3 for the screws of the ears, from the front)
+    yu0 = ycf - case_d + 1.0
+    base = box(sx0 - 8.0, sx0 + sv_l + 8.0, 170.0, max(yf - 2.5, 199.15 + 3.0), PLATE_T, PLATE_T + 4.0)
+    ups = [box(sx0 - 8.0, sx0 - 0.3, yu0, yf - 2.5, PLATE_T + 4.0, zs0 + sv_w),
+           box(sx0 + sv_l + 0.3, sx0 + sv_l + 8.0, yu0, yf - 2.5, PLATE_T + 4.0, zs0 + sv_w)]
+    mount = fuse(base, *ups)
+    for hx, hy in ((7.98, 174.15), (8.0, 199.15)):
+        mount = mount.cut(cyl_z(TAP / 2, PLATE_T - 1, PLATE_T + 4.1, hx, hy))                # threads M3 from below
+    for xx, zz in ear_holes:
+        mount = mount.cut(cyl_y(TAP / 2, yf - 2.5 - 6.0, yf - 2.4, xx, zz))                  # threads M3, servo ears
+    hstud = stud(horn_ball, (0, 1.0, 0), p["ball_offset"], 3.5)
+    out += [("servo", "servo", servo.clean()), ("servo horn (aluminium clamp)", "steer", horn.clean()),
+            ("servo mount", "steer", mount.clean()), ("servo horn ball stud", "link", hstud)]
+    ack = ackermann(P, S, c["front"]["J"], K, c["rear"]["O"][1])
+    steering.info = {"S": S, "K": K, "B": np.array([*BR, zb0]), "bridge ball": bball, "horn": horn_ball,
+                     "gap steering link": gap_a, "gap servo link": gap_v, "ackermann": ack}
+    return out
+
+
+def steering_sweep(parts, others, angle):
+    """Turns the right bellcrank with its ball stud and the rod end of the steering link about the post and
+    moves the bridge with its spacers (parallelogram) by +-angle; returns the largest overlap with the other
+    parts (bulkheads, cup joint, centre driveshaft, steering posts)."""
+    st = steering.info
+    P = np.array([21.7, 242.69, 0.0])
+    S = st["S"]
+    ring = cyl_between(3.5, S + np.array([0, 0, -3.0]), S + np.array([0, 0, 3.4]))
+    turning = [parts["bellcrank right"], parts["bellcrank ball stud right"], ring]
+    moving = [parts["steering bridge"], parts["spacers of the bridge"], parts["ball stud of the bridge"]]
+    B = st["B"]
+    res = {}
+    for sg in (1, -1):
+        a = math.radians(sg * angle)
+        v = np.array([B[0] - P[0], B[1] - P[1]])
+        d = np.array([math.cos(a) * v[0] - math.sin(a) * v[1], math.sin(a) * v[0] + math.cos(a) * v[1]]) - v
+        worst = (0.0, "")
+        for s in turning + moving:
+            s2 = s.rotate(cq.Vector(*P), cq.Vector(P[0], P[1], 1.0), sg * angle) if s in turning \
+                else s.translate(cq.Vector(d[0], d[1], 0))
+            bb = s2.BoundingBox()
+            for n, o in others:
+                ob = o.BoundingBox()
+                if bb.xmin > ob.xmax or ob.xmin > bb.xmax or bb.ymin > ob.ymax or ob.ymin > bb.ymax or bb.zmin > ob.zmax \
+                        or ob.zmin > bb.zmax:
+                    continue
+                v_ = s2.intersect(o).Volume()
+                if v_ > worst[0]:
+                    worst = (v_, n)
+        res[f"{sg * angle:+.0f} deg"] = (round(worst[0], 4), worst[1])
+    return res
+
+
+def check(parts, others):
+    """Overlap of all pairs of the new parts and with the other parts of the assembly."""
+    items = parts + others
+    boxes = [s.BoundingBox() for _, _, s in items]
+    n_new = len(parts)
+    bad = []
+    for i, j in itertools.combinations(range(len(items)), 2):
+        if i >= n_new and j >= n_new:
+            continue
+        a, b = boxes[i], boxes[j]
+        if a.xmin > b.xmax or b.xmin > a.xmax or a.ymin > b.ymax or b.ymin > a.ymax or a.zmin > b.zmax or b.zmin > a.zmax:
+            continue
+        v = items[i][2].intersect(items[j][2]).Volume()
+        if v > 1e-4:
+            bad.append((v, items[i][0], items[j][0]))
+    return sorted(bad, reverse=True)
+
+
+KIND_COLORS = {"upright": (0.86, 0.45, 0.12), "axle": (0.72, 0.74, 0.77), "cvd": (0.55, 0.57, 0.6),
+               "steer": (0.3, 0.45, 0.75), "damper": (0.75, 0.2, 0.2), "spring": (0.95, 0.8, 0.2),
+               "servo": (0.2, 0.2, 0.22), "swaybar": (0.35, 0.65, 0.4), "rodend": (0.12, 0.12, 0.13),
+               "link": (0.78, 0.79, 0.82), "arm": (0.4, 0.34, 0.52), "plate": (0.26, 0.27, 0.29)}
+MADE = {"upright", "cvd", "steer", "swaybar"}                  # own parts to manufacture (files)
+MADE_NAMES = ("axle with joint cup", "hex hub 12", "sway bar cup", "spacers of the bridge")
+
+
+def write_files(parts):
+    """STEP and STL of the own parts of the right side (assembly position, chassis plate coordinates)."""
+    import re
+    os.makedirs(OUT, exist_ok=True)
+    stems = []
+    for name, kind, s in parts:
+        if (kind not in MADE and not name.startswith(MADE_NAMES)) or (name.endswith(" left") and "bellcrank" not in name):
+            continue
+        base = name[:-6] if name.endswith(" right") and "bellcrank" not in name else name
+        stem = re.sub(r"[^a-z0-9]+", "_", base.lower().replace("1.4", "")).strip("_")
+        cq.exporters.export(cq.Workplane().add(s), f"{OUT}/{stem}.step")
+        cq.exporters.export(cq.Workplane().add(s), f"{OUT}/{stem}.stl", tolerance=0.01, angularTolerance=0.1)
+        stems.append(stem)
+    return stems
+
+
+def drawing(parts, info, lock, path=DRAWING):
+    """Drawing of the running gear: front corner from the side (kingpin axis with caster), front corner from
+    the outer end, steering from above, rear corner from the outer end."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Patch
+    from mesh_views import subdivide, draw_mesh, iso_basis
+    import generate_speedrun_assembly as A
+    p = load_params(PARAMS)
+    lp = load_params(LOWER)
+    c = corners(p, lp)
+    plate = [("chassis plate", "plate", cq.importers.importStep(A.PLATE_STEP).val())]
+    arms = [(n, "arm", s) for n, k, s in W.arms_in_plate() if k == "arm"]
+    allp = parts + arms + plate
+
+    def tess(s, tol=0.03):
+        v, idx = s.tessellate(tol, 0.2)
+        v = np.array([[q.x, q.y, q.z] for q in v])
+        return v[np.array(idx)]
+
+    def panel(ax, region, view, keep=lambda n, k: True, max_edge=1.0):
+        box_r = cq.Solid.makeBox(region[3] - region[0], region[4] - region[1], region[5] - region[2],
+                                 cq.Vector(*region[:3]))
+        tris, cols = [], []
+        for n, k, s in allp:
+            if not keep(n, k):
+                continue
+            bb = s.BoundingBox()
+            if bb.xmin > region[3] or bb.xmax < region[0] or bb.ymin > region[4] or bb.ymax < region[1] \
+                    or bb.zmin > region[5] or bb.zmax < region[2]:
+                continue
+            cut = s.intersect(box_r)
+            if cut.Volume() < 1e-3:
+                continue
+            t = subdivide(tess(cut), 6.0 if k == "plate" else max_edge)
+            tris.append(t)
+            cols.append(np.tile(KIND_COLORS[k], (len(t), 1)))
+        lo, hi = draw_mesh(ax, np.concatenate(tris), view, tri_colors=np.concatenate(cols), depth_cue=0.25)
+        ax.set_xlim(lo[0] - 3, hi[0] + 3)
+        ax.set_ylim(lo[1] - 3, hi[1] + 3)
+        ax.set_aspect("equal")
+        ax.axis("off")
+        return view
+
+    fig = plt.figure(figsize=(16, 13))
+    fig.suptitle("Speedrun chassis: running gear (own design, re-engineered from the T410R)", fontsize=13, y=0.985)
+    fp, J, kb = front_corner(p, load_params(DRIVE), c["front"])
+    kd = c["front"]["kd"]
+    yc = J[1]
+    # 1: front right corner seen from the outside (view along -x): kingpin axis with the caster
+    ax = fig.add_axes([0.01, 0.5, 0.36, 0.44])
+    side = (np.array([-1.0, 0, 0]), np.array([0, 1.0, 0]), np.array([0, 0, 1.0]))
+    keep_f = lambda n, k: "End A" in n and ("right" in n or k in ("swaybar",)) and k not in ("damper", "spring", "swaybar")
+    panel(ax, (40, yc - 22, 0, 75.5, yc + 16, 42), side,
+          lambda n, k: keep_f(n, k) and (k != "axle" or n.startswith(("kingpins", "outer hinge"))))
+    a, b = J - kd * 17, J + kd * 17
+    ax.plot([a[1], b[1]], [a[2], b[2]], "-.", color="k", lw=1.2)
+    ax.plot([J[1], J[1]], [J[2] - 17, J[2] + 17], ":", color="#555", lw=1.0)
+    ax.text(J[1] + 1.0, J[2] + 17.5, f"kingpin axis, caster {p['caster']:g} deg (top toward the middle of the car),\n"
+            "dotted: vertical", fontsize=8.5, ha="left", va="bottom")
+    ax.set_ylim(ax.get_ylim()[0], J[2] + 23)
+    ax.set_title("Front right corner (End A), view from the outside, section at x = 75.5 (hex hub not shown):\n"
+                 "the C-hub carries the caster; faces between C-hub and knuckle square to the kingpin axis (gap 0.5)",
+                 fontsize=9.5, loc="left")
+    ax.text(J[1] - 21, 1, "<- middle of the car", fontsize=8)
+    # 2: front right corner seen from the outer end (view along -y)
+    ax = fig.add_axes([0.38, 0.5, 0.3, 0.44])
+    rear = (np.array([0, -1.0, 0]), np.array([-1.0, 0, 0]), np.array([0, 0, 1.0]))
+    panel(ax, (15, yc - 30, -1, 100, yc + 30, 52), rear,
+          lambda n, k: ("End A" in n and "left" not in n) or k in ("plate",))
+    ax.set_title(f"Front corner, view from the front (End A): axle height {c['front']['axle_z']:g}\n"
+                 f"(ride height {p['ride_height'][0]:g}), wheel centre x = {p['wheel_centre_x']:g}", fontsize=9.5, loc="left")
+    # 3: steering from above
+    ax = fig.add_axes([0.69, 0.3, 0.3, 0.64])
+    top = (np.array([0, 0, -1.0]), np.array([1.0, 0, 0]), np.array([0, 1.0, 0]))
+    panel(ax, (-95, 150, -1, 95, 300, 40), top,
+          lambda n, k: k not in ("damper", "spring") and not n.startswith(("sway", "CVD")) and ("End B" not in n), 2.0)
+    ax.set_title("Steering from above (End A at the top): bellcranks on H24/H25 joined\nby the bridge (parallelogram), "
+                 "servo across the car on the mount\n(H17/H21), horn facing forward", fontsize=9.5, loc="left")
+    st = steering.info
+    ak = st["ackermann"]
+    ax.text(0, 146, f"gaps between the rod ends: steering links {st['gap steering link']:.1f}, servo link "
+            f"{st['gap servo link']:.1f}\nAckermann {ak['ackermann 15']:.0f} / {ak['ackermann 20']:.0f} / "
+            f"{ak['ackermann 25']:.0f} % at 15 / 20 / 25 deg of the inner wheel", fontsize=8, ha="center", va="top")
+    ax.set_ylim(132, ax.get_ylim()[1])
+    # 4: rear right corner seen from the outer end (view along +y)
+    ax = fig.add_axes([0.01, 0.04, 0.36, 0.42])
+    back = (np.array([0, 1.0, 0]), np.array([1.0, 0, 0]), np.array([0, 0, 1.0]))
+    yr = c["rear"]["O"][1]
+    panel(ax, (15, yr - 35, -1, 100, yr + 25, 52), back,
+          lambda n, k: ("End B" in n and "left" not in n) or k in ("plate",))
+    ax.set_title(f"Rear right corner (End B), view from the rear: hub carrier on the outer hinge pin\n"
+                 f"(axle height {c['rear']['axle_z']:g}, ride height {p['ride_height'][1]:g}), damper, sway bar", fontsize=9.5, loc="left")
+    # 5: front corner, iso view
+    ax = fig.add_axes([0.38, 0.04, 0.3, 0.42])
+    panel(ax, (45, yc - 20, 0, 100, yc + 14, 42), iso_basis(-60, 25), keep_f, 0.8)
+    ax.set_title("Front right corner, 3D view: C-hub (orange), knuckle with steering arm,\n"
+                 "kingpins 3x8 (from below) and 3x6 (from the top), axle, hex hub", fontsize=9.5, loc="left")
+    # notes
+    fmt = lambda v: f"{v:g} deg" + (" or more (limit of the check)" if v >= 45 else "")
+    notes = [f"Free steering angle of the knuckle (check, step 2.5 deg): {fmt(lock['steering arm toward the middle'])} "
+             f"(arm toward the middle), {fmt(lock['steering arm toward the outside'])} (arm toward the outside); "
+             f"required {p['steering_lock']:g} deg. Bellcranks, bridge and rod ends at the full angle of the bellcranks: "
+             f"largest overlap {max(v[0] for v in info.get('sweep', {'-': (0.0, '')}).values()):g} mm3",
+             f"CVD drive shafts: front {info['front'][2]:.1f}, rear {info['rear'][2]:.1f} (centre to centre of the joints); "
+             f"dampers {info['damper front']:.1f} front, {info['damper rear']:.1f} rear (centre to centre of the balls)",
+             "Threads M3 (tap drill 2.5): C-hub (camber stud, grub screw of the hinge pin), knuckle (steering ball stud), "
+             "hub carrier (camber stud, grub screw), hex hubs (grub screw), steering posts (both ends), bellcranks (ball studs, bridge screws), bridge (ball stud), "
+             "servo mount (H17/H21 from below, servo ears from the front), servo horn (clamp, ball stud), sway bar cups (grub screw)"]
+    fig.text(0.69, 0.25, "\n\n".join(notes), fontsize=8.3, va="top", wrap=True)
+    labels = {"upright": "C-hubs, knuckles, hub carriers", "axle": "axles, hex hubs, pins, bearings",
+              "cvd": "CVD drive shafts", "steer": "steering, servo mount, sway bar holders", "damper": "dampers",
+              "spring": "springs", "servo": "servo", "swaybar": "sway bars", "rodend": "rod ends",
+              "link": "turnbuckles, ball studs", "arm": "wishbones", "plate": "chassis plate"}
+    fig.legend(handles=[Patch(color=KIND_COLORS[k], label=v) for k, v in labels.items()], loc="lower right",
+               bbox_to_anchor=(0.995, 0.01), fontsize=8.5, ncol=2, frameon=False)
+    fig.savefig(path, dpi=100)
+    plt.close(fig)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate the running gear of the speedrun chassis.")
+    parser.add_argument("--no-check", action="store_true")
+    args = parser.parse_args()
+    parts, info = build()
+    print(f"{len(parts)} parts")
+    for k, v in info.items():
+        print(" ", k, v if not isinstance(v, tuple) else f"inner {v[0].round(2)}, joint {v[1].round(2)}, length {v[2]:.2f}")
+    print("  steering:", {k: (v.round(2) if hasattr(v, "round") else (v if isinstance(v, dict) else round(v, 2))) for k, v in steering.info.items()})
+    invalid = [n for n, _, s in parts if not s.isValid()]
+    print("  invalid solids:", invalid)
+    stems = write_files(parts)
+    print(f"  wrote {len(stems)} parts to {OUT}: " + ", ".join(stems))
+    import generate_speedrun_assembly as A
+    others = [q for q in A.build() if not q[0].startswith("running gear ")]
+    names = {n: s for n, _, s in parts}
+    p = load_params(PARAMS)
+    c = corners(p, load_params(LOWER))
+    fp, _, _ = front_corner(p, load_params(DRIVE), c["front"])
+    fixed = [(n, names[n + " End A right"]) for n in ("C-hub", "kingpins", "outer hinge pin 3x26", "CVD drive shaft")]
+    fixed += [(n, s) for n, _, s in others if "wishbone End A right" in n]
+    lock = steering_lock(p, c["front"], fp, fixed)
+    print("  free steering angle (front right knuckle):", lock)
+    sweep_o = [(n, s) for n, _, s in others if n.startswith(("lower bulkhead End A", "upper bulkhead End A", "cup joint End A",
+                                                                 "centre driveshaft", "front pinion shaft"))]
+    sweep_o += [(n, names[n]) for n in ("steering post right", "steering post left", "servo", "servo mount",
+                                         "servo horn (aluminium clamp)")]
+    ang = steering.info["ackermann"]["bellcrank 25"] + 3.0
+    info["sweep"] = steering_sweep(names, sweep_o, ang)
+    print(f"  bellcranks and bridge turned by +-{ang:.1f} deg (25 deg of the inner wheel plus 3):", info["sweep"])
+    drawing(parts, info, lock)
+    print(f"  wrote {DRAWING}")
+    if args.no_check:
+        return
+    bad = check(parts, others)
+    print(f"  overlaps: {len(bad)}")
+    for v, a, b in bad[:60]:
+        print(f"    {v:8.4f} mm3  {a} / {b}")
+
+
+if __name__ == "__main__":
+    main()

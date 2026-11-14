@@ -2,7 +2,7 @@
 
 Both towers are new designs for the speedrun upper bulkhead: flat 3 mm plates on the contact face
 of the shock tower wall, fixed with 4 screws M3x8 in the tapped holes of the wall. The damper holes
-(and the body post holes of the rear tower) are in the positions of the stock shock towers
+(and the body post holes of the rear tower) are in the positions of the original shock towers
 (measurements of the owner), the camber link holes (wheel mounts) as well. The wall of the upper
 bulkhead is narrowed (wall_half_width), so that the rod ends behind the tower have space beside it.
 
@@ -66,7 +66,7 @@ def layout(tp, lp, up):
     r = tp["stock_hole_d"] / 2
     xm, yl, yu = up["tower_hole_x"], up["tower_hole_h_lower"], up["tower_hole_h_upper"]
     cam_stock = (xm + tp["camber_dx"], yl + r + tp["camber_dy"])
-    # camber link holes at the stock position: the wall of the upper bulkhead is narrowed so that the
+    # camber link holes at the original position: the wall of the upper bulkhead is narrowed so that the
     # rod ends behind the tower have space beside it (wall_half_width of the upper bulkhead)
     lay = {"mount": [(-xm, yl), (xm, yl), (-xm, yu), (xm, yu)], "camber": cam_stock,
            "damper": (xm + r + tp["damper_dx"], yu + tp["damper_dy"])}
@@ -390,7 +390,7 @@ def generate(name, lp, up, upper, lower):
     info = ["Origin: x = 0 centre line, y = 0 parting face of the bulkheads (height above it).",
             "Lay the template on the back face (wall side). T1 to T4: mounting holes, C1/C2: camber links,",
             "D1/D2: dampers" + (", B1/B2 and S1/S2: body post mounts." if "body_post" in lay else ".")
-            + " All holes are at the positions of the stock tower."]
+            + " All holes are at the positions of the original tower."]
     for scale, suffix in ((1.0, ""), (0.97, "_print97")):
         template_a4(f"{stem}_1to1_A4{suffix}.pdf", name, g, scale, info)
     tower_b = to_bulkhead(solid, lp, up)
@@ -400,13 +400,13 @@ def generate(name, lp, up, upper, lower):
     print(f"  solid valid: {valid}, pieces: {pieces}, size {bb.xlen:.2f} x {bb.ylen:.2f} x {bb.zlen:.2f} mm, "
           f"volume {vol / 1000:.2f} cm3, mass: " + ", ".join(f"{m} {vol / 1000 * rho:.1f} g" for m, rho in DENSITY.items()))
     dmp = lay["damper"]
-    print(f"  damper holes: x +-{dmp[0]:.2f}, {dmp[1]:.2f} above the parting face (stock position)")
+    print(f"  damper holes: x +-{dmp[0]:.2f}, {dmp[1]:.2f} above the parting face (original position)")
     if "body_post" in lay:
         bp, bs = lay["body_post"], lay["body_post_screw"]
         print(f"  body post bores: x +-{bp[0]:.2f}, {bp[1]:.2f} (Ø{tp['body_post_d']:g}) and {bs[1]:.2f} "
-              f"(Ø{tp['body_post_screw_d']:g}) above the parting face (stock position)")
+              f"(Ø{tp['body_post_screw_d']:g}) above the parting face (original position)")
     print(f"  camber link holes: x +-{cam[0]:.2f}, {cam[1]:.2f} above the parting face "
-          f"(stock position)")
+          f"(original position)")
     print("  checks")
     off = max(math.hypot(h["x"] - x, h["y"] - y) for h, (x, y) in zip(g["holes"][:4], lay["mount"]))
     print(f"    mounting holes T1 to T4 on the tapped holes of the upper bulkhead: largest offset {off:.4f} mm")
