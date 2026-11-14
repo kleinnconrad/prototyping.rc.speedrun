@@ -57,12 +57,12 @@ The speedrun chassis is designed in this project for speeds over 100 km/h. It co
 
 | Part | Quantity | Status | Mass |
 |:---|---:|:---|---:|
-| Speedrun chassis plate (wide) with longer motor window | 1 | Verified | 217 g (aluminium 6082) |
-| Lower bulkhead | 2 | Verified | 2 x 34 g (7075) |
-| Upper bulkhead | 2 | Verified | 2 x 53 g (7075) |
-| Speedrun top brace | 1 | Verified | 14 g (carbon) |
-| Speedrun front shock tower | 1 | Verified | 4.4 g (carbon) |
-| Speedrun rear shock tower | 1 | Verified | 7.6 g (carbon) |
+| Speedrun chassis plate (wide) with longer motor window | 1 | $\color{green}\checkmark$ Verified | 217 g (aluminium 6082) |
+| Lower bulkhead | 2 | $\color{green}\checkmark$ Verified | 2 x 34 g (7075) |
+| Upper bulkhead | 2 | $\color{green}\checkmark$ Verified | 2 x 53 g (7075) |
+| Speedrun top brace | 1 | $\color{green}\checkmark$ Verified | 14 g (carbon) |
+| Speedrun front shock tower | 1 | $\color{green}\checkmark$ Verified | 4.4 g (carbon) |
+| Speedrun rear shock tower | 1 | $\color{green}\checkmark$ Verified | 7.6 g (carbon) |
 | **Total** | | | **417 g** |
 
 Stock parts of the Carten T410R, modelled for the completeness of the build (not part of the speedrun design, not in the mass total):
@@ -79,7 +79,7 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 | Rear wishbones (NHA402) | 2 | Not verified, work in progress | `cad/stock_parts/wishbone` |
 | Inner hinge pins of the wishbones (NHA423 3x42) | 4 | Not verified, work in progress | `cad/stock_parts/wishbone` |
 
-* All parts of the speedrun design are verified. The stock parts are not verified and work in progress. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#edges-of-the-outer-shape)). The stock shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the stock towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
+* All parts of the speedrun design are verified. The stock parts are not verified and work in progress. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#design-of-the-lower-bulkhead)). The stock shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the stock towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
 * The legend lists the colours of the speedrun parts and of the stock parts. The bottom row shows close-ups of End A and End B from the outer end and of the stock drive line at End B (spur gear, motor mount with cap, cup joint) from the middle of the car, without the top brace and the shock tower.
 * The assembly is available as a STEP file (`cad/assembly/speedrun_chassis_T410R.step`).
 
