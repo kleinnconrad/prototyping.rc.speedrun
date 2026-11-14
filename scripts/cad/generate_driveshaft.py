@@ -174,7 +174,8 @@ def rear_drive_line(p, lay):
     shaft = shaft.fuse(cyl_y(rs, yb, yb + b, 0, z))                         # bearing NBA298 in the motor mount
     shaft = shaft.fuse(flats(yb + b, y_end))                                # cup joint seat
     yp = lay["back"][0] + sum(p["cup_groove"][:2]) / 2                      # retaining pin NBA255 in the groove
-    shaft = shaft.fuse(cyl_x(p["cup_pin_d"] / 2, -p["cup_pin_length"] / 2, p["cup_pin_length"] / 2, yp, z))
+    shaft = shaft.cut(cyl_x(p["cup_pin_d"] / 2, -rs - 1, rs + 1, yp, z))       # cross hole of the retaining pin
+    ret_pin = cyl_x(p["cup_pin_d"] / 2, -p["cup_pin_length"] / 2, p["cup_pin_length"] / 2, yp, z)
     shaft = shaft.cut(cyl_y(p["tap_d"] / 2, y0 - 0.1, y0 + p["pinion_thread_depth"], 0, z))  # axial thread M3
     for k in range(4):     # threads M3 of the 4 screws of the spur gear in the flange (tap drill, through)
         ang = np.pi / 4 + k * np.pi / 2
@@ -192,6 +193,7 @@ def rear_drive_line(p, lay):
     cap = motor_mount_cap_solid(p, lay)
     return [("rear pinion shaft with flange", "drive", shaft.clean()), ("spur gear", "drive", spur.clean()),
             ("pinion NBA207", "drive", pinion),
+            ("retaining pin NBA255 of the cup joint End B", "drive", ret_pin),
             ("bearing NBA298 in the bulkhead, inner", "drive", bulk[0].clean()),
             ("bearing NBA298 in the bulkhead, outer", "drive", bulk[1].clean()),
             ("bearing NBA298 in the motor mount", "drive", bearing.clean()), ("motor mount", "mount", mount.clean()),
@@ -467,6 +469,8 @@ def main():
         ("driveshaft", "cup_joint_T410R", cup_solid(p)),
         ("rear_drive", "rear_pinion_shaft_T410R",
          parts["rear pinion shaft with flange"].translate(cq.Vector(0, -lay["housing"][0], -z))),
+        ("rear_drive", "retaining_pin_2x7.6_NBA255",
+         parts["retaining pin NBA255 of the cup joint End B"].translate(cq.Vector(0, -lay["housing"][0], -z))),
         ("rear_drive", f"pinion_{p['pinion'][0]:g}T_NBA207", parts["pinion NBA207"].translate(cq.Vector(0, -lay["housing"][0], -z))),
         ("rear_drive", f"spur_gear_{p['spur_teeth']:g}T_T410R", parts["spur gear"].translate(cq.Vector(0, -lay["spur"][0], -z))),
         ("rear_drive", "bearing_5x10x4", parts["bearing NBA298 in the motor mount"].translate(cq.Vector(0, -yb, -z))),
