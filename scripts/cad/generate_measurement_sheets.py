@@ -78,7 +78,7 @@ def arm_page(pdf, p, kind, solid):
     q0, q1 = p[f"{kind}_shock_plate_x"]
     z0, z1 = p["shock_plate_z"]
     gap, lo = p[f"{kind}_outer_gap"], p[f"{kind}_outer_lug_len"]
-    dx, dy, h = p["droop_x"], p[f"{kind}_droop_y"], p["rail_h"] / 2
+    dx, dy, h = p[f"{kind}_droop_x"], p[f"{kind}_droop_y"], p["rail_h"] / 2
     t = subdivide(tess(solid), 1.0)
     grey = (0.72, 0.74, 0.78)
     # plan view
@@ -154,7 +154,7 @@ ARM_ROWS = [
     ("F", "Width of one side rail.", "{k}_rail_y", "F"),
     ("G", "Inner pin axis to the inner cross bar at the end of the notch between the inner lugs (start).",
      "{k}_inner_bar_x", 0),
-    ("H", "Inner pin axis to the axis of the droop screw bosses (M4 thread).", "droop_x", None),
+    ("H", "Inner pin axis to the axis of the droop screw bosses (M4 thread).", "{k}_droop_x", None),
     ("I", "Middle of the arm to the axis of a droop screw boss (or: distance of the two axes / 2).", "{k}_droop_y", None),
     ("J", "Inner pin axis to outer pin axis: outer edges of the two bores minus one bore diameter.", "{k}_arm_length",
      None),

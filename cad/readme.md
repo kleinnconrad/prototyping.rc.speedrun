@@ -97,7 +97,7 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 ### Assembly file
 * `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and the 24 stock parts (4 pivot blocks, centre driveshaft, 2 cup joints, rear pinion shaft, spur gear, bearing, motor mount, cap of the motor mount, 4 diff outdrives, 4 wishbones, 4 inner hinge pins) in the coordinate system of the chassis plate (STEP AP214, one solid per part).
 * The stock parts are not part of the speedrun design and are not in the mass total (see [stock parts](#stock-parts-not-part-of-the-speedrun-design)).
-* The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [position and fit on the speedrun chassis](#pivot-blocks)).
+* The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [pivot blocks](#pivot-blocks)) and 2.16 mm³ between the lower bulkhead at End A and each front wishbone (inner lugs 0.14 mm into the side face, see [wishbones](#wishbones)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
 * The image shows an overall view, a side view, a top view and three close-ups:
   * both ends with the bulkheads, the shock tower and the end of the top brace, seen from the outer end;
@@ -701,7 +701,7 @@ All files are stored in the directory `/stock_parts/pivot_block`. They are gener
 
 ### Centre driveshaft and drive line
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** Model of the centre driveshaft of the Carten T410R (NHA413) between the cup joints of the two pinion shafts. The shaft has a ball end at each end with a metal pin (NBA255, 2.0 x 7.6 mm), which is fixed on the shaft. The pins run in the slots of the cup joints, so the shaft turns with the cup joints. In the centred position, each pin has 0.5 mm to the closed end of its slot, so the shaft can move a little back and forth. At End A, the cup joint sits on the front pinion shaft beside the bulkhead. At End B (motor), the rear pinion shaft NBA205 runs from the pinion in the bulkhead through a flange with the spur gear and the bearing NBA298 in the motor mount NBA201 (manual steps 5, 10 and 12); the cup joint sits on its end beyond the motor mount. All these parts are modelled as CAD files (see [files](#centre-driveshaft-and-drive-line)).
+* **Description:** Model of the centre driveshaft of the Carten T410R (NHA413) between the cup joints of the two pinion shafts. The shaft has a ball end at each end with a metal pin (2.0 x 7.6 mm), which is fixed on the shaft. The cup joints are pushed onto the pinion shafts and secured with a retaining pin NBA255 2.0 x 7.6 mm through a cross hole; an O-ring in a groove of the cup joint holds the pin. The pins run in the slots of the cup joints, so the shaft turns with the cup joints. In the centred position, each pin has 0.5 mm to the closed end of its slot, so the shaft can move a little back and forth. At End A, the cup joint sits on the front pinion shaft beside the bulkhead. At End B (motor), the rear pinion shaft NBA205 runs from the pinion in the bulkhead through a flange with the spur gear and the bearing NBA298 in the motor mount NBA201 (manual steps 5, 10 and 12); the cup joint sits on its end beyond the motor mount. All these parts are modelled as CAD files (see [files](#centre-driveshaft-and-drive-line)).
 * **Status:** Not verified, work in progress. Not part of the speedrun design (stock parts: the shaft and all parts of the drive line). The cup joints, the thickness of the motor mount and the spur gear (72T 48DP) are given by the owner, the positions of the motor mount and the spur gear are derived from the chassis plate, the outline of the motor mount and its cap follow the manual (steps 10 and 25). The thicknesses of the spur gear and the flange and the gaps are typical values (see [open points of the centre driveshaft](#centre-driveshaft-and-drive-line)).
 
 ![Centre driveshaft with the drive line and the motor mount](../photos/cad_driveshaft_drawing.png)
@@ -714,18 +714,18 @@ Positions y along the car on the chassis plate (End B at y = 0).
 |:---|:---|:---|
 | Pinion axis | x = 0, 19.2 mm above the bottom face of the chassis plate (2.0 + 17.2) | Lower bulkhead (`axis_z`), chassis plate |
 | End faces of the pinion housings | y = 49.43 mm (End B) and 259.46 mm (End A) | Lower bulkhead (pinion seat 18.65 + 9.25 = 27.9 mm), positions of the bulkheads |
-| Cup joints NBA255 | 9.7 mm outer and 6.33 mm inner diameter, 18.3 mm long, 2 slots 7.7 mm long from the open end (2.1 mm wide); bore 10.2 mm deep | Owner (bore depth: slot + 2.5 mm, estimate) |
+| Cup joints NBA255 | 9.7 mm outer and 6.33 mm inner diameter, 18.3 mm long, 2 slots 7.7 mm long from the open end (2.1 mm wide); bore 10.2 mm deep. Back end: bore 5.0 mm for the pinion shaft (7.5 mm deep), groove 4.6 to 6.8 mm from the back face (7.4 mm diameter) for the O-ring 5.8 x 9.6 x 1.9 mm, cross hole 2.0 mm in the groove for the retaining pin | Owner (dimensions, mounting, photos with a ruler), manual step 5 (pin, O-ring), estimates (bore depths) |
 | Cup joint End A | From y = 258.96 to 240.66 mm (0.5 mm from the end face of the pinion housing) | Typical value (gap) |
-| Rear pinion shaft NBA205 | 5.0 mm, from the inner end of the pinion seat of the bulkhead (y = 40.18 mm) through the 2 bearings of the bulkhead to the cup joint (y = 66.08 mm), flange 16 x 2 mm for the spur gear; the pinion NBA207 is not modelled | Manual (step 5), derived |
+| Rear pinion shaft NBA205 | 5.0 mm, from the inner end of the pinion seat of the bulkhead (y = 40.18 mm) through the 2 bearings of the bulkhead and 7.0 mm into the back bore of the cup joint (to y = 72.98 mm), flange 16 x 2 mm for the spur gear. The cup joint is pushed onto the shaft and secured with the retaining pin NBA255 2.0 x 7.6 mm through the cross holes of the cup joint and the shaft (pin in the groove, held by the O-ring). The pinion NBA207 is not modelled | Manual (step 5), owner (mounting), derived |
 | Spur gear | Standard 72T 48DP, 39.16 mm outer diameter, teeth with a simplified trapezoidal profile (not involute), centre bore 5.2 mm, 4 screw holes 3.2 mm on a radius of 5.5 mm, 4.0 mm thick, y = 51.63 to 55.63 mm, in the slot of the chassis plate below the pinion axis (y = 50.28 to 56.97 mm); it reaches 0.38 mm below the bottom face of the chassis plate. Flange of the rear pinion shaft 16 x 2 mm on the bulkhead side | Owner (72T 48DP), chassis plate (position), typical values (thicknesses) |
-| Motor mount NBA201 for 540 motors | Plate 6.2 mm thick, y = 59.38 to 65.58 mm, on the holes H09 and H10 (y = 62.48 mm); the motor window starts at y = 65.63 mm. Low part (x = -11 to 18 mm, 24.6 mm high) with a U-shaped notch, open to the top, for the bearing NBA298 5 x 10 x 4 mm at the pinion axis. Tall part (x = 18 to 52 mm, 37 mm high, top corners R6) beside the end of the top brace, with three long holes along x: motor shaft (13 mm wide, at the height of the pinion axis), motor screws M3 (3.2 mm wide, 12.5 mm above and below; 540 motors: screws 25 mm apart). Motor axis x = 25 to 33 mm: centre distance 27.0 to 31.0 mm for the 72T 48DP spur gear and motor pinions of 30 to 45 teeth, plus 2 mm | Owner (thickness, 540 motors), chassis plate (position), manual step 10 (shape), derived (long holes), typical values (outline) |
-| Cap of the motor mount (second part of NBA201) | Block 22 x 6.2 x 10 mm on the low part of the motor mount, from 24.6 mm up to the top brace (34.6 mm), above the bearing; semicircular notch R4 along y in its top face below the hole B09 of the top brace; 2 through holes 3.2 mm below the holes B10 and B11 of the top brace (x = +-7.02 mm, y = 62.15 mm). 2 screws M3x18 from the top brace through the cap into the motor mount fix the motor mount to the top brace; set screw M3x3 in the cap (manual step 25) | Manual (steps 25, parts list), top brace (holes), derived (height from the screws M3x18: 18 - 2.0 brace - approx. 6 thread), typical values (width, notch) |
-| Cup joint End B | From y = 66.08 to 84.38 mm (0.5 mm beyond the motor mount, on the end of the rear pinion shaft) | Typical value (gap) |
-| Shaft | 5.0 mm, ball ends with a radius of 2.5 mm (radial clearance 0.665 mm in the cup joints) | Typical value |
-| Metal pins | 2.0 x 7.6 mm (NBA255), fixed on the shaft at the centres of the ball ends, part of the model of the shaft | Manual (step 5) |
-| Pins in the centred position | y = 78.18 mm and 246.86 mm, 168.68 mm apart; 0.5 mm to the closed ends of the slots (y = 76.68 and 248.36 mm) | Derived |
-| Length of the shaft | 173.68 mm (distance of the pins plus 2 x 2.5 mm) | Derived |
-| Axial play | 1.0 mm in total, 0.5 mm at each pin to the closed end of its slot | Owner (a little play), value chosen |
+| Motor mount NBA201 for 540 motors | Plate 6.0 mm thick, y = 59.48 to 65.48 mm, on the holes H09 and H10 (y = 62.48 mm); the motor window starts at y = 65.63 mm. Low part (x = -11 to 18 mm, 24.4 mm high) with a U-shaped notch 10.6 mm wide, open to the top, for the bearing NBA298 5 x 10 x 4 mm at the pinion axis; on the side toward End A a lip 1.0 mm wide (opening 8.0 mm) against which the bearing lies. Tall part (x = 18 to 52 mm, 37 mm high, top corners R6) beside the end of the top brace, with three long holes along x: motor shaft (13 mm wide, at the height of the pinion axis), motor screws M3 (3.2 mm wide, 12.5 mm above and below; 540 motors: screws 25 mm apart). Motor axis x = 25 to 33 mm: centre distance 27.0 to 31.0 mm for the 72T 48DP spur gear and motor pinions of 30 to 45 teeth, plus 2 mm | Owner (thickness, notch, lip, measurement sheet), chassis plate (position), derived (height of the low part: top brace minus cap), manual step 10 (shape), typical values (outline, opening of the lip) |
+| Cap of the motor mount (second part of NBA201) | Block 22 x 6.0 x 10.2 mm on the low part of the motor mount, from 24.4 mm up to the top brace (34.6 mm), 0.2 mm above the bearing; semicircular notch R4 along y in its top face below the hole B09 of the top brace; 2 through holes 3.2 mm below the holes B10 and B11 of the top brace (x = +-7.02 mm, y = 62.15 mm). 2 screws M3x18 from the top brace through the cap into the motor mount fix the motor mount to the top brace; set screw M3x3 in the cap (manual step 25) | Owner (height), manual (steps 25, parts list), top brace (holes), typical values (width, notch) |
+| Cup joint End B | From y = 65.98 to 84.28 mm (0.5 mm beyond the motor mount, on the end of the rear pinion shaft) | Typical value (gap) |
+| Shaft | Rod 6.0 mm, ball ends 5.0 mm (radial clearance 0.665 mm in the cup joints), neck of 5.0 mm up to 4.0 mm from the centres of the balls | Owner (rod), ruler photo (ball ends) |
+| Metal pins | 2.0 x 7.6 mm, fixed on the shaft at the centres of the ball ends, part of the model of the shaft | Owner (fixed pins), size as NBA255 |
+| Pins in the centred position | y = 78.47 mm and 246.47 mm, 168.00 mm apart (ruler: 167.9 mm); 0.89 mm to the closed ends of the slots (y = 76.58 and 248.36 mm) | Derived |
+| Length of the shaft | 173.00 mm over the ball ends | Owner (ruler) |
+| Axial play | 1.78 mm in total, 0.89 mm at each pin to the closed end of its slot: follows from the measured length of the shaft and the positions of the cup joints | Derived |
 | Diff outdrives | 12.0 mm outer diameter, 10.0 mm long, 0.3 mm beyond the side faces of the bulkheads on the diff axes, bore 9.6 x 8.0 mm (wall 1.2 mm), 2 slots 2.1 x 7.0 mm for the holding pin of the dogbones | Typical values |
 
 **Checks of the centre driveshaft**
@@ -735,14 +735,16 @@ Results of `generate_driveshaft.py`:
 | Check | Result |
 |:---|:---|
 | Shaft in the cup joints | 0 mm³ overlap; pins 0.05 mm per side in the slots, pin ends 1.05 mm inside the cup joints |
-| Ends of the shaft | 1.50 mm to the bottoms of the bores (space for the O-rings) |
+| Ends of the shaft | 1.89 mm to the bottoms of the bores |
 | Shaft, cup joints, rear drive line, motor mount and diff outdrives with the bulkheads, the chassis plate and the top brace | 0 mm³ overlap; the spur gear runs through the slot of the chassis plate and below the obround of the top brace, the tall part of the motor mount lies 0.76 mm beside the end of the top brace, the cap of the motor mount touches the top brace |
 
-* Not modelled: the motor, the pinions NBA207, the front pinion shaft, the bearings in the bulkheads, the lightening holes of the spur gear, the O-rings NBA255 5.8 x 9.6 x 1.9 mm (see `specs/mechanics/carten_t410r/drivetrain/spec_driveshaft_and_joints.yaml`).
+* Not modelled: the motor, the pinions NBA207, the front pinion shaft, the bearings in the bulkheads, the lightening holes of the spur gear, the O-rings NBA255 5.8 x 9.6 x 1.9 mm in the grooves of the cup joints (see `specs/mechanics/carten_t410r/drivetrain/spec_driveshaft_and_joints.yaml`).
 
 **Open points of the centre driveshaft**
 
-* Not measured: thicknesses of the spur gear (4.0 mm) and the flange (2.0 mm), the gaps between the motor mount or the pinion housing and the cup joints (0.5 mm), depth of the bore of the cup joints, outline of the motor mount (heights, step, long holes) and of its cap (width, notch). The length of the shaft follows from these values (173.68 mm); it is to be checked against the real NHA413.
+* Not measured: thicknesses of the spur gear (4.0 mm) and the flange (2.0 mm), the gaps between the motor mount or the pinion housing and the cup joints (0.5 mm), depths of the bores of the cup joints, opening of the lip of the bearing seat (8.0 mm), outline of the tall part of the motor mount (height, long holes) and of the cap (width, notch).
+* Motor mount: the measured height of the low part (MM3: 23.2 mm) does not fit the stack: with the cap (10.2 mm) below the top brace (34.6 mm above the bottom face of the chassis plate), the low part is 22.4 mm high in the model. The depth of the U notch (MM2: 10.3 mm) fits within 0.2 mm. Open: MM3, MM5 (does the cap touch the bearing), MM8 (set screw M3x3 of the cap).
+* Length of the shaft: checked with a ruler (173.0 mm over the ball ends); the model uses this length.
 * Spur gear: the specifications (`spec_spur_gear.yaml`, `spec_gearing.yaml`) and the setup sheet list a 68T spur gear; the model uses the standard 72T 48DP spur gear of the owner.
 
 **Files of the centre driveshaft and the drive line**
@@ -751,9 +753,9 @@ All files are stored in the directory `/stock_parts` and are generated with `gen
 
 | File | Part coordinates and use |
 |:---|:---|
-| `driveshaft/driveshaft_T410R` | Centre driveshaft with the fixed metal pins, along y from 0 to 173.68 mm, axis at x = 0, z = 0, pins along x |
-| `driveshaft/cup_joint_T410R` | Cup joint (2 pieces): along y, back face at y = 0, open end at y = 18.3 mm, slots along x |
-| `rear_drive/rear_pinion_shaft_T410R` | Rear pinion shaft with flange: along y, y = 0 end face of the pinion housing of the bulkhead, from y = -9.25 mm (inside the bulkhead) to 16.65 mm |
+| `driveshaft/driveshaft_T410R` | Centre driveshaft with the fixed metal pins, along y from 0 to 173.00 mm, axis at x = 0, z = 0, pins along x |
+| `driveshaft/cup_joint_T410R` | Cup joint (2 pieces): along y, back face at y = 0, open end at y = 18.3 mm, slots and cross hole of the retaining pin along x |
+| `rear_drive/rear_pinion_shaft_T410R` | Rear pinion shaft with flange: along y, y = 0 end face of the pinion housing of the bulkhead, from y = -9.25 mm (inside the bulkhead) to 23.55 mm, with the retaining pin of the cup joint |
 | `rear_drive/spur_gear_72T_T410R` | Spur gear 72T 48DP: along y from y = 0 (face on the flange) to 4.0 mm, axis at x = 0, z = 0 |
 | `rear_drive/bearing_5x10x4` | Bearing NBA298 in the motor mount: along y from y = 0 to 4.0 mm |
 | `motor_mount/motor_mount_T410R` | Motor mount: x = 0 pinion axis, y = 0 middle of the plate, z = 0 bottom face (on the chassis plate) |
@@ -763,15 +765,15 @@ All files are stored in the directory `/stock_parts` and are generated with `gen
 
 ### Wishbones
 * **Description:** Models of the lower wishbones (suspension arms NHA402) of the Carten T410R with the inner hinge pins NHA423 3 x 42 mm. The manual (step 7 and parts list "Arms (F/R)") and the photos of the owner show two different arms: 2 front arms and 2 rear arms. Each arm is used on the left and on the right side of its axle (the same part, turned by 180 degrees).
-* **Status:** Not verified, work in progress. The manual has no dimensions. The length along the hinge pin (A) and the diameter of the inner lugs (C) follow from the pivot blocks and the lower bulkhead. The other dimensions are estimates from the photos of the owner, scaled with A, or assumptions (see [measurements for the wishbones](#wishbones)).
+* **Status:** Not verified, work in progress. The main dimensions are caliper measurements of the owner (measurement sheet). The positions of the shock plate and of the holes of the ball studs are estimates from the photos (see the measurement table below).
 
 ![Wishbones: plan views, views along the hinge pin and the letters of the measurements](../photos/cad_wishbones_drawing.png)
 
 **Design of the wishbones**
 
 * Frame without a floor: two long inner lugs on the inner hinge pin between the pivot blocks, with an open notch between them up to the inner cross bar; a shoulder from each inner lug to its side rail; two parallel side rails; an open window with X-shaped ribs between the inner cross bar and the outer cross bar; two outer lugs at the ends of the side rails for the outer hinge pin.
-* Front arm: side rails 19.5 mm wide over the outer faces, open loop between the outer cross bar and the outer lugs (C-hub NHA403), a thin closed loop beyond the outer lugs.
-* Rear arm: side rails 27 mm wide over the outer faces, longer than the front arm, open U between the outer cross bar and the outer lugs (hub carrier NHA404).
+* Front arm: side rails 22.8 mm wide over the outer faces, open loop between the outer cross bar and the outer lugs (C-hub NHA403), a thin closed loop beyond the outer lugs.
+* Rear arm: side rails 24.7 mm wide over the outer faces, 2 mm longer than the front arm, open U between the outer cross bar and the outer lugs (hub carrier NHA404).
 * Above each shoulder a boss with a thread M4 for the droop screw NHA430 M4 x 10 mm (one of the two is used, depending on the side of the car).
 * On side rail A an octagonal plate that reaches above and below the rail, with holes M3 for the ball stud of the shock (set screw M3 x 8 mm with ball NBA210): front 2 holes, rear 3 holes. On side rail B holes M3 for the ball stud of the sway bar drop link: front 3 holes, rear 1 hole. The holes go through, so that the ball stud can be set from the side that faces the shock tower.
 * Not modelled: radii, draft angles, the pivot balls NBA211 at the ends of the hinge pins, the ball studs, the droop screws and the outer hinge pins.
@@ -787,9 +789,9 @@ Results of `generate_wishbones.py`:
 
 | Check | Result |
 |:---|:---|
-| Solids | Front arm 58.0 x 33.0 x 11.2 mm, rear arm 61.0 x 33.0 x 11.2 mm: one valid solid each |
-| Arms and lower bulkhead | 0 mm³ overlap; 0.46 mm at End A (side face of the bulkhead at x = 17.24 mm, hinge pin at 20.7 mm), 0.90 mm at End B |
-| Inner lugs and pivot blocks | 0 mm³ overlap; 0.14 mm on each side at End A, 0.12 mm at End B (the arm is turned by 2.33 degrees to the faces of the blocks) |
+| Solids | Front arm 60.0 x 33.0 x 13.2 mm, rear arm 57.9 x 33.0 x 13.2 mm: one valid solid each |
+| Arms and lower bulkhead | End A: 2.16 mm³ overlap per arm: the inner lugs (7.2 mm) reach 0.14 mm into the side face of the lower bulkhead (x = 17.24 mm, hinge pin at x = 20.7 mm); see open point below. End B: 0 mm³, 0.30 mm clearance |
+| Inner lugs and pivot blocks | 0 mm³ overlap; 0.14 mm on each side at End A, 0.10 mm at End B (the arm is turned by 2.33 degrees to the faces of the blocks) |
 | Arms and chassis plate | 0 mm³ overlap; the octagonal plates reach below the top face of the chassis plate, but lie beside its outline |
 | Hinge pins in the bores of the pivot blocks | Play of the ends to the bottoms of the bores: 0.34 mm at End A, 0.45 mm at End B (pin 42 mm) |
 | Assembly | See [assembly file](#assembly-file) |
@@ -800,29 +802,30 @@ The letters are shown in the drawing and in the measurement sheet `stock_parts/s
 
 | Letter | Measurement | Front arm | Rear arm | Source |
 |:---|:---|---:|---:|:---|
-| A | Length along the inner hinge pin over the outer faces of the inner lugs | 33.0 | 33.0 | Derived from the pivot blocks |
-| B | Length of one inner lug along the hinge pin | 10.5 | 10.5 | Photo |
-| C | Outer diameter of the inner lugs | 6.0 | 6.0 | Derived from the lower bulkhead (at most 6.5) |
-| D | Height of the side rails and of the cross bars | 5.4 | 5.4 | Photo |
-| E | Width over the outer faces of the side rails | 19.5 | 27.0 | Photo |
-| F | Width of one side rail | 4.45 | 5.5 | Photo |
-| G | Inner hinge pin to the inner cross bar at the end of the notch (start, end) | 11.0, 15.0 | 14.0, 19.0 | Photo |
-| H | Droop screw bosses: distance of the axis from the axis of the inner hinge pin | 6.5 | 6.5 | Photo |
-| I | Droop screw bosses: distance of the axis from the middle of the arm | 7.5 | 10.5 | Photo |
-| J | Inner hinge pin to outer hinge pin, axis to axis | 49.0 | 55.0 | Photo |
-| K | Diameter of the outer hinge pin | 3.0 | 3.0 | Assumption |
-| L | Outer diameter of the outer lugs | 6.0 | 6.0 | Photo |
-| M | Length of one outer lug along the outer hinge pin | 4.4 | 5.2 | Photo |
-| N | Height of the outer hinge pin above the inner hinge pin (arm on a flat surface) | 0 | 0 | Assumption |
-| O | Gap between the outer lugs | 10.6 | 15.5 | Photo |
-| P | Inner hinge pin to the outer cross bar (start, end) | 26.5, 30.0 | 43.0, 48.0 | Photo |
-| Q | Octagonal plate of the shock ball stud: start, end (x); bottom, top (z) | 29.5, 36.0; -5.6, 5.6 | 38.0, 44.5; -5.6, 5.6 | Photo |
-| R | Holes of the shock ball stud (x, z) | (32.75, 3.3), (32.75, -3.3) | (41.25, 3.3), (41.25, 0), (41.25, -3.3) | Photo |
-| S | Holes of the sway bar ball stud (x, z) | (22.3, 0), (26.5, 0), (30.7, 0) | (27.0, 0) | Photo |
-| T | Loop beyond the outer lugs: end bar from, to (beyond the outer hinge pin), half width, height | 4.0, 6.0, 7.3, 2.0 | - | Photo |
+| A | Length along the inner hinge pin over the outer faces of the inner lugs | 33.0 | 33.0 | Caliper |
+| B | Length of one inner lug along the hinge pin | 10.3 | 10.3 | Caliper |
+| C | Outer diameter of the inner lugs | 7.2 | 7.2 | Caliper |
+| D | Height of the side rails and of the cross bars | 6.0 | 6.0 | Caliper |
+| E | Width over the outer faces of the side rails | 22.8 | 24.7 | Caliper |
+| F | Width of one side rail | 5.2 | 5.0 | Caliper |
+| G | Inner hinge pin to the inner cross bar at the end of the notch (start) | 5.6 | 14.0 | Caliper |
+| H | Droop screw bosses: distance of the axis from the axis of the inner hinge pin | 7.3 | 7.0 | Caliper |
+| I | Droop screw bosses: distance of the axis from the middle of the arm | 9.8 | 10.0 | Caliper |
+| J | Inner hinge pin to outer hinge pin, axis to axis (outer edges minus 4.3 mm) | 48.7 | 50.7 | Caliper |
+| K | Bore of the outer lugs | 4.3 | 4.3 | Caliper |
+| L | Outer diameter of the outer lugs | 7.2 | 7.2 | Caliper |
+| M | Length of one outer lug along the outer hinge pin | 5.8 | 5.5 | Caliper |
+| N | Height of the outer hinge pin above the inner hinge pin | 0 | 0 | Assumption |
+| O | Gap between the outer lugs | 13.3 | 15.6 | Caliper |
+| P | Inner hinge pin to the outer cross bar (start) | 24.2 | 43.0 | Caliper |
+| Q | Octagonal plate of the shock ball stud: height, width (position from the photos) | 13.2, 7.3 | 13.2, 7.3 | Caliper, photo |
+| R | Holes of the shock ball stud (x, z) | (30.85, 3.3), (30.85, -3.3) | (40.85, 3.3), (40.85, 0), (40.85, -3.3) | Photo |
+| S | Holes of the sway bar ball stud (x, z) | (20.0, 0), (24.2, 0), (28.4, 0) | (24.9, 0) | Photo |
+| T | Outer pin axis to the outer edge of the loop beyond the outer lugs | 7.7 | - | Caliper |
 
-* Measure J as the distance of the outer edges of the two bores minus one bore diameter.
-* Photo: estimate from the photos of the owner, scaled with A = 33.0 mm; not measured.
+* J: the caliper value over the outer edges of the two bores minus 4.3 mm (both bores taken as 4.3 mm). If the bore of the inner lugs is 3.0 mm (hinge pin 3 x 42 mm), J is 0.65 mm longer.
+* Open point: with the measured inner lugs (7.2 mm), the front arms reach 0.14 mm into the side faces of the lower bulkhead at End A. To be checked on the car. If they touch, the side faces of the lower bulkhead can be narrowed at the inner lugs (outer shape; the inside of the bulkhead is not changed).
+* The shock plate is assumed symmetric to the axis of the inner hinge pin (13.2 mm high).
 
 **Files of the wishbones**
 

@@ -77,7 +77,7 @@ def arm_solid(p, kind):
         parts.append(box(sx - 0.01, length, *sorted((sy * yi, sy * yo)), -h, h))                         # side rail
         parts.append(cyl_y(p["outer_lug_d"] / 2, *sorted((sy * gap / 2, sy * (gap / 2 + lo))), length,
                            p["outer_pin_z"]))                                                            # outer lug
-        parts.append(cyl_z(p["droop_boss_d"] / 2, zd0, zd1, p["droop_x"], sy * p[f"{kind}_droop_y"]))
+        parts.append(cyl_z(p["droop_boss_d"] / 2, zd0, zd1, p[f"{kind}_droop_x"], sy * p[f"{kind}_droop_y"]))
     parts.append(box(b0, b1, -yi - 0.01, yi + 0.01, -h, h))                                              # inner cross bar
     parts.append(box(c0, c1, -yi - 0.01, yi + 0.01, -h, h))                                              # outer cross bar
     # X-shaped ribs in the open window between the cross bars
@@ -109,7 +109,7 @@ def arm_solid(p, kind):
     s = s.cut(cyl_y(p["inner_pin_d"] / 2, -half - 1, half + 1, 0, 0))
     s = s.cut(cyl_y(p["outer_pin_d"] / 2, -half - 1, half + 1, length, p["outer_pin_z"]))
     for sy in (1, -1):
-        s = s.cut(cyl_z(p["droop_tap_d"] / 2, zd0 - 1, zd1 + 1, p["droop_x"], sy * p[f"{kind}_droop_y"]))
+        s = s.cut(cyl_z(p["droop_tap_d"] / 2, zd0 - 1, zd1 + 1, p[f"{kind}_droop_x"], sy * p[f"{kind}_droop_y"]))
     rb = p["ball_tap_d"] / 2
     for x, z in p[f"{kind}_shock_holes"]:
         s = s.cut(cyl_y(rb, -yo - 1, -yi + 0.01, x, z))
@@ -213,7 +213,7 @@ def drawing(path, p, solids):
         b0, b1 = p[f"{kind}_inner_bar_x"]
         c0, c1 = p[f"{kind}_cross_x"]
         q0, q1 = p[f"{kind}_shock_plate_x"]
-        dx, dy = p["droop_x"], p[f"{kind}_droop_y"]
+        dx, dy = p[f"{kind}_droop_x"], p[f"{kind}_droop_y"]
         t = subdivide(tess(s), 1.0)
         y0 = 0.655 - 0.365 * row
         n = "2 pieces: End A left and right" if kind == "front" else "2 pieces: End B left and right"
@@ -280,7 +280,7 @@ def drawing(path, p, solids):
             ("F", "Width of one side rail", "{k}_rail_y:F"),
             ("G", "Inner hinge pin to the inner cross bar at the end of the notch between the inner lugs (start, end)",
              "{k}_inner_bar_x"),
-            ("H", "Droop screw bosses: distance of the axis from the axis of the inner hinge pin", "droop_x"),
+            ("H", "Droop screw bosses: distance of the axis from the axis of the inner hinge pin", "{k}_droop_x"),
             ("I", "Droop screw bosses: distance of the axis from the middle of the arm", "{k}_droop_y"),
             ("J", "Inner hinge pin to outer hinge pin, axis to axis (outer edges of the bores minus 1 bore diameter)",
              "{k}_arm_length"),
