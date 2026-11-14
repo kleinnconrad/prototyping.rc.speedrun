@@ -80,15 +80,17 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 
 | Stock part | Quantity | Directory | Status |
 |:---|---:|:---|:---|
-| [Pivot blocks of the wishbones](#pivot-blocks) (long and short block) | 4 | `/stock_parts/pivot_block` | Not verified, work in progress |
-| [Centre driveshaft with fixed metal pins](#centre-driveshaft-and-drive-line) | 1 | `/stock_parts/driveshaft` | Not verified, work in progress |
-| [Cup joints of the centre driveshaft (NBA255)](#centre-driveshaft-and-drive-line) | 2 | `/stock_parts/driveshaft` | Not verified, work in progress |
-| [Rear pinion shaft with spur gear 72T and bearing (NBA205, NBA252, NBA298)](#centre-driveshaft-and-drive-line) | 1 | `/stock_parts/rear_drive` | Not verified, work in progress |
-| [Motor mount with cap (NBA201)](#centre-driveshaft-and-drive-line) | 1 | `/stock_parts/motor_mount` | Not verified, work in progress |
-| [Diff outdrives](#centre-driveshaft-and-drive-line) | 4 | `/stock_parts/diff_outdrive` | Not verified, work in progress |
-| [Front wishbones (NHA402)](#wishbones) | 2 | `/stock_parts/wishbone` | Not verified, work in progress |
-| [Rear wishbones (NHA402)](#wishbones) | 2 | `/stock_parts/wishbone` | Not verified, work in progress |
-| [Inner hinge pins of the wishbones (NHA423 3x42)](#wishbones) | 4 | `/stock_parts/wishbone` | Not verified, work in progress |
+| [Pivot blocks of the wishbones](#pivot-blocks) (long and short block) | 4 | `/stock_parts/pivot_block` | $\color{red}\times$ Completely unqualified |
+| [Centre driveshaft with fixed metal pins](#centre-driveshaft-and-drive-line) | 1 | `/stock_parts/driveshaft` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Cup joints of the centre driveshaft (NBA255)](#centre-driveshaft-and-drive-line) | 2 | `/stock_parts/driveshaft` | $\color{red}\times$ Completely unqualified |
+| [Rear pinion shaft with spur gear 72T and bearing (NBA205, NBA252, NBA298)](#centre-driveshaft-and-drive-line) | 1 | `/stock_parts/rear_drive` | $\color{red}\times$ Completely unqualified |
+| [Motor mount with cap (NBA201)](#centre-driveshaft-and-drive-line) | 1 | `/stock_parts/motor_mount` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Diff outdrives](#centre-driveshaft-and-drive-line) | 4 | `/stock_parts/diff_outdrive` | $\color{red}\times$ Completely unqualified |
+| [Front wishbones (NHA402)](#wishbones) | 2 | `/stock_parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Rear wishbones (NHA402)](#wishbones) | 2 | `/stock_parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Inner hinge pins of the wishbones (NHA423 3x42)](#wishbones) | 4 | `/stock_parts/wishbone` | $\color{red}\times$ Completely unqualified |
+
+Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
 
 * The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³). Screws, bearings and the other parts of the car are not included.
 * The bulkheads are the same parts at both ends. At End A, they are rotated by 180 degrees, so that both pinions point to the middle of the car.
@@ -643,12 +645,12 @@ Both shock towers are verified by the owner. The following points are not requir
 * Holes of the stock towers: the conversion of the measurements assumes holes of 3.2 mm.
 
 ## Stock parts (not part of the speedrun design)
-Models of stock parts of the Carten T410R, modelled for the completeness of the build: the assembly of the speedrun chassis contains them, so that the space around the speedrun parts can be checked. They are not part of the speedrun design and are not manufactured in this project. Status of all stock parts: not verified, work in progress.
+Models of stock parts of the Carten T410R, modelled for the completeness of the build: the assembly of the speedrun chassis contains them, so that the space around the speedrun parts can be checked. They are not part of the speedrun design and are not manufactured in this project. Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
 
 ### Pivot blocks
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Models of the stock pivot blocks of the Carten T410R. The pivot blocks hold the hinge pins of the wishbones and are screwed to the chassis plate from below (countersunk screws M3).
-* **Status:** Not verified, work in progress. Not part of the speedrun design (stock part). The dimensions are measurements of the owner, the distances of the mounting holes are taken from the hole pattern of the speedrun chassis plate, the lengths of the shoulders are estimates from photos.
+* **Status:** $\color{red}\times$ Completely unqualified. Not part of the speedrun design (stock part). The dimensions are measurements of the owner, the distances of the mounting holes are taken from the hole pattern of the speedrun chassis plate, the lengths of the shoulders are estimates from photos.
 
 ![Pivot blocks: sections and top views](../photos/cad_pivot_blocks_drawing.png)
 
@@ -702,7 +704,7 @@ All files are stored in the directory `/stock_parts/pivot_block`. They are gener
 ### Centre driveshaft and drive line
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Model of the centre driveshaft of the Carten T410R (NHA413) between the cup joints of the two pinion shafts. The shaft has a ball end at each end with a metal pin (2.0 x 7.6 mm), which is fixed on the shaft. The cup joints are pushed onto the pinion shafts and secured with a retaining pin NBA255 2.0 x 7.6 mm through a cross hole; an O-ring in a groove of the cup joint holds the pin. The pins run in the slots of the cup joints, so the shaft turns with the cup joints. In the centred position, each pin has 0.5 mm to the closed end of its slot, so the shaft can move a little back and forth. At End A, the cup joint sits on the front pinion shaft beside the bulkhead. At End B (motor), the rear pinion shaft NBA205 runs from the pinion in the bulkhead through a flange with the spur gear and the bearing NBA298 in the motor mount NBA201 (manual steps 5, 10 and 12); the cup joint sits on its end beyond the motor mount. All these parts are modelled as CAD files (see [files](#centre-driveshaft-and-drive-line)).
-* **Status:** Not verified, work in progress. Not part of the speedrun design (stock parts: the shaft and all parts of the drive line). The cup joints, the thickness of the motor mount and the spur gear (72T 48DP) are given by the owner, the positions of the motor mount and the spur gear are derived from the chassis plate, the outline of the motor mount and its cap follow the manual (steps 10 and 25). The thicknesses of the spur gear and the flange and the gaps are typical values (see [open points of the centre driveshaft](#centre-driveshaft-and-drive-line)).
+* **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification: centre driveshaft and motor mount with cap. $\color{red}\times$ Completely unqualified: cup joints, rear pinion shaft, spur gear, bearing and diff outdrives. Not part of the speedrun design (stock parts). The cup joints, the thickness of the motor mount and the spur gear (72T 48DP) are given by the owner, the positions of the motor mount and the spur gear are derived from the chassis plate, the outline of the motor mount and its cap follow the manual (steps 10 and 25). The thicknesses of the spur gear and the flange and the gaps are typical values (see [open points of the centre driveshaft](#centre-driveshaft-and-drive-line)).
 
 ![Centre driveshaft with the drive line and the motor mount](../photos/cad_driveshaft_drawing.png)
 
@@ -765,7 +767,7 @@ All files are stored in the directory `/stock_parts` and are generated with `gen
 
 ### Wishbones
 * **Description:** Models of the lower wishbones (suspension arms NHA402) of the Carten T410R with the inner hinge pins NHA423 3 x 42 mm. The manual (step 7 and parts list "Arms (F/R)") and the photos of the owner show two different arms: 2 front arms and 2 rear arms. Each arm is used on the left and on the right side of its axle (the same part, turned by 180 degrees).
-* **Status:** Not verified, work in progress. The main dimensions are caliper measurements of the owner (measurement sheet). The positions of the shock plate and of the holes of the ball studs are estimates from the photos (see the measurement table below).
+* **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification (front and rear wishbone); inner hinge pins: $\color{red}\times$ Completely unqualified. The main dimensions are caliper measurements of the owner (measurement sheet). The positions of the shock plate and of the holes of the ball studs are estimates from the photos (see the measurement table below).
 
 ![Wishbones: plan views, views along the hinge pin and the letters of the measurements](../photos/cad_wishbones_drawing.png)
 

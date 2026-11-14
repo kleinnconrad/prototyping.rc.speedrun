@@ -69,17 +69,17 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 
 | Stock part | Quantity | Status | Directory |
 |:---|---:|:---|:---|
-| Pivot blocks of the wishbones (long and short block) | 4 | Not verified, work in progress | `cad/stock_parts/pivot_block` |
-| Centre driveshaft with fixed metal pins | 1 | Not verified, work in progress | `cad/stock_parts/driveshaft` |
-| Cup joints of the centre driveshaft (NBA255) | 2 | Not verified, work in progress | `cad/stock_parts/driveshaft` |
-| Rear pinion shaft with spur gear 72T and bearing (NBA205, NBA252, NBA298) | 1 | Not verified, work in progress | `cad/stock_parts/rear_drive` |
-| Motor mount with cap (NBA201) | 1 | Not verified, work in progress | `cad/stock_parts/motor_mount` |
-| Diff outdrives | 4 | Not verified, work in progress | `cad/stock_parts/diff_outdrive` |
-| Front wishbones (NHA402) | 2 | Not verified, work in progress | `cad/stock_parts/wishbone` |
-| Rear wishbones (NHA402) | 2 | Not verified, work in progress | `cad/stock_parts/wishbone` |
-| Inner hinge pins of the wishbones (NHA423 3x42) | 4 | Not verified, work in progress | `cad/stock_parts/wishbone` |
+| Pivot blocks of the wishbones (long and short block) | 4 | $\color{red}\times$ Completely unqualified | `cad/stock_parts/pivot_block` |
+| Centre driveshaft with fixed metal pins | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/driveshaft` |
+| Cup joints of the centre driveshaft (NBA255) | 2 | $\color{red}\times$ Completely unqualified | `cad/stock_parts/driveshaft` |
+| Rear pinion shaft with spur gear 72T and bearing (NBA205, NBA252, NBA298) | 1 | $\color{red}\times$ Completely unqualified | `cad/stock_parts/rear_drive` |
+| Motor mount with cap (NBA201) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/motor_mount` |
+| Diff outdrives | 4 | $\color{red}\times$ Completely unqualified | `cad/stock_parts/diff_outdrive` |
+| Front wishbones (NHA402) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/wishbone` |
+| Rear wishbones (NHA402) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/wishbone` |
+| Inner hinge pins of the wishbones (NHA423 3x42) | 4 | $\color{red}\times$ Completely unqualified | `cad/stock_parts/wishbone` |
 
-* All parts of the speedrun design are verified. The stock parts are not verified and work in progress. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#design-of-the-lower-bulkhead)). The stock shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the stock towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
+* Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. All parts of the speedrun design are verified. Of the stock parts, the motor mount, the centre driveshaft and the wishbones are measured with a caliper; the other stock parts are not qualified. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#design-of-the-lower-bulkhead)). The stock shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the stock towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
 * The legend lists the colours of the speedrun parts and of the stock parts. The bottom row shows close-ups of End A and End B from the outer end and of the stock drive line at End B (spur gear, motor mount with cap, cup joint) from the middle of the car, without the top brace and the shock tower.
 * The assembly is available as a STEP file (`cad/assembly/speedrun_chassis_T410R.step`).
 
