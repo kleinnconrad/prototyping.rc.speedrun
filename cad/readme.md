@@ -796,7 +796,7 @@ Results of `generate_wishbones.py`:
 
 **Measurements for the wishbones**
 
-The letters are shown in the drawing. x: distance from the axis of the inner hinge pin toward the wheel; y: distance from the middle of the arm; z: height above the axis of the inner hinge pin. Current values in the model:
+The letters are shown in the drawing and in the measurement sheet `stock_parts/stock_parts_measurement_sheet.pdf` (A4, 4 pages: drawings of both arms with dimension lines, a table with empty fields for the measured values, and the bearing seat of the motor mount). x: distance from the axis of the inner hinge pin toward the wheel; y: distance from the middle of the arm; z: height above the axis of the inner hinge pin. Current values in the model:
 
 | Letter | Measurement | Front arm | Rear arm | Source |
 |:---|:---|---:|---:|:---|
@@ -854,6 +854,7 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_pivot_blocks.py` | Parameter file of the pivot blocks, geometry data of the speedrun chassis plate, parameter files of the bulkheads | STEP and STL files of the stock pivot blocks (reference), drawing `photos/cad_pivot_blocks_drawing.png`, checks of the mounting holes and of the clearance to the bulkheads | cadquery, matplotlib |
 | `generate_driveshaft.py` | Parameter file of the driveshaft, parameter files of the bulkheads, STEP file of the speedrun chassis plate | STEP and STL files of the stock centre driveshaft, cup joint, rear pinion shaft, spur gear, bearing, motor mount with cap and diff outdrive, drawing `photos/cad_driveshaft_drawing.png`, checks of the play and of the fit | cadquery, matplotlib |
 | `generate_wishbones.py` | Parameter file of the wishbones, parameter files of the pivot blocks and the bulkheads, geometry data and STEP file of the speedrun chassis plate | STEP and STL files of the stock front and rear wishbones and of the inner hinge pin, drawing `photos/cad_wishbones_drawing.png` with the letters of the measurements, checks of the clearance to the pivot blocks, the bulkheads and the chassis plate and of the play of the hinge pins | cadquery, matplotlib |
+| `generate_measurement_sheets.py` | Parameter files of the wishbones and of the driveshaft | Measurement sheet `stock_parts/stock_parts_measurement_sheet.pdf` of the stock parts that are not measured yet (wishbones, bearing seat of the motor mount) | cadquery, matplotlib |
 | `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, of the shock towers, of the pivot blocks, of the driveshaft and of the wishbones, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file, geometry checks | cadquery |
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
@@ -906,6 +907,7 @@ python scripts/cad/generate_shock_towers.py
 python scripts/cad/generate_pivot_blocks.py
 python scripts/cad/generate_driveshaft.py
 python scripts/cad/generate_wishbones.py
+python scripts/cad/generate_measurement_sheets.py
 python scripts/cad/generate_speedrun_assembly.py
 ```
 
