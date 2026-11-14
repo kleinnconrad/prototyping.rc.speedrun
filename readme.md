@@ -77,6 +77,7 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 | Diff outdrives | 4 | Not verified, work in progress | `cad/stock_parts/diff_outdrive` |
 
 * All parts of the speedrun design are verified. The stock parts are not verified and work in progress. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#edges-of-the-outer-shape)). The stock shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the stock towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
+* The legend lists the colours of the speedrun parts and of the stock parts. The bottom row shows close-ups of End A and End B from the outer end and of the stock drive line at End B (spur gear, motor mount with cap, cup joint) from the middle of the car, without the top brace and the shock tower.
 * The assembly is available as a STEP file (`cad/assembly/speedrun_chassis_T410R.step`).
 
 ## Repository structure
