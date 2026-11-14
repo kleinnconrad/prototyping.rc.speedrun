@@ -56,7 +56,8 @@ OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3),
           "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
           "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77),
-          "drive": (0.45, 0.47, 0.5), "mount": (0.6, 0.63, 0.68), "arm": (0.4, 0.34, 0.52)}
+          "drive": (0.45, 0.47, 0.5), "mount": (0.6, 0.63, 0.68), "arm": (0.4, 0.34, 0.52),
+          "diff": (0.16, 0.16, 0.18)}
 PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
@@ -70,7 +71,8 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "cup": ("Stock cup joints, diff outdrives, hinge pins", {}),
              "drive": ("Stock pinion shafts, pinions, spur gear, bearings", {}),
              "mount": ("Stock motor mount with cap", {}),
-             "arm": ("Stock wishbones (4 pieces)", {})}
+             "arm": ("Stock wishbones (4 pieces)", {}),
+             "diff": ("Stock differential cases (ring gear 42T grey)", {})}
 
 
 def build():

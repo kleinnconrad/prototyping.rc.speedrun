@@ -102,11 +102,60 @@ def cup_solid(p):
     return s.clean()
 
 
+def revolve_x(pts):
+    """Solid of revolution about the x axis from a profile [(x, r), ...] (closed polygon, r >= 0)."""
+    w = cq.Workplane("XY").polyline(pts).close()
+    return w.revolve(360, (0, 0, 0), (1, 0, 0)).val()
+
+
+def ring_tooth(x_tip, root, r0, r1, half_tip, half_root, ang):
+    """One tooth of the ring gear (diff coordinates, diff axis along x): lofted between two profiles
+    at the radii r0 and r1 (planes perpendicular to the radial direction), tip at x_tip (toward -x,
+    the case side), root on the root cone x = root[0] + root[1] (r - r_od), turned by ang about x."""
+    wires = []
+    for r in (r0, r1):
+        pitch = 2 * np.pi * r / 42.0
+        xr = root[0] + root[1] * (r - root[2]) + 0.05
+        pts = [(xr, r, -half_root * pitch), (x_tip, r, -half_tip * pitch), (x_tip, r, half_tip * pitch),
+               (xr, r, half_root * pitch)]
+        wires.append(cq.Wire.makePolygon([cq.Vector(*q) for q in pts], close=True))
+    t = cq.Solid.makeLoft(wires, True)
+    return t.rotate(cq.Vector(0, 0, 0), cq.Vector(1, 0, 0), ang)
+
+
+def diff_solids(p, lp):
+    """Differential in diff coordinates (x along the diff axis, x = 0 plane of the pinion axis, ring
+    gear on the +x side as in the bulkhead): case, ring gear 42T with hub, 2 bearings NBA299."""
+    rc, lc = p["diff_case_d"] / 2, p["diff_case_len"]
+    x_tip = p["diff_ring_tip_x"]
+    x_back = p["diff_ring_back_x"]
+    r_od = p["diff_ring_od"] / 2
+    r_in = p["diff_ring_teeth_r_in"]
+    rx0, slope = p["diff_ring_root"]
+    root = (rx0, slope, r_od)
+    xb0, xb1 = p["diff_bearing_x"]
+    rh = p["diff_hub_d"] / 2
+    xt, rt = p["diff_case_taper_end"]
+    x_root_in = rx0 + slope * (r_in - r_od)                 # root of the teeth at the inner radius
+    case = revolve_x([(-xb0, 0), (-xb0, rh), (xt, rh), (xt, rt), (x_tip - lc, rc), (x_root_in, rc), (x_root_in, 0)])
+    ring = revolve_x([(x_root_in, 0), (x_root_in, r_in), (rx0, r_od), (x_back, r_od), (x_back, rh), (xb0, rh),
+                      (xb0, 0)])
+    n = int(p["diff_ring_teeth"])
+    teeth = [ring_tooth(x_tip, root, r_in, r_od, *p["diff_ring_tooth_half"], (k + 0.5) * 360.0 / n + p["diff_ring_phase"])
+             for k in range(n)]
+    ring = ring.fuse(*teeth).clean()
+    d, dd, b = p["diff_bearing"]
+    brg = [cyl_x(dd / 2, x0, x0 + b, 0, 0).cut(cyl_x(d / 2, x0 - 1, x0 + b + 1, 0, 0)) for x0 in (xb0, -xb1)]
+    return {"case": case.clean(), "ring": ring, "bearings": brg}
+
+
 def outdrive_solid(p):
     """Diff outdrive along +x: back face at x = 0, open end at x = outdrive_length, bore for the end
     of the dogbone and two slots for its holding pin (along z, through both walls)."""
     lo, ro = p["outdrive_length"], p["outdrive_od"] / 2
     s = cyl_x(ro, 0, lo, 0, 0)
+    sh = p["outdrive_shank"]                                # shank through the diff bearing to the hub of the diff
+    s = s.fuse(cyl_x(p["outdrive_shank_d"] / 2, -sh, 0.01, 0, 0))
     s = s.cut(cyl_x(p["outdrive_bore_d"] / 2, lo - p["outdrive_bore_depth"], lo + 1, 0, 0))
     s = s.cut(box(lo - p["outdrive_slot_len"], lo + 1, -p["outdrive_slot_w"] / 2, p["outdrive_slot_w"] / 2,
                   -ro - 1, ro + 1))
@@ -337,6 +386,17 @@ def parts_in_plate(p=None, lp=None):
     parts += [q for q in front_drive_line(p, lay) if q[1] != "export"]
     od = outdrive_solid(p)
     xo = lp["body_half_width"] + p["outdrive_gap"]
+    ds = diff_solids(p, lp)
+    for label, yd, rot in (("End B", BULKHEAD_Y["rear"] + lp["diff_axis_y"], False),
+                           ("End A", BULKHEAD_Y["front"] - lp["diff_axis_y"], True)):
+        def place(solid):
+            q = solid.rotate(*zrot) if rot else solid
+            return q.translate(cq.Vector(0, yd, z))
+        parts.append((f"diff case {label}", "diff", place(ds["case"])))
+        parts.append((f"ring gear 42T {label}", "drive", place(ds["ring"])))
+        for i, bsol in enumerate(ds["bearings"]):
+            parts.append((f"diff bearing NBA299 {label} {'ring gear side' if i == 0 else 'case side'}", "drive",
+                          place(bsol)))
     for label, yd in (("End B", BULKHEAD_Y["rear"] + lp["diff_axis_y"]), ("End A", BULKHEAD_Y["front"] - lp["diff_axis_y"])):
         for sx, side in ((1, "+x"), (-1, "-x")):
             s = od if sx > 0 else od.rotate(*zrot)
@@ -523,7 +583,10 @@ def main():
         ("motor_mount", "motor_mount_T410R", parts["motor mount"].translate(cq.Vector(0, -p["mount_y"], -PLATE_T))),
         ("motor_mount", "motor_mount_cap_T410R",
          parts["cap of the motor mount"].translate(cq.Vector(0, -p["mount_y"], -PLATE_T))),
-        ("diff_outdrive", "diff_outdrive_T410R", outdrive_solid(p))]
+        ("diff_outdrive", "diff_outdrive_T410R", outdrive_solid(p)),
+        ("diff", "diff_case_T410R", diff_solids(p, lp)["case"]),
+        ("diff", "ring_gear_42T_T410R", diff_solids(p, lp)["ring"]),
+        ("diff", "bearing_10x15x4_NBA299", diff_solids(p, lp)["bearings"][0].translate(cq.Vector(-p["diff_bearing_x"][0], 0, 0)))]
     for folder, name, s in exports:
         os.makedirs(f"{STOCK}/{folder}", exist_ok=True)
         stem = f"{STOCK}/{folder}/{name}"

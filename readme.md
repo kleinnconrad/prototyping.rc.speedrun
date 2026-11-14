@@ -75,6 +75,7 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 | Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin (NBA205, NBA207, NBA252, NBA298, NBA255) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/rear_drive` |
 | Front pinion shaft with pinion 17T, bearings and retaining pin (NBA205, NBA207, NBA298, NBA255) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/front_drive` |
 | Motor mount with cap (NBA201) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/motor_mount` |
+| Differentials with ring gear 42T and bearings NBA299 | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/diff` |
 | Diff outdrives | 4 | $\color{red}\times$ Completely unqualified | `cad/stock_parts/diff_outdrive` |
 | Front wishbones (NHA402) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/wishbone` |
 | Rear wishbones (NHA402) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/stock_parts/wishbone` |
@@ -96,6 +97,7 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
     * **`/rear_drive`**: Rear pinion shaft, pinion, spur gear 72T, bearing and retaining pin (STEP, STL)
     * **`/front_drive`**: Front pinion shaft (STEP, STL)
     * **`/motor_mount`**: Motor mount for 540 motors and its cap (STEP, STL)
+    * **`/diff`**: Differential case, ring gear 42T and bearing (STEP, STL)
     * **`/diff_outdrive`**: Diff outdrive (STEP, STL)
     * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file)
   * **`/chassis`**: Chassis plate, wide speedrun chassis plate, top brace and speedrun top brace with one subdirectory per part (STEP, STL, DXF, OpenSCAD, 1:1 templates, test print files)
