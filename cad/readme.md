@@ -452,7 +452,18 @@ The lower part has the same design as the upper part: the footprint of the upper
 * Each diff bearing seat is limited only by the outer lip. The half bore of 15 mm runs 4.0 mm inward from the lip and then opens into the gear cavity. On the inner side, the diff holds the bearings. The diff with both bearings measures 30.0 mm, the lips are 30.7 mm apart: the diff has 0.7 mm axial play, as on the stock part.
 * The gear cavity has two depths. Between the bearing seats, a cylinder with a radius of 13.5 mm holds the diff case (floor 3.7 mm thick). The test print with a radius of 12.5 mm showed that the diff case touches the wall on the outer side. On the ring gear side, a deepening with a radius of 16.4 mm from x = 4.5 mm to the inner end of the bearing seat (x = 11.35 mm) holds the ring gear (radial clearance 0.43 mm). Below the ring gear, the floor has a through opening of 6.85 x 5 mm (extra deepening of the stock part, approx. 5 mm long). The chassis plate closes the gear box from below. The wall between the deepening and the bottom holes is 1.4 mm thick.
 * The ring gear is on the +x side. Seen from the pinion housing, the deepening is on the left. The bulkhead is the same part at the front and at the rear and is rotated by 180 degrees. Both pinions point to the centre shaft, so the ring gear is on the same side of the bulkhead at both ends.
-* The STEP file contains no threads. The M3 holes are modelled with the tap drill diameter of 2.5 mm. For CNC manufacturing, the threads are specified in the comment field of the order (M3, thread depth 6.5 mm for the bottom holes).
+* The STEP files contain no threads. All M3 threads are modelled as holes with the tap drill diameter of 2.5 mm (ISO metric thread M3 x 0.5). For CNC manufacturing, the threads are specified in the comment field of the order:
+
+| Part | Holes | Thread | Drill depth | Thread depth | Screws |
+|:---|:---|:---|---:|---:|:---|
+| Lower bulkhead | 4 holes in the bottom face | M3 | 8.0 mm | 6.5 mm | M3x8 countersunk from below through the chassis plate |
+| Lower bulkhead | 4 holes in the bosses below the upper part | M3 | 7.0 mm | 6.0 mm | M3x8 and M3x10 button head through the upper bulkhead |
+| Lower bulkhead | 2 holes in the sway bar tabs | M3 | Through (4.35 mm) | Through | Sway bar holders |
+| Upper bulkhead | 2 holes for the top brace | M3 | 7.0 mm | 6.0 mm | M3x8 through the top brace |
+| Upper bulkhead | 4 holes in the shock tower wall | M3 | Through (6.0 mm) | Through | M3x8 button head through the shock tower |
+
+* All other holes of the speedrun parts are clearance holes Ø3.2 mm without a thread: chassis plate (countersunk from below), top brace, shock towers, and the holes of the upper bulkhead for the screws into the lower bulkhead.
+* Stock parts: the motor mount has M3 threads (tap drill 2.5 mm, 7.0 mm deep) for the screws from below through the holes H09 and H10 and for the 2 screws M3x18 of the cap; the flange of the rear pinion shaft has 4 M3 threads for the screws of the spur gear; the pivot blocks have M3 threads for the countersunk screws from below; the wishbones have M3 threads for the ball studs and M4 threads for the droop screws.
 
 **Edges of the outer shape**
 

@@ -149,6 +149,11 @@ def rear_drive_line(p, lay):
     yp = lay["back"][0] + sum(p["cup_groove"][:2]) / 2                            # retaining pin NBA255 in the groove
     shaft = shaft.fuse(cyl_x(p["cup_pin_d"] / 2, -p["cup_pin_length"] / 2, p["cup_pin_length"] / 2, yp, z))
     shaft = shaft.fuse(cyl_y(p["flange_d"] / 2, *lay["flange"], 0, z))
+    for k in range(4):     # threads M3 of the 4 screws of the spur gear in the flange (tap drill, through)
+        ang = np.pi / 4 + k * np.pi / 2
+        rs = p["spur_screw_r"]
+        shaft = shaft.cut(cyl_y(p["tap_d"] / 2, lay["flange"][0] - 0.1, lay["flange"][1] + 0.1, rs * np.cos(ang),
+                                z + rs * np.sin(ang)))
     spur = spur_gear_solid(p, lay)
     d, dd, b = p["mount_bearing"]
     m0, m1 = lay["mount"]
@@ -183,6 +188,12 @@ def motor_mount_solid(p, lay):
     hs = p["motor_screw_spacing"] / 2
     for zc, w in ((z, p["motor_shaft_slot_w"]), (z + hs, p["motor_screw_slot_w"]), (z - hs, p["motor_screw_slot_w"])):
         s = s.cut(long_hole(zc, w))
+    # threads M3 (tap drill): screws from below through the chassis plate (H09, H10) and screws M3x18 of the cap
+    rt, dep = p["tap_d"] / 2, p["mount_tap_depth"]
+    for x, y in p["mount_bottom_screws"]:
+        s = s.cut(cyl_z(rt, PLATE_T - 1, PLATE_T + dep, x, y))
+    for x, y in p["cap_screws"]:
+        s = s.cut(cyl_z(rt, zl - dep, zl + 1, x, y))
     return s.clean()
 
 
