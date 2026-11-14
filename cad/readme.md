@@ -89,7 +89,8 @@ Stock parts of the Carten T410R, modelled for the completeness of the build (not
 | [Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin (NBA205, NBA207, NBA252, NBA298, NBA255)](#centre-driveshaft-and-drive-line) | 1 | `/stock_parts/rear_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Front pinion shaft with pinion 17T, bearings and retaining pin (NBA205, NBA207, NBA298, NBA255)](#centre-driveshaft-and-drive-line) | 1 | `/stock_parts/front_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Motor mount with cap (NBA201)](#centre-driveshaft-and-drive-line) | 1 | `/stock_parts/motor_mount` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Differentials with ring gear 42T, inner gears and bearings NBA299](#differentials) | 2 | `/stock_parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Differential (End B) with ring gear 42T, inner gears and bearings NBA299](#differentials) | 1 | `/stock_parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Spool (End A) with ring gear 42T and bearings NBA299](#differentials) | 1 | `/stock_parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Diff outdrives](#centre-driveshaft-and-drive-line) | 4 | `/stock_parts/diff_outdrive` | $\color{red}\times$ Completely unqualified |
 | [Front wishbones (NHA402)](#wishbones) | 2 | `/stock_parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Rear wishbones (NHA402)](#wishbones) | 2 | `/stock_parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
@@ -102,11 +103,11 @@ Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{g
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
 
 ### Assembly file
-* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and 59 stock parts (pivot blocks, wishbones with hinge pins, centre driveshaft with cup joints, rear and front drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, 2 differentials with their inner parts and bearings, 4 diff outdrives) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
+* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and 50 stock parts (pivot blocks, wishbones with hinge pins, centre driveshaft with cup joints, rear and front drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool with the ring gears and bearings, 4 diff outdrives) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
 * The stock parts are not part of the speedrun design and are not in the mass total (see [stock parts](#stock-parts-not-part-of-the-speedrun-design)).
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [pivot blocks](#pivot-blocks)) and 2.16 mm³ between the lower bulkhead at End A and each front wishbone (inner lugs 0.14 mm into the side face, see [wishbones](#wishbones)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
-* The image shows an overall view, a side view, a top view and three close-ups:
+* The image shows an overall view with an inset of the differential at End B in section (with the pinion), a side view, a top view and three close-ups:
   * both ends with the bulkheads, the shock tower and the end of the top brace, seen from the outer end;
   * the stock drive line at End B (spur gear, motor mount with cap, cup joint), seen from the middle of the car, without the top brace and the shock tower.
 
@@ -789,20 +790,21 @@ All files are stored in the directory `/stock_parts` and are generated with `gen
 | `driveshaft/driveshaft_parameters.json` | All dimensions of these parts, each with its source and a note (JSON) |
 
 ### Differentials
-* **Description:** Models of the two differentials of the Carten T410R (End A and End B, the same part) with the ring gear 42T, the inner gears, the shims, the bearings NBA299 and the outdrives. Stock parts: not part of the speedrun design, modelled for the completeness of the build.
+* **Description:** Models of the differential at End B (rear) with the ring gear 42T, the inner gears, the shims, the bearings NBA299 and the outdrives, and of the spool at End A (front, owner: a spool is installed) with the same ring gear, bearings and outdrives. Stock parts: not part of the speedrun design, modelled for the completeness of the build.
 * **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification. Main dimensions and the design of the inner parts from the owner (measurements, photos, description), the position from the verified bulkhead.
 
-![Differential: complete with the pinion, section, open case and exploded view](../photos/cad_differential_drawing.png)
+![Differential: complete with the pinion, section, open case, exploded view; spool](../photos/cad_differential_drawing.png)
 
 | Part | Model | Source |
 |:---|:---|:---|
 | Position | Diff axis 0.5 mm from the bulkhead centre toward the pinion, 17.2 mm above the bottom face of the bulkhead; ring gear on the +x side of the bulkhead; centre of the inner gears in the plane of the pinion axis (x = 0) | Bulkhead |
 | Case (plastic) | 26.0 mm diameter over 10.5 mm from the teeth of the ring gear, then a taper to 14.0 mm at x = -10.3 mm, hub 12.0 mm and journal 10.0 mm for the bearing; inner space 19.0 mm diameter with flat walls at the spider gears (16.4 mm apart), bores and mounting slots for the cross pin, 4 tap holes M2 (1.6 mm, 5.0 mm deep) on a radius of 10.7 mm; hexagon bore 5.6 mm through the hub; 0.5 mm in the case cavity of the bulkhead (radius 13.5 mm), 1.05 mm below the pinion | Owner (26.0 x 10.5 mm, photos), bulkhead, estimates (taper, wall) |
-| Ring gear 42T | 31.8 mm, teeth toward the case and the pinion (tips at x = 4.9 mm, toothed band from radius 13.2 to 15.9 mm), back face at x = 9.4 mm; central opening 15.9 mm for the side gear with the shoulder for its shims at x = 6.8 mm; hub 12.0 mm and journal 10.0 mm for the bearing; hexagon bore 5.6 mm through the hub for the shaft of the outdrive; 4 clearance holes 2.2 mm for the screws M2 into the case. Mesh with the pinion 17T: tooth gap of the ring gear at the pinion, no overlap (smallest clearance 0.02 mm) | Owner (42T, 31.8 mm, photos, hexagon bore, screws), bulkhead (recess, no. 27) |
+| Ring gear 42T | 31.8 mm, 3.8 mm from the back face (plate side) to the tips of the teeth: teeth toward the case and the pinion (tips at x = 4.9 mm, toothed band from radius 13.2 to 15.9 mm), back face at x = 8.7 mm; central opening 15.9 mm for the side gear with the shoulder for its shims at x = 6.8 mm; hub 12.0 mm and journal 10.0 mm for the bearing; hexagon bore 5.6 mm through the hub for the shaft of the outdrive; 4 clearance holes 2.2 mm for the screws M2 into the case. Mesh with the pinion 17T: tooth gap of the ring gear at the pinion, no overlap (smallest clearance 0.02 mm) | Owner (42T, 31.8 mm, 3.8 mm, photos, hexagon bore, screws), bulkhead (recess, no. 27) |
 | Side gears 14T (2 pieces) | Module 1.0, pitch cone angle 57.3 degrees, 15.1 mm outer diameter, back face 6.5 mm from the centre; hexagon bore 5.6 mm on the press fit of the outdrive; 3 shims 0.1 x 6.6 x 12.0 mm behind each side gear | Owner (14T, press fit, 3 shims), photo (diameter), estimates (shim sizes) |
 | Spider gears 9T (2 pieces) | Module 1.0, pitch cone angle 32.7 degrees, 10.6 mm outer diameter, on the cross pin, back face 7.9 mm from the centre; 1 shim 0.3 x 4.1 x 9.2 mm behind each spider gear against the flat wall of the case | Owner (2 spider gears, 9T, 1 shim each, photos) |
 | Cross pin | 4.0 x 23.3 mm, through the spider gears and the case wall | Photo of the owner |
 | Bearings NBA299 | 10 x 15 x 4 mm on the journals of the ring gear and the case hub, x = +-11.0 to +-15.0 mm (30.0 mm over both bearings, 0.35 mm to each lip of the bulkhead) | Manual, bulkhead (no. 28) |
+| Spool (End A) | Instead of the case and the inner gears: solid body 15.0 mm, flange 25.0 x 2.0 mm with 4 tap holes M2 for the ring gear, spigot 15.8 mm in the opening of the ring gear, hub 12.0 mm and journal 10.0 mm for the bearing, hexagon bores 5.6 mm for the shafts of both outdrives (up to x = +-2.85 mm). Same ring gear, bearings and outdrives as the differential; shape of the body assumed (inside the envelope of the differential) | Owner (spool), assumption (body) |
 | Outdrives | Hexagon shaft 5.6 mm from the front face of the side gear (x = 2.9 mm) through the hub to the cup (see [centre driveshaft and drive line](#centre-driveshaft-and-drive-line)) | Owner (press fit) |
 
 * Checks of `generate_driveshaft.py`: all parts of the differential and the outdrives are valid solids without overlap with each other (19 parts per differential), with the bulkheads, the chassis plate and the top brace. The gear teeth are simplified (straight flanks, tooth profile scaled toward the apex of the pitch cone); the inner gears are turned so that their teeth lie in the tooth gaps.
@@ -821,6 +823,7 @@ All files are stored in the directory `/stock_parts/diff` and are generated with
 | `spider_gear_9T_T410R` | Spider gear 9T: along z, apex of the pitch cone at z = 0, back face at z = 7.9 mm |
 | `cross_pin_T410R` | Cross pin, along z, centred at the origin |
 | `shim_side_gear`, `shim_spider_gear` | Shims (side gear: along x from x = 0; spider gear: along z from z = 7.9 mm) |
+| `spool_T410R` | Spool (End A), in the coordinates of the diff case |
 | `bearing_10x15x4_NBA299` | Bearing NBA299 of the differential: along x from x = 0 to 4.0 mm |
 
 ### Wishbones

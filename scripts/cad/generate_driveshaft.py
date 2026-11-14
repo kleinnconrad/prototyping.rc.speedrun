@@ -232,7 +232,17 @@ def diff_solids(p, lp):
         case = case.cut(cyl_x(d_tap / 2, x_root_in - dep, x_root_in + 1, yy, zz))
     d, dd, b = p["diff_bearing"]
     brg = [cyl_x(dd / 2, x0, x0 + b, 0, 0).cut(cyl_x(d / 2, x0 - 1, x0 + b + 1, 0, 0)) for x0 in (xb0, -xb1)]
-    return {"case": case.clean(), "ring": ring.clean(), "bearings": brg, "inner": diff_inner(p)}
+    # spool (End A): solid body instead of the case and the inner gears, same ring gear, bearings and outdrives
+    fl_r, fl_t, sp_r = p["spool"]
+    spool = revolve_x([(-xb1, 0), (-xb1, rj), (-xb0, rj), (-xb0, rh), (xt, rh), (xt, sp_r), (x_root_in - fl_t, sp_r),
+                       (x_root_in - fl_t, fl_r), (x_root_in, fl_r), (x_root_in, od_open / 2 - 0.05),
+                       (xc + x_sh, od_open / 2 - 0.05), (xc + x_sh, 0)])
+    he = p["diff_side_gear"][2] - 0.05                     # ends of the hexagon shafts of the outdrives (x = +-2.9)
+    spool = spool.cut(hex_x(-xb1 - 1, xc - he)).cut(hex_x(xc + he, xc + x_sh + 0.1))
+    for k in range(int(nscr)):
+        a = np.radians(45 + k * 360 / nscr)
+        spool = spool.cut(cyl_x(d_tap / 2, x_root_in - fl_t - 1, x_root_in + 0.1, rscr * np.cos(a), rscr * np.sin(a)))
+    return {"case": case.clean(), "ring": ring.clean(), "bearings": brg, "inner": diff_inner(p), "spool": spool.clean()}
 
 
 def outdrive_solid(p):
@@ -479,13 +489,16 @@ def parts_in_plate(p=None, lp=None):
         def place(solid):
             q = solid.rotate(*zrot) if rot else solid
             return q.translate(cq.Vector(0, yd, z))
-        parts.append((f"diff case {label}", "diff", place(ds["case"])))
+        if label == "End A":                                 # front: spool instead of the differential
+            parts.append(("spool End A", "diff", place(ds["spool"])))
+        else:
+            parts.append((f"diff case {label}", "diff", place(ds["case"])))
         parts.append((f"ring gear 42T {label}", "drive", place(ds["ring"])))
         for i, bsol in enumerate(ds["bearings"]):
             parts.append((f"diff bearing NBA299 {label} {'ring gear side' if i == 0 else 'case side'}", "drive",
                           place(bsol)))
         for key, sol in ds["inner"].items():
-            if key.startswith("_"):
+            if key.startswith("_") or label == "End A":
                 continue
             if key == "side shims":                          # 3 shims per side gear, one solid per pack in the assembly
                 packs = (ds["inner"]["side shims"][:3], ds["inner"]["side shims"][3:])
@@ -712,19 +725,23 @@ def diff_drawing(p, lp, path=DIFF_DRAWING):
         ax.axis("off")
         ax.set_title(title, fontsize=10, loc="left")
 
-    fig = plt.figure(figsize=(16, 13))
-    fig.suptitle("Carten T410R differential (stock part, not part of the speedrun design; measures qualified, no 3D print "
+    fig = plt.figure(figsize=(16, 19))
+    fig.suptitle("Carten T410R differential (End B) and spool (End A) (stock parts, not part of the speedrun design; measures qualified, no 3D print "
                  "verification)", fontsize=12, y=0.99)
-    draw(fig.add_axes([0.01, 0.5, 0.48, 0.44]), items + [pinion], iso_basis(125, 30),
+    draw(fig.add_axes([0.01, 0.66, 0.48, 0.3]), items + [pinion], iso_basis(125, 30),
          "Complete differential with bearings NBA299, outdrives and the pinion 17T (brown)")
     keep = box(-40, 40, -40, 0.0, -40, 40)
-    draw(fig.add_axes([0.51, 0.5, 0.48, 0.44]), items, iso_basis(75, 20),
+    draw(fig.add_axes([0.51, 0.66, 0.48, 0.3]), items, iso_basis(75, 20),
          "Section: case, ring gear, side gears 14T with 3 shims each,\nspider gears 9T with 1 shim each on the cross pin", clip=keep)
     open_items = [q for q in items if q[3] != "ring" and not (q[2] > 0 and q[3] in ("gear", "shim", "bearing", "out"))]
-    draw(fig.add_axes([0.01, 0.04, 0.4, 0.42]), open_items, iso_basis(15, 35),
+    draw(fig.add_axes([0.01, 0.34, 0.4, 0.29]), open_items, iso_basis(15, 35),
          "Open case (ring gear with its side gear removed), view from the ring gear side")
-    draw(fig.add_axes([0.42, 0.04, 0.57, 0.42]), items, iso_basis(60, 22),
+    draw(fig.add_axes([0.42, 0.34, 0.57, 0.29]), items, iso_basis(60, 22),
          "Exploded view along the diff axis (the case side gear and its shims lie in the case)", explode=1.0)
+    spool_items = [q for q in items if q[3] in ("ring", "bearing", "out")] + [("spool", ds["spool"], -14, "case")]
+    draw(fig.add_axes([0.01, 0.03, 0.48, 0.28]), spool_items, iso_basis(125, 30),
+         "Spool at End A (front): ring gear 42T on the spool body, bearings and outdrives as on the differential")
+    draw(fig.add_axes([0.51, 0.03, 0.48, 0.28]), spool_items, iso_basis(75, 20), "Spool: section", clip=keep)
     fig.text(0.01, 0.005, "Gear teeth simplified (straight flanks, tooth profile scaled toward the apex of the pitch cone). "
              "Not modelled: ribs of the case, the 4 screws M2 of the ring gear, the O-rings and the oil.", fontsize=8.5)
     fig.savefig(path, dpi=100)
@@ -762,6 +779,7 @@ def main():
         ("diff", "cross_pin_T410R", diff_solids(p, lp)["inner"]["cross pin"].translate(cq.Vector(-p["diff_center_x"], 0, 0))),
         ("diff", "shim_side_gear", diff_solids(p, lp)["inner"]["_side_shim"]),
         ("diff", "shim_spider_gear", diff_solids(p, lp)["inner"]["_spider_shim"]),
+        ("diff", "spool_T410R", diff_solids(p, lp)["spool"]),
         ("diff", "bearing_10x15x4_NBA299", diff_solids(p, lp)["bearings"][0].translate(cq.Vector(-p["diff_bearing_x"][0], 0, 0)))]
     for folder, name, s in exports:
         os.makedirs(f"{STOCK}/{folder}", exist_ok=True)
