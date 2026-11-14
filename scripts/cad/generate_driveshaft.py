@@ -117,10 +117,33 @@ def rear_drive_line(p, lay):
     m0, m1 = lay["mount"]
     yb = p["mount_y"] - b / 2
     bearing = cyl_y(dd / 2, yb, yb + b, 0, z).cut(cyl_y(d / 2, yb - 1, yb + b + 1, 0, z))
-    xa, xb = p["mount_x"]
-    mount = box(xa, xb, m0, m1, PLATE_T, p["mount_top"]).cut(cyl_y(dd / 2, m0 - 1, m1 + 1, 0, z))
+    mount = motor_mount_solid(p, lay)
     return [("rear pinion shaft with flange", "drive", shaft.clean()), ("spur gear", "drive", spur.clean()),
             ("bearing NBA298 in the motor mount", "drive", bearing.clean()), ("motor mount", "mount", mount.clean())]
+
+
+def motor_mount_solid(p, lay):
+    """Motor mount NBA201 for 540 motors (manual step 10), chassis plate coordinates, picture only:
+    low part on the bulkhead side with a U-shaped notch for the bearing NBA298 at the pinion axis,
+    tall part on the motor side with rounded top corners and three long holes along x: the motor
+    shaft (middle, at the height of the pinion axis) and the two motor screws (above and below)."""
+    z, (m0, m1) = lay["z"], lay["mount"]
+    xa, xb = p["mount_x"]
+    xs, zl, zt = p["mount_step_x"], p["mount_low_top"], p["mount_top"]
+    tall = cq.Workplane().add(box(xs, xb, m0, m1, PLATE_T, zt)).edges("|Y and >Z").fillet(p["mount_corner_r"]).val()
+    s = box(xa, xs, m0, m1, PLATE_T, zl).fuse(tall)
+    rb = p["mount_bearing"][1] / 2
+    s = s.cut(cyl_y(rb, m0 - 1, m1 + 1, 0, z)).cut(box(-rb, rb, m0 - 1, m1 + 1, z, zl + 1))   # U notch, bearing
+
+    def long_hole(zc, w):
+        """Long hole through the plate: centres of the end radii at motor_slot_x, width w."""
+        x0, x1 = p["motor_slot_x"]
+        h = cq.Workplane("XZ").center((x0 + x1) / 2, zc).slot2D(x1 - x0 + w, w).extrude(p["mount_t"] / 2 + 1, both=True)
+        return h.val().translate(cq.Vector(0, p["mount_y"], 0))
+    hs = p["motor_screw_spacing"] / 2
+    for zc, w in ((z, p["motor_shaft_slot_w"]), (z + hs, p["motor_screw_slot_w"]), (z - hs, p["motor_screw_slot_w"])):
+        s = s.cut(long_hole(zc, w))
+    return s.clean()
 
 
 def parts_in_plate(p=None, lp=None):
@@ -147,22 +170,35 @@ def parts_in_plate(p=None, lp=None):
     return parts
 
 
-def section_polys(solid):
-    """Polygons (y, z) of the section of a solid at x = 0: list of (outer, points)."""
+def section_polys(solid, normal="x", offset=0.0):
+    """Polygons of the section of a solid: plane x = offset with the coordinates (y, z), or plane
+    y = offset with the coordinates (x, z). List of (outer, points)."""
     from OCP.BRepTools import BRepTools_WireExplorer
-    plane = cq.Face.makePlane(800, 800, cq.Vector(0, 150, 0), cq.Vector(1, 0, 0))
+    if normal == "x":
+        plane = cq.Face.makePlane(800, 800, cq.Vector(offset, 150, 0), cq.Vector(1, 0, 0))
+        uv = (lambda v: v.y)
+    else:
+        plane = cq.Face.makePlane(800, 800, cq.Vector(0, offset, 0), cq.Vector(0, 1, 0))
+        uv = (lambda v: v.x)
     out = []
     for f in solid.intersect(plane).Faces():
         for outer, wire in [(True, f.outerWire())] + [(False, w) for w in f.innerWires()]:
             ex = BRepTools_WireExplorer(wire.wrapped)
-            poly = []
+            poly, count = [], 0
+
+            def gap(a, b):
+                return float(np.hypot(*(np.array(a) - np.array(b))))
             while ex.More():
                 ed = cq.Edge(ex.Current())
                 n = 2 if ed.geomType() == "LINE" else 40
-                seg = [(ed.positionAt(k / (n - 1)).y, ed.positionAt(k / (n - 1)).z) for k in range(n)]
-                if poly and np.hypot(*(np.array(seg[0]) - poly[-1])) > np.hypot(*(np.array(seg[-1]) - poly[-1])):
+                seg = [(uv(ed.positionAt(k / (n - 1))), ed.positionAt(k / (n - 1)).z) for k in range(n)]
+                if count == 1 and min(gap(seg[0], poly[0]), gap(seg[-1], poly[0])) < \
+                        min(gap(seg[0], poly[-1]), gap(seg[-1], poly[-1])):
+                    poly.reverse()                          # first edge was in the opposite direction
+                if poly and gap(seg[0], poly[-1]) > gap(seg[-1], poly[-1]):
                     seg = seg[::-1]
                 poly += seg
+                count += 1
                 ex.Next()
             out.append((outer, poly))
     return out
@@ -213,7 +249,7 @@ def drawing(path, p, lay, items):
     for k, (end, sign) in enumerate((("End B: spur gear, motor mount and cup joint", 1),
                                      ("End A: cup joint on the front pinion shaft", -1))):
         i = 0 if sign > 0 else 1
-        ax2 = fig.add_axes([0.04 + 0.48 * k, 0.075, 0.44, 0.44])
+        ax2 = fig.add_axes([0.04 + 0.64 * k, 0.075, 0.31, 0.44])
         draw(ax2)
         hy, pin, se, bk, op = lay["housing"][i], lay["pins"][i], lay["slot_end"][i], lay["back"][i], lay["open"][i]
         lo, hi = sorted((hy - sign * 8, pin + sign * 16))
@@ -230,21 +266,56 @@ def drawing(path, p, lay, items):
         ax2.annotate(f"metal pin {p['pin_d']:g} x {p['pin_length']:g} (fixed)", (pin, z), (pin + sign * 9, z + 9.5),
                      fontsize=7.5, ha="center", arrowprops=dict(arrowstyle="-", lw=0.6))
         ax2.text(pin + sign * 11, z - 1.0, "shaft", ha="center", fontsize=8, color="white")
-        ax2.text(hy - sign * 4, z + 7.5 if sign < 0 else z + 19.5, "pinion housing", ha="center", fontsize=7.5)
+        if sign > 0:
+            ax2.text(lo + 0.5, z + 19.3, "pinion housing", ha="left", fontsize=7.5)
+        else:
+            ax2.text(hy - sign * 4, z + 7.5, "pinion housing", ha="center", fontsize=7.5)
         if sign > 0:
             m0, m1 = lay["mount"]
-            ax2.text((m0 + m1) / 2, p["mount_top"] + 0.5, "motor mount", ha="center", va="bottom", fontsize=7.5)
+            ax2.text(m1 + 0.8, 7.0, "motor\nmount", ha="left", va="center", fontsize=7.5)
             ax2.text(sum(lay["spur"]) / 2, z + lay["spur_od"] / 2 - 4, "spur\ngear", ha="center", fontsize=7.5)
             ax2.text(p["mount_y"], z - 4.2, "bearing", ha="center", va="top", fontsize=7)
             dim(ax2, m1, bk, z + 5.0, f"{p['rear_cup_gap']:g}")
         else:
             dim(ax2, hy, bk, z + 5.0, f"{p['cup_gap']:g}")
+    # motor mount seen from the motor side (section y = middle of the motor mount)
+    ax3 = fig.add_axes([0.37, 0.075, 0.29, 0.44])
+    yv = p["mount_y"]
+    for solid, col in items:
+        sec = section_polys(solid, "y", yv)
+        for outer, poly in sec:
+            if outer:
+                ax3.add_patch(MPoly(poly, closed=True, fc=col, ec="#1d2025", lw=0.5))
+        for outer, poly in sec:
+            if not outer:
+                ax3.add_patch(MPoly(poly, closed=True, fc="white", ec="#1d2025", lw=0.5))
+    from matplotlib.patches import Circle
+    ax3.add_patch(Circle((0, z), lay["spur_od"] / 2, fill=False, ec="#5d636b", lw=0.7, ls="--"))
+    xm = sum(p["motor_slot_x"]) / 2
+    ax3.add_patch(Circle((xm, z), 18.0, fill=False, ec="#2c3e50", lw=0.7, ls=":"))
+    hs = p["motor_screw_spacing"] / 2
+    for zz in (z + hs, z - hs):
+        ax3.add_patch(Circle((xm, zz), 1.5, fill=False, ec="#2c3e50", lw=0.6, ls=":"))
+    x0, x1 = p["motor_slot_x"]
+    ax3.annotate("", (x0, p["mount_top"] + 2.0), (x1, p["mount_top"] + 2.0), arrowprops=dict(arrowstyle="<->", lw=0.7))
+    ax3.text(xm, p["mount_top"] + 2.3, f"motor axis x = {x0:g} to {x1:g}", ha="center", va="bottom", fontsize=7.5)
+    ax3.text(p["mount_x"][1] + 1.0, z + 12, "540 motor\n(dotted)", fontsize=7, ha="left")
+    ax3.text(0, z + lay["spur_od"] / 2 + 0.6, f"spur gear {p['spur_teeth']:g}T (dashed)", ha="center", va="bottom",
+             fontsize=7)
+    ax3.text(0, 4.0, "bearing in\nthe U notch", ha="center", va="center", fontsize=7)
+    ax3.set_xlim(-24, 68)
+    ax3.set_ylim(-3, 48)
+    ax3.set_aspect("equal")
+    ax3.grid(True, color="#eeeeee", lw=0.5)
+    ax3.set_title("Motor mount from the motor side (section y = 62.48)", fontsize=10, loc="left")
+    ax3.set_xlabel("x [mm] (across the car)", fontsize=8)
     fig.text(0.04, 0.006, f"Shaft {p['shaft_d']:g} mm with ball ends and fixed metal pins NBA255 {p['pin_d']:g} x "
              f"{p['pin_length']:g} mm in the slots of the cup joints; total axial play {p['axial_play']:g} mm (pins to the "
              f"closed ends of the slots). Cup joints {p['cup_od']:g} / {p['cup_bore_d']:g} x {p['cup_length']:g} mm, slots "
-             f"{p['cup_slot_len']:g} mm (owner).\nSpur gear 68T 48DP ({lay['spur_od']:.1f} mm) in the slot of the chassis "
-             "plate, motor mount on the holes H09/H10. Thicknesses of the spur gear, the flange and the motor mount and "
-             "the gaps: typical values.\nDashed: slots of the cup joints (across the section). Cup joints, drive line and "
+             f"{p['cup_slot_len']:g} mm (owner).\nSpur gear {p['spur_teeth']:g}T {p['spur_dp']:g}DP ({lay['spur_od']:.1f} mm) "
+             f"in the slot of the chassis plate, motor mount {p['mount_t']:g} mm (owner) for 540 motors on the holes "
+             "H09/H10. Thicknesses of the spur gear and the flange, outline of the motor mount and the gaps: typical "
+             "values.\nDashed: slots of the cup joints (across the section). Cup joints, drive line and "
              "motor mount: simple bodies, no CAD files.",
              fontsize=8, va="bottom")
     fig.savefig(path, dpi=110)
