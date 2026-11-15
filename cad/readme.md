@@ -120,7 +120,7 @@ Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{g
 * The further own parts are not in the mass total (see [further own parts](#further-own-parts)).
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [pivot blocks](#pivot-blocks)) and 2.16 mm³ between the lower bulkhead at End A and each front wishbone (inner lugs 0.14 mm into the side face, see [wishbones](#wishbones)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
-* The image shows an overall view with an inset of the differential at End B in section (with the pinion), a side view, a top view and three close-ups:
+* The image shows an overall view, a side view, a top view and three close-ups:
   * both ends with the bulkheads, the shock tower, the corners of the running gear, the dampers and the sway bar, seen from the outer end;
   * the drive line at End B (spur gear, motor mount with cap, cup joint), seen from the middle of the car, without the top brace and the shock tower.
 
