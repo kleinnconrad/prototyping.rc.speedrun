@@ -976,7 +976,7 @@ All files are stored in the directory `/parts/camber_link` and are generated wit
 
 **Rear corner**
 
-* Hub carrier on the outer hinge pin 3x26 between 2 spacers 3x7x3 (manual step 18), built in the frame of the rear wishbone (toe from the pivot blocks): bearing housing for 2 bearings 5x10x4 (bearings and hex hub positioned so that the outer face of the hex hub lines up with the front one; the joint cup of the axle reaches up to 0.6 mm before the inner bearing, a shoulder 6.5 mm rests on its inner race), thread M3 on top for the outer ball stud of the camber link, grub screw M3 on the hinge pin.
+* Hub carrier on the outer hinge pin 3x26 between 2 spacers 3x7x3 (manual step 18), built in the frame of the rear wishbone (toe from the pivot blocks): bearing housing (tube, 19 mm long) for 2 bearings 5x10x4; the tube with the bearings, the axle and the outer joint of the CVD drive shaft is offset 5.56 mm outward from the lug on the hinge pin, so that the outer face of the hex hub lines up with the front one (the length of the tube and the plunge of the joint are unchanged); the web and a sloped gusset from the inner end of the tube carry the seat of the camber stud, thread M3 on top for the outer ball stud of the camber link, grub screw M3 on the hinge pin.
 
 **Axles, hex hubs and CVD drive shafts**
 
@@ -984,7 +984,7 @@ All files are stored in the directory `/parts/camber_link` and are generated wit
 |:---|:---|:---|
 | Axles | 5 mm in the bearings 5x10x4, joint cup 10 mm (owner) with 2 slots 2.1 mm for the cross pin of the CVD drive shaft, thread M4 for the wheel nut | Manual (bearings, M4), design |
 | Hex hubs | 12 mm across the flats, 6 mm (front) and 7 mm (rear) wide, pin 2x10 through the axle in a slot of the hub, grub screw M3 | `spec_tires.yaml`, manual |
-| CVD drive shafts | Bone 4 mm with balls 6 mm, cross pins 2x11 in the slots of the diff outdrives and 2x8 in the joint cups of the axles; centre to centre of the joints: front 43.6 mm, rear 39.9 mm | Design |
+| CVD drive shafts | Bone 4 mm with balls 6 mm, cross pins 2x11 in the slots of the diff outdrives and 2x8 in the joint cups of the axles; centre to centre of the joints: front 43.6 mm, rear 45.5 mm | Design |
 
 **Steering and servo mounting (as the T410R)**
 
