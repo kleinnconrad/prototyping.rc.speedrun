@@ -699,8 +699,8 @@ def drawing(path, p, lay, items):
 
     z = lay["z"]
     fig = plt.figure(figsize=(15, 10))
-    fig.suptitle("Centre driveshaft with the drive line (own design, re-engineered from the T410R; measures "
-                 "qualified, no 3D print verification)", fontsize=12, y=0.985)
+    fig.suptitle("Centre driveshaft with the drive line (own design, re-engineered from the T410R; motor mount verified "
+                 "with a test print, the other parts measures qualified)", fontsize=12, y=0.985)
     ax = fig.add_axes([0.04, 0.57, 0.92, 0.36])
     draw(ax)
     y0, y1 = lay["shaft"]
@@ -960,8 +960,9 @@ def drive_assembly_drawing(p, lp, path=ASSEMBLY_DRAWING):
                [(s, lab, pos) for s, lab, _, pos in moved])
         ax.set_title(f"{name}, exploded along the pinion axis: parts in the order on the shaft, from the pinion in the "
                      "bulkhead\nto the centre driveshaft", fontsize=9.5, loc="left")
-    fig.text(0.01, 0.012, "Status: pinion shafts, pinions, spur gear, bearings, retaining pins and motor mount with cap: measures "
-             "qualified, no 3D print verification; cup joints: completely unqualified. CAD files: cad/parts (rear_drive, "
+    fig.text(0.01, 0.008, "Status: motor mount with cap: verified (test print, only some beautifying open); pinion shafts, "
+             "pinions, spur gear, bearings and retaining pins: measures qualified, no 3D print verification;\ncup joints: "
+             "completely unqualified. CAD files: cad/parts (rear_drive, "
              "front_drive, motor_mount, driveshaft).", fontsize=8.5)
     fig.savefig(path, dpi=100)
     plt.close(fig)
