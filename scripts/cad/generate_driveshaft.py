@@ -422,94 +422,45 @@ def pinion_solid(p, lay, y_front, y_shaft):
     return g.clean()
 
 
+def arc3(c, r, a0, a1):
+    """Arc around c with radius r from the angle a0 to a1 (degrees): (start, middle, end)."""
+    pt = lambda a: (c[0] + r * math.cos(math.radians(a)), c[1] + r * math.sin(math.radians(a)))
+    return [pt(a0), pt((a0 + a1) / 2), pt(a1)]
+
+
 def mount_outline(p, lay):
     """Outline of the motor mount in the x-z plane (photos of the owner): base, outer end with rounded corners, top of
-    the tall part, inner edge of the tall part with the rounded upper corner and the fillet to the top face of the low
-    part, top face of the low part to the hook beside the bearing seat, underside of the hook down to the base.
+    the tall part, continuous contour at the upper inner corner (S-curve down to the corner arc below the end of the
+    top brace), inner edge of the tall part with the fillet to the top face of the low part, top face of the low part
+    to the hook beside the bearing seat, underside of the hook down to the base.
     Returns the list of the outline segments as (kind, points) with kind "line", "arc" (start, middle, end) or "spline"."""
     xa, xb = p["mount_x"]
     zt, zl, xs = p["mount_top"], p["mount_low_top"], p["mount_step_x"]
     r_out, r_in, r_bot, r_fil = p["mount_corners"]
+    xr, zr, rs = p["mount_brace_relief"]
     hook = [tuple(q) for q in p["mount_hook"]]
     c45 = math.sqrt(0.5)
+    xA = xs + r_in                                                  # top of the corner arc (z = zr)
+    assert xA >= xr, "the corner arc must stay below the end of the top brace"
+    h = zt - zr                                                     # S-curve from zr up to the top (2 arcs of radius rs)
+    dx = math.sqrt(rs ** 2 - (rs - h / 2) ** 2)
+    xM, xB = xA + dx, xA + 2 * dx
+    am = math.degrees(math.atan2(rs - h / 2, dx))                   # angle of the inflection point
     seg = [("line", [(xa, PLATE_T), (xb - r_bot, PLATE_T)]),
            ("arc", [(xb - r_bot, PLATE_T), (xb - r_bot + r_bot * c45, PLATE_T + r_bot - r_bot * c45), (xb, PLATE_T + r_bot)]),
            ("line", [(xb, PLATE_T + r_bot), (xb, zt - r_out)]),
            ("arc", [(xb, zt - r_out), (xb - r_out + r_out * c45, zt - r_out + r_out * c45), (xb - r_out, zt)]),
-           ("line", [(xb - r_out, zt), (xs + r_in, zt)]),
-           ("arc", [(xs + r_in, zt), (xs + r_in - r_in * c45, zt - r_in + r_in * c45), (xs, zt - r_in)]),
-           ("line", [(xs, zt - r_in), (xs, zl + r_fil)]),
+           ("line", [(xb - r_out, zt), (xB, zt)]),
+           ("arc", arc3((xB, zt - rs), rs, 90.0, 180.0 - am)),                  # convex, down from the top
+           ("arc", arc3((xA, zr + rs), rs, -am, -90.0)),                       # concave, to the top of the corner arc
+           ("arc", arc3((xA, zr - r_in), r_in, 90.0, 180.0)),                  # upper inner corner
+           ("line", [(xs, zr - r_in), (xs, zl + r_fil)]),
            ("arc", [(xs, zl + r_fil), (xs - r_fil + r_fil * c45, zl + r_fil - r_fil * c45), (xs - r_fil, zl)]),
            ("line", [(xs - r_fil, zl), (hook[0][0] + 0.5, zl)]),
            ("arc", [(hook[0][0] + 0.5, zl), (hook[0][0] + 0.5 - 0.5 * c45, zl - 0.5 + 0.5 * c45), (hook[0][0], zl - 0.5)]),
            ("spline", [(hook[0][0], zl - 0.5)] + hook[1:]),
            ("line", [hook[-1], (xa, PLATE_T)])]
     return seg
-
-
-def outline_points(seg, step=0.2):
-    """Dense polygon of the outline (for the layout of the grooves)."""
-    pts = []
-    for kind, q in seg:
-        q = np.asarray(q, float)
-        if kind == "line":
-            n = max(int(np.linalg.norm(q[1] - q[0]) / step), 1)
-            pts += [q[0] + (q[1] - q[0]) * t for t in np.linspace(0, 1, n, endpoint=False)]
-        elif kind == "arc":
-            a, b, c = q
-            # circle through the 3 points
-            d = 2 * (a[0] * (b[1] - c[1]) + b[0] * (c[1] - a[1]) + c[0] * (a[1] - b[1]))
-            ux = ((a @ a) * (b[1] - c[1]) + (b @ b) * (c[1] - a[1]) + (c @ c) * (a[1] - b[1])) / d
-            uy = ((a @ a) * (c[0] - b[0]) + (b @ b) * (a[0] - c[0]) + (c @ c) * (b[0] - a[0])) / d
-            m = np.array([ux, uy])
-            t0, t1 = math.atan2(*(a - m)[::-1]), math.atan2(*(c - m)[::-1])
-            tm = math.atan2(*(b - m)[::-1])
-            d1 = (t1 - t0 + math.pi) % (2 * math.pi) - math.pi
-            if not (min(t0, t0 + d1) <= tm <= max(t0, t0 + d1) or min(t0, t0 + d1) <= tm + 2 * math.pi <= max(t0, t0 + d1)
-                    or min(t0, t0 + d1) <= tm - 2 * math.pi <= max(t0, t0 + d1)):
-                d1 = d1 - math.copysign(2 * math.pi, d1)
-            rr = np.linalg.norm(a - m)
-            n = max(int(abs(d1) * rr / step), 2)
-            pts += [m + rr * np.array([math.cos(t0 + d1 * t), math.sin(t0 + d1 * t)]) for t in np.linspace(0, 1, n, endpoint=False)]
-        else:
-            for u, v in zip(q[:-1], q[1:]):
-                n = max(int(np.linalg.norm(v - u) / step), 1)
-                pts += [u + (v - u) * t for t in np.linspace(0, 1, n, endpoint=False)]
-    return np.array(pts)
-
-
-def groove_layout(p, lay, seg, holes, threads):
-    """Grooves along x on the face toward the spur gear: for each height, the runs of the groove centre line where
-    the groove (width w, rounded ends) keeps the minimum walls to the outline, the holes (stadiums) and the threads
-    (rectangles in the x-z plane). Returns the list of (z, x_from, x_to)."""
-    w, depth, pitch, z0, n, wall_o, wall_h, x_min, l_min = p["mount_grooves"]
-    poly = outline_points(seg, 0.1)
-    a, b = poly, np.roll(poly, -1, axis=0)
-    out = []
-    for k in range(int(n)):
-        zg = z0 + k * pitch
-        xs_ = np.arange(x_min, p["mount_x"][1], 0.02)
-        q = np.c_[xs_, np.full_like(xs_, zg)]
-        # distance to the outline and inside test (ray casting)
-        ab = b - a
-        t = np.clip(((q[:, None, :] - a[None]) * ab[None]).sum(-1) / (ab * ab).sum(-1)[None], 0, 1)
-        dist = np.linalg.norm(q[:, None, :] - (a[None] + t[..., None] * ab[None]), axis=-1).min(axis=1)
-        cross = ((a[:, 1][None] > q[:, 1:2]) != (b[:, 1][None] > q[:, 1:2])) & \
-            (q[:, 0:1] < a[:, 0][None] + (q[:, 1:2] - a[:, 1][None]) * ab[:, 0][None] / np.where(ab[:, 1] == 0, 1e-9, ab[:, 1])[None])
-        inside = cross.sum(axis=1) % 2 == 1
-        ok = inside & (dist >= wall_o + w / 2)
-        for hx0, hx1, hz, hr in holes:                                     # stadium: segment (hx0..hx1, hz), radius hr
-            dx = np.clip(xs_, hx0, hx1) - xs_
-            ok &= np.hypot(dx, zg - hz) >= hr + wall_h + w / 2
-        for tx0, tx1, tz0, tz1 in threads:                                 # rectangle in the x-z plane
-            dx = np.maximum(np.maximum(tx0 - xs_, xs_ - tx1), 0)
-            dz = max(tz0 - zg, zg - tz1, 0)
-            ok &= np.hypot(dx, dz) >= wall_h + w / 2
-        edges = np.flatnonzero(np.diff(np.r_[0, ok.astype(int), 0]))
-        for s0, s1 in zip(edges[::2], edges[1::2]):
-            if xs_[s1 - 1] - xs_[s0] >= l_min - w:
-                out.append((zg, float(xs_[s0]), float(xs_[s1 - 1])))
-    return out
 
 
 def motor_axis_range(p):
@@ -525,8 +476,8 @@ def motor_mount_solid(p, lay):
     """Motor mount for 540 motors as the original part (manual step 10, photos of the owner), chassis plate
     coordinates: outline with the hook beside the bearing seat (low part) and the tall part on the motor side, bearing
     seat (U-shaped notch with the lip), long hole of the motor shaft at the height of the pinion axis, 2 diagonal long
-    holes of the motor screws (extended as far as the part allows), grooves on the face toward the spur gear,
-    threads M3 from below (H09, H10) and from the top (screws of the cap)."""
+    holes of the motor screws (extended as far as the part allows), smooth faces, threads M3 from below (H09, H10)
+    and from the top (screws of the cap)."""
     z, (m0, m1) = lay["z"], lay["mount"]
     zl = p["mount_low_top"]
     seg = mount_outline(p, lay)
@@ -539,8 +490,6 @@ def motor_mount_solid(p, lay):
         else:
             wp = wp.spline(q[1:], includeCurrent=True)
     s = wp.close().extrude(m1 - m0).val().translate(cq.Vector(0, m1, 0))          # XZ: extrusion toward -y
-    xr, zr = p["mount_brace_relief"]                                                # below the end of the top brace
-    s = s.cut(box(p["mount_x"][0] - 20, xr, m0 - 1, m1 + 1, zr, p["mount_top"] + 1))
     rb, (lw, ld) = p["mount_notch_d"] / 2, p["mount_lip"]
     s = s.cut(cyl_y(rb, m0 - 1, m1 - lw, 0, z)).cut(box(-rb, rb, m0 - 1, m1 - lw, z, zl + 1))   # U notch, bearing
     s = s.cut(cyl_y(ld / 2, m1 - lw - 1, m1 + 1, 0, z)).cut(box(-ld / 2, ld / 2, m1 - lw - 1, m1 + 1, z, zl + 1))  # lip
@@ -556,20 +505,10 @@ def motor_mount_solid(p, lay):
         s = s.cut(long_hole(hx0, hx1, hz, 2 * hr))
     # threads M3 (tap drill): screws from below through the chassis plate (H09, H10) and screws M3x18 of the cap
     rt, dep = p["tap_d"] / 2, p["mount_tap_depth"]
-    threads = []
     for x, y in p["mount_bottom_screws"]:
         s = s.cut(cyl_z(rt, PLATE_T - 1, PLATE_T + dep, x, y))
-        threads.append((x - rt, x + rt, PLATE_T, PLATE_T + dep))
     for x, y in p["cap_screws"]:
         s = s.cut(cyl_z(rt, zl - dep, zl + 1, x, y))
-        threads.append((x - rt, x + rt, zl - dep, zl))
-    # grooves on the face toward the spur gear (y = m0), rounded ends
-    w, depth = p["mount_grooves"][:2]
-    holes.append((0.0, 0.0, z, rb))                                                   # bearing seat
-    motor_mount_solid.grooves = groove_layout(p, lay, seg, holes, threads)
-    for zg, x0, x1 in motor_mount_solid.grooves:
-        g = cq.Workplane("XZ").center((x0 + x1) / 2, zg).slot2D(x1 - x0 + w, w).extrude(depth + 0.01).val()
-        s = s.cut(g.translate(cq.Vector(0, m0 + depth, 0)))
     return s.clean()
 
 
@@ -960,7 +899,7 @@ def drive_assembly_drawing(p, lp, path=ASSEMBLY_DRAWING):
                [(s, lab, pos) for s, lab, _, pos in moved])
         ax.set_title(f"{name}, exploded along the pinion axis: parts in the order on the shaft, from the pinion in the "
                      "bulkhead\nto the centre driveshaft", fontsize=9.5, loc="left")
-    fig.text(0.01, 0.008, "Status: motor mount with cap: verified (test print, only some beautifying open); pinion shafts, "
+    fig.text(0.01, 0.008, "Status: motor mount with cap: verified (test print, cosmetic changes after the print); pinion shafts, "
              "pinions, spur gear, bearings and retaining pins: measures qualified, no 3D print verification;\ncup joints: "
              "completely unqualified. CAD files: cad/parts (rear_drive, "
              "front_drive, motor_mount, driveshaft).", fontsize=8.5)
