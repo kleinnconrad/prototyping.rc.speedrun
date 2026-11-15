@@ -1,9 +1,9 @@
 adr:
   id: ADR-005
-  title: Selection of the remote control system for 100 km/h speedruns
+  title: Selection of the remote control system for 130 km/h speedruns
   status: decided
   date: '2026-08-20'
-  context: "An RC car traveling at 100 km/h (approx. 27.7 meters per second) covers \nenormous distances in a few seconds. \nThe remote control (transmitter) \nand the receiver \nmust therefore absolutely have a stable radio connection \nand an absolutely reliable fail-safe \nso that the vehicle does not get out of control at the end \nof the acceleration stretch. \nA balance must be struck \nbetween maximum range incl. gyro support and a \nrobust, \nfailsafe MVP approach (Minimum Viable Product) that reduces the complexity in \nthe setup.\n"
+  context: "An RC car traveling at 130 km/h (approx. 36.1 meters per second) covers \nenormous distances in a few seconds. \nThe remote control (transmitter) \nand the receiver \nmust therefore absolutely have a stable radio connection \nand an absolutely reliable fail-safe \nso that the vehicle does not get out of control at the end \nof the acceleration stretch. \nA balance must be struck \nbetween maximum range incl. gyro support and a \nrobust, \nfailsafe MVP approach (Minimum Viable Product) that reduces the complexity in \nthe setup.\n"
   considered_alternatives:
   - option_id: 1
     name: Standard RTR / Budget Transmitter (e.g. FlySky FS-GT2)
@@ -31,7 +31,7 @@ adr:
     evaluation: Very reliable and proven entry-level system. Although it offers no
       gyro and slightly less maximum range than the DumboRC, it scores with
       absolute simplicity, a highly robust fail-safe and absolutely necessary
-      setting options (Dual Rate) for initial 100 km/h tests.
+      setting options (Dual Rate) for initial 130 km/h tests.
   - option_id: 5
     name: Konect X9S Radio + RG4CHWP Receiver
     type: Mid-Range / 4-Channel 2.4 GHz Pistol Grip Transmitter

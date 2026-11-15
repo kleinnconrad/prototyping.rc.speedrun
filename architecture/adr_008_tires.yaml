@@ -1,9 +1,9 @@
 adr:
   id: ADR-008
-  title: Selection of tires for 100 km/h speedruns
+  title: Selection of tires for 130 km/h speedruns
   status: decided
   date: '2026-10-05'
-  context: "At a target speed of 100 km/h and the associated high \nspeeds \nof the wheels, standard rubber tires expand massively in the middle due to centrifugal force \n(the so-called \"pizza cutter effect\" or \"ballooning\"\n). This leads to an immediate \nloss of control and often to the tire bursting. \nPre-glued tires \non rims with a 12mm hex hub \n(suitable for the Carten T410R chassis) are required, \nwhich retain their shape 100% under high centrifugal forces \nand whose rubber compound \nwithstands the high friction heat on rough \nasphalt. \nIn addition, the real track conditions (not \ndust-free normal asphalt vs. \ncleanly prepared race track) must be considered when choosing \nthe tire tread (slick vs. grooved). \n\n"
+  context: "At a target speed of 130 km/h and the associated high \nspeeds \nof the wheels, standard rubber tires expand massively in the middle due to centrifugal force \n(the so-called \"pizza cutter effect\" or \"ballooning\"\n). This leads to an immediate \nloss of control and often to the tire bursting. \nPre-glued tires \non rims with a 12mm hex hub \n(suitable for the Carten T410R chassis) are required, \nwhich retain their shape 100% under high centrifugal forces \nand whose rubber compound \nwithstands the high friction heat on rough \nasphalt. \nIn addition, the real track conditions (not \ndust-free normal asphalt vs. \ncleanly prepared race track) must be considered when choosing \nthe tire tread (slick vs. grooved). \n\n"
   considered_alternatives:
   - option_id: 1
     name: Standard Touring Car Rubber Tires (Non-Belted)
@@ -21,13 +21,13 @@ adr:
     name: Sweep HANKOOK Tread Belted 32deg (for Carpet)
     type: Indoor / Carpet
     evaluation: Have the saving belted fabric, but the 32-shore
-      rubber compound is much too soft for asphalt. At 100 km/h on the street,
+      rubber compound is much too soft for asphalt. At 130 km/h on the street,
       these tires would massively overheat and wear out very quickly or disintegrate.
   - option_id: 4
     name: Full-Slicks Belted (e.g. Sweep EXP Belted Slicks / Matrix Slicks)
     type: Premium / Treadless
     evaluation: Physically offer the maximum contact to the road (100% rubber contact)
-      and extreme smoothness, as no tread blocks can flex. Are the absolute fastest tires at 100 km/h,
+      and extreme smoothness, as no tread blocks can flex. Are the absolute fastest tires at 130 km/h,
       BUT absolutely require an optimally swept,
       clean track. They slide massively on dusty roads.
   - option_id: 5
@@ -55,7 +55,7 @@ adr:
   consequences:
   - 'Pre-check: Even factory pre-glued tires must absolutely be checked
     for manufacturing defects on the glue seam before the first run (pull briefly on the tire sidewall).'
-  - 'Balancing: Since the smallest imbalances destabilize the chassis at 100 km/h,
+  - 'Balancing: Since the smallest imbalances destabilize the chassis at 130 km/h,
     the wheels should ideally be balanced with an RC tire balancer and putty lead.'
   - 'Temperature window: In order to build up maximum mechanical
     grip, the 35 shore foam tires must be warmed up by 1-2 slow laps before the actual speedrun.'

@@ -1,7 +1,7 @@
 spec:
   meta:
     type: Oil-filled bevel differential (Metal Gear)
-    mechanical_load_capacity: '> 100 km/h (approx. 8,300 RPM axle speed)'
+    mechanical_load_capacity: '> 100 km/h (approx. 8,300 RPM axle speed; not evaluated for the goal of 130 km/h, approx. 10,800 RPM)'
   properties:
     material_and_construction:
       gears_ring_and_bevel: Sintered metal / Steel
@@ -15,7 +15,7 @@ spec:
           that the teeth skip or tear off under the high torque of the 3S motor.
       reinforced_sealing:
         issue: O-ring sealing
-        description: At 8,300 RPM, the oil inside generates a massive centrifugal pressure
+        description: At 10,800 RPM (130 km/h), the oil inside generates a massive centrifugal pressure
           outwards. The rubber O-rings must be sealed with viscous special grease (e.g. 'Green
           Slime') so that the differential does not run dry.
       oil_viscosity:

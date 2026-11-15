@@ -3,7 +3,7 @@ adr:
   title: Selection of motor cooling for 3S speedruns
   status: decided
   date: '2026-10-27'
-  context: "The targeted goal of 100 km/h requires the use of a 3700kV motor (Hobbywing QuicRun 3660SL G2) on a 3S LiPo (11.1V), which leads to motor speeds of approx. 41,000 rpm and a tall final drive ratio (43T pinion / 68T spur gear, FDR 3.91, wheel load 25.6 %). Under these conditions, a high thermal load of the motor was expected. Excessive motor temperatures can demagnetize the rotor or damage the winding insulation. The cooling concept must therefore match the thermal load observed in test drives.\n"
+  context: "The targeted goal of 130 km/h requires the use of a 3700kV motor (Hobbywing QuicRun 3660SL G2) on a 3S LiPo (11.1V), which leads to motor speeds of approx. 41,000 rpm and a tall final drive ratio (43T pinion / 68T spur gear, FDR 3.91, wheel load 25.6 %). Under these conditions, a high thermal load of the motor was expected. Excessive motor temperatures can demagnetize the rotor or damage the winding insulation. The cooling concept must therefore match the thermal load observed in test drives.\n"
   considered_alternatives:
   - option_id: 1
     name: No dedicated motor cooling (stock setup)

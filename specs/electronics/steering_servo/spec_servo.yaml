@@ -25,4 +25,4 @@ spec:
       reason: Guarantees an absolutely rigid, play-free steering connection. A servo saver is completely omitted to achieve maximum accuracy.
       installation: Tighten the clamp screw and definitely fix the main screw with threadlocker (e.g. Loctite medium strength).
     transmitter_setup:
-      dual_rate: For the 100 km/h run, the 'Dual Rate' (D/R) or the steering throw (EPA) must absolutely be reduced on the remote control. Minimal steering movements are sufficient at top speed.
+      dual_rate: For the 130 km/h run, the 'Dual Rate' (D/R) or the steering throw (EPA) must absolutely be reduced on the remote control. Minimal steering movements are sufficient at top speed.

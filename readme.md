@@ -26,6 +26,8 @@ The artefacts of this repository are:
   </tbody>
 </table>
 
+The photos show the car with the parts of the manufacturers (Carten T410R kit and purchased components), not the own parts of the CAD model.
+
 ## Table of contents
 * [Latest setup drawing](#latest-setup-drawing)
 * [Speedrun chassis design](#speedrun-chassis-design)

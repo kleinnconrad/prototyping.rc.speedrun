@@ -1,15 +1,15 @@
 adr:
   id: ADR-002
-  title: Selection of the brushless motor combo for 100 km/h speedruns
+  title: Selection of the brushless motor combo for 130 km/h speedruns
   status: decided
   date: '2026-03-06'
-  context: "In order to accelerate a 1/10 touring car (Carten T410R) to 100 km/h, \nthe gearing must be very 'tall' (high wheel load > 22 %). A \nclassic 3650 motor (50 mm length) operates \nhere at its thermal \nload limit. A drivetrain is absolutely required \nthat delivers enough mechanical torque (motor size 3660) at 3S voltage \n(11.1V) and \nwhose electronic speed controller (ESC) can safely handle the high stall currents during acceleration \n(min. 120A).\n"
+  context: "In order to accelerate a 1/10 touring car (Carten T410R) to 130 km/h, \nthe gearing must be very 'tall' (high wheel load > 22 %). A \nclassic 3650 motor (50 mm length) operates \nhere at its thermal \nload limit. A drivetrain is absolutely required \nthat delivers enough mechanical torque (motor size 3660) at 3S voltage \n(11.1V) and \nwhose electronic speed controller (ESC) can safely handle the high stall currents during acceleration \n(min. 120A).\n"
   considered_alternatives:
   - option_id: 1
     name: Standard 1/10 Setup (e.g. Hobbywing 10BL120 + 3650SL 4000KV)
     type: Classic Touring Car Setup
     evaluation: The 3650 motor fits physically perfectly into the chassis. However, the short rotor lacks
-      the necessary torque for large pinions (43T/44T). At 100 km/h,
+      the necessary torque for large pinions (43T/44T). At 130 km/h,
       there is a threat of massive overheating (heat death).
   - option_id: 2
     name: Hybrid Budget Setup (Hobbywing 120A ESC + DollaTek 3660 3300KV)

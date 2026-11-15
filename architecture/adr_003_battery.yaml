@@ -1,16 +1,16 @@
 adr:
   id: ADR-003
-  title: Selection of the LiPo Battery for the 100 km/h Goal.
+  title: Selection of the LiPo Battery for the 130 km/h Goal.
   status: decided
   date: '2026-03-06'
-  context: "In order to accelerate the RC100 project to over 100 km/h, the power source must be optimally \nmatched to the 3700kV motor and the 120A ESC (Hobbywing QuicRun). \nA 2S LiPo (7.4V) would only deliver approx. 27,400 rpm, which is not sufficient for 100 km/h \nwith a normal gear ratio. Therefore, a 3S LiPo (11.1V) is absolutely necessary to \nreach the calculated ~41,000 rpm. In addition, the battery must be able to briefly \ndeliver extreme currents without dropping in voltage (voltage sag), and must be physically \nprotected in the event of a crash at high speed.\n"
+  context: "In order to accelerate the RC100 project to over 130 km/h, the power source must be optimally \nmatched to the 3700kV motor and the 120A ESC (Hobbywing QuicRun). \nA 2S LiPo (7.4V) would only deliver approx. 27,400 rpm, which is not sufficient for 130 km/h \nwith a normal gear ratio. Therefore, a 3S LiPo (11.1V) is absolutely necessary to \nreach the calculated ~41,000 rpm. In addition, the battery must be able to briefly \ndeliver extreme currents without dropping in voltage (voltage sag), and must be physically \nprotected in the event of a crash at high speed.\n"
   considered_alternatives:
   - option_id: 1
     name: Standard 2S LiPo (7.4V) / Low-C 3S LiPo (30C)
     type: Budget / Softcase
     evaluation: 2S delivers too little voltage for the speed goal. A 3S battery with only
       a 30C discharge rate will collapse under the 120A+ peak currents of the tall gearing,
-      will get hot and swell up (fire hazard). Softcases offer no crash protection at 100 km/h.
+      will get hot and swell up (fire hazard). Softcases offer no crash protection at 130 km/h.
   - option_id: 2
     name: High-End Graphene 3S LiPo (e.g. Gens Ace Redline 130C)
     type: Premium / Hardcase
@@ -24,7 +24,7 @@ adr:
       250A continuous load), which optimally covers the 120A controller. The hardcase protects the
       cells. Offers the best price-performance ratio (~ 45 €) for the project budget.
   decision: Absima GreenHorn Line V2 (3S / 5000mAh / 50C / Hardcase)
-  rationale: "The decision is made in favor of the Absima GreenHorn V2 3S LiPo. With a 50C \ndischarge rate, it offers \nenough buffer for the massive current peaks when accelerating \nthe 43T/68T gearing (pinion/spur gear). \nThe hardcase is a safety requirement for speedruns, as an impact at 100 km/h \nwould immediately destroy and ignite a softcase LiPo. The pre-assembled XT60 connector \nguarantees a \nlow contact resistance for the high currents.\n"
+  rationale: "The decision is made in favor of the Absima GreenHorn V2 3S LiPo. With a 50C \ndischarge rate, it offers \nenough buffer for the massive current peaks when accelerating \nthe 43T/68T gearing (pinion/spur gear). \nThe hardcase is a safety requirement for speedruns, as an impact at 130 km/h \nwould immediately destroy and ignite a softcase LiPo. The pre-assembled XT60 connector \nguarantees a \nlow contact resistance for the high currents.\n"
   consequences:
   - 'Chassis modification: Since 3S hardcase batteries are approx. 35mm high, the upper
     carbon battery brace in the Carten T410R must be raised with 10mm spacers and longer M3 screws.'

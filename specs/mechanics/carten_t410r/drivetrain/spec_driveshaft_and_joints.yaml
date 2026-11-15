@@ -6,17 +6,17 @@ spec:
       driveshaft:
         component: Driveshaft (Shaft)
         material: Aluminum (anodized), hollow or solid (depending on batch)
-        suitability_100kmh_3s: YES. Aluminum is better here than steel, since the lower
-          rotating mass generates fewer vibrations at approx. 26,000 RPM.
+        suitability_130kmh_3s: YES. Aluminum is better here than steel, since the lower
+          rotating mass generates fewer vibrations at approx. 26,600 RPM.
       joint_cups:
         component: Connectors (Diff-Inputs)
         material: Steel (Hardened)
-        suitability_100kmh_3s: YES. The mounts at the differential input are made of steel
+        suitability_130kmh_3s: YES. The mounts at the differential input are made of steel
           and withstand the torque of the 3S drive.
       rpm_load:
         component: Speed load
-        specification: Shaft rotates at approx. 26,000 RPM
-        suitability_100kmh_3s: Critical, but doable for the kit part, as long as
+        specification: Shaft rotates at approx. 26,600 RPM (130 km/h)
+        suitability_130kmh_3s: Critical, but doable for the kit part, as long as
           there is no imbalance.
     mandatory_durability_measures:
       centering_floating_problem:

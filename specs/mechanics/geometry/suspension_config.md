@@ -1,8 +1,8 @@
-## Chassis geometry: Toe & camber (the 100 km/h setup)
+## Chassis geometry: Toe & camber (the 130 km/h setup)
 
 
 ## Table of contents
-* [Chassis geometry: Toe & camber (the 100 km/h setup)](#chassis-geometry-toe--camber-the-100-kmh-setup)
+* [Chassis geometry: Toe & camber (the 130 km/h setup)](#chassis-geometry-toe--camber-the-130-kmh-setup)
   * [1. Toe](#1-toe)
   * [2. Camber](#2-camber)
   * [Setup plan (Carten T410R)](#setup-plan-carten-t410r)
@@ -39,7 +39,7 @@ The camber describes the angle of the wheels, **when looking at the car from the
 
 For an uncompromising speedrun (exactly straight ahead, maximum stability), the following basic setup applies:
 
-| Axle / parameter | setting | physical reason for 100 km/h |
+| Axle / parameter | setting | physical reason for 130 km/h |
 | :--- | :--- | :--- |
 | **Front axle: Toe** | **0° (neutral)** | minimization of rolling resistance when driving straight ahead. |
 | **Rear axle: Toe** | **2.5° toe-in** | increase in driving stability. Prevents the rear axle from breaking out at high speeds. (Predefined on the Carten T410R by the rear toe blocks). |

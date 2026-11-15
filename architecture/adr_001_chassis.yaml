@@ -1,16 +1,16 @@
 adr:
   id: ADR-001
-  title: Selection of the chassis platform and make-or-buy decision (100 km/h Benchmark)
+  title: Selection of the chassis platform and make-or-buy decision (130 km/h Benchmark)
   status: decided
   date: '2026-03-06'
-  context: "For the 100 km/h speedrun project, a mechanically stable basis is required. \nThe platform must withstand \nextreme loads (approx. 41,000 rpm at the motor, massive \ncentrifugal forces on the axles). \nThe fundamental architecture question (Make or Buy) compares the construction of an own budget kit (\"Make\") \n\nwith the purchase of an expensive, pre-assembled high-end competition chassis (\"Buy\"\n). \nA critical risk for 3S use are differential gears made of plastic/composite, \nwhich often cannot withstand the torque.\n"
+  context: "For the 130 km/h speedrun project, a mechanically stable basis is required. \nThe platform must withstand \nextreme loads (approx. 41,000 rpm at the motor, massive \ncentrifugal forces on the axles). \nThe fundamental architecture question (Make or Buy) compares the construction of an own budget kit (\"Make\") \n\nwith the purchase of an expensive, pre-assembled high-end competition chassis (\"Buy\"\n). \nA critical risk for 3S use are differential gears made of plastic/composite, \nwhich often cannot withstand the torque.\n"
   make_or_buy_evaluation:
     buy_option:
       description: 'Purchase of a high-end competition chassis (Benchmark: Xray X4 ''24).'
       pros:
       - Perfect mechanics and torsional stiffness (Premium Carbon).
       - Pivot-ball / active-toe suspension for highly precise setup.
-      - Risk at 3S / 100 km/h is very low.
+      - Risk at 3S / 130 km/h is very low.
       cons:
       - Very high budget required (~ 750 € just for the kit).
       - Differentials are made of plastic despite competition quality.
@@ -35,7 +35,7 @@ adr:
     type: Driveshaft (Shaft)
     price_class: ~ 150 €
     evaluation: 'Shaft drive is good, but the FRP bottom plate (fiberglass) flexes
-      too much (fluttering at 100 km/h possible). Critical: plastic differentials.'
+      too much (fluttering at 130 km/h possible). Critical: plastic differentials.'
   - option_id: 3
     name: Xpress Execute XQ2S
     type: 2-Belt
@@ -52,12 +52,12 @@ adr:
     name: Schumacher Vibe TC
     type: 2-Belt / S2 Composite
     price_class: ~ 140 €
-    evaluation: Excellent club racing chassis, but unsuitable for 100 km/h on 3S.
+    evaluation: Excellent club racing chassis, but unsuitable for 130 km/h on 3S.
       The belt drive carries the risk of skipping under extreme torque.
       The soft S2 composite (fiberglass) chassis flexes too much (risk of lifting off
       at high speed). Plastic wheel hexes cannot withstand the 3S power.
   decision: MAKE - Carten T410R
-  rationale: "The decision is made in favor of the \"Make\" option with the Carten T410R \n(~ 180 €). \nIt is the only kit in the benchmark field of this price class that \ncombines the essential requirements \nfor a 3S/100 km/h run out of the box: \n1. A stiff 2.25mm carbon bottom plate (prevents dangerous fluttering). \n2. A robust shaft drive (eliminates the risk of skipping belts). \n3. Differential gears made of sintered metal (solves the knockout criterion of shearing \nplastic diffs). \nThe massive price advantage over the Xray X4 '24 fully justifies \nthe increased manual setup effort.\n"
+  rationale: "The decision is made in favor of the \"Make\" option with the Carten T410R \n(~ 180 €). \nIt is the only kit in the benchmark field of this price class that \ncombines the essential requirements \nfor a 3S/130 km/h run out of the box: \n1. A stiff 2.25mm carbon bottom plate (prevents dangerous fluttering). \n2. A robust shaft drive (eliminates the risk of skipping belts). \n3. Differential gears made of sintered metal (solves the knockout criterion of shearing \nplastic diffs). \nThe massive price advantage over the Xray X4 '24 fully justifies \nthe increased manual setup effort.\n"
   consequences:
   - The metal differentials of the T410R must be shimmed precisely to
     guarantee zero play.
