@@ -227,59 +227,72 @@ def front_corner(p, d, c):
     bx0, bx1, r_pass, gap, t_up, z_seat = p["front_c_hub"]
     w_low, w_back, w_arm = p["front_c_hub_width"]
     kz0, kz1, r_boss, r_ring, xr0, xr1, d_lip, r_cup = p["knuckle"]
+    d_seat, t_out, t_lip, d_kp = p["knuckle_bores"]
+    xl1 = xr1 - t_out                                                     # lip: outer face (end of the outer seat)
+    xl0 = xl1 - t_lip                                                     # lip: inner face
+    xs0 = xl0 - 4.0                                                       # inner seat: the bore narrows at the bearing
     xb = bx1 - J[0]                                                       # inner face of the back plate (local)
+    xg = -r_boss - 0.7                                                    # block under the upper arm, beside the boss
     # C-hub: lug on the outer hinge pin, lower arm and back plate (chassis coordinates, between the rails
     # of the wishbone), upper arm square to the kingpin; space of the knuckle square to the kingpin
     hub = fuse(cyl_y(3.6, yc - 6.5, yc + 6.5, O[0], O[2]),
                box(bx0, O[0], yc - w_low / 2, yc + w_low / 2, O[2], J[2] - 5.0),
                box(bx0, bx1, yc - w_low / 2, yc + w_low / 2, O[2], 10.5),
                box(bx0, bx1, yc - w_back / 2, yc + w_back / 2, 10.0, z_seat),
-               K(box(bx0 - J[0], 3.5, -w_arm / 2, w_arm / 2, kz1 + gap, kz1 + gap + t_up)))
-    hub = hub.cut(K(box(xb, 30, -30, 30, kz0 - gap, kz1 + gap)))                         # space of the knuckle
+               K(box(bx0 - J[0], 3.5, -w_arm / 2, w_arm / 2, kz1 + gap, kz1 + gap + t_up)),
+               K(box(bx0 - J[0], xg, -w_arm / 2, w_arm / 2, r_ring + 1.0, kz1 + gap + 0.5)))
+    hub = hub.cut(K(box(xb, 30, -30, 30, kz0 - gap, r_ring + 1.0)))                       # space of the knuckle
+    hub = hub.cut(K(box(xg, 30, -30, 30, r_ring + 0.9, kz1 + gap)))
     hub = hub.cut(box(bx0 - 1, J[0] - 3.0, yc - 10, yc + 10, z_seat, z_seat + 10))        # seat of the camber stud
     hub = hub.cut(cyl_y(1.5, yc - 8, yc + 8, O[0], O[2]))                                  # outer hinge pin
     hub = hub.cut(cyl_x(r_pass, bx0 - 1, bx1 + 1, yc, J[2]))                              # passage of the CVD
-    hub = hub.cut(K(cyl_z(1.52, kz1 + gap - 1.0, kz1 + gap + t_up + 2.0, 0, 0)))               # kingpin, top (through)
-    hub = hub.cut(K(cyl_z(1.52, -21.0, kz0 - gap + 1.0, 0, 0)))                                # kingpin, bottom (through)
+    hub = hub.cut(K(cyl_z(1.55, kz1 + gap - 1.0, kz1 + gap + t_up + 2.0, 0, 0)))               # kingpin, top (through)
+    hub = hub.cut(K(cyl_z(1.55, -21.0, kz0 - gap + 1.0, 0, 0)))                                # kingpin, bottom (through)
     cam = c["camber"]
     hub = hub.cut(cyl_z(TAP / 2, z_seat - 6.0, z_seat + 1, cam[0], cam[1]))               # thread M3, camber stud
     hub = hub.cut(cyl_z(TAP / 2, O[2] - 5, O[2], O[0], yc))                               # thread M3, grub screw
-    # knuckle (kingpin frame) as the T410R knuckle (photos of the owner, manual step 15): ring for 2 bearings
-    # 5x10x4, pressed in from both ends against a lip in the middle; kingpin bosses above and below the ring on
-    # the kingpin axis; flat steering arm in the middle plane of the axle: wide root along the ring, diagonal
-    # toward the inner end of the ring, end tab straight back with 2 holes; gussets between the arm and the
+    # knuckle (kingpin frame) as the T410R knuckle (measured by the owner, manual step 15): ring for 2 bearings
+    # 5x10x4 from the kingpin axis outward, pressed in from both ends against a lip; from the inner end a wider
+    # bore around the joint cup up to the inner bearing; kingpin bosses above and below the inner end of the ring
+    # with the bores for the kingpin set screws; flat steering arm in the middle plane of the axle: wide root along
+    # the ring, diagonal to the end tab with 2 holes inboard of the kingpin axis; gussets between the arm and the
     # ring at the bosses; ball stud on top of the arm (as the original)
-    sax, say, t_arm, t_web, d_hole2, z_arm = p["steering_arm_ball"]
+    sax, say, t_arm, t_web, d_hole2, z_arm, w_tab = p["steering_arm_ball"]
+    wt = w_tab / 2
     sg = c["outw"]                                                        # toward the middle of the car along y: -sg
     kb_l = np.array([sax - J[0], say * sg, z_arm + t_arm / 2 + p["ball_offset"]])
     bx_, by_ = kb_l[0], kb_l[1]
     h2 = np.array([bx_, by_ + d_hole2 * sg])                              # second hole, toward the ring
     ay0, yt = -1.0 * sg, h2[1] + 3.0 * sg                                 # root inside the ring, start of the tab
-    outline = [(xr0 + 0.3, ay0), (xr1 - 0.3, ay0), (bx_ + 3.5, yt), (bx_ + 3.5, by_), (bx_ - 3.5, by_), (bx_ - 3.5, yt),
+    outline = [(xr0 + 0.3, ay0), (xr1 - 0.3, ay0), (bx_ + wt, yt), (bx_ + wt, by_), (bx_ - wt, by_), (bx_ - wt, yt),
                (xr0 + 0.6, -8.5 * sg)]                # inner edge straight back near the kingpin: clear of the C-hub
     a0, a1 = z_arm - t_arm / 2, z_arm + t_arm / 2
-    arm = fuse(prism_z(outline, a0, a1), cyl_z(3.5, a0, a1, bx_, by_))
+    arm = fuse(prism_z(outline, a0, a1), cyl_z(wt, a0, a1, bx_, by_))
     zw = min(t_web / 2, math.sqrt(r_ring ** 2 - 1.0) - 0.1)
     web = cq.Workplane("YZ").workplane(offset=xr0).polyline(
         [(ay0, z_arm - zw), (ay0, z_arm + zw), (-10.0 * sg, a1), (-10.0 * sg, a0)]).close().extrude(6.0).val()
     web = web.intersect(prism_z(outline, z_arm - t_web, z_arm + t_web))      # gussets at the bosses
     knu = fuse(cyl_x(r_ring, xr0, xr1, 0, 0), cyl_z(r_boss, kz0, kz1, 0, 0), arm, web)
-    knu = knu.cut(cyl_x(r_cup, -10.0, 4.5, 0, 0))                                        # around the joint cup
-    knu = knu.cut(cyl_x(5.0, 4.5, 9.0, 0, 0))                                            # seat of the inner bearing
-    knu = knu.cut(cyl_x(d_lip / 2, 8.9, 10.1, 0, 0))                                     # lip between the bearings
-    knu = knu.cut(cyl_x(5.0, 10.0, xr1 + 1.0, 0, 0))                                     # seat of the outer bearing
-    zb = r_cup + 0.8                                                                     # end of the kingpin bores
-    knu = knu.cut(cyl_z(1.55, kz0 - 1, -zb, 0, 0)).cut(cyl_z(1.55, zb, kz1 + 1, 0, 0))  # kingpins (the knuckle turns)
+    knu = knu.cut(cyl_x(r_cup, -10.0, xs0, 0, 0))                                        # entry bore around the joint cup
+    knu = knu.cut(cyl_x(d_seat / 2, xs0 - 0.1, xl0, 0, 0))                               # seat of the inner bearing
+    knu = knu.cut(cyl_x(d_lip / 2, xl0 - 0.1, xl1 + 0.1, 0, 0))                          # lip between the bearings
+    knu = knu.cut(cyl_x(d_seat / 2, xl1, xr1 + 1.0, 0, 0))                               # seat of the outer bearing
+    zb = r_cup - 0.5                                                                     # bores open into the entry bore
+    knu = knu.cut(cyl_z(d_kp / 2, kz0 - 1, -zb, 0, 0)).cut(cyl_z(d_kp / 2, zb, kz1 + 1, 0, 0))   # kingpin set screws
     for hx, hy in ((bx_, by_), tuple(h2)):
         knu = knu.cut(cyl_z(TAP / 2, a0 - 1, a1 + 1, hx, hy))                            # threads M3, ball stud
-    pins = cq.Compound.makeCompound([K(cyl_z(1.5, -zb - 8.1, -zb - 0.1, 0, 0)),                # 3x8, from below
-                                     K(cyl_z(1.5, zb + 0.1, zb + 6.1, 0, 0))])                 # 3x6, from the top
+    # kingpins: set screws M3x8 threaded into the bosses (bores 2.7, thread formed by the screw, as the original);
+    # they turn with the knuckle in the bores 3.1 of the C-hub (modelled with the bore diameter of the knuckle)
+    zs = kz1 - 4.3                                                                       # 4.3 of thread in the boss
+    pins = cq.Compound.makeCompound([K(cyl_z(d_kp / 2 - 0.001, -zs - 8.0, -zs, 0, 0)),          # from below
+                                     K(cyl_z(d_kp / 2 - 0.001, zs, zs + 8.0, 0, 0))])           # from the top
     kb = J + R @ kb_l
     c["kb"] = kb
     hinge = cyl_y(1.5, yc - 13, yc + 13, O[0], O[2])
     parts = {"C-hub": ("upright", hub.clean()), "steering knuckle": ("upright", K(knu.clean())), "kingpins": ("axle", pins),
              "outer hinge pin 3x26": ("axle", hinge)}
-    parts.update(axle_group(p, d, J, np.array([1.0, 0, 0]), (J[0] + 5.0, J[0] + 10.0), J[0] + 15.5, p["hex_hub"][1]))
+    parts.update(axle_group(p, d, J, np.array([1.0, 0, 0]), (J[0] + xs0, J[0] + xl1), J[0] + xr1 + 0.5, p["hex_hub"][1],
+                            shoulder=J[0] + xs0 - 0.1))
     parts["ball stud of the steering arm"] = ("link", stud(kb, kd, p["ball_offset"], t_arm))            # on top
     return parts, J.copy(), kb
 
@@ -316,15 +329,18 @@ def steering_lock(p, c, parts, fixed):
     return res
 
 
-def axle_group(p, d, joint, ax_dir, bearings, hub_x0, hub_w):
+def axle_group(p, d, joint, ax_dir, bearings, hub_x0, hub_w, shoulder=None):
     """Axle with the joint cup, 2 bearings 5x10x4, hex hub with pin and grub screw thread, along ax_dir
-    from the joint centre (positions as x along the axle relative to x = 0 of the front axle frame)."""
+    from the joint centre (positions as x along the axle relative to x = 0 of the front axle frame).
+    shoulder: end of a shoulder 6.5 from the joint cup to the inner race of the inner bearing (front)."""
     ad, thr, cup_d, cup_l = p["axle"]
     hex_af = p["hex_hub"][0]
     pin_d = p["hex_hub"][3]
     j = joint[0]
     a = fuse(cyl_x(cup_d / 2, j - 4.5, j + 4.0, 0, 0), cyl_x(ad / 2, j + 3.9, hub_x0 + hub_w + 0.5, 0, 0),
              cyl_x(thr / 2, hub_x0 + hub_w + 0.4, hub_x0 + hub_w + 5.5, 0, 0))
+    if shoulder is not None:
+        a = fuse(a, cyl_x(3.25, j + 3.9, shoulder, 0, 0))                                 # shoulder on the inner race
     a = a.cut(cyl_x(3.3, j - 5, j + 3.3, 0, 0)).cut(box(j - 5, j + 3.3, -1.05, 1.05, -6, 6))   # bore and slots
     xp = hub_x0 + 2.0
     a = a.cut(cyl_z(pin_d / 2, -3, 3, xp, 0))
@@ -881,7 +897,7 @@ def drawing(parts, info, lock, path=DRAWING):
     ax = fig.add_axes(row([0.38, 0.04, 0.3, 0.42]))
     panel(ax, (45, yc - 20, 0, 100, yc + 14, 42), iso_basis(-60, 25), keep_f, 0.8)
     ax.set_title("Front right corner, 3D view: C-hub (orange), knuckle with steering arm,\n"
-                 "kingpins 3x8 (from below) and 3x6 (from the top), axle, hex hub", fontsize=9.5, loc="left")
+                 "kingpins (set screws M3x8 in the knuckle), axle, hex hub", fontsize=9.5, loc="left")
     # notes
     fmt = lambda v: f"{v:g} deg" + (" or more (limit of the check)" if v >= 45 else "")
     notes = [f"Free steering angle of the knuckle (check, step 2.5 deg): {fmt(lock['steering arm toward the middle'])} "
