@@ -892,7 +892,7 @@ The letters are shown in the drawing and in the measurement sheet `parts/parts_m
 | G | Inner hinge pin to the inner cross bar at the end of the notch (start) | 5.6 | 14.0 | Caliper |
 | H | Droop screw bosses: distance of the axis from the axis of the inner hinge pin | 7.3 | 7.0 | Caliper |
 | I | Droop screw bosses: distance of the axis from the middle of the arm | 9.8 | 10.0 | Caliper |
-| J | Inner hinge pin to outer hinge pin, axis to axis (outer edges minus 4.3 mm) | 48.7 | 50.7 | Caliper |
+| J | Inner hinge pin to outer hinge pin, axis to axis (front: outer edges minus 4.3 mm; rear: 61.5 mm from end to end minus 2 x 3.6 mm, second measurement of the owner) | 48.7 | 54.3 | Caliper |
 | K | Bore of the outer lugs | 4.3 | 4.3 | Caliper |
 | L | Outer diameter of the outer lugs | 7.2 | 7.2 | Caliper |
 | M | Length of one outer lug along the outer hinge pin | 5.8 | 5.5 | Caliper |
@@ -960,7 +960,7 @@ All files are stored in the directory `/parts/camber_link` and are generated wit
 | Item | Model | Source |
 |:---|:---|:---|
 | Ride height | 10 mm front, 15 mm rear: axle 22.0 mm and 17.0 mm above the bottom face of the chassis plate | Setup sheet 4 |
-| Wheel centres | x = ±80 mm (overall width 190 mm with tyres of 30 mm), wheel radius 32 mm; wheels not modelled. Equal track front and rear: the outer faces of the hex hubs lie at x = ±90.2 mm at both ends; the rear hex hubs are 1 mm wider (7 mm instead of 6 mm), so the rear gains 2 mm of track as on the car of the owner (overall width: see [open points](#running-gear)) | Owner, `spec_tires.yaml` |
+| Wheel centres | x = ±80 mm (overall width 190 mm with tyres of 30 mm), wheel radius 32 mm; wheels not modelled. Outer faces of the hex hubs: front x = ±90.2 mm, rear x = ±86.9 mm (the rear hex hubs are 1 mm wider, 7 mm instead of 6 mm, so the rear gains 2 mm of track as on the car of the owner). Front and rear track should be equal (owner): see [open points](#running-gear) | Owner, `spec_tires.yaml` |
 | Wishbones | Horizontal at this ride height: inner and outer hinge pins 6.6 mm above the bottom face of the chassis plate; each arm is used on both sides (flipped, the shock plate on rail A faces the outer end of the car) | Owner, wishbones |
 | Caster | 10 degrees at the front, in the C-hub | Setup sheet 4 |
 | Rear toe | 2.33 degrees toe-in from the pivot blocks | Pivot blocks |
@@ -976,7 +976,7 @@ All files are stored in the directory `/parts/camber_link` and are generated wit
 
 **Rear corner**
 
-* Hub carrier on the outer hinge pin 3x26 between 2 spacers 3x7x3 (manual step 18), built in the frame of the rear wishbone (toe from the pivot blocks): bearing housing (tube, 19 mm long) for 2 bearings 5x10x4; the tube with the bearings, the axle and the outer joint of the CVD drive shaft is offset 5.56 mm outward from the lug on the hinge pin, so that the outer face of the hex hub lines up with the front one (the length of the tube and the plunge of the joint are unchanged); the web and a sloped gusset from the inner end of the tube carry the seat of the camber stud, thread M3 on top for the outer ball stud of the camber link, grub screw M3 on the hinge pin.
+* Hub carrier as the original part (photos of the owner), on the outer hinge pin 3x26 between 2 spacers 3x7x3 (manual step 18), built in the frame of the rear wishbone (toe from the pivot blocks): tube (bearing housing) 10 mm long and approx. 14.6 mm in diameter, its outer end flush with the lug on the hinge pin (owner); the 2 bearings 5x10x4 sit in the ends of the tube against a lip of 2.0 mm. A web on the inner end of the tube and a sloped arm carry the seat of the camber stud (thread M3 on top for the outer ball stud of the camber link; the original part has 2 holes in the top tab); grub screw M3 on the hinge pin.
 
 **Axles, hex hubs and CVD drive shafts**
 
@@ -984,7 +984,7 @@ All files are stored in the directory `/parts/camber_link` and are generated wit
 |:---|:---|:---|
 | Axles | 5 mm in the bearings 5x10x4, joint cup 10 mm (owner) with 2 slots 2.1 mm for the cross pin of the CVD drive shaft, thread M4 for the wheel nut | Manual (bearings, M4), design |
 | Hex hubs | 12 mm across the flats, 6 mm (front) and 7 mm (rear) wide, pin 2x10 through the axle in a slot of the hub, grub screw M3 | `spec_tires.yaml`, manual |
-| CVD drive shafts | Bone 4 mm with balls 6 mm, cross pins 2x11 in the slots of the diff outdrives and 2x8 in the joint cups of the axles; centre to centre of the joints: front 43.6 mm, rear 45.5 mm | Design |
+| CVD drive shafts | Bone 4 mm with balls 6 mm, cross pins 2x11 in the slots of the diff outdrives and 2x8 in the joint cups of the axles; centre to centre of the joints: front 43.6 mm, rear 41.1 mm | Design |
 
 **Steering and servo mounting (as the T410R)**
 
@@ -1052,7 +1052,8 @@ All files are stored in the directory `/running_gear` and are generated with `ge
 * 3D print verification of the C-hub, the knuckle, the hub carrier, the steering and the servo mount.
 * C-hub and knuckle: 3D print verification with the guide sleeves (planned by the owner). The lower guide sleeve deviates from the original part (see kingpins).
 * Steering knuckle: open dimensions of the original part K11, K14, K16 and K19 (measurement sheet `running_gear/front_corner/steering_knuckle_measurement_sheet.pdf`).
-* Overall width: the outer faces of the hex hubs lie at x = ±90.2 mm at both ends (equal track). With the same wheels the overall width is approx. 193.4 mm instead of 190 mm (the measured knuckle ring places the front hex hubs further outward than assumed before). Options: wheels with approx. 1.7 mm more offset, or the kingpin axis further inward (C-hub, camber stud and CVD drive shaft change).
+* Track: with the measured rear wishbone (61.5 mm end to end) and the measured hub carrier (tube 10 mm, flush with the lug) the rear hex hubs end at x = ±86.9 mm, the front ones at x = ±90.2 mm: the front is 3.35 mm per side wider than the rear. The front kingpin position (x = 67 mm) is a design value. With the kingpin approx. 3.35 mm further inward (x = 63.65 mm) the track is equal; the kingpin then lies 5.75 mm beside the outer hinge pin, so the lower guide sleeve and a screw from below fit as the original. The front wishbone length (48.7 mm) was measured the same way as the first rear value: a measurement from end to end (expected 55.9 mm) confirms it.
+* Height of the rear hub carrier: in the photo along the axle the axle lies approx. 17 mm above the hinge pin (scaled with the bearing seat 10 mm); in the model 10.4 mm (axle 17.0 mm from the ride height of 15 mm, hinge pin 6.6 mm with the arm horizontal). A caliper value (axis of the bearing seat to the axis of the hinge pin) confirms or corrects it.
 * Servo travel: with the original position of the steering ball the servo turns approx. 50 degrees for 25 degrees of the inner wheel (horn 10 mm). Extended end points in the transmitter or a longer horn (12.5 mm: approx. 37 degrees).
 * Servo height: on the car of the owner the servo hangs approx. 1 mm above the chassis plate (photos), in the model 4.5 mm. A lower servo needs a longer horn (approx. 13.5 mm) and moves the servo approx. 3 mm toward End A, because the screw H21 then lies below the servo ear.
 * Drop links of the sway bars: the length is assumed with the rod ends of the camber links (21 mm between the ball centres); a measurement on the car confirms the height of the ball ends.
