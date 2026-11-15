@@ -363,18 +363,24 @@ def axle_group(p, d, joint, ax_dir, bearings, hub_x0, hub_w, shoulder=None, cup_
 # ------------------------------------------------------------------ rear corner
 def rear_corner(p, d, c):
     """Rear right corner (End B): hub carrier in the frame of the rear arm (origin on the outer hinge pin,
-    x along the arm, y along the pin: toe), outer hinge pin, spacers 3x7x3, axle group."""
+    x along the arm, y along the pin: toe), outer hinge pin, spacers 3x7x3, axle group. The outer faces of the
+    rear hex hubs line up with the front ones (equal track, owner); the rear hex hubs are 1 mm wider."""
     O, ex, ey = c["O"], c["ex"], c["ey"]
     za = c["axle_z"] - O[2]
     w0, w1, ztop = p["rear_carrier"]
     zt = ztop - O[2]
     R = np.column_stack([ex, ey, [0, 0, 1.0]])
     cam = np.linalg.solve(R, c["camber"] - O)
-    car = fuse(cyl_y(3.6, -4.6, 4.6, 0, 0), box(-3.0, 3.0, -4.0, 4.0, 0, za - 5.0), cyl_x(6.5, -13.5, 5.5, 0, za),
+    x_face = p["kingpin_x"] + p["knuckle"][5] + 0.5 + p["hex_hub"][1]                     # outer face, front hex hub
+    hub1 = (x_face - O[0]) / ex[0]                                                        # outer face, rear hex hub
+    sh = hub1 - p["hex_hub"][2] - 5.5                                                     # shift of bearings and hub
+    rear_corner.shift = sh
+    car = fuse(cyl_y(3.6, -4.6, 4.6, 0, 0), box(-3.0, 3.0, -4.0, 4.0, 0, za - 5.0), cyl_x(6.5, -13.5, 5.5 + sh, 0, za),
                box(w0, w1, -4.0, 4.0, za, zt), box(cam[0] - 3.5, w1 + 0.5, -4.0, 4.0, zt - 3.5, zt))
     car = car.cut(cyl_y(1.5, -6, 6, 0, 0))
-    car = car.cut(cyl_x(5.6, -15, -4.4, 0, za))                                           # space of the joint cup
-    car = car.cut(cyl_x(5.0, -4.0, 0.05, 0, za)).cut(cyl_x(5.0, 0.95, 6, 0, za)).cut(cyl_x(3.5, -5, 6, 0, za))
+    car = car.cut(cyl_x(5.6, -15, -4.4 + sh, 0, za))                                      # space of the joint cup
+    car = car.cut(cyl_x(5.0, -4.0 + sh, 0.05 + sh, 0, za)).cut(cyl_x(5.0, 0.95 + sh, 6 + sh, 0, za))
+    car = car.cut(cyl_x(3.5, -5 + sh, 6 + sh, 0, za))
     car = car.cut(cyl_z(TAP / 2, zt - 4.5, zt + 1, cam[0], cam[1]))                        # thread M3, camber stud
     car = car.cut(cyl_z(TAP / 2, -5, 0, 0, 0))                                            # thread M3, grub pin
     spacers = cq.Compound.makeCompound([cyl_y(3.5, s0, s0 + 3.0, 0, 0).cut(cyl_y(1.5, s0 - 1, s0 + 4, 0, 0))
@@ -383,7 +389,8 @@ def rear_corner(p, d, c):
     to_w = lambda s: place(s, R, O)
     parts = {"hub carrier": ("upright", to_w(car.clean())), "spacers 3x7x3": ("axle", to_w(spacers)),
              "outer hinge pin 3x26": ("axle", to_w(hinge))}
-    ag = axle_group(p, d, np.array([-9.0, 0, 0]), np.array([1.0, 0, 0]), (-4.0, 1.0), 5.5, p["hex_hub"][2])
+    ag = axle_group(p, d, np.array([-9.0, 0, 0]), np.array([1.0, 0, 0]), (-4.0 + sh, 1.0 + sh), 5.5 + sh, p["hex_hub"][2],
+                    shoulder=-4.1 + sh, cup_end=-4.7 + sh)                       # cup and shoulder up to the bearing
     for k, (kind, s) in ag.items():
         parts[k] = (kind, to_w(s.translate(cq.Vector(0, 0, za))))
     return parts, O + R @ np.array([-9.0, 0, za])

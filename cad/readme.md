@@ -960,7 +960,7 @@ All files are stored in the directory `/parts/camber_link` and are generated wit
 | Item | Model | Source |
 |:---|:---|:---|
 | Ride height | 10 mm front, 15 mm rear: axle 22.0 mm and 17.0 mm above the bottom face of the chassis plate | Setup sheet 4 |
-| Wheel centres | x = ±80 mm (overall width 190 mm with tyres of 30 mm), wheel radius 32 mm; wheels not modelled. Front: the measured knuckle places the hex hubs 1.7 mm further outward (see [open points](#running-gear)) | Owner, `spec_tires.yaml` |
+| Wheel centres | x = ±80 mm (overall width 190 mm with tyres of 30 mm), wheel radius 32 mm; wheels not modelled. Equal track front and rear: the outer faces of the hex hubs lie at x = ±90.2 mm at both ends; the rear hex hubs are 1 mm wider (7 mm instead of 6 mm), so the rear gains 2 mm of track as on the car of the owner (overall width: see [open points](#running-gear)) | Owner, `spec_tires.yaml` |
 | Wishbones | Horizontal at this ride height: inner and outer hinge pins 6.6 mm above the bottom face of the chassis plate; each arm is used on both sides (flipped, the shock plate on rail A faces the outer end of the car) | Owner, wishbones |
 | Caster | 10 degrees at the front, in the C-hub | Setup sheet 4 |
 | Rear toe | 2.33 degrees toe-in from the pivot blocks | Pivot blocks |
@@ -976,7 +976,7 @@ All files are stored in the directory `/parts/camber_link` and are generated wit
 
 **Rear corner**
 
-* Hub carrier on the outer hinge pin 3x26 between 2 spacers 3x7x3 (manual step 18), built in the frame of the rear wishbone (toe from the pivot blocks): bearing housing for 2 bearings 5x10x4, thread M3 on top for the outer ball stud of the camber link, grub screw M3 on the hinge pin.
+* Hub carrier on the outer hinge pin 3x26 between 2 spacers 3x7x3 (manual step 18), built in the frame of the rear wishbone (toe from the pivot blocks): bearing housing for 2 bearings 5x10x4 (bearings and hex hub positioned so that the outer face of the hex hub lines up with the front one; the joint cup of the axle reaches up to 0.6 mm before the inner bearing, a shoulder 6.5 mm rests on its inner race), thread M3 on top for the outer ball stud of the camber link, grub screw M3 on the hinge pin.
 
 **Axles, hex hubs and CVD drive shafts**
 
@@ -1052,7 +1052,7 @@ All files are stored in the directory `/running_gear` and are generated with `ge
 * 3D print verification of the C-hub, the knuckle, the hub carrier, the steering and the servo mount.
 * C-hub: the kingpin bores (3.1 mm) need to be adjusted to an appropriate guide sleeve for the mount of the steering knuckle (owner).
 * Steering knuckle: open dimensions of the original part K11, K14, K16 and K19 (measurement sheet `running_gear/front_corner/steering_knuckle_measurement_sheet.pdf`).
-* Front width: with the measured ring (16.7 mm from the kingpin axis) the front hex hubs lie 1.7 mm further outward than before; with the same wheels the overall width at the front grows from 190 mm to approx. 193.4 mm. Options: wheels with 1.7 mm more offset at the front, or the kingpin axis 1.7 mm further inward (C-hub, camber stud and CVD drive shaft change).
+* Overall width: the outer faces of the hex hubs lie at x = ±90.2 mm at both ends (equal track). With the same wheels the overall width is approx. 193.4 mm instead of 190 mm (the measured knuckle ring places the front hex hubs further outward than assumed before). Options: wheels with approx. 1.7 mm more offset, or the kingpin axis further inward (C-hub, camber stud and CVD drive shaft change).
 * Servo travel: with the original position of the steering ball the servo turns approx. 50 degrees for 25 degrees of the inner wheel (horn 10 mm). Extended end points in the transmitter or a longer horn (12.5 mm: approx. 37 degrees).
 * Servo height: on the car of the owner the servo hangs approx. 1 mm above the chassis plate (photos), in the model 4.5 mm. A lower servo needs a longer horn (approx. 13.5 mm) and moves the servo approx. 3 mm toward End A, because the screw H21 then lies below the servo ear.
 * Drop links of the sway bars: the length is assumed with the rod ends of the camber links (21 mm between the ball centres); a measurement on the car confirms the height of the ball ends.
