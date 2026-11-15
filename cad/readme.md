@@ -27,7 +27,7 @@
 * [Speedrun shock towers](#speedrun-shock-towers)
   * [Design and fit of the speedrun shock towers](#design-and-fit-of-the-speedrun-shock-towers)
   * [Files and open points of the speedrun shock towers](#files-and-open-points-of-the-speedrun-shock-towers)
-* [Re-engineered parts](#re-engineered-parts)
+* [Further own parts](#further-own-parts)
   * [Pivot blocks](#pivot-blocks)
   * [Centre driveshaft and drive line](#centre-driveshaft-and-drive-line)
   * [Differentials](#differentials)
@@ -51,7 +51,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/top_brace_speedrun`**: New design of the top brace that matches the bulkheads of this project (STEP, STL, DXF, PDF templates, geometry data, hole table, test print STL files)
 * **`/bulkhead`**: CAD data of the bulkheads (gear boxes): lower bulkhead, upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets).
 * **`/shock_tower`**: New design of the front and the rear shock tower that match the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
-* **`/parts`**: Drive line, pivot blocks, wishbones and camber links: own design of the owner, re-engineered from the T410R.
+* **`/parts`**: Drive line, pivot blocks, wishbones and camber links: own design of the owner, partly based on the T410R.
   * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file).
   * **`/driveshaft`**: Centre driveshaft with the fixed metal pins and the cup joints (STEP, STL, parameter file of all drive line parts).
   * **`/rear_drive`**: Rear pinion shaft with flange, pinion 17T, spur gear 72T, bearing 5x10x4 and retaining pin (STEP, STL).
@@ -62,13 +62,13 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file).
   * **`/camber_link`**: Camber links: turnbuckle, rod end, ball stud, assembled front and rear link (STEP, STL, parameter file).
 * **`/running_gear`**: parameter file of the running gear and one folder per group (STEP, STL): `/front_corner` (C-hubs with caster, steering knuckles, axles and hex hubs at End A), `/rear_corner` (hub carriers, axles and hex hubs at End B), `/cvd_drive_shafts`, `/steering` (posts, bellcranks, bridge, spacers, servo horn), `/servo_mount` and `/sway_bars`.
-* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the re-engineered parts: pivot blocks, drive line, wishbones, camber links and running gear (STEP).
+* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the further own parts: pivot blocks, drive line, wishbones, camber links and running gear (STEP).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
 
 ## Speedrun chassis
-The speedrun chassis combines the parts that are designed in this project for speeds over 130 km/h; the assembly completes them with the re-engineered parts (drive line, wishbones, running gear). The parts share their interfaces: the bulkheads are mounted on the hole patterns of the chassis plate, the top brace on the contact faces of both upper bulkheads, the shock towers on the shock tower walls of the upper bulkheads (front tower at End A, rear tower at End B).
+The speedrun chassis combines the parts that are designed in this project for speeds over 130 km/h; the assembly completes them with the further own parts (drive line, wishbones, running gear). The parts share their interfaces: the bulkheads are mounted on the hole patterns of the chassis plate, the top brace on the contact faces of both upper bulkheads, the shock towers on the shock tower walls of the upper bulkheads (front tower at End A, rear tower at End B).
 
 ![Speedrun chassis: complete build with the drive line, the wishbones and the running gear](../photos/cad_speedrun_chassis_assembly.png)
 
@@ -83,7 +83,7 @@ The speedrun chassis combines the parts that are designed in this project for sp
 | [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
 | **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace and shock towers carbon | **417 g** |
 
-Re-engineered parts (own design of the owner, re-engineered from the T410R, not in the mass total):
+Further own parts (own design of the owner, partly based on the T410R, not in the mass total):
 
 | Part | Quantity | Directory | Status |
 |:---|---:|:---|:---|
@@ -116,8 +116,8 @@ Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{g
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
 
 ### Assembly file
-* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and 173 re-engineered parts (pivot blocks, wishbones with hinge pins, camber links, centre driveshaft with cup joints, front and rear drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool, 4 diff outdrives, and the running gear: C-hubs, knuckles, hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the floating servo mount, dampers, sway bars with drop links) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
-* The re-engineered parts are not in the mass total (see [re-engineered parts](#re-engineered-parts)).
+* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and 173 further own parts (pivot blocks, wishbones with hinge pins, camber links, centre driveshaft with cup joints, front and rear drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool, 4 diff outdrives, and the running gear: C-hubs, knuckles, hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the floating servo mount, dampers, sway bars with drop links) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
+* The further own parts are not in the mass total (see [further own parts](#further-own-parts)).
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [pivot blocks](#pivot-blocks)) and 2.16 mm³ between the lower bulkhead at End A and each front wishbone (inner lugs 0.14 mm into the side face, see [wishbones](#wishbones)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
 * The image shows an overall view with an inset of the differential at End B in section (with the pinion), a side view, a top view and three close-ups:
@@ -482,7 +482,7 @@ The lower part has the same design as the upper part: the footprint of the upper
 | Upper bulkhead | 4 holes in the shock tower wall | M3 | Through (6.0 mm) | Through | M3x8 button head through the shock tower |
 
 * All other holes of the speedrun parts are clearance holes Ø3.2 mm without a thread: chassis plate (countersunk from below), top brace, shock towers, and the holes of the upper bulkhead for the screws into the lower bulkhead.
-* Re-engineered parts: the motor mount has M3 threads (tap drill 2.5 mm, 7.0 mm deep) for the screws from below through the holes H09 and H10 and for the 2 screws M3x18 of the cap; the flange of the rear pinion shaft has 4 M3 threads for the screws of the spur gear; the pivot blocks have M3 threads for the countersunk screws from below; the wishbones have M3 threads for the ball studs and M4 threads for the droop screws.
+* Further own parts: the motor mount has M3 threads (tap drill 2.5 mm, 7.0 mm deep) for the screws from below through the holes H09 and H10 and for the 2 screws M3x18 of the cap; the flange of the rear pinion shaft has 4 M3 threads for the screws of the spur gear; the pivot blocks have M3 threads for the countersunk screws from below; the wishbones have M3 threads for the ball studs and M4 threads for the droop screws.
 
 **Edges of the outer shape**
 
@@ -674,12 +674,12 @@ Both shock towers are verified by the owner. The following points are not requir
 * Rod ends of the camber links: size and position behind the towers are not measured (the zone with a radius of 4.0 mm is an estimate). It sets the width of the shock tower wall of the upper bulkhead (parameters `rod_end_clearance_r` of the towers and `wall_half_width` of the upper bulkhead).
 * Holes of the original towers: the conversion of the measurements assumes holes of 3.2 mm.
 
-## Re-engineered parts
-The drive line, the pivot blocks, the wishbones, the camber links and the running gear are the owner's own design, re-engineered from the Carten T410R: the interfaces (bearings, gears, screws) follow the T410R, the shapes deviate from the original parts where the function or the speedrun chassis requires it. The assembly of the speedrun chassis contains them, so that the space around the speedrun parts and the function of the build can be checked. Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
+## Further own parts
+The drive line, the pivot blocks, the wishbones, the camber links and the running gear are the owner's own design. Some of them are based on parts of the Carten T410R (for example the interfaces: bearings, gears, screws), others deviate strongly from them (for example the C-hubs and the steering knuckles). The assembly of the speedrun chassis contains them, so that the space around the speedrun parts and the function of the build can be checked. Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
 
 ### Pivot blocks
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** Pivot blocks of the speedrun chassis (own design, re-engineered from the T410R). The pivot blocks hold the hinge pins of the wishbones and are screwed to the chassis plate from below (countersunk screws M3).
+* **Description:** Pivot blocks of the speedrun chassis (own design, partly based on the T410R). The pivot blocks hold the hinge pins of the wishbones and are screwed to the chassis plate from below (countersunk screws M3).
 * **Status:** $\color{green}\checkmark$ Verified with a 3D printed prototype of the owner (bores 5.0 mm for the hinge pins, distances of the bores 44.6 and 41.4 mm confirmed). The dimensions are measurements of the owner, the distances of the mounting holes are taken from the hole pattern of the speedrun chassis plate, the lengths of the shoulders are estimates from photos.
 
 ![Pivot blocks: sections and top views](../photos/cad_pivot_blocks_drawing.png)
@@ -807,7 +807,7 @@ All files are stored in the directory `/parts` and are generated with `generate_
 | `driveshaft/driveshaft_parameters.json` | All dimensions of these parts, each with its source and a note (JSON) |
 
 ### Differentials
-* **Description:** Models of the differential at End B (rear) with the ring gear 42T, the inner gears, the shims, the bearings and the outdrives, and of the spool at End A (front, owner: a spool is installed) with the same ring gear, bearings and outdrives. Own design, re-engineered from the T410R.
+* **Description:** Models of the differential at End B (rear) with the ring gear 42T, the inner gears, the shims, the bearings and the outdrives, and of the spool at End A (front, owner: a spool is installed) with the same ring gear, bearings and outdrives. Own design, partly based on the T410R.
 * **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification. Main dimensions and the design of the inner parts from the owner (measurements, photos, description), the position from the verified bulkhead.
 
 ![Differential: complete with the pinion, section, open case, exploded view; spool](../photos/cad_differential_drawing.png)
@@ -844,7 +844,7 @@ All files are stored in the directory `/parts/diff` and are generated with `gene
 | `bearing_10x15x4` | Bearing of the differential: along x from x = 0 to 4.0 mm |
 
 ### Wishbones
-* **Description:** Lower wishbones (suspension arms) of the speedrun chassis (own design, re-engineered from the T410R) with the inner hinge pins 3 x 42 mm. The manual (step 7 and parts list "Arms (F/R)") and the photos of the owner show two different arms: 2 front arms and 2 rear arms. There is no left or right arm (owner): each arm is used on both sides of its axle, flipped so that the shock plate on rail A faces the outer end of the car.
+* **Description:** Lower wishbones (suspension arms) of the speedrun chassis (own design, partly based on the T410R) with the inner hinge pins 3 x 42 mm. The manual (step 7 and parts list "Arms (F/R)") and the photos of the owner show two different arms: 2 front arms and 2 rear arms. There is no left or right arm (owner): each arm is used on both sides of its axle, flipped so that the shock plate on rail A faces the outer end of the car.
 * **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification (front and rear wishbone); inner hinge pins: $\color{red}\times$ Completely unqualified. The main dimensions are caliper measurements of the owner (measurement sheet). The positions of the shock plate and of the holes of the ball studs are estimates from the photos (see the measurement table below).
 
 ![Wishbones: plan views, views along the hinge pin and the letters of the measurements](../photos/cad_wishbones_drawing.png)
@@ -920,7 +920,7 @@ All files are stored in the directory `/parts/wishbone`. They are generated with
 | `wishbone_parameters.json` | JSON | All dimensions, each with its source, the letter of the measurement and a note |
 
 ### Camber links
-* **Description:** Models of the 4 camber links (upper links) of the speedrun chassis (own design, re-engineered from the T410R): turnbuckle M3x37 with a rod end on each end, on ball studs (manual page 05 step 4, "C front upper" and "D rear upper", mounted in step 21).
+* **Description:** Models of the 4 camber links (upper links) of the speedrun chassis (own design, partly based on the T410R): turnbuckle M3x37 with a rod end on each end, on ball studs (manual page 05 step 4, "C front upper" and "D rear upper", mounted in step 21).
 * **Status:** $\color{red}\times$ Completely unqualified. The gaps between the rod ends are from the manual; the dimensions of the rod ends and the ball studs are assumptions, the outer ball studs are screwed into the C-hubs and hub carriers of the [running gear](#running-gear).
 
 ![Camber links: front and rear link with the gap of the manual, section through the rod end on the ball](../photos/cad_camber_links_drawing.png)
@@ -950,7 +950,7 @@ All files are stored in the directory `/parts/camber_link` and are generated wit
 
 ### Running gear
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** Wheel suspension (front C-hubs with steering knuckles, rear hub carriers), axles with hex hubs, CVD drive shafts, steering with the servo mount, dampers and sway bars of the speedrun chassis. Own design of the owner, re-engineered from the T410R: the steering, the floating servo mount and the sway bars follow the T410R (manual steps 10, 13, 14, 21, 22 and 23, photos of the owner), the other parts are designed for their function and deviate from the original parts. The dampers are standard 1:10 on-road dampers (purchased, simplified model).
+* **Description:** Wheel suspension (front C-hubs with steering knuckles, rear hub carriers), axles with hex hubs, CVD drive shafts, steering with the servo mount, dampers and sway bars of the speedrun chassis. Own design of the owner, partly based on the T410R: the steering, the floating servo mount and the sway bars follow the T410R (manual steps 10, 13, 14, 21, 22 and 23, photos of the owner), the other parts are designed for their function and deviate from the original parts. The dampers are standard 1:10 on-road dampers (purchased, simplified model).
 * **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification: steering knuckles (dimensions measured by the owner on the original part; still open: K11, K14, K16 and K19 of the measurement sheet). All other parts: $\color{red}\times$ Completely unqualified: first design, not checked by the owner, no 3D print verification. The parts are designed from the measured parts (chassis plate, bulkheads, shock towers, wishbones, pivot blocks) and the setup sheet. They still need a lot of refinement (dimensions, strength, fit and function on the car) before manufacturing. Two values can be confirmed on the car (servo height, length of the drop links, see open points).
 
 ![Running gear: front corner with the kingpin axis, front corner from the front, steering from above, rear corner, 3D views of the front corner, of the servo on the floating servo mount and of the front sway bar](../photos/cad_running_gear_drawing.png)
@@ -1077,7 +1077,7 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_pivot_blocks.py` | Parameter file of the pivot blocks, geometry data of the speedrun chassis plate, parameter files of the bulkheads | STEP and STL files of the pivot blocks, drawing `photos/cad_pivot_blocks_drawing.png`, checks of the mounting holes and of the clearance to the bulkheads | cadquery, matplotlib |
 | `generate_driveshaft.py` | Parameter file of the driveshaft, parameter files of the bulkheads, STEP file of the speedrun chassis plate | STEP and STL files of the centre driveshaft, cup joint, rear pinion shaft, spur gear, bearing, motor mount with cap and diff outdrive, drawings `photos/cad_driveshaft_drawing.png`, `photos/cad_differential_drawing.png` and the assembly pictures of the rear and the front drive `photos/cad_drive_line_assembly.png`, checks of the play and of the fit | cadquery, matplotlib |
 | `generate_wishbones.py` | Parameter file of the wishbones, parameter files of the pivot blocks and the bulkheads, geometry data and STEP file of the speedrun chassis plate | STEP and STL files of the front and rear wishbones and of the inner hinge pin, drawing `photos/cad_wishbones_drawing.png` with the letters of the measurements, checks of the clearance to the pivot blocks, the bulkheads and the chassis plate and of the play of the hinge pins | cadquery, matplotlib |
-| `generate_measurement_sheets.py` | Parameter files of the wishbones and of the driveshaft | Measurement sheet `parts/parts_measurement_sheet.pdf` of the re-engineered parts that are not measured yet (wishbones, bearing seat of the motor mount) | cadquery, matplotlib |
+| `generate_measurement_sheets.py` | Parameter files of the wishbones and of the driveshaft | Measurement sheet `parts/parts_measurement_sheet.pdf` of the further own parts that are not measured yet (wishbones, bearing seat of the motor mount) | cadquery, matplotlib |
 | `generate_camber_links.py` | Parameter file of the camber links, parameter files of the shock towers and the bulkheads, wishbones | STEP and STL files of the camber links (turnbuckle, rod end, ball stud, assembled links), drawing `photos/cad_camber_links_drawing.png`, checks of the clearance to the shock towers, the bulkheads and the wishbones | cadquery, matplotlib |
 | `generate_running_gear.py` | Parameter file of the running gear, parameter files of the driveshaft, the bulkheads, the shock towers and the camber links, wishbones | STEP and STL files of the own parts of the running gear, drawing `photos/cad_running_gear_drawing.png`, free steering angle, Ackermann, overlap check of all parts against each other and against the assembly (option `--no-check`) | cadquery, matplotlib |
 | `generate_knuckle_measurement_sheet.py` | Parameter file of the running gear (knuckle of the front corner) | Measurement sheet `running_gear/front_corner/steering_knuckle_measurement_sheet.pdf` of the original steering knuckle (views of the model with the letters K1 to K21, table with the model values and the measured values) | cadquery, matplotlib |

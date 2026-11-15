@@ -1,4 +1,4 @@
-"""Generate the centre driveshaft of the speedrun chassis (own design, re-engineered from the T410R)
+"""Generate the centre driveshaft of the speedrun chassis (own design, partly based on the T410R)
 and the parts of the drive line around it.
 
 The centre driveshaft connects the cup joints of the two pinion shafts. Each ball end carries a
@@ -16,7 +16,7 @@ the motor mount (holes H09/H10 of the chassis plate) and the spur gear (slot of 
 below the pinion axis). Cup joints: measurements of the owner. The other dimensions are typical
 values (cad/parts/driveshaft/driveshaft_parameters.json). The shaft, the cup
 joints, the drive lines, the motor mount with its cap, the differential, the spool and the diff
-outdrives are the owner's own design, re-engineered from the T410R; the script writes the STEP and
+outdrives are the owner's own design, partly based on the T410R; the script writes the STEP and
 STL files of all these parts.
 
 Usage (from the root directory of the repository):
@@ -638,7 +638,7 @@ def drawing(path, p, lay, items):
 
     z = lay["z"]
     fig = plt.figure(figsize=(15, 10))
-    fig.suptitle("Centre driveshaft with the drive line (own design, re-engineered from the T410R; motor mount verified "
+    fig.suptitle("Centre driveshaft with the drive line (own design, partly based on the T410R; motor mount verified "
                  "with a test print, the other parts measures qualified)", fontsize=12, y=0.985)
     ax = fig.add_axes([0.04, 0.57, 0.92, 0.36])
     draw(ax)
@@ -790,7 +790,7 @@ def diff_drawing(p, lp, path=DIFF_DRAWING):
         ax.set_title(title, fontsize=10, loc="left")
 
     fig = plt.figure(figsize=(16, 19))
-    fig.suptitle("Differential (End B) and spool (End A) (own design, re-engineered from the T410R; measures qualified, no 3D print "
+    fig.suptitle("Differential (End B) and spool (End A) (own design, partly based on the T410R; measures qualified, no 3D print "
                  "verification)", fontsize=12, y=0.99)
     draw(fig.add_axes([0.01, 0.66, 0.48, 0.3]), items + [pinion], iso_basis(125, 30),
          "Complete differential with bearings, outdrives and the pinion 17T (brown)")
@@ -883,7 +883,7 @@ def drive_assembly_drawing(p, lp, path=ASSEMBLY_DRAWING):
         ax.axis("off")
 
     fig = plt.figure(figsize=(16, 12.5))
-    fig.suptitle("Rear drive and front drive (own design, re-engineered from the T410R): assembled and exploded views",
+    fig.suptitle("Rear drive and front drive (own design, partly based on the T410R): assembled and exploded views",
                  fontsize=13, y=0.99)
     for row, (name, lst, ctx, az) in enumerate((("Rear drive (End B)", rear, ctx_b, -35), ("Front drive (End A)", front, ctx_a, 35))):
         y0 = 0.52 - row * 0.48

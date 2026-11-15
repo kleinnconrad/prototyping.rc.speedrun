@@ -1,6 +1,6 @@
 """Measurement sheet of the front steering knuckle (original part of the T410R as the reference).
 
-The re-engineered knuckle of the running gear follows the original knuckle (photos of the owner, manual
+The knuckle of the running gear (own design) is based on the original knuckle (photos of the owner, manual
 step 15). The sheet shows the dimensions of the original part as letters K1 to K21 on three views of the
 current model and lists the model values next to the values measured by the owner (empty field: still
 open).
@@ -123,7 +123,7 @@ def drawing_page(pdf, p, k):
     bx, by = sax - p["kingpin_x"], say                                    # outer hole (front right: -y toward the middle)
     fig = plt.figure(figsize=A4)
     fig.text(0.06, 0.965, "Measurement sheet: front steering knuckle (2 pieces)", fontsize=13, fontweight="bold")
-    fig.text(0.06, 0.945, "Own design, re-engineered from the T410R knuckle. The drawings show the current model with "
+    fig.text(0.06, 0.945, "Own design, partly based on the T410R knuckle. The drawings show the current model with "
              "the measured values (page 2).", fontsize=7.5)
     # 1: view along the axle from the outside (horizontal: along the car, arm to the right; vertical: kingpin axis)
     ax = fig.add_axes([0.04, 0.55, 0.5, 0.36])

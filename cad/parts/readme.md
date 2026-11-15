@@ -1,5 +1,5 @@
-# Re-engineered parts
-The files in this directory are the drive line, the pivot blocks, the wishbones and the camber links of the speedrun chassis. They are the owner's own design, re-engineered from the Carten T410R: the interfaces follow the T410R, the shapes deviate from the original parts where the function or the speedrun chassis requires it. The running gear is stored in `cad/running_gear` (see the [CAD readme](../readme.md#running-gear)).
+# Further own parts
+The files in this directory are the drive line, the pivot blocks, the wishbones and the camber links of the speedrun chassis. They are the owner's own design. Some of them are based on parts of the Carten T410R (for example the interfaces: bearings, gears, screws), others deviate strongly from them. The running gear is stored in `cad/running_gear` (see the [CAD readme](../readme.md#running-gear)).
 
 Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. The parts marked red are first designs: they still need a lot of refinement (dimensions, strength, fit and function on the car) and are not ready for manufacturing.
 

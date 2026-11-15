@@ -1,8 +1,8 @@
-"""Measurement sheet of the re-engineered parts that are not measured yet (wishbones, bearing seat of the motor mount).
+"""Measurement sheet of the further own parts that are not measured yet (wishbones, bearing seat of the motor mount).
 
 The sheet shows each caliper measurement as a dimension line with a letter on drawings of the
 models, explains how to measure it and lists the current value of the model with an empty field
-for the measured value. The parts are the own design of the owner, re-engineered from the T410R.
+for the measured value. The parts are the own design of the owner, partly based on the T410R.
 
 * page 1: front wishbone (plan view and side view)
 * page 2: rear wishbone (plan view and side view)
@@ -69,7 +69,7 @@ def arm_page(pdf, p, kind, solid):
     fig = plt.figure(figsize=A4)
     name = "Front wishbone (End A, 2 pieces)" if kind == "front" else "Rear wishbone (End B, 2 pieces)"
     fig.text(0.06, 0.965, f"Measurement sheet: {name}", fontsize=13, fontweight="bold")
-    fig.text(0.06, 0.945, "Own design, re-engineered from the T410R. Dimensions in mm. "
+    fig.text(0.06, 0.945, "Own design, partly based on the T410R. Dimensions in mm. "
              "The drawing is the current model (estimate from the photos).", fontsize=7.5)
     length, half = p[f"{kind}_arm_length"], p["inner_width"] / 2
     yi, yo = p[f"{kind}_rail_y"]
@@ -234,7 +234,7 @@ def table_page(pdf, p):
 def motor_mount_page(pdf, d):
     fig = plt.figure(figsize=A4)
     fig.text(0.06, 0.965, "Measurement sheet: bearing seat of the motor mount", fontsize=13, fontweight="bold")
-    fig.text(0.06, 0.945, "Own design, re-engineered from the T410R. Bearing 5x10x4 (manual step 5). "
+    fig.text(0.06, 0.945, "Own design, partly based on the T410R. Bearing 5x10x4 (manual step 5). "
              "Dimensions in mm.", fontsize=7.5)
     z = 2.0 + 17.2
     low, cap_h, cap_w = d["mount_low_top"], d["cap_h"], d["cap_w"]

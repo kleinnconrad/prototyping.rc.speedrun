@@ -1,4 +1,4 @@
-"""Generate the camber links of the speedrun chassis (own design, re-engineered from the T410R).
+"""Generate the camber links of the speedrun chassis (own design, partly based on the T410R).
 
 The camber links (upper links, manual page 05 step 4 "C front upper" and "D rear upper", mounted in
 step 21) consist of a turnbuckle M3x37 with a rod end on each end. The inner rod end
@@ -183,7 +183,7 @@ def drawing(p, path=DRAWING):
         v = np.array([[q.x, q.y, q.z] for q in v])
         return v[np.array(i)]
     fig = plt.figure(figsize=(14, 6.2))
-    fig.suptitle("Camber links: turnbuckle M3x37 with 2 rod ends (own design, re-engineered from the T410R)",
+    fig.suptitle("Camber links: turnbuckle M3x37 with 2 rod ends (own design, partly based on the T410R)",
                  fontsize=11, y=0.98)
     e = p["rod_end"][0]
     for row, (name, gap) in enumerate((("Front upper link (C), End A, 2 pieces", p["gap_front"]),

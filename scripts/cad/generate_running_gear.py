@@ -1,4 +1,4 @@
-"""Generate the running gear of the speedrun chassis (own design, re-engineered from the Carten T410R).
+"""Generate the running gear of the speedrun chassis (own design, partly based on the Carten T410R).
 
 The running gear completes the build: wheel suspension (front C-hubs with steering knuckles, rear
 hub carriers), axles with hex hubs, CVD drive shafts, steering (posts, bellcranks joined by a
@@ -847,7 +847,7 @@ def drawing(parts, info, lock, path=DRAWING):
         return view
 
     fig = plt.figure(figsize=(16, 19))
-    fig.suptitle("Speedrun chassis: running gear (own design, re-engineered from the T410R)", fontsize=13, y=0.99)
+    fig.suptitle("Speedrun chassis: running gear (own design, partly based on the T410R)", fontsize=13, y=0.99)
     row = lambda r: [r[0], (r[1] * 13 + 6) / 19, r[2], r[3] * 13 / 19]          # upper two rows, third row below
     fp, J, kb = front_corner(p, load_params(DRIVE), c["front"])
     kd = c["front"]["kd"]

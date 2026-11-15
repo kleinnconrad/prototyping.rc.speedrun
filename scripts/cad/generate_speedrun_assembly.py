@@ -1,7 +1,7 @@
 """Assembly of the speedrun chassis: chassis plate, bulkheads, top brace, shock towers, drive line,
 wishbones and running gear.
 
-Parts (the parts besides the speedrun chassis are the owner's own design, re-engineered from the
+Parts (the parts besides the speedrun chassis are the owner's own design, partly based on the
 T410R; they are not in the mass total):
 * speedrun chassis plate (wide) with the longer motor window
 * lower and upper bulkhead at End B (centre of H03 to H06) and at End A (centre of H28 to H31,
@@ -156,7 +156,7 @@ def image(parts, path):
         cols.append(np.tile(COLORS[key], (len(t), 1)))
     tris, cols = np.concatenate(tris), np.concatenate(cols)
     fig = plt.figure(figsize=(16, 15))
-    fig.suptitle("Speedrun chassis (own design, re-engineered from the T410R): complete build with the running gear", fontsize=13, y=0.987)
+    fig.suptitle("Speedrun chassis (own design, partly based on the T410R): complete build with the running gear", fontsize=13, y=0.987)
     top = 1 / 3                                             # overview in the upper 2/3, close-ups below
 
     def upper(rect):

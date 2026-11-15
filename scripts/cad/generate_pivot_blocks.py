@@ -1,7 +1,7 @@
-"""Generate the pivot blocks of the speedrun chassis (own design, re-engineered from the T410R).
+"""Generate the pivot blocks of the speedrun chassis (own design, partly based on the T410R).
 
 The pivot blocks hold the hinge pins of the wishbones (suspension arms). They are the owner's own
-design, re-engineered from the T410R, and verified with a 3D printed prototype (bores 5.0 for the
+design, partly based on the T410R, and verified with a 3D printed prototype (bores 5.0 for the
 hinge pins). The assembly of the speedrun chassis contains them, so that the space below the
 bulkheads can be checked.
 
@@ -134,7 +134,7 @@ def drawing(path, p, solids):
         return out
 
     fig = plt.figure(figsize=(15, 9.5))
-    fig.suptitle("Pivot blocks (own design, re-engineered from the T410R; verified with a 3D printed prototype)",
+    fig.suptitle("Pivot blocks (own design, partly based on the T410R; verified with a 3D printed prototype)",
                  fontsize=12, y=0.985)
     w = p["width"]
     for row, kind in enumerate(("long", "short")):
