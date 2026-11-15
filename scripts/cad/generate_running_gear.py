@@ -232,17 +232,19 @@ def front_corner(p, d, c):
     xl0 = xs0 + t_seat                                                    # lip: inner face (end of the inner seat)
     xl1 = xr1 - t_seat                                                    # lip: outer face (end of the outer seat)
     xb = bx1 - J[0]                                                       # inner face of the back plate (local)
-    xg = -r_boss - 0.7                                                    # block under the upper arm, beside the boss
+    zu = r_ring + 1.0                                                     # bottom of the upper arm: 1.0 above the ring
+    rs = r_boss + 0.5                                                     # U-slot around the upper boss
     # C-hub: lug on the outer hinge pin, lower arm and back plate (chassis coordinates, between the rails
-    # of the wishbone), upper arm square to the kingpin; space of the knuckle square to the kingpin
+    # of the wishbone), upper arm as wide as the back plate (chassis coordinates, flat top): solid down to 1.0
+    # above the ring of the knuckle, with a U-slot around the upper boss (open toward the wheel: the knuckle
+    # slides in); space of the knuckle and U-slot square to the kingpin
     hub = fuse(cyl_y(3.6, yc - 6.5, yc + 6.5, O[0], O[2]),
                box(bx0, O[0], yc - w_low / 2, yc + w_low / 2, O[2], J[2] - 5.0),
                box(bx0, bx1, yc - w_low / 2, yc + w_low / 2, O[2], 10.5),
                box(bx0, bx1, yc - w_back / 2, yc + w_back / 2, 10.0, z_seat),
-               K(box(bx0 - J[0], 3.5, -w_arm / 2, w_arm / 2, kz1 + gap, kz1 + gap + t_up)),
-               K(box(bx0 - J[0], xg, -w_arm / 2, w_arm / 2, r_ring + 1.0, kz1 + gap + 0.5)))
-    hub = hub.cut(K(box(xb, 30, -30, 30, kz0 - gap, r_ring + 1.0)))                       # space of the knuckle
-    hub = hub.cut(K(box(xg, 30, -30, 30, r_ring + 0.9, kz1 + gap)))
+               box(bx0, J[0] + 3.5, yc - w_arm / 2, yc + w_arm / 2, J[2], J[2] + kz1 + gap + t_up))
+    hub = hub.cut(K(box(xb, 30, -30, 30, kz0 - gap, zu)))                                 # space of the knuckle
+    hub = hub.cut(K(fuse(cyl_z(rs, zu - 0.1, kz1 + gap, 0, 0), box(0, 30, -rs, rs, zu - 0.1, kz1 + gap))))  # U-slot
     hub = hub.cut(box(bx0 - 1, J[0] - 3.0, yc - 10, yc + 10, z_seat, z_seat + 10))        # seat of the camber stud
     hub = hub.cut(cyl_y(1.5, yc - 8, yc + 8, O[0], O[2]))                                  # outer hinge pin
     hub = hub.cut(cyl_x(r_pass, bx0 - 1, bx1 + 1, yc, J[2]))                              # passage of the CVD
