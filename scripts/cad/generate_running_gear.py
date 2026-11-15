@@ -268,9 +268,9 @@ def front_corner(p, d, c):
     hub = hub.cut(K(fuse(cyl_z(rs, zu - 0.1, kz1 + gap, 0, 0), box(0, 30, -rs, rs, zu - 0.1, kz1 + gap))))  # U-slot
     hub = hub.cut(cyl_y(1.5, yc - 8, yc + 8, O[0], O[2]))                                  # outer hinge pin
     hub = hub.cut(cyl_x(r_pass, bx0 - 1, bx1 + 1, yc, J[2]))                              # passage of the CVD
-    # bores 5.0 for the guide sleeves (owner; manual step 15: flanged sleeves); top: spot face square to the kingpin
-    # axis for the flange below the flat top of the arm; bottom: bore ends above the outer hinge pin (wall),
-    # through hole 3.1 below it for the set screw
+    # bores 5.0 for the guide sleeves (owner; manual step 15: flanged sleeves); top: through the upper arm, spot face
+    # square to the kingpin axis for the flange below the flat top of the arm; bottom: blind bore that ends above the
+    # outer hinge pin (wall), no hole below it (the outer hinge pin lies only 2.3 beside the kingpin axis)
     d_sl, d_sl_in, d_fl, t_fl, w_pin = p["guide_sleeve"]
     ca, sa = math.cos(math.radians(p["caster"])), math.sin(math.radians(p["caster"]))
     r_sf = d_fl / 2 + 0.3                                                                 # spot face of the flange
@@ -279,7 +279,6 @@ def front_corner(p, d, c):
     hub = hub.cut(K(cyl_z(2.5, kz1 + gap - 1.0, zf + 0.01, 0, 0)))                         # bore 5.0, top
     hub = hub.cut(K(cyl_z(r_sf, zf, zf + 10.0, 0, 0)))                                     # spot face of the flange
     hub = hub.cut(K(cyl_z(2.5, zbb, kz0 - gap + 1.0, 0, 0)))                               # bore 5.0, bottom
-    hub = hub.cut(K(cyl_z(1.55, -21.0, zbb + 0.01, 0, 0)))                                 # through hole 3.1, set screw
     hub = hub.cut(cyl_z(TAP / 2, O[2] - 5, O[2], O[0], yc))                               # thread M3, grub screw
     # knuckle (kingpin frame) as the T410R knuckle (measured by the owner, manual step 15): ring for 2 bearings
     # 5x10x4 from the kingpin axis outward, pressed in from both ends against a lip; from the inner end a wider
@@ -314,12 +313,13 @@ def front_corner(p, d, c):
     # kingpins, threaded into the bosses (bores 2.7, thread formed by the screw, as the original): top: the ball stud
     # 4.8x9 of the camber link (as the original, manual step 15) through the flanged guide sleeve, which it clamps to
     # the boss (knuckle, sleeve and ball stud turn together in the bore 5.0 of the C-hub; the ball sits on the
-    # kingpin axis); bottom: set screw M3x8 from below (inserted before the outer hinge pin), turning in the plain
-    # guide sleeve, which stands 0.4 above the lower face of the C-hub (thrust face, 0.1 play to the boss);
+    # kingpin axis); bottom: set screw M3x6, screwed into the lower boss from inside the knuckle (the bore of the boss
+    # opens into the entry bore; before the axle is inserted), its end turns in the plain guide sleeve in the blind
+    # bore of the C-hub, which stands 0.4 above the lower face of the C-hub (thrust face, 0.1 play to the boss);
     # threads modelled with the core diameter in the bores 2.7
     zs = kz1 - 4.3                                                                       # 4.3 of thread in the boss
     zt0 = zf + t_fl                                                                      # face of the ball stud
-    pins = cq.Compound.makeCompound([K(cyl_z(d_kp / 2 - 0.001, -zs - 8.0, -zs, 0, 0)),          # set screw, bottom
+    pins = cq.Compound.makeCompound([K(cyl_z(d_kp / 2 - 0.001, -zs - 6.0, -zs, 0, 0)),          # set screw M3x6, bottom
                                      K(stud(np.array([0, 0, zt0 + p["ball_offset"]]), np.array([0, 0, 1.0]),
                                             p["ball_offset"], 9.0))])                            # ball stud 4.8x9, top
     c["camber_ball"] = J + R @ np.array([0, 0, zt0 + p["ball_offset"]])
