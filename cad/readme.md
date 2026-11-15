@@ -68,7 +68,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
 
 ## Speedrun chassis
-The speedrun chassis combines the parts that are designed in this project for speeds over 100 km/h; the assembly completes them with the re-engineered parts (drive line, wishbones, running gear). The parts share their interfaces: the bulkheads are mounted on the hole patterns of the chassis plate, the top brace on the contact faces of both upper bulkheads, the shock towers on the shock tower walls of the upper bulkheads (front tower at End A, rear tower at End B).
+The speedrun chassis combines the parts that are designed in this project for speeds over 130 km/h; the assembly completes them with the re-engineered parts (drive line, wishbones, running gear). The parts share their interfaces: the bulkheads are mounted on the hole patterns of the chassis plate, the top brace on the contact faces of both upper bulkheads, the shock towers on the shock tower walls of the upper bulkheads (front tower at End A, rear tower at End B).
 
 ![Speedrun chassis: complete build with the drive line, the wishbones and the running gear](../photos/cad_speedrun_chassis_assembly.png)
 
