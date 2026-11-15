@@ -248,8 +248,18 @@ def front_corner(p, d, c):
     hub = hub.cut(box(bx0 - 1, J[0] - 3.0, yc - 10, yc + 10, z_seat, z_seat + 10))        # seat of the camber stud
     hub = hub.cut(cyl_y(1.5, yc - 8, yc + 8, O[0], O[2]))                                  # outer hinge pin
     hub = hub.cut(cyl_x(r_pass, bx0 - 1, bx1 + 1, yc, J[2]))                              # passage of the CVD
-    hub = hub.cut(K(cyl_z(1.55, kz1 + gap - 1.0, kz1 + gap + t_up + 2.0, 0, 0)))               # kingpin, top (through)
-    hub = hub.cut(K(cyl_z(1.55, -21.0, kz0 - gap + 1.0, 0, 0)))                                # kingpin, bottom (through)
+    # bores 5.0 for the guide sleeves (owner; manual step 15: flanged sleeves); top: spot face square to the kingpin
+    # axis for the flange below the flat top of the arm; bottom: bore ends above the outer hinge pin (wall),
+    # through hole 3.1 below it for the set screw
+    d_sl, d_sl_in, d_fl, t_fl, w_pin = p["guide_sleeve"]
+    ca, sa = math.cos(math.radians(p["caster"])), math.sin(math.radians(p["caster"]))
+    r_sf = d_fl / 2 + 0.3                                                                 # spot face of the flange
+    zf = math.floor(((kz1 + gap + t_up) - sa * r_sf) / ca * 20) / 20                      # below the flat top
+    zbb = math.ceil((O[2] + 1.5 + w_pin - J[2] + sa * 2.5) / ca * 20) / 20                # bottom of the lower bore
+    hub = hub.cut(K(cyl_z(2.5, kz1 + gap - 1.0, zf + 0.01, 0, 0)))                         # bore 5.0, top
+    hub = hub.cut(K(cyl_z(r_sf, zf, zf + 10.0, 0, 0)))                                     # spot face of the flange
+    hub = hub.cut(K(cyl_z(2.5, zbb, kz0 - gap + 1.0, 0, 0)))                               # bore 5.0, bottom
+    hub = hub.cut(K(cyl_z(1.55, -21.0, zbb + 0.01, 0, 0)))                                 # through hole 3.1, set screw
     cam = c["camber"]
     hub = hub.cut(cyl_z(TAP / 2, z_seat - 6.0, z_seat + 1, cam[0], cam[1]))               # thread M3, camber stud
     hub = hub.cut(cyl_z(TAP / 2, O[2] - 5, O[2], O[0], yc))                               # thread M3, grub screw
@@ -283,16 +293,27 @@ def front_corner(p, d, c):
     knu = knu.cut(cyl_z(d_kp / 2, kz0 - 1, -zb, 0, 0)).cut(cyl_z(d_kp / 2, zb, kz1 + 1, 0, 0))   # kingpin set screws
     for hx, hy in ((bx_, by_), tuple(h2)):
         knu = knu.cut(cyl_z(TAP / 2, a0 - 1, a1 + 1, hx, hy))                            # threads M3, ball stud
-    # kingpins: set screws M3x8 threaded into the bosses (bores 2.7, thread formed by the screw, as the original);
-    # they turn with the knuckle in the bores 3.1 of the C-hub (modelled with the bore diameter of the knuckle)
+    # kingpins, threaded into the bosses (bores 2.7, thread formed by the screw, as the original; modelled with the
+    # bore diameter of the knuckle): top: button head screw M3x8 through the flanged guide sleeve, which it clamps
+    # to the boss (knuckle, sleeve and screw turn together in the bore 5.0 of the C-hub); bottom: set screw M3x8 from
+    # below (inserted before the outer hinge pin), turning in the plain guide sleeve, which stands 0.4 above the
+    # lower face of the C-hub (thrust face, 0.1 play to the boss)
     zs = kz1 - 4.3                                                                       # 4.3 of thread in the boss
-    pins = cq.Compound.makeCompound([K(cyl_z(d_kp / 2 - 0.001, -zs - 8.0, -zs, 0, 0)),          # from below
-                                     K(cyl_z(d_kp / 2 - 0.001, zs, zs + 8.0, 0, 0))])           # from the top
+    zt0 = zf + t_fl                                                                      # under the head of the screw
+    pins = cq.Compound.makeCompound([K(cyl_z(d_kp / 2 - 0.001, -zs - 8.0, -zs, 0, 0)),          # set screw, bottom
+                                     K(fuse(cyl_z(d_kp / 2 - 0.001, zt0 - 8.0, zt0, 0, 0),
+                                            cyl_z(2.85, zt0, zt0 + 1.65, 0, 0)))])               # screw M3x8, top
+    sleeves = cq.Compound.makeCompound([
+        K(fuse(cyl_z(d_sl / 2, kz1, zf, 0, 0), cyl_z(d_fl / 2, zf, zf + t_fl, 0, 0)).cut(
+            cyl_z(d_sl_in / 2, kz1 - 1, zf + t_fl + 1, 0, 0))),                                 # flanged, top
+        K(cyl_z(d_sl / 2, zbb, kz0 - 0.1, 0, 0).cut(cyl_z(d_sl_in / 2, zbb - 1, kz0, 0, 0)))])    # plain, bottom
+    c["kingpin_layout"] = {"spot face": zf, "bottom of the lower bore": zbb, "top sleeve shank": zf - kz1,
+                           "lower sleeve": kz0 - 0.1 - zbb}
     kb = J + R @ kb_l
     c["kb"] = kb
     hinge = cyl_y(1.5, yc - 13, yc + 13, O[0], O[2])
     parts = {"C-hub": ("upright", hub.clean()), "steering knuckle": ("upright", K(knu.clean())), "kingpins": ("axle", pins),
-             "outer hinge pin 3x26": ("axle", hinge)}
+             "guide sleeves": ("axle", sleeves), "outer hinge pin 3x26": ("axle", hinge)}
     parts.update(axle_group(p, d, J, np.array([1.0, 0, 0]), (J[0] + xl0 - 4.0, J[0] + xl1), J[0] + xr1 + 0.5,
                             p["hex_hub"][1], shoulder=J[0] + xl0 - 4.1, cup_end=J[0] + xs0 - 0.2))    # bearings on the lip
     parts["ball stud of the steering arm"] = ("link", stud(kb, kd, p["ball_offset"], t_arm))            # on top
@@ -864,7 +885,7 @@ def drawing(parts, info, lock, path=DRAWING):
     side = (np.array([-1.0, 0, 0]), np.array([0, 1.0, 0]), np.array([0, 0, 1.0]))
     keep_f = lambda n, k: "End A" in n and ("right" in n or k in ("swaybar",)) and k not in ("damper", "spring", "swaybar")
     panel(ax, (40, yc - 22, 0, 75.5, yc + 16, 42), side,
-          lambda n, k: keep_f(n, k) and (k != "axle" or n.startswith(("kingpins", "outer hinge"))))
+          lambda n, k: keep_f(n, k) and (k != "axle" or n.startswith(("kingpins", "guide sleeves", "outer hinge"))))
     a, b = J - kd * 17, J + kd * 17
     ax.plot([a[1], b[1]], [a[2], b[2]], "-.", color="k", lw=1.2)
     ax.plot([J[1], J[1]], [J[2] - 17, J[2] + 17], ":", color="#555", lw=1.0)
@@ -908,7 +929,7 @@ def drawing(parts, info, lock, path=DRAWING):
     ax = fig.add_axes(row([0.38, 0.04, 0.3, 0.42]))
     panel(ax, (45, yc - 20, 0, 100, yc + 14, 42), iso_basis(-60, 25), keep_f, 0.8)
     ax.set_title("Front right corner, 3D view: C-hub (orange), knuckle with steering arm,\n"
-                 "kingpins (set screws M3x8 in the knuckle), axle, hex hub", fontsize=9.5, loc="left")
+                 "guide sleeves and kingpin screws, axle, hex hub", fontsize=9.5, loc="left")
     # notes
     fmt = lambda v: f"{v:g} deg" + (" or more (limit of the check)" if v >= 45 else "")
     notes = [f"Free steering angle of the knuckle (check, step 2.5 deg): {fmt(lock['steering arm toward the middle'])} "
