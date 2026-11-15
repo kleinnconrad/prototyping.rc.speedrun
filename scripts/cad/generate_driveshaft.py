@@ -430,31 +430,24 @@ def arc3(c, r, a0, a1):
 
 def mount_outline(p, lay):
     """Outline of the motor mount in the x-z plane (photos of the owner): base, outer end with rounded corners, top of
-    the tall part, continuous contour at the upper inner corner (S-curve down to the corner arc below the end of the
-    top brace), inner edge of the tall part with the fillet to the top face of the low part, top face of the low part
-    to the hook beside the bearing seat, underside of the hook down to the base.
+    the tall part, upper inner corner with one radius (round shoulder, below the end of the top brace), inner edge of
+    the tall part with the fillet to the top face of the low part, top face of the low part to the hook beside the
+    bearing seat, underside of the hook down to the base.
     Returns the list of the outline segments as (kind, points) with kind "line", "arc" (start, middle, end) or "spline"."""
     xa, xb = p["mount_x"]
     zt, zl, xs = p["mount_top"], p["mount_low_top"], p["mount_step_x"]
     r_out, r_in, r_bot, r_fil = p["mount_corners"]
-    xr, zr, rs = p["mount_brace_relief"]
+    xr, zr = p["mount_brace_relief"]
     hook = [tuple(q) for q in p["mount_hook"]]
     c45 = math.sqrt(0.5)
-    xA = xs + r_in                                                  # top of the corner arc (z = zr)
-    assert xA >= xr, "the corner arc must stay below the end of the top brace"
-    h = zt - zr                                                     # S-curve from zr up to the top (2 arcs of radius rs)
-    dx = math.sqrt(rs ** 2 - (rs - h / 2) ** 2)
-    xM, xB = xA + dx, xA + 2 * dx
-    am = math.degrees(math.atan2(rs - h / 2, dx))                   # angle of the inflection point
+    assert zt - r_in + math.sqrt(r_in ** 2 - (xr - xs - r_in) ** 2) <= zr, "the upper inner corner must stay below the top brace"
     seg = [("line", [(xa, PLATE_T), (xb - r_bot, PLATE_T)]),
            ("arc", [(xb - r_bot, PLATE_T), (xb - r_bot + r_bot * c45, PLATE_T + r_bot - r_bot * c45), (xb, PLATE_T + r_bot)]),
            ("line", [(xb, PLATE_T + r_bot), (xb, zt - r_out)]),
            ("arc", [(xb, zt - r_out), (xb - r_out + r_out * c45, zt - r_out + r_out * c45), (xb - r_out, zt)]),
-           ("line", [(xb - r_out, zt), (xB, zt)]),
-           ("arc", arc3((xB, zt - rs), rs, 90.0, 180.0 - am)),                  # convex, down from the top
-           ("arc", arc3((xA, zr + rs), rs, -am, -90.0)),                       # concave, to the top of the corner arc
-           ("arc", arc3((xA, zr - r_in), r_in, 90.0, 180.0)),                  # upper inner corner
-           ("line", [(xs, zr - r_in), (xs, zl + r_fil)]),
+           ("line", [(xb - r_out, zt), (xs + r_in, zt)]),
+           ("arc", arc3((xs + r_in, zt - r_in), r_in, 90.0, 180.0)),           # upper inner corner (round shoulder)
+           ("line", [(xs, zt - r_in), (xs, zl + r_fil)]),
            ("arc", [(xs, zl + r_fil), (xs - r_fil + r_fil * c45, zl + r_fil - r_fil * c45), (xs - r_fil, zl)]),
            ("line", [(xs - r_fil, zl), (hook[0][0] + 0.5, zl)]),
            ("arc", [(hook[0][0] + 0.5, zl), (hook[0][0] + 0.5 - 0.5 * c45, zl - 0.5 + 0.5 * c45), (hook[0][0], zl - 0.5)]),
