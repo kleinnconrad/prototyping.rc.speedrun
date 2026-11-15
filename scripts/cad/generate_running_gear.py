@@ -227,10 +227,10 @@ def front_corner(p, d, c):
     bx0, bx1, r_pass, gap, t_up, z_seat = p["front_c_hub"]
     w_low, w_back, w_arm = p["front_c_hub_width"]
     kz0, kz1, r_boss, r_ring, xr0, xr1, d_lip, r_cup = p["knuckle"]
-    d_seat, t_out, x_cup, d_kp = p["knuckle_bores"]
-    xs0 = xr0 + x_cup                                                     # end of the entry bore: the bore narrows at the bearing
-    xl0 = xs0 + 4.0                                                       # lip: inner face (end of the inner seat)
-    xl1 = xr1 - t_out                                                     # lip: outer face (end of the outer seat)
+    d_seat, t_seat, x_cup, d_kp = p["knuckle_bores"]
+    xs0 = xr0 + x_cup                                                     # end of the entry bore (section of the joint cup)
+    xl0 = xs0 + t_seat                                                    # lip: inner face (end of the inner seat)
+    xl1 = xr1 - t_seat                                                    # lip: outer face (end of the outer seat)
     xb = bx1 - J[0]                                                       # inner face of the back plate (local)
     xg = -r_boss - 0.7                                                    # block under the upper arm, beside the boss
     # C-hub: lug on the outer hinge pin, lower arm and back plate (chassis coordinates, between the rails
@@ -291,8 +291,8 @@ def front_corner(p, d, c):
     hinge = cyl_y(1.5, yc - 13, yc + 13, O[0], O[2])
     parts = {"C-hub": ("upright", hub.clean()), "steering knuckle": ("upright", K(knu.clean())), "kingpins": ("axle", pins),
              "outer hinge pin 3x26": ("axle", hinge)}
-    parts.update(axle_group(p, d, J, np.array([1.0, 0, 0]), (J[0] + xs0, J[0] + xl1), J[0] + xr1 + 0.5, p["hex_hub"][1],
-                            shoulder=J[0] + xs0 - 0.1))
+    parts.update(axle_group(p, d, J, np.array([1.0, 0, 0]), (J[0] + xl0 - 4.0, J[0] + xl1), J[0] + xr1 + 0.5,
+                            p["hex_hub"][1], shoulder=J[0] + xl0 - 4.1, cup_end=J[0] + xs0 - 0.2))    # bearings on the lip
     parts["ball stud of the steering arm"] = ("link", stud(kb, kd, p["ball_offset"], t_arm))            # on top
     return parts, J.copy(), kb
 
@@ -329,18 +329,20 @@ def steering_lock(p, c, parts, fixed):
     return res
 
 
-def axle_group(p, d, joint, ax_dir, bearings, hub_x0, hub_w, shoulder=None):
+def axle_group(p, d, joint, ax_dir, bearings, hub_x0, hub_w, shoulder=None, cup_end=None):
     """Axle with the joint cup, 2 bearings 5x10x4, hex hub with pin and grub screw thread, along ax_dir
     from the joint centre (positions as x along the axle relative to x = 0 of the front axle frame).
-    shoulder: end of a shoulder 6.5 from the joint cup to the inner race of the inner bearing (front)."""
+    shoulder: end of a shoulder 6.5 from the joint cup to the inner race of the inner bearing (front);
+    cup_end: end of the joint cup (default 4.0 beyond the joint centre)."""
     ad, thr, cup_d, cup_l = p["axle"]
     hex_af = p["hex_hub"][0]
     pin_d = p["hex_hub"][3]
     j = joint[0]
-    a = fuse(cyl_x(cup_d / 2, j - 4.5, j + 4.0, 0, 0), cyl_x(ad / 2, j + 3.9, hub_x0 + hub_w + 0.5, 0, 0),
+    ce = j + 4.0 if cup_end is None else cup_end
+    a = fuse(cyl_x(cup_d / 2, j - 4.5, ce, 0, 0), cyl_x(ad / 2, j + 3.9, hub_x0 + hub_w + 0.5, 0, 0),
              cyl_x(thr / 2, hub_x0 + hub_w + 0.4, hub_x0 + hub_w + 5.5, 0, 0))
     if shoulder is not None:
-        a = fuse(a, cyl_x(3.25, j + 3.9, shoulder, 0, 0))                                 # shoulder on the inner race
+        a = fuse(a, cyl_x(3.25, ce - 0.1, shoulder, 0, 0))                                # shoulder on the inner race
     a = a.cut(cyl_x(3.3, j - 5, j + 3.3, 0, 0)).cut(box(j - 5, j + 3.3, -1.05, 1.05, -6, 6))   # bore and slots
     xp = hub_x0 + 2.0
     a = a.cut(cyl_z(pin_d / 2, -3, 3, xp, 0))

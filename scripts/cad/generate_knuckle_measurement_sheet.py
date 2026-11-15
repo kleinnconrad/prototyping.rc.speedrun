@@ -64,26 +64,26 @@ def axis_line(ax, a, b):
 def layout(p):
     """Positions along the axle (x, kingpin frame): end of the entry bore, faces of the lip."""
     xr0, xr1 = p["knuckle"][4:6]
-    d_seat, t_out, x_cup, d_kp = p["knuckle_bores"]
-    return xr0 + x_cup, xr0 + x_cup + 4.0, xr1 - t_out
+    d_seat, t_seat, x_cup, d_kp = p["knuckle_bores"]
+    return xr0 + x_cup, xr0 + x_cup + t_seat, xr1 - t_seat
 
 
 def rows(p):
     """(letter, what to measure, model value, measured value of the owner; empty: open)."""
     kz0, kz1, r_boss, r_ring, xr0, xr1, d_lip, r_cup = p["knuckle"]
-    d_seat, t_out, x_cup, d_kp = p["knuckle_bores"]
+    d_seat, t_seat, x_cup, d_kp = p["knuckle_bores"]
     sax, say, t_arm, t_web, d2, z_arm, w_tab = p["steering_arm_ball"]
     xs0, xl0, xl1 = layout(p)
     t_lip = xl1 - xl0
     return [
         ("K1", "Outer diameter of the bearing ring.", f"{2 * r_ring:g}", "14.1"),
-        ("K2", "Length of the ring along the axle, end face to end face.", f"{xr1 - xr0:g}", "16.6"),
+        ("K2", "Length of the ring along the axle, end face to end face.", f"{xr1 - xr0:g}", "16.7"),
         ("K3", "Diameter of the bearing seats (bearings 5x10x4, manual step 15). Tight press fit or slip fit?",
                f"{d_seat:.1f} (nominal)", "9.98 (press fit)"),
         ("K4", "Depth of each bearing seat from the end face of the ring to the lip (outer seat, inner seat).",
-               f"{t_out:g} / {xl0 - xs0:g} (inner seat: the bore narrows at the bearing)", "4.35 (outer seat)"),
+               f"{t_seat:g} / {t_seat:g} (bearings on the lip)", "4.29 (each seat)"),
         ("K5", "Thickness of the lip between the bearings (along the axle).",
-               f"{t_lip:g} = K2 - {x_cup:g} (K21 section) - {xl0 - xs0:g} - K4", "not measurable: calculated"),
+               f"{t_lip:.2f} = K2 - K21 (length) - 2 x K4", "2.33 (calculated by the owner)"),
         ("K6", "Inner diameter of the lip.", f"{d_lip:g}", "lip approx. 1 high"),
         ("K7", "Outer diameter of the kingpin bosses.", f"{2 * r_boss:g}", "7"),
         ("K8", "Distance between the end faces of the two bosses (along the kingpin axis).",
@@ -110,13 +110,13 @@ def rows(p):
                 "the rib.", "not modelled", "not needed (design without function)"),
         ("K21", "Entry bore from the inner end face up to the inner bearing (around the joint cup of the axle): "
                 "diameter. The step to the bearing seat holds the end of the CVD drive shaft.",
-                f"{2 * r_cup:g}, {xs0 - xr0:g} long (joint cup 4.0 + shoulder 0.5)", "12.4"),
+                f"{2 * r_cup:g}, {xs0 - xr0:g} long", "12.4, 5.79 long"),
     ]
 
 
 def drawing_page(pdf, p, k):
     kz0, kz1, r_boss, r_ring, xr0, xr1, d_lip, r_cup = p["knuckle"]
-    d_seat, t_out, x_cup, d_kp = p["knuckle_bores"]
+    d_seat, t_seat, x_cup, d_kp = p["knuckle_bores"]
     sax, say, t_arm, t_web, d2, z_arm, w_tab = p["steering_arm_ball"]
     wt = w_tab / 2
     xs0, xl0, xl1 = layout(p)
@@ -171,8 +171,8 @@ def drawing_page(pdf, p, k):
         "the inner bearing; the bearings 5x10x4 are pressed in from both ends against the lip. Kingpins: set "
         "screws M3x8 threaded into the bores of the bosses (K9), they turn with the knuckle in the C-hub. "
         "Dash-dot lines: axle axis and kingpin axis (+). K5 cannot be measured: it is the rest of K2 after the "
-        "entry bore (K21: joint cup of the axle 4.0 beyond the kingpin axis and a shoulder of 0.5 on the inner race), "
-        "the inner seat (4.0) and the outer seat (K4). Still open: K11, K14, K16 and K19.", 46)), fontsize=7.2,
+        "entry bore (K21, section of the joint cup) and the two bearing seats (K4): 16.7 - 5.79 - 2 x 4.29 = 2.33. "
+        "Still open: K11, K14, K16 and K19.", 46)), fontsize=7.2,
         va="top",
         linespacing=1.4)
     pdf.savefig(fig)
