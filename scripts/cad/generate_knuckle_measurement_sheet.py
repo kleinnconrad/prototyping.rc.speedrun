@@ -96,7 +96,7 @@ def rows(p):
         ("K12", "Steering arm: kingpin axis to the centre of the outer hole, along the car (square to the axle).",
                 f"{-say:g}", "25"),
         ("K13", "Steering arm: kingpin axis to the centre of the outer hole, along the axle (+ toward the wheel).",
-                f"{sax - p['kingpin_x']:g}", "-5 (5 toward the chassis)"),
+                f"{sax:g}", "-5 (5 toward the chassis)"),
         ("K14", "Distance between the 2 holes of the end tab and their diameters (thread or through hole?).",
                 f"{d2:g}; thread M3 (2.5)", ""),
         ("K15", "Thickness of the arm at the end tab (along the kingpin axis).", f"{t_arm:g}", "4.9"),
@@ -120,7 +120,7 @@ def drawing_page(pdf, p, k):
     sax, say, t_arm, t_web, d2, z_arm, w_tab = p["steering_arm_ball"]
     wt = w_tab / 2
     xs0, xl0, xl1 = layout(p)
-    bx, by = sax - p["kingpin_x"], say                                    # outer hole (front right: -y toward the middle)
+    bx, by = sax, say                                    # outer hole (front right: -y toward the middle)
     fig = plt.figure(figsize=A4)
     fig.text(0.06, 0.965, "Measurement sheet: front steering knuckle (2 pieces)", fontsize=13, fontweight="bold")
     fig.text(0.06, 0.945, "Own design, partly based on the T410R knuckle. The drawings show the current model with "
