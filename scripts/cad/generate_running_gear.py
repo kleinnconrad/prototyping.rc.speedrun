@@ -264,7 +264,8 @@ def front_corner(p, d, c):
                box(bx0, bx1, yc - w_low / 2, yc + w_low / 2, O[2], z_w + 0.5),
                box(bx0, bx1, yc - w_back / 2, yc + w_back / 2, z_w, z_seat),
                box(bx0, J[0] + 3.5, yc - w_arm / 2, yc + w_arm / 2, J[2], J[2] + kz1 + gap + t_up))
-    hub = hub.cut(K(box(xb, 30, -30, 30, kz0 - gap, zu)))                                 # space of the knuckle
+    space = K(box(xb, 30, -30, 30, kz0 - gap, zu)).cut(cyl_y(3.6, yc - 6.5, yc + 6.5, O[0], O[2]))
+    hub = hub.cut(space)                                                                  # space of the knuckle (tube stays)
     hub = hub.cut(K(fuse(cyl_z(rs, zu - 0.1, kz1 + gap, 0, 0), box(0, 30, -rs, rs, zu - 0.1, kz1 + gap))))  # U-slot
     hub = hub.cut(cyl_y(1.5, yc - 8, yc + 8, O[0], O[2]))                                  # outer hinge pin
     hub = hub.cut(cyl_x(r_pass, bx0 - 1, bx1 + 1, yc, J[2]))                              # passage of the CVD
@@ -283,8 +284,6 @@ def front_corner(p, d, c):
     hub = hub.cut(K(cyl_z(2.5, zl0 - 1.0, kz0 - gap + 1.0, 0, 0)))                         # bore 5.0, bottom (through)
     hub = hub.cut(K(cyl_z(r_sf, zl1 - 0.05, kz0 - gap + 1.0, 0, 0)))                       # counterbore, lower flange
     hub = hub.cut(K(cyl_z(h_d / 2 + 0.1, zl0 - 30.0, zl0 + 0.1, 0, 0)))                    # pocket, head of the screw
-    hub = fuse(hub, cyl_y(3.6, yc - 6.5, yc + 6.5, O[0], O[2]))                            # complete tube on the hinge pin
-    hub = hub.cut(cyl_y(1.5, yc - 8, yc + 8, O[0], O[2]))                                  # outer hinge pin
     hub = hub.cut(cyl_z(TAP / 2, O[2] - 5, O[2], O[0], yc))                               # thread M3, grub screw
     # knuckle (kingpin frame) as the T410R knuckle (measured by the owner, manual step 15): ring for 2 bearings
     # 5x10x4 from the kingpin axis outward, pressed in from both ends against a lip; from the inner end a wider
