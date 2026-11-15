@@ -112,24 +112,42 @@ def tower_faces():
     return out
 
 
+def front_outer_ball(side):
+    """Front: the outer ball sits on the top kingpin of the steering knuckle (the ball stud 4.8x9 is the top
+    kingpin, as the original); its position comes from the running gear."""
+    import generate_running_gear as G
+    return G.front_camber_ball(G.load_params(G.PARAMS), side)
+
+
 def link_points(p=None):
-    """Centres of the inner and outer balls of the camber links: {(end, side): (p1, p2)}."""
+    """Centres of the inner and outer balls of the camber links: {(end, side): (p1, p2)}. Rear: the outer ball
+    follows from the gap of the manual (link in the plane of the middle of the wishbone); front: the outer ball
+    sits on the top kingpin of the knuckle."""
     p = p or load_params(PARAMS)
     from generate_wishbones import pin_lines
     lines = pin_lines()
     faces = tower_faces()
     off = p["ball"][1]
     out = {}
-    for end, gap in (("rear", p["gap_rear"]), ("front", p["gap_front"])):
+    for end, gap in (("rear", p["gap_rear"]), ("front", None)):
         yf, sign, zc, cx, tt = faces[end]
-        L = link_parts(p, gap)[3]
         for side in (1, -1):
             p1 = np.array([side * cx, yf + sign * off, zc])
-            dy = lines[(end, side)][0][1] - p1[1]
-            dz = p["outer_height_offset"]
-            p2 = p1 + np.array([side * math.sqrt(L ** 2 - dy ** 2 - dz ** 2), dy, dz])
+            if gap is None:
+                p2 = front_outer_ball(side)
+            else:
+                L = link_parts(p, gap)[3]
+                dy = lines[(end, side)][0][1] - p1[1]
+                dz = p["outer_height_offset"]
+                p2 = p1 + np.array([side * math.sqrt(L ** 2 - dy ** 2 - dz ** 2), dy, dz])
             out[(end, side)] = (p1, p2)
     return out
+
+
+def gaps(p):
+    """Gap between the rod ends: rear from the manual, front from the position of the outer ball."""
+    p1, p2 = link_points(p)[("front", 1)]
+    return {"front": float(np.linalg.norm(p2 - p1)) - 2 * p["rod_end"][0], "rear": p["gap_rear"]}
 
 
 def links_in_plate(p=None):
@@ -141,30 +159,30 @@ def links_in_plate(p=None):
     faces = tower_faces()
     bd, off, nd = p["ball"]
     out = []
-    for end, label, gap in (("rear", "End B", p["gap_rear"]), ("front", "End A", p["gap_front"])):
+    pts = link_points(p)
+    for end, label in (("rear", "End B"), ("front", "End A")):
         yf, sign, zc, cx, tt = faces[end]
-        L = link_parts(p, gap)[3]
         for side, sname in ((1, "right"), (-1, "left")):
-            p1 = np.array([side * cx, yf + sign * off, zc])
-            yw = lines[(end, side)][0][1]                    # plane of the middle of the wishbone (wheel)
-            dy = yw - p1[1]
-            dz = p["outer_height_offset"]
-            dx = math.sqrt(L ** 2 - dy ** 2 - dz ** 2)
-            p2 = p1 + np.array([side * dx, dy, dz])
+            p1, p2 = pts[(end, side)]
+            L = float(np.linalg.norm(p2 - p1))
+            gap = L - 2 * p["rod_end"][0]
             th = math.degrees(math.atan2(p2[1] - p1[1], p2[0] - p1[0]))
+            pitch = math.degrees(math.atan2(p2[2] - p1[2], math.hypot(p2[0] - p1[0], p2[1] - p1[1])))
             # opening of the inner socket toward the tower (stud direction -sign along y in plate coordinates)
             inner_open = 1 if -sign * math.cos(math.radians(th)) > 0 else -1
             inner_r, outer_r, tb, _ = link_parts(p, gap, inner_open, -1)
 
             def place(sol):
-                return sol.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), th).translate(cq.Vector(*p1))
+                return (sol.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 1, 0), -pitch)
+                        .rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), th).translate(cq.Vector(*p1)))
             rods = cq.Compound.makeCompound([place(inner_r), place(outer_r)])
             st_in = ball_stud(p, (0, -sign, 0), off + tt + 1.0).translate(cq.Vector(*p1))
-            st_out = ball_stud(p, (0, 0, -1), p["outer_neck"], 3.5).translate(cq.Vector(*p2))
+            # outer ball stud: rear vertical into the hub carrier; front: the top kingpin of the knuckle (running gear)
+            st_out = ball_stud(p, (0, 0, -1), p["outer_neck"], 3.5).translate(cq.Vector(*p2)) if end == "rear" else None
             out.append((f"camber link {label} {sname}: rod ends", "rodend", rods))
             out.append((f"camber link {label} {sname}: turnbuckle M3x37", "link", place(tb)))
             out.append((f"camber link {label} {sname}: ball studs", "link",
-                        cq.Compound.makeCompound([st_in, st_out])))
+                        cq.Compound.makeCompound([st_in] + ([st_out] if st_out is not None else []))))
     return out
 
 
@@ -186,8 +204,9 @@ def drawing(p, path=DRAWING):
     fig.suptitle("Camber links: turnbuckle M3x37 with 2 rod ends (own design, partly based on the T410R)",
                  fontsize=11, y=0.98)
     e = p["rod_end"][0]
-    for row, (name, gap) in enumerate((("Front upper link (C), End A, 2 pieces", p["gap_front"]),
-                                       ("Rear upper link (D), End B, 2 pieces", p["gap_rear"]))):
+    g = gaps(p)
+    for row, (name, gap) in enumerate((("Front upper link (C), End A, 2 pieces", g["front"]),
+                                       ("Rear upper link (D), End B, 2 pieces", g["rear"]))):
         inner, outer, tb, L = link_parts(p, gap)
         T, C = [], []
         for sol, col in ((inner, (0.15, 0.15, 0.16)), (outer, (0.15, 0.15, 0.16)), (tb, (0.75, 0.76, 0.8))):
@@ -197,7 +216,8 @@ def drawing(p, path=DRAWING):
         ax = fig.add_axes([0.04, 0.52 - 0.46 * row, 0.6, 0.36])
         lo, hi = draw_mesh(ax, np.concatenate(T), basis((0, 1, 0), (1, 0, 0), (0, 0, 1)),
                            tri_colors=np.concatenate(C), depth_cue=0.2)
-        for x0, x1, yy, txt in ((e, L - e, -6.0, f"{gap:g} (manual: gap between the rod ends)"),
+        src = "manual" if row == 1 else "ball on the top kingpin"
+        for x0, x1, yy, txt in ((e, L - e, -6.0, f"{gap:.1f} (gap between the rod ends, {src})"),
                                 (0, L, -9.5, f"{L:.1f} between the ball centres")):
             ax.annotate("", (x0, yy), (x1, yy), arrowprops=dict(arrowstyle="<->", lw=0.8, color="#b42318"))
             ax.text((x0 + x1) / 2, yy + 0.5, txt, ha="center", va="bottom", fontsize=8, color="#b42318")
@@ -249,12 +269,13 @@ def main():
     p = load_params(PARAMS)
     os.makedirs(OUT, exist_ok=True)
     files = []
-    for name, gap in (("front", p["gap_front"]), ("rear", p["gap_rear"])):
+    g = gaps(p)
+    for name, gap in (("front", g["front"]), ("rear", g["rear"])):
         inner, outer, tb, L = link_parts(p, gap)
         files.append((f"camber_link_{name}_T410R", cq.Compound.makeCompound([inner, outer, tb]), L))
     files += [("rod_end", rod_end(p, "y", -1), None),
-              ("turnbuckle_M3x37", link_parts(p, p["gap_front"])[2].translate(
-                  cq.Vector(-link_parts(p, p["gap_front"])[3] / 2, 0, 0)), None),
+              ("turnbuckle_M3x37", link_parts(p, p["gap_rear"])[2].translate(
+                  cq.Vector(-link_parts(p, p["gap_rear"])[3] / 2, 0, 0)), None),
               ("ball_stud", ball_stud(p, (0, -1, 0), p["ball"][1] + 4.0), None)]
     for stem, s, L in files:
         bb = s.BoundingBox()

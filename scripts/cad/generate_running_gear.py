@@ -206,6 +206,26 @@ def corners(p, lp):
 
 
 # ------------------------------------------------------------------ front corner
+def top_spot_face(p):
+    """Local z (kingpin frame) of the spot face of the flanged guide sleeve below the flat top of the upper arm."""
+    kz1, gap, t_up = p["knuckle"][1], p["front_c_hub"][3], p["front_c_hub"][4]
+    d_fl = p["guide_sleeve"][2]
+    ca, sa = math.cos(math.radians(p["caster"])), math.sin(math.radians(p["caster"]))
+    return math.floor(((kz1 + gap + t_up) - sa * (d_fl / 2 + 0.3)) / ca * 20) / 20
+
+
+def front_camber_ball(p, side=1):
+    """Centre of the outer ball of the front camber link (chassis coordinates): the camber ball stud is the top
+    kingpin (as the original, manual step 15: ball stud 4.8x9 through the flanged guide sleeve into the knuckle),
+    so the ball sits on the kingpin axis above the flange of the sleeve. side: 1 right, -1 left."""
+    ap = W.load_params(W.PARAMS)
+    O = W.arm_point("front", 1, (ap["front_arm_length"], 0, 0), W.pin_lines())
+    a = math.radians(p["caster"])                                         # front: top toward the middle (outw = +1)
+    zl = top_spot_face(p) + p["guide_sleeve"][3] + p["ball_offset"]
+    ball = np.array([p["kingpin_x"], O[1] - math.sin(a) * zl, -p["ride_height"][0] + p["wheel_r"] + math.cos(a) * zl])
+    return ball * np.array([side, 1.0, 1.0])
+
+
 def kingpin_frame(p, c):
     """Frame of the front kingpin: origin in the centre of the outer CVD joint (on the kingpin axis at the
     height of the axle), x along the axle, z along the kingpin axis (caster: top toward the middle of the
@@ -226,7 +246,7 @@ def front_corner(p, d, c):
     c["kd"], c["R_k"], c["J"] = kd, R, J
     K = lambda s: place(s, R, J)                                          # kingpin frame -> chassis
     bx0, bx1, r_pass, gap, t_up, z_seat = p["front_c_hub"]
-    w_low, w_back, w_arm = p["front_c_hub_width"]
+    w_low, w_back, w_arm, z_w = p["front_c_hub_width"]
     kz0, kz1, r_boss, r_ring, xr0, xr1, d_lip, r_cup = p["knuckle"]
     d_seat, t_seat, x_cup, d_kp = p["knuckle_bores"]
     xs0 = xr0 + x_cup                                                     # end of the entry bore (section of the joint cup)
@@ -241,12 +261,11 @@ def front_corner(p, d, c):
     # slides in); space of the knuckle and U-slot square to the kingpin
     hub = fuse(cyl_y(3.6, yc - 6.5, yc + 6.5, O[0], O[2]),
                box(bx0, O[0], yc - w_low / 2, yc + w_low / 2, O[2], J[2] - 5.0),
-               box(bx0, bx1, yc - w_low / 2, yc + w_low / 2, O[2], 10.5),
-               box(bx0, bx1, yc - w_back / 2, yc + w_back / 2, 10.0, z_seat),
+               box(bx0, bx1, yc - w_low / 2, yc + w_low / 2, O[2], z_w + 0.5),
+               box(bx0, bx1, yc - w_back / 2, yc + w_back / 2, z_w, z_seat),
                box(bx0, J[0] + 3.5, yc - w_arm / 2, yc + w_arm / 2, J[2], J[2] + kz1 + gap + t_up))
     hub = hub.cut(K(box(xb, 30, -30, 30, kz0 - gap, zu)))                                 # space of the knuckle
     hub = hub.cut(K(fuse(cyl_z(rs, zu - 0.1, kz1 + gap, 0, 0), box(0, 30, -rs, rs, zu - 0.1, kz1 + gap))))  # U-slot
-    hub = hub.cut(box(bx0 - 1, J[0] - 3.0, yc - 10, yc + 10, z_seat, z_seat + 10))        # seat of the camber stud
     hub = hub.cut(cyl_y(1.5, yc - 8, yc + 8, O[0], O[2]))                                  # outer hinge pin
     hub = hub.cut(cyl_x(r_pass, bx0 - 1, bx1 + 1, yc, J[2]))                              # passage of the CVD
     # bores 5.0 for the guide sleeves (owner; manual step 15: flanged sleeves); top: spot face square to the kingpin
@@ -255,14 +274,12 @@ def front_corner(p, d, c):
     d_sl, d_sl_in, d_fl, t_fl, w_pin = p["guide_sleeve"]
     ca, sa = math.cos(math.radians(p["caster"])), math.sin(math.radians(p["caster"]))
     r_sf = d_fl / 2 + 0.3                                                                 # spot face of the flange
-    zf = math.floor(((kz1 + gap + t_up) - sa * r_sf) / ca * 20) / 20                      # below the flat top
+    zf = top_spot_face(p)                                                                 # below the flat top
     zbb = math.ceil((O[2] + 1.5 + w_pin - J[2] + sa * 2.5) / ca * 20) / 20                # bottom of the lower bore
     hub = hub.cut(K(cyl_z(2.5, kz1 + gap - 1.0, zf + 0.01, 0, 0)))                         # bore 5.0, top
     hub = hub.cut(K(cyl_z(r_sf, zf, zf + 10.0, 0, 0)))                                     # spot face of the flange
     hub = hub.cut(K(cyl_z(2.5, zbb, kz0 - gap + 1.0, 0, 0)))                               # bore 5.0, bottom
     hub = hub.cut(K(cyl_z(1.55, -21.0, zbb + 0.01, 0, 0)))                                 # through hole 3.1, set screw
-    cam = c["camber"]
-    hub = hub.cut(cyl_z(TAP / 2, z_seat - 6.0, z_seat + 1, cam[0], cam[1]))               # thread M3, camber stud
     hub = hub.cut(cyl_z(TAP / 2, O[2] - 5, O[2], O[0], yc))                               # thread M3, grub screw
     # knuckle (kingpin frame) as the T410R knuckle (measured by the owner, manual step 15): ring for 2 bearings
     # 5x10x4 from the kingpin axis outward, pressed in from both ends against a lip; from the inner end a wider
@@ -273,7 +290,7 @@ def front_corner(p, d, c):
     sax, say, t_arm, t_web, d_hole2, z_arm, w_tab = p["steering_arm_ball"]
     wt = w_tab / 2
     sg = c["outw"]                                                        # toward the middle of the car along y: -sg
-    kb_l = np.array([sax - J[0], say * sg, z_arm + t_arm / 2 + p["ball_offset"]])
+    kb_l = np.array([sax, say * sg, z_arm + t_arm / 2 + p["ball_offset"]])
     bx_, by_ = kb_l[0], kb_l[1]
     h2 = np.array([bx_, by_ + d_hole2 * sg])                              # second hole, toward the ring
     ay0, yt = -1.0 * sg, h2[1] + 3.0 * sg                                 # root inside the ring, start of the tab
@@ -294,16 +311,18 @@ def front_corner(p, d, c):
     knu = knu.cut(cyl_z(d_kp / 2, kz0 - 1, -zb, 0, 0)).cut(cyl_z(d_kp / 2, zb, kz1 + 1, 0, 0))   # kingpin set screws
     for hx, hy in ((bx_, by_), tuple(h2)):
         knu = knu.cut(cyl_z(TAP / 2, a0 - 1, a1 + 1, hx, hy))                            # threads M3, ball stud
-    # kingpins, threaded into the bosses (bores 2.7, thread formed by the screw, as the original; modelled with the
-    # bore diameter of the knuckle): top: button head screw M3x8 through the flanged guide sleeve, which it clamps
-    # to the boss (knuckle, sleeve and screw turn together in the bore 5.0 of the C-hub); bottom: set screw M3x8 from
-    # below (inserted before the outer hinge pin), turning in the plain guide sleeve, which stands 0.4 above the
-    # lower face of the C-hub (thrust face, 0.1 play to the boss)
+    # kingpins, threaded into the bosses (bores 2.7, thread formed by the screw, as the original): top: the ball stud
+    # 4.8x9 of the camber link (as the original, manual step 15) through the flanged guide sleeve, which it clamps to
+    # the boss (knuckle, sleeve and ball stud turn together in the bore 5.0 of the C-hub; the ball sits on the
+    # kingpin axis); bottom: set screw M3x8 from below (inserted before the outer hinge pin), turning in the plain
+    # guide sleeve, which stands 0.4 above the lower face of the C-hub (thrust face, 0.1 play to the boss);
+    # threads modelled with the core diameter in the bores 2.7
     zs = kz1 - 4.3                                                                       # 4.3 of thread in the boss
-    zt0 = zf + t_fl                                                                      # under the head of the screw
+    zt0 = zf + t_fl                                                                      # face of the ball stud
     pins = cq.Compound.makeCompound([K(cyl_z(d_kp / 2 - 0.001, -zs - 8.0, -zs, 0, 0)),          # set screw, bottom
-                                     K(fuse(cyl_z(d_kp / 2 - 0.001, zt0 - 8.0, zt0, 0, 0),
-                                            cyl_z(2.85, zt0, zt0 + 1.65, 0, 0)))])               # screw M3x8, top
+                                     K(stud(np.array([0, 0, zt0 + p["ball_offset"]]), np.array([0, 0, 1.0]),
+                                            p["ball_offset"], 9.0))])                            # ball stud 4.8x9, top
+    c["camber_ball"] = J + R @ np.array([0, 0, zt0 + p["ball_offset"]])
     sleeves = cq.Compound.makeCompound([
         K(fuse(cyl_z(d_sl / 2, kz1, zf, 0, 0), cyl_z(d_fl / 2, zf, zf + t_fl, 0, 0)).cut(
             cyl_z(d_sl_in / 2, kz1 - 1, zf + t_fl + 1, 0, 0))),                                 # flanged, top
