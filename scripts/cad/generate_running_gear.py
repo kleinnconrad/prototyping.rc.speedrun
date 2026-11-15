@@ -227,10 +227,10 @@ def front_corner(p, d, c):
     bx0, bx1, r_pass, gap, t_up, z_seat = p["front_c_hub"]
     w_low, w_back, w_arm = p["front_c_hub_width"]
     kz0, kz1, r_boss, r_ring, xr0, xr1, d_lip, r_cup = p["knuckle"]
-    d_seat, t_out, t_lip, d_kp = p["knuckle_bores"]
+    d_seat, t_out, x_cup, d_kp = p["knuckle_bores"]
+    xs0 = xr0 + x_cup                                                     # end of the entry bore: the bore narrows at the bearing
+    xl0 = xs0 + 4.0                                                       # lip: inner face (end of the inner seat)
     xl1 = xr1 - t_out                                                     # lip: outer face (end of the outer seat)
-    xl0 = xl1 - t_lip                                                     # lip: inner face
-    xs0 = xl0 - 4.0                                                       # inner seat: the bore narrows at the bearing
     xb = bx1 - J[0]                                                       # inner face of the back plate (local)
     xg = -r_boss - 0.7                                                    # block under the upper arm, beside the boss
     # C-hub: lug on the outer hinge pin, lower arm and back plate (chassis coordinates, between the rails
