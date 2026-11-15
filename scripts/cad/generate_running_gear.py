@@ -8,7 +8,8 @@ follows the principle of the T410R and deviates from it where the function requi
 with their source: cad/running_gear/running_gear_parameters.json.
 
 Placement (chassis plate coordinates): ride height 10 mm front / 15 mm rear (setup sheet 4), wheel
-centres at +-80 mm (overall width 190 mm), caster 10 degrees front, rear toe from the pivot blocks.
+centres of the original car at +-78.5 mm (overall width 187 mm over the tyres), caster 10 degrees front, rear toe from
+the pivot blocks.
 The wishbones are horizontal at this ride height. The parts of the right side are built and
 mirrored to the left side.
 
