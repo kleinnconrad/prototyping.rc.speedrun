@@ -1,9 +1,9 @@
 adr:
   id: ADR-010
-  title: Selection of the GPS measuring system to validate the 100 km/h mark
+  title: Selection of the GPS measuring system to validate the 130 km/h mark
   status: decided
   date: '2026-03-10'
-  context: "The calculated mathematical models (axle speed, rolling resistance, \nvoltage drop) \nmust be validated in reality ('integration test' on the street) \nby hard telemetry data. \nSince the vehicle often only holds the top speed of 100 km/h for a time window \nof 2 to 3 seconds, a very high sampling rate (update frequency) of the \nmeasuring device is absolutely required. \nAt the same time, the module must not \nnegatively affect the vehicle weight (CG) \nand the aerodynamics.\n"
+  context: "The calculated mathematical models (axle speed, rolling resistance, \nvoltage drop) \nmust be validated in reality ('integration test' on the street) \nby hard telemetry data. \nSince the vehicle often only holds the top speed of 130 km/h for a time window \nof 2 to 3 seconds, a very high sampling rate (update frequency) of the \nmeasuring device is absolutely required. \nAt the same time, the module must not \nnegatively affect the vehicle weight (CG) \nand the aerodynamics.\n"
   considered_alternatives:
   - option_id: 1
     name: Smartphone with GPS App
@@ -36,4 +36,4 @@ adr:
     *under* the carbon upper deck in the Carten T410R. The optimal position is on the
     foam bumper in the front.'
   - 'Mounting: The device must be fixed very securely (e.g. with strong velcro or 3M
-    Dual Lock) so that it does not fly away as a projectile in the event of a rollover at 100 km/h.'
+    Dual Lock) so that it does not fly away as a projectile in the event of a rollover at 130 km/h.'

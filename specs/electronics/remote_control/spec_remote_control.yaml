@@ -23,6 +23,6 @@ spec:
       potentiometer: Hall Sensor for highest possible precision
     calibration_and_setup:
       fail_safe_activation: The fail-safe must absolutely be programmed to brake! Jack up the car, hold full brake on the remote and press the setup button on the receiver. When turning off the remote, the car must brake immediately.
-      steering_dual_rate: Reduce the maximum steering angle via the Dual Rate (D/R) dial on the remote control. At 100 km/h, full steering angle leads to a rollover.
+      steering_dual_rate: Reduce the maximum steering angle via the Dual Rate (D/R) dial on the remote control. At 130 km/h, full steering angle leads to a rollover.
       throttle_trim: The throttle trim (TH Trim) must be exactly at the zero point (center) before the ESC is calibrated.
       bec_voltage_warning: The BEC of the ESC must be matched with the input voltage of the receiver.

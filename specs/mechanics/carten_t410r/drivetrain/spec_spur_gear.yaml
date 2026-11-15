@@ -1,7 +1,7 @@
 spec:
   meta:
     type: CARTEN NBA360 Steel Spur Gear (48 DP, 68T)
-    mechanical_load_capacity: '> 100 km/h (designed for 3S / 120A Brushless Systems)'
+    mechanical_load_capacity: '> 100 km/h (designed for 3S / 120A Brushless Systems; not evaluated for the goal of 130 km/h)'
   properties:
     material_and_construction:
       gear_body: Steel - CNC machined

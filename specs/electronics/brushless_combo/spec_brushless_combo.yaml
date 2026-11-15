@@ -1,6 +1,6 @@
 spec:
   meta:
-    description: Specification of the brushless powertrain for 100 km/h on 3S.
+    description: Specification of the brushless powertrain for 130 km/h on 3S.
     architecture_status: 'ADR-002: Hobbywing QuicRun WP10BL120 G2 Combo (3660SL 3700KV)
       accepted'
   properties:

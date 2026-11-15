@@ -60,7 +60,7 @@ Charger:
       control_interface: Simple 3-button control
 Brushless Combo:
   meta:
-    description: Specification of the brushless powertrain for 100 km/h on 3S.
+    description: Specification of the brushless powertrain for 130 km/h on 3S.
     architecture_status: 'ADR-002: Hobbywing QuicRun WP10BL120 G2 Combo (3660SL 3700KV)
       accepted'
   properties:
@@ -194,7 +194,7 @@ Laser Tachometer:
       preparation: Stick reflector strip (included) on the tire sidewall or pinion.
       execution: Jack up the vehicle safely. Turn on the remote control, apply full
         throttle and point the laser at the rotating strip.
-      safety_warning: 'IMPORTANT: At 100 km/h wheel rotation speed, rubber tires expand
+      safety_warning: 'IMPORTANT: At 130 km/h wheel rotation speed, rubber tires expand
         significantly (ballooning). Wear safety goggles and do not stand directly
         in the centrifugal line of the wheels in case the tire glue fails!'
 Remote Control:
@@ -226,7 +226,7 @@ Remote Control:
         Jack up the car, hold full brake on the remote and press the setup button
         on the receiver. When turning off the remote, the car must brake immediately.
       steering_dual_rate: Reduce the maximum steering angle via the Dual Rate (D/R)
-        dial on the remote control. At 100 km/h, full steering angle leads to a rollover.
+        dial on the remote control. At 130 km/h, full steering angle leads to a rollover.
       throttle_trim: The throttle trim (TH Trim) must be exactly at the zero point
         (center) before the ESC is calibrated.
       bec_voltage_warning: The BEC of the ESC must be matched with the input voltage
@@ -261,7 +261,7 @@ Servo:
       installation: Tighten the clamp screw and definitely fix the main screw with
         threadlocker (e.g. Loctite medium strength).
     transmitter_setup:
-      dual_rate: For the 100 km/h run, the 'Dual Rate' (D/R) or the steering throw
+      dual_rate: For the 130 km/h run, the 'Dual Rate' (D/R) or the steering throw
         (EPA) must absolutely be reduced on the remote control. Minimal steering movements
         are sufficient at top speed.
 Body:
@@ -290,7 +290,8 @@ Body:
 Differentials:
   meta:
     type: Oil-filled bevel differential (Metal Gear)
-    mechanical_load_capacity: '> 100 km/h (approx. 8,300 RPM axle speed)'
+    mechanical_load_capacity: '> 100 km/h (approx. 8,300 RPM axle speed; not evaluated
+      for the goal of 130 km/h, approx. 10,800 RPM)'
   properties:
     material_and_construction:
       gears_ring_and_bevel: Sintered metal / Steel
@@ -304,9 +305,10 @@ Differentials:
           the teeth skip or tear off under the high torque of the 3S motor.
       reinforced_sealing:
         issue: O-ring sealing
-        description: At 8,300 RPM, the oil inside generates a massive centrifugal
-          pressure outwards. The rubber O-rings must be sealed with viscous special
-          grease (e.g. 'Green Slime') so that the differential does not run dry.
+        description: At 10,800 RPM (130 km/h), the oil inside generates a massive
+          centrifugal pressure outwards. The rubber O-rings must be sealed with viscous
+          special grease (e.g. 'Green Slime') so that the differential does not run
+          dry.
       oil_viscosity:
         issue: Locking effect & straight-line stability
         description: The kit oil is too soft and leads to uncontrollable breakouts
@@ -323,17 +325,17 @@ Driveshaft And Joints:
       driveshaft:
         component: Driveshaft (Shaft)
         material: Aluminum (anodized), hollow or solid (depending on batch)
-        suitability_100kmh_3s: YES. Aluminum is better here than steel, since the
-          lower rotating mass generates fewer vibrations at approx. 26,000 RPM.
+        suitability_130kmh_3s: YES. Aluminum is better here than steel, since the
+          lower rotating mass generates fewer vibrations at approx. 26,600 RPM.
       joint_cups:
         component: Connectors (Diff-Inputs)
         material: Steel (Hardened)
-        suitability_100kmh_3s: YES. The mounts at the differential input are made
+        suitability_130kmh_3s: YES. The mounts at the differential input are made
           of steel and withstand the torque of the 3S drive.
       rpm_load:
         component: Speed load
-        specification: Shaft rotates at approx. 26,000 RPM
-        suitability_100kmh_3s: Critical, but doable for the kit part, as long as there
+        specification: Shaft rotates at approx. 26,600 RPM (130 km/h)
+        suitability_130kmh_3s: Critical, but doable for the kit part, as long as there
           is no imbalance.
     mandatory_durability_measures:
       centering_floating_problem:
@@ -373,11 +375,13 @@ Gearing:
       calculated_values:
         internal_ratio: 2.47
         total_ratio: 3.91
-        target_speed: '> 100 km/h'
+        target_speed: '> 130 km/h (project goal; theoretical top speed with the 43T
+          pinion at 11.1 V: approx. 127 km/h, from a 45T pinion: over 130 km/h)'
 Spur Gear:
   meta:
     type: CARTEN NBA360 Steel Spur Gear (48 DP, 68T)
-    mechanical_load_capacity: '> 100 km/h (designed for 3S / 120A Brushless Systems)'
+    mechanical_load_capacity: '> 100 km/h (designed for 3S / 120A Brushless Systems;
+      not evaluated for the goal of 130 km/h)'
   properties:
     material_and_construction:
       gear_body: Steel - CNC machined
@@ -512,7 +516,7 @@ Tires:
       width_rear_mm: 30
     setup_instructions:
       ballooning_protection: Foam rubber tires physically do not expand at approx.
-        8,300 RPM (axle speed at 100 km/h). The aerodynamics of the ZooRacing Hellcat
+        10,800 RPM (axle speed at 130 km/h). The aerodynamics of the ZooRacing Hellcat
         and the ride height remain constantly safe.
       wheel_nut_securing: Mandatory to use locknuts with an intact nylon ring (M4)
         and tighten firmly. The brutal acceleration of the 3660 motor can spin off
@@ -520,7 +524,7 @@ Tires:
       balancing: Despite industrial production, tires can have slight imbalances.
         In case of strong vibrations on the jacked-up chassis, balance the wheels
         (e.g. with putty lead in the rim) so as not to destroy the wheel bearings
-        of the Carten T410R at 100 km/h.
+        of the Carten T410R at 130 km/h.
       break_in_scrubbing: The smooth production layer must first be worn off. Use
         the first test runs to calibrate the ESC to build up the grip for the final
         topspeed run.

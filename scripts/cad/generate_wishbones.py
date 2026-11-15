@@ -1,6 +1,6 @@
-"""Generate the lower wishbones of the speedrun chassis (own design, re-engineered from the T410R).
+"""Generate the lower wishbones of the speedrun chassis (own design, partly based on the T410R).
 
-The wishbones (suspension arms) are the owner's own design, re-engineered from the T410R (manual
+The wishbones (suspension arms) are the owner's own design, partly based on the T410R (manual
 step 7 and parts list, measurements of the owner). The assembly of the speedrun chassis contains
 them, so that the space beside the bulkheads can be checked.
 
@@ -232,7 +232,7 @@ def drawing(path, p, solids):
                     arrowprops=dict(arrowstyle="-", lw=0.6, color=color), bbox=dict(fc="white", ec="none", pad=0.4))
 
     fig = plt.figure(figsize=(16, 15.5))
-    fig.suptitle("Lower wishbones with hinge pin (own design, re-engineered from the T410R; measures qualified, "
+    fig.suptitle("Lower wishbones with hinge pin (own design, partly based on the T410R; measures qualified, "
                  "no 3D print verification)", fontsize=12, y=0.992)
     half, h = p["inner_width"] / 2, p["rail_h"] / 2
     z0, z1 = p["shock_plate_z"]
@@ -355,7 +355,7 @@ def drawing(path, p, solids):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate the wishbones of the speedrun chassis (own design, re-engineered from the T410R).")
+    parser = argparse.ArgumentParser(description="Generate the wishbones of the speedrun chassis (own design, partly based on the T410R).")
     parser.parse_args()
     p, pp = load_params(PARAMS), load_params(PIVOT)
     solids = {k: arm_solid(p, k) for k in KINDS}

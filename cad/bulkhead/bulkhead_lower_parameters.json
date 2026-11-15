@@ -1,5 +1,5 @@
 {
-  "part": "Lower bulkhead (gear box lower half) of the speedrun chassis: own design, re-engineered from the T410R",
+  "part": "Lower bulkhead (gear box lower half) of the speedrun chassis: own design, partly based on the T410R",
   "units": "mm",
   "coordinate_system": "Origin at the centre of the 4 bottom holes on the bottom face. x along the diff axis (across the car), y along the pinion axis, +y toward the pinion and the centre shaft, z = 0 bottom face (contact face to the chassis plate), +z up.",
   "design": "Prismatic part in the style of the upper bulkhead: the footprint of the upper part, extruded to the parting face, with a flat contact face on the chassis plate and one straight chamfer per side below the wings (space for the pivot blocks of the wishbones). Below the chamfers: a rectangular block under the pinion, the 4 screw bosses and the sway bar tabs. The only curved faces are the bores, the cavities, the bosses, the ends of the tabs and the radii of the edges (inside_corner_r, outside_corner_r). The other hard outside edges have edge chamfers (edge_chamfer).",

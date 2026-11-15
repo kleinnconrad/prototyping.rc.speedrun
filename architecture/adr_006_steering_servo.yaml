@@ -3,13 +3,13 @@ adr:
   title: Selection of the steering servo for precise high-speed control
   status: decided
   date: '2026-08-21'
-  context: "At speeds of 100 km/h, enormous aerodynamic and mechanical forces act on the front wheels of the Carten T410R. A minimal jitter, play or a too slow reaction time of the steering servo can immediately lead to loss of control and total failure. In addition, space in a 1:10 touring car chassis is limited. The servo must hold the straight line precisely, return reproducibly to the neutral position and execute the counter-steering commands of the steering gyro (ADR-011) without delay. A low-profile servo with metal gears (robustness), high speed and a precise neutral return is required.\n"
+  context: "At speeds of 130 km/h, enormous aerodynamic and mechanical forces act on the front wheels of the Carten T410R. A minimal jitter, play or a too slow reaction time of the steering servo can immediately lead to loss of control and total failure. In addition, space in a 1:10 touring car chassis is limited. The servo must hold the straight line precisely, return reproducibly to the neutral position and execute the counter-steering commands of the steering gyro (ADR-011) without delay. A low-profile servo with metal gears (robustness), high speed and a precise neutral return is required.\n"
   considered_alternatives:
   - option_id: 1
     name: Standard RTR / Plastic Gear Servo (3-6 kg)
     type: Low-End / Standard Size
     evaluation: Very cheap (often < 15 €), but life-threatening for the project.
-      Plastic gears shear off immediately under the restoring forces at 100 km/h. With
+      Plastic gears shear off immediately under the restoring forces at 130 km/h. With
       often > 0.15s positioning time much too slow.
   - option_id: 2
     name: High-End Brushless Full-Size Servo (e.g. Savöx SB-2290SG)
@@ -44,4 +44,4 @@ adr:
   consequences:
   - 'Servo horn: To minimize play in the steering system, a rigid aluminum lever (ALU CLAMP SERVO HORN - FUTABA, SAVÖX - 3-HOLE - 25T, item HUD293409) is mounted without a servo saver.'
   - 'BEC voltage: The BEC output voltage of the controller is configured to 6.0V.'
-  - 'Dual-Rate: The maximum steering angle is limited on the remote control to ensure stability at 100 km/h.'
+  - 'Dual-Rate: The maximum steering angle is limited on the remote control to ensure stability at 130 km/h.'

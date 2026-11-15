@@ -16,4 +16,4 @@ spec:
       calculated_values:
         internal_ratio: 2.47
         total_ratio: 3.91
-        target_speed: '> 100 km/h'
+        target_speed: '> 130 km/h (project goal; theoretical top speed with the 43T pinion at 11.1 V: approx. 127 km/h, from a 45T pinion: over 130 km/h)'

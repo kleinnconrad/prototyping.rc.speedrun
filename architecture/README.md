@@ -6,27 +6,27 @@ This directory contains all fundamental architecture and hardware decisions for 
 
 | ID | Date | Title | Status | Decision |
 | :--- | :--- | :--- | :--- | :--- |
-| **ADR-001** | 2026-03-06 | Selection of the chassis platform and make-or-buy decision (100 km/h Benchmark) | 🟢 decided | MAKE - Carten T410R |
-| **ADR-002** | 2026-03-06 | Selection of the brushless motor combo for 100 km/h speedruns | 🟢 decided | Hobbywing QuicRun WP10BL120 G2 Combo (3660SL 3700KV) |
-| **ADR-003** | 2026-03-06 | Selection of the LiPo Battery for the 100 km/h Goal. | 🟢 decided | Absima GreenHorn Line V2 (3S / 5000mAh / 50C / Hardcase) |
+| **ADR-001** | 2026-03-06 | Selection of the chassis platform and make-or-buy decision (130 km/h Benchmark) | 🟢 decided | MAKE - Carten T410R |
+| **ADR-002** | 2026-03-06 | Selection of the brushless motor combo for 130 km/h speedruns | 🟢 decided | Hobbywing QuicRun WP10BL120 G2 Combo (3660SL 3700KV) |
+| **ADR-003** | 2026-03-06 | Selection of the LiPo Battery for the 130 km/h Goal. | 🟢 decided | Absima GreenHorn Line V2 (3S / 5000mAh / 50C / Hardcase) |
 | **ADR-004** | 2026-03-06 | Selection of the charger for 3S LiPo batteries | 🟢 decided | SkyRC S100neo |
-| **ADR-005** | 2026-08-20 | Selection of the remote control system for 100 km/h speedruns | 🟢 decided | Konect X9S Radio + Mini Waterproof 4-Channel Receiver RG4CHWP |
+| **ADR-005** | 2026-08-20 | Selection of the remote control system for 130 km/h speedruns | 🟢 decided | Konect X9S Radio + Mini Waterproof 4-Channel Receiver RG4CHWP |
 | **ADR-006** | 2026-08-21 | Selection of the steering servo for precise high-speed control | 🟢 decided | Savöx SC-1252MG+ |
 | **ADR-007** | 2026-10-27 | Selection of motor cooling for 3S speedruns | 🟢 decided | No dedicated motor cooling (stock setup) |
-| **ADR-008** | 2026-10-05 | Selection of tires for 100 km/h speedruns | 🟢 decided | Team Corally C-14705-35 Attack Moosgummi Reifen - 1/10 GP Toerenwagen - 35 shore |
-| **ADR-009** | 2026-03-12 | Selection of the aerodynamic body for 100 km/h speedruns | 🟢 decided | ZooRacing Hellcat (190 mm, 0.7mm thickness) |
-| **ADR-010** | 2026-03-10 | Selection of the GPS measuring system to validate the 100 km/h mark | 🟢 decided | Ruddog GPS Performance Analyzer |
+| **ADR-008** | 2026-10-05 | Selection of tires for 130 km/h speedruns | 🟢 decided | Team Corally C-14705-35 Attack Moosgummi Reifen - 1/10 GP Toerenwagen - 35 shore |
+| **ADR-009** | 2026-03-12 | Selection of the aerodynamic body for 130 km/h speedruns | 🟢 decided | ZooRacing Hellcat (190 mm, 0.7mm thickness) |
+| **ADR-010** | 2026-03-10 | Selection of the GPS measuring system to validate the 130 km/h mark | 🟢 decided | Ruddog GPS Performance Analyzer |
 | **ADR-011** | 2026-08-30 | Selection of Gyro for vehicle stabilization | 🟢 decided | SkyRC GC301 Gyro |
 
 ---
 
 ## Detailed Logs
 
-### ADR-001: Selection of the chassis platform and make-or-buy decision (100 km/h Benchmark)
+### ADR-001: Selection of the chassis platform and make-or-buy decision (130 km/h Benchmark)
 **Status:** decided | **Date:** 2026-03-06
 
 #### Context
-For the 100 km/h speedrun project, a mechanically stable basis is required. 
+For the 130 km/h speedrun project, a mechanically stable basis is required. 
 The platform must withstand 
 extreme loads (approx. 41,000 rpm at the motor, massive 
 centrifugal forces on the axles). 
@@ -46,7 +46,7 @@ The decision is made in favor of the "Make" option with the Carten T410R
 (~ 180 €). 
 It is the only kit in the benchmark field of this price class that 
 combines the essential requirements 
-for a 3S/100 km/h run out of the box: 
+for a 3S/130 km/h run out of the box: 
 1. A stiff 2.25mm carbon bottom plate (prevents dangerous fluttering). 
 2. A robust shaft drive (eliminates the risk of skipping belts). 
 3. Differential gears made of sintered metal (solves the knockout criterion of shearing 
@@ -62,11 +62,11 @@ the increased manual setup effort.
 
 ---
 
-### ADR-002: Selection of the brushless motor combo for 100 km/h speedruns
+### ADR-002: Selection of the brushless motor combo for 130 km/h speedruns
 **Status:** decided | **Date:** 2026-03-06
 
 #### Context
-In order to accelerate a 1/10 touring car (Carten T410R) to 100 km/h, 
+In order to accelerate a 1/10 touring car (Carten T410R) to 130 km/h, 
 the gearing must be very 'tall' (high wheel load > 22 %). A 
 classic 3650 motor (50 mm length) operates 
 here at its thermal 
@@ -103,13 +103,13 @@ thermal problems have not occurred in the tests so far.
 
 ---
 
-### ADR-003: Selection of the LiPo Battery for the 100 km/h Goal.
+### ADR-003: Selection of the LiPo Battery for the 130 km/h Goal.
 **Status:** decided | **Date:** 2026-03-06
 
 #### Context
-In order to accelerate the RC100 project to over 100 km/h, the power source must be optimally 
+In order to accelerate the RC100 project to over 130 km/h, the power source must be optimally 
 matched to the 3700kV motor and the 120A ESC (Hobbywing QuicRun). 
-A 2S LiPo (7.4V) would only deliver approx. 27,400 rpm, which is not sufficient for 100 km/h 
+A 2S LiPo (7.4V) would only deliver approx. 27,400 rpm, which is not sufficient for 130 km/h 
 with a normal gear ratio. Therefore, a 3S LiPo (11.1V) is absolutely necessary to 
 reach the calculated ~41,000 rpm. In addition, the battery must be able to briefly 
 deliver extreme currents without dropping in voltage (voltage sag), and must be physically 
@@ -124,7 +124,7 @@ The decision is made in favor of the Absima GreenHorn V2 3S LiPo. With a 50C
 discharge rate, it offers 
 enough buffer for the massive current peaks when accelerating 
 the 43T/68T gearing (pinion/spur gear). 
-The hardcase is a safety requirement for speedruns, as an impact at 100 km/h 
+The hardcase is a safety requirement for speedruns, as an impact at 130 km/h 
 would immediately destroy and ignite a softcase LiPo. The pre-assembled XT60 connector 
 guarantees a 
 low contact resistance for the high currents.
@@ -177,11 +177,11 @@ superfluous. This fits perfectly with the architecture decision of the Absima ba
 
 ---
 
-### ADR-005: Selection of the remote control system for 100 km/h speedruns
+### ADR-005: Selection of the remote control system for 130 km/h speedruns
 **Status:** decided | **Date:** 2026-08-20
 
 #### Context
-An RC car traveling at 100 km/h (approx. 27.7 meters per second) covers 
+An RC car traveling at 130 km/h (approx. 36.1 meters per second) covers 
 enormous distances in a few seconds. 
 The remote control (transmitter) 
 and the receiver 
@@ -215,7 +215,7 @@ The tests with the Carson Reflex Wheel X1 showed insufficient steering precision
 **Status:** decided | **Date:** 2026-08-21
 
 #### Context
-At speeds of 100 km/h, enormous aerodynamic and mechanical forces act on the front wheels of the Carten T410R. A minimal jitter, play or a too slow reaction time of the steering servo can immediately lead to loss of control and total failure. In addition, space in a 1:10 touring car chassis is limited. The servo must hold the straight line precisely, return reproducibly to the neutral position and execute the counter-steering commands of the steering gyro (ADR-011) without delay. A low-profile servo with metal gears (robustness), high speed and a precise neutral return is required.
+At speeds of 130 km/h, enormous aerodynamic and mechanical forces act on the front wheels of the Carten T410R. A minimal jitter, play or a too slow reaction time of the steering servo can immediately lead to loss of control and total failure. In addition, space in a 1:10 touring car chassis is limited. The servo must hold the straight line precisely, return reproducibly to the neutral position and execute the counter-steering commands of the steering gyro (ADR-011) without delay. A low-profile servo with metal gears (robustness), high speed and a precise neutral return is required.
 
 
 #### Decision
@@ -228,7 +228,7 @@ Test drives with the MVP servo (JX PDI-4409MG) showed that the required steering
 #### Consequences
 - Servo horn: To minimize play in the steering system, a rigid aluminum lever (ALU CLAMP SERVO HORN - FUTABA, SAVÖX - 3-HOLE - 25T, item HUD293409) is mounted without a servo saver.
 - BEC voltage: The BEC output voltage of the controller is configured to 6.0V.
-- Dual-Rate: The maximum steering angle is limited on the remote control to ensure stability at 100 km/h.
+- Dual-Rate: The maximum steering angle is limited on the remote control to ensure stability at 130 km/h.
 
 
 ---
@@ -237,7 +237,7 @@ Test drives with the MVP servo (JX PDI-4409MG) showed that the required steering
 **Status:** decided | **Date:** 2026-10-27
 
 #### Context
-The targeted goal of 100 km/h requires the use of a 3700kV motor (Hobbywing QuicRun 3660SL G2) on a 3S LiPo (11.1V), which leads to motor speeds of approx. 41,000 rpm and a tall final drive ratio (43T pinion / 68T spur gear, FDR 3.91, wheel load 25.6 %). Under these conditions, a high thermal load of the motor was expected. Excessive motor temperatures can demagnetize the rotor or damage the winding insulation. The cooling concept must therefore match the thermal load observed in test drives.
+The targeted goal of 130 km/h requires the use of a 3700kV motor (Hobbywing QuicRun 3660SL G2) on a 3S LiPo (11.1V), which leads to motor speeds of approx. 41,000 rpm and a tall final drive ratio (43T pinion / 68T spur gear, FDR 3.91, wheel load 25.6 %). Under these conditions, a high thermal load of the motor was expected. Excessive motor temperatures can demagnetize the rotor or damage the winding insulation. The cooling concept must therefore match the thermal load observed in test drives.
 
 
 #### Decision
@@ -256,11 +256,11 @@ Test drives showed that the motor does not heat up significantly during speedrun
 
 ---
 
-### ADR-008: Selection of tires for 100 km/h speedruns
+### ADR-008: Selection of tires for 130 km/h speedruns
 **Status:** decided | **Date:** 2026-10-05
 
 #### Context
-At a target speed of 100 km/h and the associated high 
+At a target speed of 130 km/h and the associated high 
 speeds 
 of the wheels, standard rubber tires expand massively in the middle due to centrifugal force 
 (the so-called "pizza cutter effect" or "ballooning"
@@ -288,17 +288,17 @@ While belted tires avoid ballooning, they do not provide sufficient stability an
 
 #### Consequences
 - Pre-check: Even factory pre-glued tires must absolutely be checked for manufacturing defects on the glue seam before the first run (pull briefly on the tire sidewall).
-- Balancing: Since the smallest imbalances destabilize the chassis at 100 km/h, the wheels should ideally be balanced with an RC tire balancer and putty lead.
+- Balancing: Since the smallest imbalances destabilize the chassis at 130 km/h, the wheels should ideally be balanced with an RC tire balancer and putty lead.
 - Temperature window: In order to build up maximum mechanical grip, the 35 shore foam tires must be warmed up by 1-2 slow laps before the actual speedrun.
 
 
 ---
 
-### ADR-009: Selection of the aerodynamic body for 100 km/h speedruns
+### ADR-009: Selection of the aerodynamic body for 130 km/h speedruns
 **Status:** decided | **Date:** 2026-03-12
 
 #### Context
-At a target speed of 100 km/h (approx. 27.7 m/s), the body is 
+At a target speed of 130 km/h (approx. 36.1 m/s), the body is 
 no longer a purely visual component, but the primary aerodynamic protective layer. 
 A classic, boxy body 
 traps air under the front apron, 
@@ -307,7 +307,7 @@ dynamic pressure). At the same time,
 the air resistance (drag coefficient) must not unnecessarily slow down the motor. 
 The Carten T410R chassis requires a width of 190 mm. The material thickness is 
 critical: 
-Thin lexan (< 0.5 mm) deforms massively at 100 km/h.
+Thin lexan (< 0.5 mm) deforms massively at 130 km/h.
 
 
 #### Decision
@@ -317,7 +317,7 @@ Thin lexan (< 0.5 mm) deforms massively at 100 km/h.
 The decision is made in favor of the ZooRacing Hellcat in the 0.7mm standard thickness. 
 It represents the 
 optimal compromise between minimum air resistance (for 
-reaching 100 km/h) and safe 
+reaching 130 km/h) and safe 
 downforce (prevention of blow-overs). Unlike very flat LMP bodies, 
 it fits easily over 
 the shock towers of the Carten T410R. The material thickness of 0.7mm 
@@ -333,7 +333,7 @@ start to vibrate or rub against the tires.
 
 ---
 
-### ADR-010: Selection of the GPS measuring system to validate the 100 km/h mark
+### ADR-010: Selection of the GPS measuring system to validate the 130 km/h mark
 **Status:** decided | **Date:** 2026-03-10
 
 #### Context
@@ -341,7 +341,7 @@ The calculated mathematical models (axle speed, rolling resistance,
 voltage drop) 
 must be validated in reality ('integration test' on the street) 
 by hard telemetry data. 
-Since the vehicle often only holds the top speed of 100 km/h for a time window 
+Since the vehicle often only holds the top speed of 130 km/h for a time window 
 of 2 to 3 seconds, a very high sampling rate (update frequency) of the 
 measuring device is absolutely required. 
 At the same time, the module must not 
@@ -365,7 +365,7 @@ saves a heavy, readable display directly on the vehicle.
 
 #### Consequences
 - Signal constraint: The GPS signal easily passes through lexan bodies, but is massively blocked by carbon fibers. The module must not be mounted directly *under* the carbon upper deck in the Carten T410R. The optimal position is on the foam bumper in the front.
-- Mounting: The device must be fixed very securely (e.g. with strong velcro or 3M Dual Lock) so that it does not fly away as a projectile in the event of a rollover at 100 km/h.
+- Mounting: The device must be fixed very securely (e.g. with strong velcro or 3M Dual Lock) so that it does not fly away as a projectile in the event of a rollover at 130 km/h.
 
 
 ---
@@ -374,7 +374,7 @@ saves a heavy, readable display directly on the vehicle.
 **Status:** decided | **Date:** 2026-08-30
 
 #### Context
-At high speeds of up to 100 km/h, the RC vehicle requires electronic stabilization to maintain a straight trajectory and prevent spin-outs. A gyro sensor detects unwanted rotational movements and automatically applies counter-steering via the steering servo. The selection of a gyro must balance reliability and cost. High-end gyros offer advanced features but exceed the current project budget.
+At high speeds of up to 130 km/h, the RC vehicle requires electronic stabilization to maintain a straight trajectory and prevent spin-outs. A gyro sensor detects unwanted rotational movements and automatically applies counter-steering via the steering servo. The selection of a gyro must balance reliability and cost. High-end gyros offer advanced features but exceed the current project budget.
 
 #### Decision
 > **SkyRC GC301 Gyro**

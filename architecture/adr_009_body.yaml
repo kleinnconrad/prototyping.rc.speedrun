@@ -1,15 +1,15 @@
 adr:
   id: ADR-009
-  title: Selection of the aerodynamic body for 100 km/h speedruns
+  title: Selection of the aerodynamic body for 130 km/h speedruns
   status: decided
   date: '2026-03-12'
-  context: "At a target speed of 100 km/h (approx. 27.7 m/s), the body is \nno longer a purely visual component, but the primary aerodynamic protective layer. \nA classic, boxy body \ntraps air under the front apron, \nwhich inevitably leads to a 'blow-over' (lifting off due to \ndynamic pressure). At the same time, \nthe air resistance (drag coefficient) must not unnecessarily slow down the motor. \nThe Carten T410R chassis requires a width of 190 mm. The material thickness is \ncritical: \nThin lexan (< 0.5 mm) deforms massively at 100 km/h.\n"
+  context: "At a target speed of 130 km/h (approx. 36.1 m/s), the body is \nno longer a purely visual component, but the primary aerodynamic protective layer. \nA classic, boxy body \ntraps air under the front apron, \nwhich inevitably leads to a 'blow-over' (lifting off due to \ndynamic pressure). At the same time, \nthe air resistance (drag coefficient) must not unnecessarily slow down the motor. \nThe Carten T410R chassis requires a width of 190 mm. The material thickness is \ncritical: \nThin lexan (< 0.5 mm) deforms massively at 130 km/h.\n"
   considered_alternatives:
   - option_id: 1
     name: Standard Touring Car / Bash Body (e.g. Nissan Skyline, BMW M3)
     type: Scale Looks / High Drag
     evaluation: Visually appealing, but aerodynamically a parachute. High risk
-      for blow-overs. Architecturally unsuitable for 100 km/h.
+      for blow-overs. Architecturally unsuitable for 130 km/h.
   - option_id: 2
     name: ZooRacing Wolverine (190 mm)
     type: CFD-optimized Competition Body
@@ -33,7 +33,7 @@ adr:
     model: Hellcat
     required_width: 190 mm
     required_thickness: 0.7 mm (Regular Weight)
-  rationale: "The decision is made in favor of the ZooRacing Hellcat in the 0.7mm standard thickness. \nIt represents the \noptimal compromise between minimum air resistance (for \nreaching 100 km/h) and safe \ndownforce (prevention of blow-overs). Unlike very flat LMP bodies, \nit fits easily over \nthe shock towers of the Carten T410R. The material thickness of 0.7mm \nguarantees \nthat the body withstands the massive dynamic pressure at top speed and does not \nstart to vibrate or rub against the tires.\n"
+  rationale: "The decision is made in favor of the ZooRacing Hellcat in the 0.7mm standard thickness. \nIt represents the \noptimal compromise between minimum air resistance (for \nreaching 130 km/h) and safe \ndownforce (prevention of blow-overs). Unlike very flat LMP bodies, \nit fits easily over \nthe shock towers of the Carten T410R. The material thickness of 0.7mm \nguarantees \nthat the body withstands the massive dynamic pressure at top speed and does not \nstart to vibrate or rub against the tires.\n"
   consequences:
   - 'Assembly: The included rear wing must be screwed on very rigidly. The
     body holes must be precisely machined with lexan scissors and a body reamer.'
