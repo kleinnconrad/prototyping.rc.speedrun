@@ -271,7 +271,7 @@ def front_corner(p, d, c):
     # bores 5.0 through both arms for the 2 flanged guide sleeves (owner; manual step 15); top: flange outside on a
     # spot face square to the kingpin axis below the flat top of the arm; bottom: flange inside in a counterbore of the
     # lower arm (thrust face toward the lower boss), pocket below the lower arm for the head of the screw M3x8 (the
-    # outer hinge pin lies 4.5 beside the kingpin axis, owner: the bore and the head pass beside it)
+    # outer hinge pin lies 6.75 beside the kingpin axis: the bore and the pocket stay outside the tube on the pin)
     d_sl, d_sl_in, d_fl, t_fl, h_d, h_h = p["guide_sleeve"]
     r_sf = d_fl / 2 + 0.3                                                                 # spot face / counterbore
     zf = top_spot_face(p)                                                                 # below the flat top
@@ -283,6 +283,8 @@ def front_corner(p, d, c):
     hub = hub.cut(K(cyl_z(2.5, zl0 - 1.0, kz0 - gap + 1.0, 0, 0)))                         # bore 5.0, bottom (through)
     hub = hub.cut(K(cyl_z(r_sf, zl1 - 0.05, kz0 - gap + 1.0, 0, 0)))                       # counterbore, lower flange
     hub = hub.cut(K(cyl_z(h_d / 2 + 0.1, zl0 - 30.0, zl0 + 0.1, 0, 0)))                    # pocket, head of the screw
+    hub = fuse(hub, cyl_y(3.6, yc - 6.5, yc + 6.5, O[0], O[2]))                            # complete tube on the hinge pin
+    hub = hub.cut(cyl_y(1.5, yc - 8, yc + 8, O[0], O[2]))                                  # outer hinge pin
     hub = hub.cut(cyl_z(TAP / 2, O[2] - 5, O[2], O[0], yc))                               # thread M3, grub screw
     # knuckle (kingpin frame) as the T410R knuckle (measured by the owner, manual step 15): ring for 2 bearings
     # 5x10x4 from the kingpin axis outward, pressed in from both ends against a lip; from the inner end a wider
@@ -334,7 +336,8 @@ def front_corner(p, d, c):
     # walls to the bore of the outer hinge pin (in the plane of the axle: kingpin axis to hinge pin axis along x)
     dk = O[0] - J[0]
     c["kingpin_layout"] = {"spot face": zf, "sleeve shank": l_sh, "lower flange": (zl1, kz0), "lower end": zl0,
-                           "wall bore 5 / hinge pin": dk - 2.5 - 1.5, "wall head pocket / hinge pin": dk - h_d / 2 - 0.1 - 1.5,
+                           "bore 5 to the tube on the hinge pin": dk - 2.5 - 3.6,
+                           "head pocket to the tube on the hinge pin": dk - h_d / 2 - 0.1 - 3.6,
                            "screw end (local z)": zl0 + 8.0}
     kb = J + R @ kb_l
     c["kb"] = kb
