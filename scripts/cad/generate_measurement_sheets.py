@@ -238,7 +238,7 @@ def motor_mount_page(pdf, d):
              "Dimensions in mm.", fontsize=7.5)
     z = 2.0 + 17.2
     low, cap_h, cap_w = d["mount_low_top"], d["cap_h"], d["cap_w"]
-    xa, xs = d["mount_x"][0], d["mount_step_x"]
+    xa, xs = d["mount_hook"][0][0], d["mount_step_x"]                      # from the tip of the hook
     t = d["mount_t"]
     rb = d["mount_bearing"][1] / 2
     # view along the pinion shaft
@@ -288,7 +288,7 @@ def motor_mount_page(pdf, d):
             ("MM6", "Thickness of the motor mount at the bearing seat (along the shaft).", f"{t:g}"),
             ("MM7", "Is there a step (shoulder) in the seat beside the bearing? On which side: spur gear or cup joint? "
                     "Diameter of the smaller bore and width of the seat.", "no step"),
-            ("MM8", "Where does the set screw M3x3 of the cap go, and what does it press on?", "-")]
+            ("MM8", "Where does the set screw M3x3 of the cap go, and what does it press on?", "photo: middle of the cap, on the bearing")]
     y = 0.44
     fig.text(0.06, y, "No.", fontsize=7.5, fontweight="bold", va="top")
     fig.text(0.13, y, "What to measure", fontsize=7.5, fontweight="bold", va="top")
