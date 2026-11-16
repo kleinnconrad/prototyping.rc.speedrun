@@ -14,7 +14,7 @@ foam bumper (photo of the owner).
   their height follows from the screws (stack_screws). Raised ears with a hexagon recess: press fit of the body
   posts, each held by a countersunk screw M3x6 from below.
 * Front splitter (carbon sheet 2.0) on the bases of the bosses and on the ears; the pins pass through its holes,
-  hexagon holes fit over the body posts. Front end 70 mm ahead of the axis H34-H35 (owner). Outer form (owner): the
+  hexagon holes fit over the body posts. Front end 90 mm ahead of the axis H34-H35 (owner). Outer form (owner): the
   assumed lower front edge of the body, offset outward and moved forward to this front end, from tip to tip; broad
   plate after the reference picture of the owner. The rear edge is straight in the middle and runs around the front
   corners of the tyres at full steering lock.
@@ -550,7 +550,7 @@ def drawing(p, parts, geometry, tyre, plate, notes, context=None, path=DRAWING):
             f"(y = {yf:.1f}); outer form: body edge offset by {over:g} and moved forward", ha="center", fontsize=8,
             zorder=7)
     ax.set_xlim(-100, 100)
-    ax.set_ylim(255, 398)
+    ax.set_ylim(255, 418)
     ax.set_aspect("equal")
     ax.grid(True, lw=0.25, color="#bbbbbb")
     ax.set_title("Top view (mm): chassis plate light grey, splitter dark grey on the mount (outline of the mount "
@@ -567,7 +567,7 @@ def drawing(p, parts, geometry, tyre, plate, notes, context=None, path=DRAWING):
             col.append(np.tile(c, (len(t[-1]), 1)))
     draw_mesh(ax, np.concatenate(t), tuple(np.array(v) for v in ((-1.0, 0, 0), (0, 1.0, 0), (0, 0, 1.0))),
               tri_colors=np.concatenate(col), depth_cue=0.0)
-    ax.plot([288, 395], [-10, -10], color="#6b4f2a", lw=1.2)
+    ax.plot([288, 415], [-10, -10], color="#6b4f2a", lw=1.2)
     ax.text(289, -12.5, "ground at the ride height of 10 (setup sheet 4)", fontsize=8, color="#6b4f2a")
     zt = splitter_z(p) + p["splitter_t"]
     z0, z1 = p["ear_boss"][1] - p["ear_boss"][3], zt + p["body_post"][2]
@@ -575,7 +575,7 @@ def drawing(p, parts, geometry, tyre, plate, notes, context=None, path=DRAWING):
     ax.plot([ey - r, ey - r, ey + r, ey + r], [z0, z1, z1, z0], color="#b42318", lw=0.8)
     ax.text(ey, z1 + 1, f"body post (at x = +-{ex:.1f})", ha="center", fontsize=8, color="#b42318")
     ax.plot([yb, yb], [-3, 25], "--", color="#c2410c", lw=0.9)
-    ax.set_xlim(288, 395)
+    ax.set_xlim(288, 415)
     ax.set_ylim(-14, 42)
     ax.set_aspect("equal")
     ax.grid(True, lw=0.25, color="#bbbbbb")

@@ -131,7 +131,7 @@ def rows(p, v):
         ("B6", "Height of the body mounting holes at the front body posts above the bottom face of the chassis plate "
                "(needed length of the posts).", f"{v['zt'] + pl:g} = top of the posts (assumed)", ""),
         ("S1", "Front end of the splitter on the centre line: distance ahead of the axis through H34/H35.",
-         f"{p['splitter_front_distance']:g}", "70 (owner)"),
+         f"{p['splitter_front_distance']:g}", "90 (owner)"),
         ("S2", "Ride height at the front for the speedruns; height of the bottom face of the splitter above the "
                f"ground = S2 + {v['zs']:g}.", f"10 -> {10 + v['zs']:g} (setup sheet 4)", ""),
         ("S3", "Droop of the front wheels: how far the wheel centre drops below the ride height when the car is "
@@ -299,8 +299,8 @@ def body_page(pdf, p, v, parts, geometry):
                  (named["speedrun front splitter End A"], COL["splitter"]),
                  (named["speedrun splitter holder plate End A"], COL["holder"]),
                  (named["body post End A right"], COL["post"])],
-            ex, (300, 392, -13, 40))
-    ax.plot([300, 392], [-10, -10], color="#6b4f2a", lw=1.0)
+            ex, (300, 412, -13, 40))
+    ax.plot([300, 412], [-10, -10], color="#6b4f2a", lw=1.0)
     ax.text(301, -12.6, "ground at the ride height of 10", fontsize=6.5, color="#6b4f2a")
     zb = v["zt"] + 4.0
     ax.plot([yb - 8, yb, yb], [zb + 6, zb, zb], "--", color="#e8833a", lw=1.2)
