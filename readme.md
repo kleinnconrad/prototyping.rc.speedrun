@@ -55,7 +55,7 @@ The speedrun chassis is designed in this project for speeds over 130 km/h. It co
 * Laser cutting: the top brace (2 mm) and the shock towers (3 mm) are flat plates with plain holes, so that they can be laser cut from aluminium or another material of choice (for example carbon). The outline and the holes are taken from the DXF files. The edge and hole chamfers and the relief on the back face of the shock towers (clearance to the root radius of the wall of the upper bulkhead) are a second machining step.
 * Simple design: a further goal is a simplified design of the bulkheads, the shock towers and the top brace with flat faces, straight edges and radii.
 * Chassis plate: apart from the material, the speedrun chassis plate is designed to match the ZooRacing Hellcat body (190 mm). It also gives more space for further developments: a battery with 4S or 6S instead of 3S, a dual motor setup and the custom [telemetry system](#follow-up-project-telemetry-system).
-* Further own parts: the drive line (centre driveshaft, cup joints, pinion shafts, differential, spool, motor mount), the pivot blocks, the wishbones, the camber links (`cad/parts`) and the running gear (`cad/running_gear`: C-hubs with 10 degrees caster, steering knuckles, rear hub carriers, axles, hex hubs, CVD drive shafts, steering, servo mount, dampers, sway bars) complete the build. They are the owner's own design; some are based on parts of the T410R, others deviate strongly from them. Standard parts (bearings, screws, pins, rod ends, ball studs, dampers, servo) are purchased.
+* Further own parts: the drive line (centre driveshaft, cup joints, pinion shafts, differential, spool, motor mount), the pivot blocks, the wishbones, the camber links, the front body post mount with the front splitter (`cad/parts`) and the running gear (`cad/running_gear`: C-hubs with 10 degrees caster, steering knuckles, rear hub carriers, axles, hex hubs, CVD drive shafts, steering, servo mount, dampers, sway bars) complete the build. They are the owner's own design; some are based on parts of the T410R, others deviate strongly from them. Standard parts (bearings, screws, pins, rod ends, ball studs, dampers, servo) are purchased.
 
 ![Speedrun chassis: complete build with the drive line, the wishbones and the running gear](photos/cad_speedrun_chassis_assembly.png)
 
@@ -105,7 +105,7 @@ Further own parts (own design, partly based on the T410R, not in the mass total)
   * **`/assembly`**: Assembly of the speedrun chassis (STEP)
   * **`/bulkhead`**: Lower and upper bulkhead (STEP, STL, test print files, parameter files, measurement sheets)
   * **`/shock_tower`**: Front and rear shock tower for the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file)
-  * **`/parts`**: Drive line, pivot blocks, wishbones and camber links (own design, partly based on the T410R)
+  * **`/parts`**: Drive line, pivot blocks, wishbones, camber links, front body post mount and front splitter (own design, partly based on the T410R)
     * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file)
     * **`/driveshaft`**: Centre driveshaft with the fixed metal pins and the cup joints (STEP, STL, parameter file)
     * **`/rear_drive`**: Rear pinion shaft, pinion, spur gear 72T, bearing and retaining pin (STEP, STL)
@@ -115,6 +115,7 @@ Further own parts (own design, partly based on the T410R, not in the mass total)
     * **`/diff_outdrive`**: Diff outdrive (STEP, STL)
     * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file)
     * **`/camber_link`**: Camber links: turnbuckle, rod end, ball stud (STEP, STL, parameter file)
+    * **`/front_splitter`**: Front body post mount (End A) and speedrun front splitter (STEP, STL, DXF, parameter file, measurement sheet)
   * **`/running_gear`**: parameter file of the running gear and one folder per group (STEP, STL): `/front_corner` (C-hubs, steering knuckles, axles and hex hubs at End A), `/rear_corner` (hub carriers, axles and hex hubs at End B), `/cvd_drive_shafts`, `/steering`, `/servo_mount`, `/sway_bars`
   * **`/chassis`**: Chassis plate, wide speedrun chassis plate, top brace and speedrun top brace with one subdirectory per part (STEP, STL, DXF, OpenSCAD, 1:1 templates, test print files)
 * **`/docs`**: Static web dashboard for visualizing the latest setup configurations
