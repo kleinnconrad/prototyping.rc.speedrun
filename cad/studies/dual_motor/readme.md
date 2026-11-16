@@ -5,6 +5,7 @@ Study of a dual motor setup on the speedrun chassis plate (wide): a dual motor m
 ## Table of contents
 * [Design](#design)
 * [Checks](#checks)
+* [Electronics layout](#electronics-layout)
 * [Open points](#open-points)
 * [Files](#files)
 * [Regenerating the files](#regenerating-the-files)
@@ -44,8 +45,28 @@ Results of `generate_dual_motor_study.py`:
 | Mass of the dual motor mount | 33.7 g in 7075 (single mount 18.1 g) |
 | Mass of the chassis plate | 209 g in 6082 (plate with one motor window 217 g) |
 
+## Electronics layout
+![Dual motor study: ESCs behind the motors, batteries 3S shorty on the outer sides, receiver on the servo plate, wiring](dual_motor_study_electronics.png)
+
+One battery and one ESC per motor; both ESCs get the same throttle signal. Picture only: the parts are simple bodies, they are not in the assembly file.
+
+| Part | Model | Source |
+|:---|:---|:---|
+| ESC (2 pieces) | Hobbywing QuicRun WP 10BL120 G2, 52.8 x 39.8 x 38.2 mm, with the fan on the top. Crosswise behind each motor (as on the car): x = ±9.5 to ±62.3 mm, y = 129.4 to 169.2 mm. Between the end of the motor and the servo mount there are 43 mm along the car, so the ESC does not fit lengthwise on the right side. | Manufacturer (size) |
+| Battery (2 pieces) | 3S shorty hardcase, 95.7 x 46.8 x 24.7 mm (for example Reedy Wolfpack 3S 3000 mAh), on the outer side of each ESC: x = ±66.0 to ±90.7 mm, y = 100.0 to 195.7 mm. On edge, because flat (46.8 mm wide) the battery does not fit beside the ESC within the chassis plate; the top is 48.8 mm above the chassis plate. | Manufacturer (size) |
+| Battery leads | Each battery feeds the ESC on its side: leads from the end of the battery (End B side) to an XT60 connector pair beside the motor, from there to the face of the ESC | Simple bodies |
+| Motor wires | A, B, C from the face of the ESC over the gap of 3.9 mm to the top of the motor near its end | Simple bodies |
+| Receiver | Konect RG4CHWP (4 channels), size 36 x 24 x 14 mm assumed, on the top plate of the servo mount; plugs of channel 1 and 2 on its inner face | Spec (model), assumed (size) |
+| Signal cables | Signal cables of both ESCs joined in a Y junction on the top brace, Y cable to channel 2 (throttle); servo cable to channel 1 (steering) | Simple bodies |
+
+* Interference check: the new parts do not overlap with the parts of the assembly and with each other (each wire touches only the parts at its ends).
+* Clearances: ESC to servo mount 0.95 mm, ESC to motor shaft 0.92 mm, ESC to top brace 3.57 mm, battery to ESC 3.70 mm, battery to servo mount 4.70 mm, XT60 to motor 2.79 mm.
+* BEC: both ESCs have a BEC output. At the Y junction the red wire (BEC +) of one ESC is removed, so that the 2 BEC outputs do not work in parallel.
+* Not modelled: body (190 mm wide), battery straps, switches of the ESCs, antenna.
+
 ## Open points
-* Battery: on the car the battery lies on the left side (photo `photos/rc_car_chassis_top_view_battery.jpg`, holes H11 to H23). The left motor takes this place; a new position of the battery is needed.
+* Battery: on the car the battery lies on the left side (photo `photos/rc_car_chassis_top_view_battery.jpg`, holes H11 to H23). The left motor takes this place. The [electronics layout](#electronics-layout) shows one battery 3S shorty on each outer side, on edge; a fit check with the body and the battery straps is open.
+* Electronics layout: the gap of 3.9 mm between the motor and the ESC leaves little room for the motor wires and their connectors; height of the batteries on edge (48.8 mm) under the body.
 * The motor axes are fixed by the spur gear (x = ±24.60 to 33.85 mm). The left motor window can therefore not be moved clear of the holes H11, H12, H14 and H15.
 * Electronics: 2 ESCs (or one ESC for 2 motors) with the same throttle signal; synchronisation of 2 sensorless motors on one spur gear.
 * Load: at full power of both motors, the torque on the spur gear, the rear pinion shaft and the drive line doubles (not evaluated).
@@ -60,15 +81,18 @@ Results of `generate_dual_motor_study.py`:
 | `dual_motor_study_assembly.step` | Assembly of the speedrun chassis with the chassis plate (study), the dual motor mount instead of the motor mount, the 2 motors, motor shafts and pinions (STEP AP214, one solid per part, 192 parts) |
 | `dual_motor_study_assembly.png` | Complete build, top view of End B, spur gear with the 2 pinions, view from below |
 | `dual_motor_study_drawing.png` | Dual motor mount from the motor side, chassis plate (study) with the closed holes and the new hole, check results |
-| `generate_dual_motor_study.py` | Script that generates all files of this directory |
+| `dual_motor_study_electronics.png` | Electronics layout: overview, top view, close-up of the right side and the wiring diagram |
+| `generate_dual_motor_study.py` | Script that generates the parts, the assembly and the first 2 pictures |
+| `generate_dual_motor_electronics.py` | Script that generates the picture of the electronics layout from the assembly of the study |
 
 ## Regenerating the files
 The script reads the parameters of the drive line, the geometry data of the speedrun chassis plate with the longer motor window and the assembly `cad/assembly/speedrun_chassis_T410R.step`. Run it after `generate_speedrun_assembly.py`, from the root directory of the repository:
 
 ```bash
 python cad/studies/dual_motor/generate_dual_motor_study.py
+python cad/studies/dual_motor/generate_dual_motor_electronics.py
 ```
 
-* Option `--out <directory>`: writes the files to another directory.
-* Option `--no-picture`: skips the pictures.
-* Run time: approx. 1.5 min. Requires the packages cadquery and matplotlib.
+* Options of `generate_dual_motor_study.py`: `--out <directory>` writes the files to another directory, `--no-picture` skips the pictures.
+* `generate_dual_motor_electronics.py` reads `dual_motor_study_assembly.step` of this directory.
+* Run time: approx. 1.5 min and 3 min. Requires the packages cadquery and matplotlib.
