@@ -37,6 +37,9 @@ Outputs (chassis plate coordinates):
   of the fit (bottom face at z = 0)
 * cad/front_splitter/front_splitter_holder_plate_end_a.step and .stl (on the splitter), .dxf and _geometry.json
 * photos/cad_front_splitter_drawing.png
+* alternative version, the body post mount enlarged to the splitter (one part, no separate splitter, no holder
+  plate): cad/front_splitter/front_splitter_one_piece_end_a.step and .stl (position in the car), _test_print.stl
+  (middle part, bottom face on the print bed), photos/cad_front_splitter_one_piece_drawing.png
 
 Checks: holes of the mount and of the splitter against the holes of the chassis plate, overlap of the mount with the
 chassis plate, clearance of the splitter and the mount to the front tyres over the steering angle (static ride
@@ -58,7 +61,7 @@ import cadquery as cq
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_bulkhead_lower import cyl_z, load_params  # noqa: E402
 from generate_dxf import build_dxf  # noqa: E402
-from generate_solid import plate_solid  # noqa: E402
+from generate_solid import plate_solid, wire_from_prims  # noqa: E402
 
 PARAMS = "cad/front_splitter/front_splitter_parameters.json"
 PLATE_GEOM = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
@@ -69,6 +72,8 @@ MOUNT_STEM = f"{OUT}/body_post_mount_end_a"
 SPLITTER_STEM = f"{OUT}/front_splitter_end_a"
 HOLDER_STEM = f"{OUT}/front_splitter_holder_plate_end_a"
 DRAWING = "photos/cad_front_splitter_drawing.png"
+ONE_PIECE_STEM = f"{OUT}/front_splitter_one_piece_end_a"
+ONE_PIECE_DRAWING = "photos/cad_front_splitter_one_piece_drawing.png"
 PLATE_T = 2.0
 OWN_PREFIXES = ("speedrun_front_body_post_mount", "body_post", "speedrun_front_splitter",
                 "speedrun_splitter_holder_plate")                             # names of these parts in the assembly
@@ -418,8 +423,137 @@ def splitter_test_print(p, splitter=None):
     return splitter.intersect(box).translate(cq.Vector(0, 0, -zs))
 
 
+def one_piece_solid(p, geom=None):
+    """Alternative version: the body post mount is enlarged to the splitter, one part, no separate splitter and no
+    holder plate. The mount as measured by the owner (deck on the chassis plate, pocket and side lips around its front
+    end, ramp, front part 3.0 thick with its bottom face flush with the bottom face of the plate, ears with the hexagon
+    recesses of the body posts); its front part is extended to the outline of the splitter (behind the rear edge of the
+    mount only beside the chassis plate). Bosses on H34, H35 and H36 for the countersunk screws M3x6 from below (blind
+    tapped holes, not visible from above)."""
+    geom = geom or plate_geometry()
+    holes = plate_holes(geom)
+    cl, dt, ft, rw = p["pocket_clearance"], p["deck_t"], p["front_t"], p["ramp_w"]
+    z_deck = PLATE_T + dt
+    wire = mount_outline_wire(p)
+
+    def mount_prism(h):
+        return cq.Solid.extrudeLinear(wire, [], cq.Vector(0, 0, h))
+    C = plate_front_contour(geom)
+    ramp = cq.Solid.extrudeLinear(poly_wire(offset(C, cl + rw), ft), [], cq.Vector(0, 0, z_deck - ft),
+                                  taper=math.degrees(math.atan(rw / (z_deck - ft))))
+    # front part of the mount enlarged to the outline of the splitter (not behind the rear edge of the mount)
+    split = wire_from_prims(splitter_geometry(p, holes)["outline"]).extrude(ft).val()
+    split = split.intersect(cq.Solid.makeBox(400, 200, ft + 2, cq.Vector(-200, p["mount_rear_y"], -1)))
+    body = mount_prism(ft).fuse(split).fuse(ramp.intersect(mount_prism(z_deck + 1)))
+    body = body.cut(prism(offset(C, cl), -1.0, PLATE_T))                     # pocket: overhang around the plate
+    tap = p["stack_screws"][3] / 2
+    depth, d_boss, z_boss = p["stack_screws"][0] + p["one_piece"][0], p["collar"][0], p["one_piece"][2]
+    for hid in ("H34", "H35", "H36"):
+        x, y = holes[hid]
+        body = body.fuse(cyl_z(d_boss / 2, z_deck - 0.5, z_boss, x, y))        # boss for the screw M3x6 from below
+        body = body.cut(cyl_z(tap, -1, depth, x, y))                           # blind tapped hole M3 (not open on top)
+    ed, eh, eaf, edep = p["ear_boss"]
+    ex, ey = p["ear_holes"]
+    r, rc = p["screw_hole_d"] / 2, p["ear_csk"] / 2
+    for sx in (1, -1):
+        body = body.fuse(cyl_z(ed / 2, ft - 0.5, eh, sx * ex, ey))            # ear boss as the original part
+        body = body.cut(hex_z(eaf, eh - edep, eh + 1, sx * ex, ey))
+        body = body.cut(cyl_z(r, -1, eh + 1, sx * ex, ey))
+        body = body.cut(cq.Solid.makeCone(rc + 0.5, r, rc - r + 0.5, cq.Vector(sx * ex, ey, -0.5), cq.Vector(0, 0, 1)))
+    return body.clean()
+
+
+def one_piece_posts(p):
+    """Body posts in the ears of the one-piece version: hexagon section from the bottom of the recess (8 long), round
+    post above it (assembly and drawing only)."""
+    ed, eh, eaf, edep = p["ear_boss"]
+    ex, ey = p["ear_holes"]
+    pd, hl, pl, pb = p["body_post"]
+    z0 = eh - edep
+    out = []
+    for sx in (1, -1):
+        x = sx * ex
+        s = hex_z(eaf, z0, z0 + hl, x, ey).fuse(cyl_z(pd / 2, z0 + hl - 0.5, z0 + hl + pl, x, ey))
+        out.append(s.cut(cyl_z(pb / 2, z0 - 1, z0 + hl + pl + 1, x, ey)).clean())
+    return out
+
+
+def one_piece_test_print(p, solid=None):
+    """Test print of the one-piece version: the middle part over the chassis plate and the ears (splitter_test_print),
+    bottom face on the print bed (the deck over the pocket is printed as a bridge)."""
+    solid = solid or one_piece_solid(p)
+    hw, y0, y1 = p["splitter_test_print"]
+    return solid.intersect(cq.Solid.makeBox(2 * hw, y1 - y0, 30, cq.Vector(-hw, y0, -1)))
+
+
+def one_piece_drawing(p, solid, plate, posts_, notes, path=ONE_PIECE_DRAWING):
+    """Picture of the one-piece version: 3D views from above and from below, sections through H34 and the ear."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from mesh_views import draw_mesh, iso_basis, subdivide
+
+    def tris(s, tol=0.03, edge=1.0):
+        v, idx = s.tessellate(tol, 0.2)
+        return subdivide(np.array([[q.x, q.y, q.z] for q in v])[np.array(idx)], edge)
+    grey, red, light = (0.55, 0.58, 0.63), (0.75, 0.3, 0.25), (0.86, 0.87, 0.89)
+    holes = plate_holes()
+    fig = plt.figure(figsize=(16, 11))
+    fig.suptitle("Speedrun front splitter, alternative: the body post mount enlarged to the splitter, one part (End A)",
+                 fontsize=13, y=0.985)
+    views = [([0.0, 0.42, 0.5, 0.52], iso_basis(-60, 32), "From above (front left), body posts cut at z = 14",
+              [(solid, grey)] + [(s.intersect(cq.Solid.makeBox(200, 100, 15, cq.Vector(-100, 280, -1))), red)
+                                 for s in posts_]),
+             ([0.5, 0.42, 0.5, 0.52], iso_basis(-120, -40), "From below: pocket for the front end of the chassis "
+              "plate, blind tapped holes H34, H35, H36, countersinks of the post screws", [(solid, grey)])]
+    for rect, basis, title, solids in views:
+        ax = fig.add_axes(rect)
+        t = [tris(s) for s, _ in solids]
+        col = [np.tile(c, (len(q), 1)) for q, (_, c) in zip(t, solids)]
+        lo, hi = draw_mesh(ax, np.concatenate(t), basis, tri_colors=np.concatenate(col), depth_cue=0.3)
+        ax.set_xlim(lo[0] - 2, hi[0] + 2)
+        ax.set_ylim(lo[1] - 2, hi[1] + 2)
+        ax.set_aspect("equal")
+        ax.axis("off")
+        ax.set_title(title, fontsize=9.5, loc="left")
+    side = tuple(np.array(v) for v in ((-1.0, 0, 0), (0, 1.0, 0), (0, 0, 1.0)))
+    for k, (x, title) in enumerate(((holes["H34"][0], f"Section through H34 (x = {holes['H34'][0]:.2f})"),
+                                    (p["ear_holes"][0], f"Section through the ear and the body post "
+                                                        f"(x = {p['ear_holes'][0]:.2f})"))):
+        ax = fig.add_axes([0.03 + 0.49 * k, 0.2, 0.46, 0.2])
+        slab = cq.Solid.makeBox(0.3, 140, 60, cq.Vector(x - 0.15, 290, -20))
+        t, col = [], []
+        for s, c in [(plate, light), (solid, grey)] + [(q, red) for q in posts_]:
+            cut = s.intersect(slab)
+            if cut.Volume() > 1e-4:
+                t.append(tris(cut, 0.02, 0.6))
+                col.append(np.tile(c, (len(t[-1]), 1)))
+        draw_mesh(ax, np.concatenate(t), side, tri_colors=np.concatenate(col), depth_cue=0.0)
+        ax.set_xlim(300, 412)
+        ax.set_ylim(-3, 16)
+        ax.set_aspect("equal")
+        ax.axis("off")
+        ax.set_title(title + " (y horizontal, z vertical; chassis plate light, part grey, body post red)",
+                     fontsize=9, loc="left")
+    fig.text(0.03, 0.155, "Checks", fontsize=10, fontweight="bold", va="top")
+    fig.text(0.03, 0.135, "\n".join("\n".join(textwrap.wrap(n, 190)) for n in notes), fontsize=8, va="top",
+             linespacing=1.35)
+    fig.savefig(path, dpi=100)
+    plt.close(fig)
+
+
+def car_parts_in_plate(p=None):
+    """Front splitter used on the car (owner): the one-piece version with the body posts, in chassis plate coordinates:
+    list of (name, kind, solid)."""
+    p = p or load_params(PARAMS)
+    out = [("speedrun front splitter one-piece End A", "onepiece", one_piece_solid(p))]
+    out += [(f"body post End A {side}", "bodypost", s) for side, s in zip(("right", "left"), one_piece_posts(p))]
+    return out
+
+
 def parts_in_plate(p=None):
-    """Mount, body posts, splitter and holder plate in chassis plate coordinates: list of (name, kind, solid)."""
+    """3-part version (alternative): mount, body posts, splitter and holder plate in chassis plate coordinates: list
+    of (name, kind, solid)."""
     p = p or load_params(PARAMS)
     out = [("speedrun front body post mount End A", "bodymount", mount_solid(p))]
     out += [(name, "bodypost", s) for name, s in posts(p)]
@@ -738,6 +872,37 @@ def main():
         notes.append("Tyre check and assembly check skipped (--no-check).")
     drawing(p, parts, geometry, tyre, plate, notes, context)
     print(f"Wrote {DRAWING}")
+    # alternative version: body post mount and front splitter in one piece
+    one = one_piece_solid(p, geom)
+    cq.exporters.export(cq.Workplane().add(one), ONE_PIECE_STEM + ".step")
+    cq.exporters.export(cq.Workplane().add(one), ONE_PIECE_STEM + ".stl", tolerance=0.01, angularTolerance=0.1)
+    one_test = one_piece_test_print(p, one)
+    cq.exporters.export(cq.Workplane().add(one_test), ONE_PIECE_STEM + "_test_print.stl", tolerance=0.01,
+                        angularTolerance=0.1)
+    ob, tb = one.BoundingBox(), one_test.BoundingBox()
+    posts_ = one_piece_posts(p)
+    one_notes = [f"One piece {ob.xlen:.0f} x {ob.ylen:.1f} mm, volume {one.Volume() / 1000:.1f} cm3 (PETG approx. "
+                 f"{one.Volume() / 1000 * p['one_piece'][1]:.0f} g): the mount enlarged to the outline of the splitter "
+                 f"at the thickness of its front part (z = 0 to {p['front_t']:g}, bottom face flush with the chassis "
+                 "plate, 10 above the ground at the ride height of 10); the body sits on it at z = "
+                 f"{p['front_t']:g}.",
+                 f"Overlap with the chassis plate {one.intersect(plate).Volume():.3f} mm3, with the body posts "
+                 f"{max(s.intersect(one).Volume() for s in posts_):.3f} mm3. Screws M3x6 from below: tip at z = "
+                 f"{p['stack_screws'][0]:g}, blind tapped holes on H34, H35 and H36 in bosses up to z = "
+                 f"{p['one_piece'][2]:g}. "
+                 f"Test print (middle part, bottom face on the bed): {tb.xlen:.0f} x {tb.ylen:.0f} mm."]
+    if not args.no_check:
+        d, ang, dz = tyre_clearance(p, [("one piece", one)])[0]["one piece"]
+        one_notes.append(f"Clearance to the front tyres (steering -{p['tyre_check'][3]:g} to +{p['tyre_check'][3]:g} "
+                         f"deg, droop 0 and {p['tyre_check'][1]:g}): {d:.2f} at {ang:+.1f} deg, droop {dz:g}.")
+        if context:
+            worst = max(one.intersect(o).Volume() for on, o in context if on != "chassis_plate")
+            one_notes.append(f"Overlap with the {len(context)} parts of the assembly at End A (without the chassis "
+                             f"plate): largest {worst:.3f} mm3.")
+    for n in one_notes:
+        print("  one piece: " + n)
+    one_piece_drawing(p, one, plate, posts_, one_notes)
+    print(f"Wrote {ONE_PIECE_STEM}.step/.stl/_test_print.stl, {ONE_PIECE_DRAWING}")
 
 
 if __name__ == "__main__":
