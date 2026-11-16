@@ -34,6 +34,7 @@
   * [Wishbones](#wishbones)
   * [Camber links](#camber-links)
   * [Running gear](#running-gear)
+  * [Front body post mount and front splitter](#front-body-post-mount-and-front-splitter)
 * [Scripts](#scripts)
   * [Regenerating the files](#regenerating-the-files)
   * [DXF generation](#dxf-generation)
@@ -51,7 +52,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/top_brace_speedrun`**: New design of the top brace that matches the bulkheads of this project (STEP, STL, DXF, PDF templates, geometry data, hole table, test print STL files)
 * **`/bulkhead`**: CAD data of the bulkheads (gear boxes): lower bulkhead, upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets).
 * **`/shock_tower`**: New design of the front and the rear shock tower that match the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
-* **`/parts`**: Drive line, pivot blocks, wishbones and camber links: own design of the owner, partly based on the T410R.
+* **`/parts`**: Drive line, pivot blocks, wishbones, camber links, front body post mount and front splitter: own design of the owner, partly based on the T410R.
   * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file).
   * **`/driveshaft`**: Centre driveshaft with the fixed metal pins and the cup joints (STEP, STL, parameter file of all drive line parts).
   * **`/rear_drive`**: Rear pinion shaft with flange, pinion 17T, spur gear 72T, bearing 5x10x4 and retaining pin (STEP, STL).
@@ -61,6 +62,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/diff_outdrive`**: Diff outdrive (STEP, STL).
   * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file).
   * **`/camber_link`**: Camber links: turnbuckle, rod end, ball stud, assembled front and rear link (STEP, STL, parameter file).
+  * **`/front_splitter`**: Front body post mount (End A), speedrun front splitter and splitter holder plate (STEP, STL, DXF, geometry data, parameter file, measurement sheet).
 * **`/running_gear`**: parameter file of the running gear and one folder per group (STEP, STL): `/front_corner` (C-hubs with caster, steering knuckles, axles and hex hubs at End A), `/rear_corner` (hub carriers, axles and hex hubs at End B), `/cvd_drive_shafts`, `/steering` (posts, bellcranks, bridge, spacers, servo horn), `/servo_mount` and `/sway_bars`.
 * **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the further own parts: pivot blocks, drive line, wishbones, camber links and running gear (STEP).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
@@ -108,6 +110,9 @@ Further own parts (own design of the owner, partly based on the T410R, not in th
 | [Steering: posts, bellcranks, bridge, steering links, servo link, servo horn, servo mount](#running-gear) | 1 set | `/running_gear/steering`, `/running_gear/servo_mount` | $\color{red}\times$ Completely unqualified |
 | [Sway bars with holders, ball ends and drop links](#running-gear) | 2 | `/running_gear/sway_bars` | $\color{red}\times$ Completely unqualified |
 | [Dampers (standard 1:10 on-road, purchased)](#running-gear) | 4 | Assembly only | $\color{red}\times$ Completely unqualified |
+| [Front body post mount (End A)](#front-body-post-mount-and-front-splitter) | 1 | `/parts/front_splitter` | $\color{red}\times$ Completely unqualified; measured by the owner (measurement sheet), no 3D print verification |
+| [Speedrun front splitter (carbon)](#front-body-post-mount-and-front-splitter) | 1 | `/parts/front_splitter` | $\color{red}\times$ Completely unqualified; front edge of the body assumed |
+| [Splitter holder plate (carbon)](#front-body-post-mount-and-front-splitter) | 1 | `/parts/front_splitter` | $\color{red}\times$ Completely unqualified |
 
 Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. The parts marked red are first designs: they still need a lot of refinement (dimensions, strength, fit and function on the car) and are not ready for manufacturing.
 
@@ -116,7 +121,7 @@ Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{g
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
 
 ### Assembly file
-* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and 175 further own parts (pivot blocks, wishbones with hinge pins, camber links, centre driveshaft with cup joints, front and rear drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool, 4 diff outdrives, and the running gear: C-hubs, knuckles with guide sleeves and kingpin screws, hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the floating servo mount, dampers, sway bars with drop links) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
+* `assembly/speedrun_chassis_T410R.step`: assembly of the 8 parts of the speedrun chassis and 180 further own parts (pivot blocks, wishbones with hinge pins, camber links, centre driveshaft with cup joints, front and rear drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool, 4 diff outdrives, and the running gear: C-hubs, knuckles with guide sleeves and kingpin screws, hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the floating servo mount, dampers, sway bars with drop links; the front body post mount with the 2 body posts, the front splitter and its holder plate) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
 * The further own parts are not in the mass total (see [further own parts](#further-own-parts)).
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [pivot blocks](#pivot-blocks)) and 2.16 mm³ between the lower bulkhead at End A and each front wishbone (inner lugs 0.14 mm into the side face, see [wishbones](#wishbones)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
@@ -1060,6 +1065,43 @@ All files are stored in the directory `/running_gear` and are generated with `ge
 * Drop links of the sway bars: the length is assumed with the rod ends of the camber links (21 mm between the ball centres); a measurement on the car confirms the height of the ball ends.
 * Wheels are not modelled.
 
+### Front body post mount and front splitter
+* **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
+* **Description:** Front body post mount on the holes H34 and H35 at the front end of the speedrun chassis plate (End A), the speedrun front splitter on it and the splitter holder plate on top of the splitter. The car runs without the front foam bumper: the splitter takes its place, the holder plate follows the carbon plate on top of the original foam bumper (photo of the owner). The mount is the owner's own design, partly based on the T410R (photos and measurements of the owner); the outer form of the splitter follows the lower front edge of the body (owner), as a broad plate after a reference picture of the owner.
+* **Status:** $\color{red}\times$ Completely unqualified: first design. The mount is built from the measurements of the owner (M1 to M9, M11 to M16 of the measurement sheet `parts/front_splitter/front_splitter_measurement_sheet.pdf`); still open: the ramp (M10), the lower front edge of the body (B1 to B6) and the droop of the front wheels (S3).
+
+![Front body post mount, front splitter and holder plate: top view with the front tyres up to full steering lock and the assumed front edge of the body, section on the centre line, 3D views of the mount and of the stack with the body posts](../photos/cad_front_splitter_drawing.png)
+
+| Item | Model | Source |
+|:---|:---|:---|
+| Body post mount | Plastic part (3D print, approx. 5.5 g in PETG), 79.5 mm wide over the ears, 47.7 mm over the side lips. Deck 2.5 mm thick on the top face of the chassis plate (4.5 mm total height at the rear edge), straight rear edge 4.0 mm behind H34/H35, 19.2 mm deep on the centre line. The bottom has a pocket in the form of the front end of the plate (2.0 mm deep, 0.2 mm clearance, side lips around the plate): the overhang holds the part against turning. In front of the plate the part is cranked down by the thickness of the plate (bottom face flush with the bottom face of the plate, 3.0 mm thick); a ramp 4 mm wide on the top face follows the front contour of the plate | Owner (M1 to M9), photo (form of the outline, ramp) |
+| Collars on H34/H35 | 6.3 mm, holes 3.2 mm; they pass through the holes of the splitter and end 0.1 mm below its top face (1.9 mm above the deck), so that the holder plate clamps the splitter onto the deck | Owner (M11) |
+| Ears | One on each side, holes 65.6 mm apart and 12.0 mm ahead of H34/H35; boss 11.2 mm, top 4.41 mm above the bottom face; hexagon recess 7.06 mm across the flats and 2.1 mm deep: press fit of the body posts; hole 3.2 mm with a countersink on the bottom face | Owner (M2, M3, M13, M15, M16), photo (diameter of the boss) |
+| Boss on H36 | Left out: on the original part it only holds the stock bumper | Owner (M14) |
+| Body posts | Stock parts (assembly only): 5.92 mm, hexagon section 7.06 mm across the flats and 8 mm long from the bottom of the recess (through the splitter and the holder plate), each held by a countersunk screw M3x6 from below; 30 mm above the splitter (B6 open) | Owner (M13), assumption (length) |
+| Front splitter | Flat plate, carbon 2.0 mm (approx. 34 g), 187 x 75 mm, on the deck of the mount: bottom face 4.5 mm above the bottom face of the chassis plate (14.5 mm above the ground at the ride height of 10 mm). Front end 70 mm ahead of the axis through H34/H35 (62.3 mm ahead of the chassis plate). Outer form: the assumed lower front edge of the body, offset outward by 5 mm and moved forward to this front end, from tip to tip. Rear edge: straight in the middle (y = 313 mm), then around the front corners of the tyres at full steering lock to the side edges of the tips. Holes 6.7 mm over the collars, hexagon holes 7.16 mm across the flats over the body posts | Owner (front end, outer form, holes), design |
+| Splitter holder plate | Carbon 2.0 mm (approx. 4 g), outline as the mount, on top of the splitter: hexagon holes 7.16 mm over the body posts, holes 3.2 mm on H34/H35 | Owner (photo of the original carbon plate), design |
+| Screws | 2 countersunk screws M3x14 from below through the countersinks of H34/H35 in the chassis plate, the collars and the holder plate, nuts M3 with nylon insert on top: they clamp the splitter between the deck and the holder plate. Body posts: countersunk screws M3x6 from below through the ears | Owner (M13), design |
+| Front edge of the body | Assumed: on the centre line 29.4 mm ahead of the front end of the chassis plate (68 mm ahead of the front axle), receding toward the corners. The length of the ZooRacing Hellcat body is not published. The front end of the splitter lies 33 mm ahead of this assumed edge | Assumption (measurement sheet B1 to B5) |
+
+* Checks of `generate_front_splitter.py`: holes of the splitter on H34/H35 (offset 0.000 mm); no overlap of the mount with the chassis plate, of the splitter with the mount and with the holder plate, and of the body posts with the mount, the splitter and the holder plate; clearance to the front tyres (cylinder 64 x 30 mm on the wheel centre plane, turned about the kingpin axis from -45 to +45 degrees, at the ride height and with 4 mm droop): splitter 4.61 mm (required 3 mm), mount 16.96 mm, holder plate 15.82 mm; no overlap with the 30 parts of the assembly at End A (bulkheads, pivot block, wishbones, dampers, sway bar and its holders).
+* The splitter and the holder plate are flat plates for CNC milling: DXF and geometry data in the format of the chassis plates (the outline of the holder plate as lines of 0.5 mm along the outline of the mount).
+* The outer form of the splitter follows the parameter `body_front_edge` (offset `splitter_overhang`), its front end is set by `splitter_front_distance`. With the measured front edge of the body (B1 to B3) the form follows the real body. The body must reach down to the top face of the splitter at least (B4), otherwise the body hides the splitter or touches it.
+* The car ran with the front foam bumper so far. ADR-009 (the foam bumper flush with the front apron of the body) and ADR-010 (GPS module on the front foam bumper) refer to it and are not changed yet.
+
+**Files of the front body post mount, the front splitter and the holder plate**
+
+All files are stored in the directory `/parts/front_splitter` and are generated with `generate_front_splitter.py` from `front_splitter_parameters.json` (see [scripts](#scripts)), in the coordinates of the chassis plate.
+
+| File | Content |
+|:---|:---|
+| `body_post_mount_end_a` | Body post mount (STEP, STL) in the position on the chassis plate |
+| `front_splitter_end_a` | Front splitter: STEP and STL in the position on the mount, DXF for CNC milling |
+| `front_splitter_holder_plate_end_a` | Splitter holder plate: STEP and STL in the position on the splitter, DXF for CNC milling |
+| `front_splitter_end_a_geometry.json`, `front_splitter_holder_plate_end_a_geometry.json` | Geometry data of the splitter and of the holder plate in the format of the chassis plates: outline, holes, cutouts (z = 0 bottom face) |
+| `front_splitter_parameters.json` | All dimensions, each with its source and a note |
+| `front_splitter_measurement_sheet.pdf` | Measurement sheet (A4, 4 pages): mount, body and splitter with the letters M1 to M16, B1 to B6 and S1 to S4, table with the model values and the measured values of the owner; generated with `generate_front_splitter_measurement_sheet.py` |
+
 ## Scripts
 The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates (except `generate_chassis_templates.py`, which writes the templates of the chassis plate and the top brace), and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
 
@@ -1083,7 +1125,9 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_camber_links.py` | Parameter file of the camber links, parameter files of the shock towers and the bulkheads, wishbones | STEP and STL files of the camber links (turnbuckle, rod end, ball stud, assembled links), drawing `photos/cad_camber_links_drawing.png`, checks of the clearance to the shock towers, the bulkheads and the wishbones | cadquery, matplotlib |
 | `generate_running_gear.py` | Parameter file of the running gear, parameter files of the driveshaft, the bulkheads, the shock towers and the camber links, wishbones | STEP and STL files of the own parts of the running gear, drawing `photos/cad_running_gear_drawing.png`, free steering angle, Ackermann, overlap check of all parts against each other and against the assembly (option `--no-check`) | cadquery, matplotlib |
 | `generate_knuckle_measurement_sheet.py` | Parameter file of the running gear (knuckle of the front corner) | Measurement sheet `running_gear/front_corner/steering_knuckle_measurement_sheet.pdf` of the original steering knuckle (views of the model with the letters K1 to K21, table with the model values and the measured values) | cadquery, matplotlib |
-| `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, of the shock towers, of the pivot blocks, of the driveshaft, of the wishbones, of the camber links and of the running gear, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
+| `generate_front_splitter.py` | Parameter file of the front splitter, geometry data and STEP file of the speedrun chassis plate, parameter file of the running gear (kingpin, wheels), assembly STEP file (check) | STEP and STL files of the front body post mount, of the front splitter and of the splitter holder plate, DXF and geometry data of the splitter and of the holder plate, drawing `photos/cad_front_splitter_drawing.png`, checks of the holes, of the clearance to the front tyres over the steering angle and of the overlap with the parts of the assembly at End A (option `--no-check`) | cadquery, ezdxf, matplotlib |
+| `generate_front_splitter_measurement_sheet.py` | Parameter file of the front splitter | Measurement sheet `parts/front_splitter/front_splitter_measurement_sheet.pdf` of the body post mount, the body and the splitter (letters M1 to M16, B1 to B6, S1 to S4, table with the model values and the measured values of the owner) | cadquery, matplotlib |
+| `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, of the shock towers, of the pivot blocks, of the driveshaft, of the wishbones, of the camber links, of the running gear and of the front splitter, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file, geometry checks | cadquery |
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
 | `generate_bulkhead_upper.py` | Parameter files of the upper and the lower bulkhead | STEP and STL file of the upper part, test print STL file, assembly STEP file, interference check, geometry checks | cadquery |
@@ -1138,6 +1182,8 @@ python scripts/cad/generate_wishbones.py
 python scripts/cad/generate_camber_links.py
 python scripts/cad/generate_measurement_sheets.py
 python scripts/cad/generate_running_gear.py
+python scripts/cad/generate_front_splitter.py
+python scripts/cad/generate_front_splitter_measurement_sheet.py
 python scripts/cad/generate_speedrun_assembly.py
 ```
 
