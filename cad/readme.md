@@ -713,6 +713,7 @@ All files are stored in the directory `/front_splitter` and are generated with `
 | `body_post_mount_end_a` | Body post mount (STEP, STL) in the position on the chassis plate |
 | `front_splitter_end_a` | Front splitter: STEP and STL in the position on the mount, DXF for CNC milling |
 | `front_splitter_holder_plate_end_a` | Splitter holder plate: STEP and STL in the position on the splitter, DXF for CNC milling |
+| `front_splitter_end_a_test_print.stl` | Test print of the splitter for a home 3D printer (the whole splitter does not fit on the print bed): the middle part over the mount, 92 x 33 x 2 mm, with the holes over the pins and the hexagon holes over the body posts. It checks the fit on the mount (the splitter on the bases of the bosses and on the ears, the pins and the body posts in the holes). Print with the bottom face on the bed, 100 % infill; disable the XY hole compensation of the slicer, printed holes are usually undersized |
 | `front_splitter_end_a_geometry.json`, `front_splitter_holder_plate_end_a_geometry.json` | Geometry data of the splitter and of the holder plate in the format of the chassis plates: outline, holes, cutouts (z = 0 bottom face) |
 | `front_splitter_parameters.json` | All dimensions, each with its source and a note |
 | `front_splitter_measurement_sheet.pdf` | Measurement sheet (A4, 4 pages): mount, body and splitter with the letters M1 to M16, B1 to B6 and S1 to S4, table with the model values and the measured values of the owner; generated with `generate_front_splitter_measurement_sheet.py` |
