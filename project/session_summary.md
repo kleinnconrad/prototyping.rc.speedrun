@@ -1,6 +1,6 @@
 # Session summary (handover)
 
-Handover of the CAD session that ended on 2026-11-16, for the next session. Read this file, `CLAUDE.md` and the [CAD readme](../cad/readme.md) first.
+Handover of the CAD session that ended on 2026-11-16 (front splitter), for the next session. Read this file, `CLAUDE.md` and the [CAD readme](../cad/readme.md) first.
 
 ## Table of contents
 * [State of the repository](#state-of-the-repository)
@@ -12,9 +12,9 @@ Handover of the CAD session that ended on 2026-11-16, for the next session. Read
 * [Open points](#open-points)
 
 ## State of the repository
-* Work branch: `ccr-a9bb1886-3anw1b`. All changes are committed and pushed (last commit `42cb4ee`, motor mount with a round upper inner corner). No pull request was created; the branch is not merged into `main`.
-* The previous handover (branch `claude/new-session-1yf69h`) no longer exists on the remote; this file replaces it.
-* Generated files are up to date: STEP/STL files, drawings in `photos/`, measurement sheets, the assembly `cad/assembly/speedrun_chassis_T410R.step`, `architecture/README.md` and `specs/full_spec.yaml`.
+* Work branch of the session: `ccr-a9bb1886-3anw1b` (last design commit `df05c50`, one-piece front splitter on the car). The design commits are merged into `main` with pull request #89 (`e100609`).
+* This file was updated on the work branch after the merge (commit `c5a986f`) and is carried to `main` through the branch `ccr-40867872-qk7gsh`. It replaces the previous handover of the same branch (commit `4e9bf2a`).
+* Generated files are up to date: STEP/STL/DXF files, drawings in `photos/`, measurement sheets and the assembly `cad/assembly/speedrun_chassis_T410R.step`. `architecture/README.md` and `specs/full_spec.yaml` were not changed in this session.
 
 ## Rules of the owner
 * `CLAUDE.md`: English, sentence case also in headings, list items and table entries, table of contents as soon as a Markdown file has more than one heading, no emojis, objective style without filler words.
@@ -23,19 +23,22 @@ Handover of the CAD session that ended on 2026-11-16, for the next session. Read
 * The inside of the lower and upper bulkhead (verified with test prints) must not be changed; the generators of the bulkheads run a functional check.
 * Do not change `scripts/generate_setup_drawing.py`, `photos/latest_setup_drawing.svg`, `docs/latest_setup_drawing.svg` or `.github/workflows/*`.
 * No Carten part numbers (NBA..., NHA...) in docs, drawings or file names (purchase lists excepted).
-* Wording: the parts besides the speedrun chassis are "own design, partly based on the (Carten) T410R"; the group is called "further own parts". The word "re-engineered" is not used any more.
-* Third-party STL files stay in `cad/`. Force push is not allowed. The chassis plate is ordered: only its existing holes can be used (steering posts H24/H25, servo mount H17/H21, motor mount H09/H10).
+* Wording: the parts besides the speedrun parts are "own design, partly based on the (Carten) T410R"; the group is called "further own parts". The word "re-engineered" is not used any more. The front splitter parts are speedrun parts (owner), directory `cad/front_splitter`.
+* Third-party STL files stay in `cad/`. Force push is not allowed. The chassis plate is ordered: only its existing holes can be used (steering posts H24/H25, servo mount H17/H21, motor mount H09/H10, front splitter H34/H35/H36).
+* The owner sends photos and caliper values; values of the owner have the source `owner` in the parameter files and the measured column of the measurement sheets.
 
 ## Workflow
+* The CAD packages are not preinstalled in a fresh container: `pip install cadquery ezdxf matplotlib reportlab` (approx. 2 min; cadquery 2.8 with Python 3.13 works).
 * Run the scripts from the root directory with `PYTHONDONTWRITEBYTECODE=1`; delete `scripts/cad/__pycache__` before a commit.
 * Generators and run times (approx.):
   * `scripts/cad/generate_running_gear.py`: running gear, drawing, steering lock check, bellcrank sweep and overlap check of all parts (10 to 15 min; `--no-check` skips the overlap check).
-  * `scripts/cad/generate_speedrun_assembly.py`: assembly STEP, assembly picture and interference check of all 183 parts (approx. 10 min).
-  * `scripts/cad/generate_wishbones.py`, `generate_camber_links.py`, `generate_driveshaft.py` (drive line, motor mount, drawings), `generate_measurement_sheets.py`, `generate_knuckle_measurement_sheet.py`, `generate_pivot_blocks.py`.
-  * `scripts/generate_adr_readme.py` (ADR readme from `architecture/adr_*.yaml`) and `scripts/merge_specs.py` (`specs/full_spec.yaml`).
+  * `scripts/cad/generate_speedrun_assembly.py`: assembly STEP, assembly picture and interference check of all 186 parts (approx. 10 min; with `python -u` the output is not buffered).
+  * `scripts/cad/generate_front_splitter.py`: front splitter (one-piece version and three-part alternative), DXF and geometry data, test prints, drawings `photos/cad_front_splitter_drawing.png` and `photos/cad_front_splitter_one_piece_drawing.png`, checks (approx. 1 min; `--no-check` skips the tyre check and the assembly check). It reads the assembly STEP for the overlap check, so after a change of the splitter run the assembly first and then this script once more.
+  * `scripts/cad/generate_front_splitter_measurement_sheet.py`: measurement sheet `cad/front_splitter/front_splitter_measurement_sheet.pdf` (M1 to M16, B1 to B6, S1 to S4, measured values of the owner in the rows).
+  * `scripts/cad/generate_wishbones.py`, `generate_camber_links.py`, `generate_driveshaft.py`, `generate_measurement_sheets.py`, `generate_knuckle_measurement_sheet.py`, `generate_pivot_blocks.py`, `scripts/generate_adr_readme.py`, `scripts/merge_specs.py`.
 * Run long generators in the background and commit only after the checks have passed.
-* Expected check results: running gear "overlaps: 0"; assembly only the 3 known interferences (lower bulkhead End B / pivot block End B, outer: 0.82 mm³; lower bulkhead End A / front wishbone, left and right: 2.16 mm³ each).
-* The generators rewrite all STEP and STL files with new headers. Before a commit, restore the files whose geometry did not change (normalised comparison with `HEAD`). The following script did this in the session (save it in a scratch directory and run it from the root directory):
+* Expected check results: running gear "overlaps: 0"; assembly only the 3 known interferences (lower bulkhead End B / pivot block End B, outer: 0.82 mm³; lower bulkhead End A / front wishbone, left and right: 2.16 mm³ each); front splitter: no overlap with the chassis plate, the body posts and the 30 parts at End A, tyre clearance >= 3 mm.
+* The generators rewrite all STEP, STL and DXF files with new headers. Before a commit, restore the files whose geometry did not change (normalised comparison with `HEAD`). The following script did this in the session (save it in a scratch directory and run it from the root directory):
 
 ```python
 import re, subprocess
@@ -61,27 +64,22 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
             subprocess.run(["git", "checkout", "--", f])
 ```
 
-* Files that change without a change of geometry and must be restored by hand: `cad/running_gear/steering/spacers_of_the_bridge.step`, `cad/parts/rear_drive/bearing_5x10x4.stl`, `cad/parts/camber_link/turnbuckle_M3x37.stl`; the assembly STEP when only the order of the colours changed.
-* Boolean operations: do not fuse a solid onto an identical existing face (for example a cylinder on the existing lug); the following booleans fail silently and the overlap check is no longer reliable. Leave the region out of the cut instead.
+* Files that change without a change of geometry and must be restored by hand: `cad/running_gear/steering/spacers_of_the_bridge.step`, `cad/parts/rear_drive/bearing_5x10x4.stl`, `cad/parts/camber_link/turnbuckle_M3x37.stl`; the assembly STEP when only the order of the colours changed; the DXF files of the splitter and the holder plate when their `_geometry.json` is unchanged (only the date and IDs change); an STL file of a cut solid (test print) can come back with another triangle order (compare the number of triangles and the surface area).
+* Boolean operations: do not fuse a solid onto an identical existing face; the following booleans fail silently. A closed spline with tangents loops: build the outline of the mount from one half spline with unit tangents (`scale=False`) and mirror it (`mount_outline_wire`).
 
 ## Work of this session
-* Readme and documents:
-  * Design goal: top speed over 130 km/h (root readme, CAD readme, ADRs, specs). Values derived from the speed are recalculated (36.1 m/s, axle approx. 10,800 rpm, 45T pinion for 130 km/h with the 68T spur gear). Not changed: load capacities of the spur gear and the differentials (marked "not evaluated for 130 km/h"), the GPS function "0-100 km/h", the project name "RC100", the test drive logs.
-  * The root readme describes the CAD model of the 1:10 on-road car with speedrun-specific parts, refers to the status tables and notes that the photos show the parts of the manufacturers.
-  * The differential inset is removed from the assembly picture.
-* Sway bars (manual steps 22 and 23) and the floating servo mount (manual step 10) are reworked.
-* Motor mount and cap: rebuilt from the photos of the owner; long holes of the motor screws extended; grooves removed (smooth faces); upper inner corner one radius R9.0 below the end of the top brace (upper long hole from x = 19.05 mm, wall 2.1 mm). Verified by a test print of the owner (status green).
-* Steering knuckle: built from the measurement sheet of the owner (K1 to K21: ring 14.1 x 16.7 mm from the kingpin axis, seats 4.29 mm, lip 2.33 mm, entry bore 12.4 x 5.79 mm, bosses 7 mm with 21.1 mm between the end faces, kingpin bores 2.7 x 4.5 mm, steering ball 5 mm inboard and 25 mm behind the kingpin axis, arm 4.9 mm, tab 7.4 mm). Verified by a 3D print of the owner (status green).
-* C-hub (front): solid upper arm with a U-slot for the upper boss (the knuckle slides in from the wheel side); passage 10 mm for the CVD bone with its pin; back plate and upper arm 15 mm wide (13.5 mm above the shock plate of the wishbone, 11.6 mm below); kingpin bores 5 mm through both arms with 2 identical flanged guide sleeves (4.95 x 3.1 mm, flange 6.4 x 1.0 mm, shank 3.6 mm; sizes scaled from the manual drawing). Top: flange outside, the camber ball stud 4.8x9 is the top kingpin (the ball sits on the kingpin axis). Bottom: flange inside in a counterbore, socket head screw M3x8 from below, its head in a pocket beside the tube on the hinge pin.
-* Wishbones: second measurement of the owner over the lugs: front 52.46 mm, rear 61.5 mm (axis to axis 45.26 mm and 54.3 mm). The front wishbone is prolonged by 4.44 mm (49.7 mm axis to axis, owner) so that the kingpin lies 6.75 mm inside the outer hinge pin (lower bore clear of the hinge pin tube) and the track is equal front and rear.
-* Rear hub carrier: as the original part (photos of the owner): tube 10 mm long, approx. 14.6 mm in diameter, outer end flush with the lug on the hinge pin, bearings in the ends of the tube against a lip of 2 mm, sloped arm to the camber seat.
-* Camber links: front outer ball on the top kingpin (gap 28.0 mm, screwed out from the manual value 24.0 mm); rear gap 25.8 mm (manual).
-* Hinge pin of the C-hub 3 mm (owner); joint cups of the axles 10 mm (owner).
+* Speedrun front splitter at End A (new, `cad/front_splitter`, section "Speedrun front splitter" of the CAD readme). The car runs without the front foam bumper; the splitter takes its place, the body sits on it and the splitter shows 15 to 20 mm ahead of the body (owner).
+* Body post mount: built from photos of the original part and the measurements of the owner (M1 to M16 of the measurement sheet: 79.5 mm over the ears, ear holes 65.6 mm apart and 12.0 mm ahead of H34/H35, rear edge 4.0 mm behind H34/H35, 19.2 mm deep, 47.7 mm over the side lips, total height 4.5 mm at the rear edge, front part 3.0 mm, pocket 2.0 mm flush with the chassis plate, ear bosses 4.41 mm, hexagon recess 7.06 x 2.1 mm, body posts 5.92 mm with a hexagon section 8 mm long, held with countersunk screws M3x6 from below). Pocket and side lips around the front end of the chassis plate, ramp on the top face. The original boss on H36 (stock bumper) is left out.
+* Planform of the splitter: front end 90 mm ahead of the axis through H34/H35 (owner); outer form after the form of the lower front edge of the body (parameter `front_form`, assumed), from tip to tip; rear edge as variant C of the design suggestions (owner): straight in the middle at y = 313 mm, concave rear edges, deeper beside the mount, narrower toward the tips; tyre check in 3D (cylinder 64 x 30 mm turned about the kingpin axis, -45 to +45 degrees, droop 0 and 4 mm).
+* Three-part version (verified with a 3D print of the owner, now the alternative): mount with bosses on H34/H35 (base 8.0 mm up to 8.5 mm, pin 6.3 mm through the splitter), carbon splitter 2.0 mm (8.5 to 10.5 mm), carbon holder plate 2.0 mm on top (outline as the mount, like the carbon plate on the original foam bumper); screws M3x6 from below and M3x6 from above into the same bosses (0.5 mm between the tips); H36 tapped through the deck. DXF files of the splitter and the holder plate, test print of the middle part of the splitter.
+* One-piece version (used on the car, owner): the body post mount enlarged to the outline of the splitter at the thickness of its front part (3.0 mm, z = 0 to 3.0 mm, bottom face flush with the chassis plate); bosses 6.3 mm up to 7.0 mm on H34, H35 and H36 with blind tapped holes for countersunk screws M3x6 from below (not visible from above); ears with the hexagon recesses as the original part. 187 x 94 mm, approx. 47 g in PETG, tyre clearance 10.18 mm. STEP, STL, test print `front_splitter_one_piece_end_a_test_print.stl` (middle part 92 x 32 mm, bottom face on the bed) and drawing.
+* Assembly: contains the one-piece version with the body posts (186 parts); the front splitter is a speedrun part with a material (PETG), the speedrun mass total is 464 g. Readmes (root, CAD, parts) updated: the one-piece version as the speedrun front splitter (yellow), the three-part parts as the verified alternative (not in the total).
+* Design study (not in the repository): planform variants A (band and tongue), B (straight taper) and C (curved taper, chosen).
 
 ## Current geometry (key values)
 | Value | Model |
 |:---|:---|
-| Front kingpin axis | x = 63.65 mm, 6.75 mm inside the outer hinge pin (x = 70.4 mm), caster 10 degrees |
+| Front kingpin axis | x = 63.65 mm, 6.75 mm inside the outer hinge pin (x = 70.4 mm), caster 10 degrees; at the height of the axle y = 286.87 mm, z = 22.0 mm |
 | Outer faces of the hex hubs | x = ±86.85 mm front and rear (front hex hubs 6 mm, rear 7 mm) |
 | Overall width | 187 mm over tyres of 26 mm (as the original car, owner), 191 mm over tyres of 30 mm |
 | Front wishbone | 49.7 mm axis to axis (measured 45.26 mm, prolonged by 4.44 mm) |
@@ -90,13 +88,19 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
 | Camber links | gap front 28.0 mm, rear 25.8 mm (turnbuckle M3x37) |
 | Steering | Ackermann 114 / 128 / 144 % at 15 / 20 / 25 degrees; free steering angle 30 degrees toward the middle, 45 degrees or more toward the outside; servo approx. 48 degrees for 25 degrees of the inner wheel (horn 10 mm) |
 | Motor axis of the motor mount | x = 24.6 to 33.85 mm (spur gear plus pinion 93 to 127 teeth, 48DP) |
+| Front splitter | front end y = 407.98 mm (90 mm ahead of the axis H34-H35, 82.3 mm ahead of the chassis plate), width 187 mm; one-piece version z = 0 to 3.0 mm (body on it at 3.0 mm), three-part version 8.5 to 10.5 mm (body at 10.5 mm) |
+| Lower front edge of the body | 17.5 mm behind the front edge of the splitter (owner: 15 to 20 mm), on the centre line 72.5 mm ahead of the axis H34-H35; form assumed |
+| Body posts | in the ears at x = ±32.8 mm, y = 329.98 mm; hexagon 7.06 mm from 2.31 mm above the bottom face of the chassis plate |
 
 ## Status of the parts
-* Verified (green): chassis plate, bulkheads, top brace, shock towers, pivot blocks, motor mount with cap, steering knuckles.
-* Measures qualified (yellow): centre driveshaft, rear and front drive line, differential, spool, front and rear wishbones (the front wishbone is longer than measured).
+* Verified (green): chassis plate, bulkheads, top brace, shock towers, pivot blocks, motor mount with cap, steering knuckles, three-part front splitter (body post mount, splitter, holder plate; alternative, 3D print of the owner).
+* Measures qualified (yellow): centre driveshaft, rear and front drive line, differential, spool, front and rear wishbones (the front wishbone is longer than measured), one-piece front splitter (used on the car, no 3D print verification yet).
 * Completely unqualified (red): cup joints, diff outdrives, inner hinge pins, camber links, C-hubs (3D print verification with the guide sleeves planned by the owner), rear hub carriers, axles and hex hubs, CVD drive shafts, steering, sway bars, dampers.
 
 ## Open points
+* One-piece front splitter: 3D print verification with the test print (owner); then status green. As a 3D print in PETG the plate (3.0 mm) is less stiff than the carbon splitter.
+* Front splitter, measurement sheet: form of the lower front edge of the body (B1 to B3, the outline of the splitter follows `front_form`), wheel arches (B5), length of the body posts (B6), ramp of the mount (M10), droop of the front wheels (S3). The body posts and the body mounting holes must be set so that the body sits on the splitter (B4 = 3.0 mm for the one-piece version).
+* ADR-009 (foam bumper flush with the front apron of the body) and ADR-010 (GPS module on the front foam bumper) still refer to the foam bumper, which is no longer used; the GPS module needs a new position (for example on the splitter).
 * C-hub: 3D print verification with the guide sleeves; the dimensions of the sleeves are scaled from the manual (a caliper value of the original sleeve confirms them); the wall between the pocket of the lower screw head and the tube on the hinge pin is only 0.3 mm.
 * Steering knuckle: open dimensions K11, K14, K16 and K19 of the measurement sheet.
 * Track: the 0.5 mm gaps between the knuckle ring and the front hex hub and between the tube of the hub carrier and the rear hex hub, and the radius 3.6 mm of the lug of the hub carrier are assumptions. A measurement of the outer faces of the hex hubs on the car, front and rear, confirms the prolonged front wishbone.
