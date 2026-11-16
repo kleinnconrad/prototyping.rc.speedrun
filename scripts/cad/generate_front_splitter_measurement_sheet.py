@@ -12,7 +12,7 @@ value.
 Usage (from the root directory of the repository):
     python scripts/cad/generate_front_splitter_measurement_sheet.py
 
-Output: cad/parts/front_splitter/front_splitter_measurement_sheet.pdf (A4).
+Output: cad/front_splitter/front_splitter_measurement_sheet.pdf (A4).
 Requires cadquery and matplotlib.
 """
 import math
@@ -33,7 +33,7 @@ import generate_front_splitter as F  # noqa: E402
 from generate_measurement_sheets import A4, RED, dimh, dimv, tag  # noqa: E402
 from mesh_views import draw_mesh, subdivide  # noqa: E402
 
-OUT = "cad/parts/front_splitter/front_splitter_measurement_sheet.pdf"
+OUT = "cad/front_splitter/front_splitter_measurement_sheet.pdf"
 PLATE_END = 325.62                                           # front end of the chassis plate (y)
 SIDE = tuple(np.array(v) for v in ((-1.0, 0, 0), (0, 1.0, 0), (0, 0, 1.0)))     # view along -x: y right, z up
 COL = {"plate": (0.86, 0.87, 0.89), "mount": (0.62, 0.65, 0.7), "splitter": (0.3, 0.31, 0.33),
@@ -69,7 +69,7 @@ def values(p):
     half = np.array(p["body_front_edge"])
     return {"holes": holes, "P": P, "x_max": float(P[:, 0].max()), "y_front": float(P[np.abs(P[:, 0]) < 0.3, 1].max()),
             "ex": p["ear_holes"][0], "ey": p["ear_holes"][1], "ft": p["front_t"], "dt": p["deck_t"],
-            "z_deck": F.PLATE_T + p["deck_t"], "cd": p["collar"][0], "ch": p["collar"][1],
+            "z_deck": F.PLATE_T + p["deck_t"], "cd": p["collar"][0], "cb": p["collar"][1],
             "zs": F.splitter_z(p), "zt": F.splitter_z(p) + p["splitter_t"], "zh": F.holder_z(p) + p["holder_plate"][0],
         "be": be, "yb": float(half[0][1]),
             "yb60": float(np.interp(60.0, half[:, 0], half[:, 1])), "over": p["splitter_overhang"],
@@ -99,18 +99,23 @@ def rows(p, v):
                "bottom face of the chassis plate when the part is mounted?", f"{F.PLATE_T:g}: flush", "2, flush"),
         ("M10", "Width of the ramp on the top face (top view) and its form (slope or radius).",
          f"{p['ramp_w']:g}, slope (photo)", ""),
-        ("M11", "Collars on H34/H35 (mounting points of the splitter): outer diameter, hole diameter. Height: through "
-                "the splitter up to 0.1 below its top face (owner: as high as needed for the splitter and the holder "
-                "plate).", f"{v['cd']:g} / {p['screw_hole_d']:g}; {v['ch']:g} above the deck", "6.3 / 3.2"),
-        ("M12", "Height of the top of the ear bosses compared with the top of the deck (the flat splitter lies on "
-                "both).", f"deck {F.PLATE_T + v['dt']:g}, ear bosses {eh:g} (from M7, M15)", "4.5 / 4.41"),
+        ("M11", "Collars on H34/H35 of the original part: outer diameter, hole diameter. Own part: boss with a base "
+                "that carries the splitter and a pin (this diameter) through the splitter, tapped M3 for a screw M3x6 "
+                "from below and a screw M3x6 from above (owner).",
+         f"pin {v['cd']:g}, base {v['cb']:g} up to {v['zs']:g}, tapped 2.5", "6.3 / 3.2"),
+        ("M12", "Height of the top of the ear bosses compared with the top of the deck. Own part: the ear bosses "
+                "reach up to the bottom face of the splitter (support).",
+         f"{v['zs']:g} (original: deck {F.PLATE_T + v['dt']:g}, ears {eh:g})", "4.5 / 4.41"),
         ("M13", "Body posts: diameter, hexagon across flats, length of the hexagon section; how is the post held?",
          f"{pd:g} / {eaf:g} / {hl:g}; countersunk screw M3x6 from below", "5.92 / 7.06 / 8; screw M3x6 from below"),
-        ("M14", "Round boss on H36 of the original part.", "left out", "only for the stock bumper, not needed"),
-        ("M15", "Bosses of the ears: height above the bottom face (diameter not measured: photo).",
-         f"{eh:g} (diameter {ed:g})", "4.41"),
-        ("M16", "Hexagon recess of the ears (press fit of the body posts): depth; hole diameter at the bottom.",
-         f"{edep:g} / {p['screw_hole_d']:g} with countersink", "2.1 / 3.2"),
+        ("M14", "Round boss on H36 of the original part. Own part: no boss, tapped hole M3 through the deck for a "
+                "countersunk screw M3x6 from below (owner).", "no boss, tapped 2.5",
+         "boss only for the stock bumper; hole needed"),
+        ("M15", "Bosses of the ears of the original part: height above the bottom face (diameter not measured: "
+                "photo). Own part: raised to the splitter (M12).", f"{eh:g} (diameter {ed:g})", "4.41"),
+        ("M16", "Hexagon recess of the ears (press fit of the body posts): depth in the original part; hole diameter "
+                "at the bottom. Own part: the recess reaches from the same bottom up to the top of the raised boss.",
+         f"{edep:g} (bottom at {eh - edep:.2f}) / {p['screw_hole_d']:g} with countersink", "2.1 / 3.2"),
         ("B1", "Lower front edge of the body on the centre line: distance ahead of the front end of the chassis plate "
                "(body on the posts at the planned height).", f"{v['yb'] - PLATE_END:.1f} (assumed)", ""),
         ("B2", "Lower front edge of the body 60 from the centre line: distance ahead of the front end of the plate.",
@@ -145,10 +150,13 @@ def plan_mount(ax, p, v, geometry=None):
         q = F.offset(C, d)
         q = q[q[:, 1] > v["rear"] + 0.05]
         ax.plot(q[:, 0], q[:, 1], ls, color="#333333", lw=0.7)
+    tap = p["stack_screws"][3] / 2
     for hid in ("H34", "H35"):
         x, y = holes[hid]
-        ax.add_patch(Circle((x, y), v["cd"] / 2, fc="#b7bbc2", ec="black", lw=0.6))
-        ax.add_patch(Circle((x, y), p["screw_hole_d"] / 2, fc="white", ec="black", lw=0.5))
+        ax.add_patch(Circle((x, y), v["cb"] / 2, fc="#b7bbc2", ec="black", lw=0.6))
+        ax.add_patch(Circle((x, y), v["cd"] / 2, fc="#a5aab2", ec="black", lw=0.5))
+        ax.add_patch(Circle((x, y), tap, fc="white", ec="black", lw=0.5))
+    ax.add_patch(Circle(holes["H36"], tap, fc="white", ec="black", lw=0.5))
     ed, eh, eaf, edep = p["ear_boss"]
     for sx in (1, -1):
         c = (sx * v["ex"], v["ey"])
@@ -160,15 +168,15 @@ def plan_mount(ax, p, v, geometry=None):
 
 def mount_page(pdf, p, v, parts):
     named = {n: s for n, _, s in parts}
-    mount, splitter = named["front body post mount End A"], named["front splitter End A"]
-    holder = named["front splitter holder plate End A"]
+    mount, splitter = named["speedrun front body post mount End A"], named["speedrun front splitter End A"]
+    holder = named["speedrun splitter holder plate End A"]
     post = named["body post End A right"]
     plate = cq.importers.importStep(F.PLATE_STEP).val()
     hx, hy = v["post"]
     fig = plt.figure(figsize=A4)
     fig.text(0.06, 0.965, "Measurement sheet: front body post mount (End A)", fontsize=13, fontweight="bold")
-    fig.text(0.06, 0.945, "Own design, partly based on the T410R. The drawings show the current model (estimate from "
-             "the photos of the original part).\nDimensions in mm, values on pages 3 and 4.", fontsize=7.5, va="top")
+    fig.text(0.06, 0.945, "Speedrun part, based on the original mount of the T410R. The drawings show the current "
+             "model.\nDimensions in mm, values on pages 3 and 4.", fontsize=7.5, va="top")
     # 1: top view
     ax = fig.add_axes([0.05, 0.55, 0.9, 0.36])
     plan_mount(ax, p, v)
@@ -181,6 +189,8 @@ def mount_page(pdf, p, v, parts):
     dimh(ax, -v["lip"], v["lip"], 311.0, "M6", ext=[(-v["lip"], rear), (v["lip"], rear)], side=-1)
     tag(ax, (11.0, 324.8), (12.0, 329.0), "M10")
     tag(ax, (hx + 2.4, hy + 2.4), (hx + 7.5, hy + 4.5), "M11")
+    x36, y36 = v["holes"]["H36"]
+    tag(ax, (x36 + 1.0, y36 + 1.0), (x36 + 5.0, y36 + 5.5), "M14")
     tag(ax, (-ex - 3.8, ey + 3.6), (-ex - 9.5, ey + 7.0), "M15")
     tag(ax, (ex + 1.9, ey - 1.6), (ex + 7.5, ey - 6.5), "M16")
     ax.text(0, 306.8, "dashed: step of the pocket (front contour of the chassis plate + 0.2); dotted: foot of the ramp",
@@ -194,7 +204,7 @@ def mount_page(pdf, p, v, parts):
     zd, ft = v["z_deck"], v["ft"]
     # 2: section through the collar on H34
     ax = fig.add_axes([0.04, 0.25, 0.55, 0.27])
-    section(ax, cols, hx, (309, 342, -3, 13))
+    section(ax, cols, hx, (309, 342, -3, 16))
     ys = [q for q in F.plate_front_contour(F.plate_geometry()) if q[1] > 318 and q[0] > 0]
     ys = sorted((q[0], q[1]) for q in ys)
     y_step = float(np.interp(hx, [q[0] for q in ys], [q[1] for q in ys])) + p["pocket_clearance"]
@@ -202,28 +212,29 @@ def mount_page(pdf, p, v, parts):
     dimv(ax, 0, ft, y_step + p["ramp_w"] + 2.5, "M8", side=1)
     dimv(ax, 0, F.PLATE_T, y_step + 1.4, "M9", side=1)
     dimh(ax, y_step, y_step + p["ramp_w"], v["zh"] + 1.2, "M10", ext=[(y_step, zd), (y_step + p["ramp_w"], ft)])
-    dimv(ax, zd, zd + v["ch"], hy - v["cd"] / 2 - 1.0, "M11", ext=[(hy - v["cd"] / 2, zd + v["ch"])])
+    dimv(ax, zd, v["zs"], hy - v["cb"] / 2 - 1.0, "M11", ext=[(hy - v["cb"] / 2, v["zs"])])
     tag(ax, (hy + 13.0, v["zh"] - 0.4), (hy + 16.5, v["zh"] + 2.6), "S4")
     ax.text(310, -2.6, "chassis plate light, mount grey, splitter dark grey, holder plate black", fontsize=6.5)
     ax.set_title(f"2  Section through the collar on H34 (x = {hx:.2f}), seen from the right", fontsize=9, loc="left")
     # 3: section through the ear with the body post
     ax = fig.add_axes([0.6, 0.25, 0.37, 0.27])
-    section(ax, cols + [(post, COL["post"])], ex, (322, 340, -3, 16))
+    section(ax, cols + [(post, COL["post"])], ex, (322, 340, -3, 20))
     ed, eh, eaf, edep = p["ear_boss"]
     dimv(ax, 0, eh, ey + ed / 2 + 1.0, "M15", ext=[(ey + ed / 2, eh)], side=1)
     dimv(ax, eh - edep, eh, ey - ed / 2 - 0.8, "M16", ext=[(ey - eaf / 2, eh - edep), (ey - ed / 2, eh)])
-    tag(ax, (ey + ed / 2 - 0.5, eh), (ey + ed / 2 + 2.0, eh + 4.0), "M12")
+    tag(ax, (ey + ed / 2 - 0.5, v["zs"] - 0.5), (ey + ed / 2 + 2.0, v["zs"] + 3.5), "M12")
     tag(ax, (ey + 1.0, v["zh"] + 3.0), (ey + 5.5, v["zh"] + 5.5), "M13")
     ax.set_title(f"3  Section through the ear (x = {ex:.2f})", fontsize=9, loc="left")
     fig.text(0.06, 0.21, "Notes", fontsize=9, fontweight="bold")
     fig.text(0.06, 0.195, "\n".join(textwrap.wrap(
-        "The mount lies with its deck on the top face of the chassis plate (holes H34 and H35). Its pocket follows "
-        "the front contour of the plate; in front of the plate the part is cranked down by the thickness of the plate. "
-        "The body posts sit with a hexagon in the recesses of the ears (press fit), each held by a countersunk screw "
-        "M3x6 from below. Stack: the splitter lies on the deck, the collars on H34/H35 pass through its holes; the "
-        "holder plate lies on the splitter (hexagon holes over the posts); 2 countersunk screws M3 from below through "
-        "the chassis plate, the collars and the holder plate with nuts on top clamp the splitter. The outline is the "
-        "photo form scaled to M1, M4, M5 and M6. The measured values of the owner are applied (pages 3 and 4).", 125)),
+        "The mount lies with its deck on the top face of the chassis plate and is screwed to it with countersunk "
+        "screws M3x6 from below through H34, H35 and H36. Its pocket follows the front contour of the plate; in front"
+        " of the plate the part is cranked down by the thickness of the plate. The body posts sit with a hexagon in "
+        "the recesses of the raised ears (press fit), each held by a countersunk screw M3x6 from below. Stack: the "
+        "splitter lies on the bases of the bosses on H34/H35 and on the ears, the pins pass through its holes; the "
+        "holder plate lies on the splitter; screws M3x6 from above through the holder plate into the pins clamp the "
+        "splitter (0.5 between the tips of the screws from below and from above). The outline is the photo form "
+        "scaled to M1, M4, M5 and M6. The measured values of the owner are applied (pages 3 and 4).", 125)),
         fontsize=7.2, va="top", linespacing=1.4)
     pdf.savefig(fig)
     plt.close(fig)
@@ -284,9 +295,9 @@ def body_page(pdf, p, v, parts, geometry):
     named = {n: s for n, _, s in parts}
     plate = cq.importers.importStep(F.PLATE_STEP).val()
     ex, ey = v["ex"], v["ey"]
-    section(ax, [(plate, COL["plate"]), (named["front body post mount End A"], COL["mount"]),
-                 (named["front splitter End A"], COL["splitter"]),
-                 (named["front splitter holder plate End A"], COL["holder"]),
+    section(ax, [(plate, COL["plate"]), (named["speedrun front body post mount End A"], COL["mount"]),
+                 (named["speedrun front splitter End A"], COL["splitter"]),
+                 (named["speedrun splitter holder plate End A"], COL["holder"]),
                  (named["body post End A right"], COL["post"])],
             ex, (300, 392, -13, 40))
     ax.plot([300, 392], [-10, -10], color="#6b4f2a", lw=1.0)
@@ -301,7 +312,7 @@ def body_page(pdf, p, v, parts, geometry):
     ax.set_title(f"2  Section through the ear and the body post (x = {ex:.2f}): heights", fontsize=9, loc="left")
     fig.text(0.06, 0.17, "Notes", fontsize=9, fontweight="bold")
     fig.text(0.06, 0.155, "\n".join(textwrap.wrap(
-        "The splitter lies on the deck of the mount, clamped by the holder plate; its front end lies S1 ahead of the "
+        "The splitter lies on the bosses of the mount, clamped by the holder plate; its front end lies S1 ahead of the "
         "axis H34-H35, in front of the lower front edge of the body. Its outer parts stay in front of the front "
         "tyres at full steering lock (tyre check of "
         "generate_front_splitter.py with the droop S3). The front edge of the body is not measured: B1 to B5 set the "

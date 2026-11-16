@@ -1,5 +1,5 @@
-"""Assembly of the speedrun chassis: chassis plate, bulkheads, top brace, shock towers, drive line,
-wishbones and running gear.
+"""Assembly of the speedrun chassis: chassis plate, bulkheads, top brace, shock towers, front splitter set,
+drive line, wishbones and running gear.
 
 Parts (the parts besides the speedrun chassis are the owner's own design, partly based on the
 T410R; they are not in the mass total):
@@ -9,6 +9,9 @@ T410R; they are not in the mass total):
 * speedrun top brace on both upper bulkheads (end with the obround at End B)
 * speedrun shock towers on the upper bulkheads: front tower at End A (assumed to be the front),
   rear tower at End B
+* speedrun front splitter set at End A (scripts/cad/generate_front_splitter.py): body post mount on
+  H34 to H36, front splitter and splitter holder plate; the body posts (stock parts) are not in the
+  mass total
 * pivot blocks of the wishbones: long block on H01/H02, short blocks on H07/H08, H26/H27 and
   H32/H33
 * centre driveshaft with the fixed metal pins, cup joints, front and rear pinion shaft with the
@@ -20,8 +23,6 @@ T410R; they are not in the mass total):
 * running gear (scripts/cad/generate_running_gear.py): C-hubs with caster, steering knuckles, rear
   hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the servo mount, dampers,
   sway bars
-* front body post mount on H34/H35 with the body posts, the speedrun front splitter on the mount and its holder plate
-  (End A, scripts/cad/generate_front_splitter.py)
 
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
@@ -64,13 +65,13 @@ OUT_STEP = "cad/assembly/speedrun_chassis_T410R.step"
 OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3),
           "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
+          "bodymount": (0.15, 0.15, 0.16), "splitter": (0.24, 0.25, 0.27), "holder": (0.09, 0.09, 0.1),
           "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77),
           "drive": (0.45, 0.47, 0.5), "mount": (0.6, 0.63, 0.68), "arm": (0.4, 0.34, 0.52),
           "diff": (0.16, 0.16, 0.18), "rodend": (0.12, 0.12, 0.13), "link": (0.78, 0.79, 0.82),
           "upright": (0.86, 0.45, 0.12), "axle": (0.62, 0.64, 0.68), "cvd": (0.5, 0.52, 0.56),
           "steer": (0.3, 0.45, 0.75), "damper": (0.75, 0.2, 0.2), "spring": (0.95, 0.8, 0.2),
-          "servo": (0.2, 0.2, 0.22), "swaybar": (0.35, 0.65, 0.4), "bodymount": (0.15, 0.15, 0.16),
-          "bodypost": (0.62, 0.63, 0.66), "splitter": (0.24, 0.25, 0.27)}
+          "servo": (0.2, 0.2, 0.22), "swaybar": (0.35, 0.65, 0.4), "bodypost": (0.62, 0.63, 0.66)}
 PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
@@ -79,6 +80,9 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "brace": ("Speedrun top brace", {"carbon": 1.6, "7075": 2.81}),
              "tower_front": ("Speedrun front shock tower", {"carbon": 1.6, "7075": 2.81}),
              "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81}),
+             "bodymount": ("Speedrun front body post mount", {"PETG": 1.27}),
+             "splitter": ("Speedrun front splitter", {"carbon": 1.6}),
+             "holder": ("Speedrun splitter holder plate", {"carbon": 1.6}),
              "pivot": ("Pivot blocks (4 pieces)", {}),     # no mass
              "shaft": ("Centre driveshaft with fixed pins", {}),
              "cup": ("Cup joints, outdrives, inner hinge pins", {}),
@@ -96,9 +100,7 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "spring": ("Damper springs", {}),
              "servo": ("Servo (low profile)", {}),
              "swaybar": ("Sway bars 1.4", {}),
-             "bodymount": ("Front body post mount", {}),
-             "bodypost": ("Front body posts", {}),
-             "splitter": ("Front splitter and holder plate (carbon)", {})}
+             "bodypost": ("Front body posts (stock)", {})}
 
 
 def build():
@@ -141,7 +143,7 @@ def build():
     # running gear: wheel suspension, axles, CVD drive shafts, steering, servo, dampers, sway bars
     rg, _ = running_gear()
     parts += [(f"running gear {name}", kind, s) for name, kind, s in rg]
-    # front body post mount with the body posts and the speedrun front splitter (End A)
+    # speedrun front splitter set (End A): body post mount with the body posts, front splitter, holder plate
     parts += front_splitter_in_plate()
     return parts
 
@@ -196,7 +198,8 @@ def image(parts, path):
     # line at End B seen from the middle of the car (top brace and shock towers left out, they hide the spur gear)
     closeups = (("End A (front): shock tower, C-hubs with knuckles, dampers,\nsway bar, view from the outer end "
                  "(front splitter not shown)",
-                 (-92, BULKHEAD_Y["front"] - 32, -5, 184, 64, 90), ("bodymount", "bodypost", "splitter"), 55, 22),
+                 (-92, BULKHEAD_Y["front"] - 32, -5, 184, 64, 90), ("bodymount", "bodypost", "splitter", "holder"), 55,
+                 22),
                 ("End B (rear): shock tower, hub carriers, dampers, sway bar,\nview from the outer end",
                  (-92, BULKHEAD_Y["rear"] - 32, -5, 184, 64, 90), (), -125, 22),
                 ("End B: drive line (spur gear, motor mount with cap, cup joint),\n"
