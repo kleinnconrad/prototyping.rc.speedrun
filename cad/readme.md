@@ -85,9 +85,9 @@ The speedrun chassis combines the parts that are designed in this project for sp
 | [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | $\color{green}\checkmark$ Verified | Carbon or 7075 | 14 g (carbon), 25 g (7075) |
 | [Speedrun front shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified | Carbon or 7075 | 4.4 g (carbon), 7.7 g (7075) |
 | [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
-| [Speedrun front body post mount](#speedrun-front-splitter) | 1 | `/front_splitter` | $\color{red}\times$ Completely unqualified; measured by the owner, no 3D print verification | PETG (3D print) | 6.5 g |
-| [Speedrun front splitter](#speedrun-front-splitter) | 1 | `/front_splitter` | $\color{red}\times$ Completely unqualified; front edge of the body assumed | Carbon | 39.3 g |
-| [Speedrun splitter holder plate](#speedrun-front-splitter) | 1 | `/front_splitter` | $\color{red}\times$ Completely unqualified | Carbon | 4.3 g |
+| [Speedrun front body post mount](#speedrun-front-splitter) | 1 | `/front_splitter` | $\color{green}\checkmark$ Verified (3D print of the owner) | PETG (3D print) | 6.5 g |
+| [Speedrun front splitter](#speedrun-front-splitter) | 1 | `/front_splitter` | $\color{green}\checkmark$ Verified (3D printed test part of the owner: fit on the mount) | Carbon | 39.3 g |
+| [Speedrun splitter holder plate](#speedrun-front-splitter) | 1 | `/front_splitter` | $\color{green}\checkmark$ Verified (3D print of the owner) | Carbon | 4.3 g |
 | **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace, shock towers, splitter and holder plate carbon, body post mount PETG | **467 g** |
 
 Further own parts (own design of the owner, partly based on the T410R, not in the mass total):
@@ -684,7 +684,7 @@ Both shock towers are verified by the owner. The following points are not requir
 ## Speedrun front splitter
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Speedrun front splitter set at End A: body post mount on the holes H34, H35 and H36 at the front end of the speedrun chassis plate, front splitter and splitter holder plate. The car runs without the front foam bumper: the splitter takes its place and shows below the front edge of the body. The body post mount follows the original mount of the T410R (photos and measurements of the owner), the holder plate follows the carbon plate on top of the original foam bumper (photo of the owner); the outer form of the splitter follows the lower front edge of the body (owner), as a broad plate after a reference picture of the owner.
-* **Status:** $\color{red}\times$ Completely unqualified: first design, no 3D print verification. The mount is built from the measurements of the owner (M1 to M9, M11 to M16 of the measurement sheet `front_splitter/front_splitter_measurement_sheet.pdf`); still open: the ramp (M10), the lower front edge of the body (B1 to B6) and the droop of the front wheels (S3).
+* **Status:** $\color{green}\checkmark$ Verified: the body post mount, the front splitter (test print of the middle part over the mount) and the holder plate are 3D printed and tested by the owner. The mount is built from the measurements of the owner (M1 to M9, M11 to M16 of the measurement sheet `front_splitter/front_splitter_measurement_sheet.pdf`); not measured: the ramp (M10), the form of the lower front edge of the body (B1 to B6) and the droop of the front wheels (S3).
 
 ![Speedrun front splitter set: top view with the front tyres up to full steering lock and the assumed front edge of the body, section on the centre line, 3D views of the mount and of the stack with the body posts](../photos/cad_front_splitter_drawing.png)
 
