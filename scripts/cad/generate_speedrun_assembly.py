@@ -9,9 +9,9 @@ T410R; they are not in the mass total):
 * speedrun top brace on both upper bulkheads (end with the obround at End B)
 * speedrun shock towers on the upper bulkheads: front tower at End A (assumed to be the front),
   rear tower at End B
-* speedrun front splitter set at End A (scripts/cad/generate_front_splitter.py): body post mount on
-  H34 to H36, front splitter and splitter holder plate; the body posts (stock parts) are not in the
-  mass total
+* speedrun front splitter at End A (scripts/cad/generate_front_splitter.py): the one-piece version
+  used on the car (body post mount enlarged to the splitter) on H34 to H36; the body posts (stock
+  parts) are not in the mass total
 * pivot blocks of the wishbones: long block on H01/H02, short blocks on H07/H08, H26/H27 and
   H32/H33
 * centre driveshaft with the fixed metal pins, cup joints, front and rear pinion shaft with the
@@ -55,7 +55,7 @@ from generate_shock_towers import tower_in_bulkhead  # noqa: E402
 from generate_wishbones import arms_in_plate  # noqa: E402
 from generate_camber_links import links_in_plate  # noqa: E402
 from generate_running_gear import build as running_gear  # noqa: E402
-from generate_front_splitter import parts_in_plate as front_splitter_in_plate  # noqa: E402
+from generate_front_splitter import car_parts_in_plate as front_splitter_in_plate  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
 PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
@@ -65,7 +65,7 @@ OUT_STEP = "cad/assembly/speedrun_chassis_T410R.step"
 OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3),
           "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
-          "bodymount": (0.15, 0.15, 0.16), "splitter": (0.24, 0.25, 0.27), "holder": (0.09, 0.09, 0.1),
+          "onepiece": (0.17, 0.17, 0.18),
           "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77),
           "drive": (0.45, 0.47, 0.5), "mount": (0.6, 0.63, 0.68), "arm": (0.4, 0.34, 0.52),
           "diff": (0.16, 0.16, 0.18), "rodend": (0.12, 0.12, 0.13), "link": (0.78, 0.79, 0.82),
@@ -80,9 +80,7 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "brace": ("Speedrun top brace", {"carbon": 1.6, "7075": 2.81}),
              "tower_front": ("Speedrun front shock tower", {"carbon": 1.6, "7075": 2.81}),
              "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81}),
-             "bodymount": ("Speedrun front body post mount", {"PETG": 1.27}),
-             "splitter": ("Speedrun front splitter", {"carbon": 1.6}),
-             "holder": ("Speedrun splitter holder plate", {"carbon": 1.6}),
+             "onepiece": ("Speedrun front splitter (one piece)", {"PETG": 1.27}),
              "pivot": ("Pivot blocks (4 pieces)", {}),     # no mass
              "shaft": ("Centre driveshaft with fixed pins", {}),
              "cup": ("Cup joints, outdrives, inner hinge pins", {}),
@@ -143,7 +141,7 @@ def build():
     # running gear: wheel suspension, axles, CVD drive shafts, steering, servo, dampers, sway bars
     rg, _ = running_gear()
     parts += [(f"running gear {name}", kind, s) for name, kind, s in rg]
-    # speedrun front splitter set (End A): body post mount with the body posts, front splitter, holder plate
+    # speedrun front splitter (End A): one-piece version with the body posts
     parts += front_splitter_in_plate()
     return parts
 
@@ -198,7 +196,7 @@ def image(parts, path):
     # line at End B seen from the middle of the car (top brace and shock towers left out, they hide the spur gear)
     closeups = (("End A (front): shock tower, C-hubs with knuckles, dampers,\nsway bar, view from the outer end "
                  "(front splitter not shown)",
-                 (-92, BULKHEAD_Y["front"] - 32, -5, 184, 64, 90), ("bodymount", "bodypost", "splitter", "holder"), 55,
+                 (-92, BULKHEAD_Y["front"] - 32, -5, 184, 64, 90), ("onepiece", "bodypost"), 55,
                  22),
                 ("End B (rear): shock tower, hub carriers, dampers, sway bar,\nview from the outer end",
                  (-92, BULKHEAD_Y["rear"] - 32, -5, 184, 64, 90), (), -125, 22),

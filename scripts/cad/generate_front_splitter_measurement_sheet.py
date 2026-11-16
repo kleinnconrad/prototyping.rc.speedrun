@@ -125,8 +125,9 @@ def rows(p, v):
                "ahead of the front end of the plate.",
          f"approx. {v['tip'][0]:.0f} / {v['tip'][1] - PLATE_END:.0f} (form assumed)", ""),
         ("B4", "Height of the lower front edge of the body above the bottom face of the chassis plate: the body sits "
-               f"on the splitter, so B4 equals the top face of the splitter ({v['zt']:g}). Body posts and body "
-               "mounting holes to be set for this height.", f"{v['zt']:g} (body on the splitter)", ""),
+               f"on the splitter, so B4 equals its top face: one-piece version (used on the car) {p['front_t']:g}, "
+               f"three-part version {v['zt']:g}. Body posts and body mounting holes to be set for this height.",
+         f"{p['front_t']:g} (one piece) / {v['zt']:g} (three parts)", ""),
         ("B5", "Front wheel arches of the body: distance of their front edge ahead of the front axle and the height "
                "of their lower edge.", "not modelled", ""),
         ("B6", "Height of the body mounting holes at the front body posts above the bottom face of the chassis plate "

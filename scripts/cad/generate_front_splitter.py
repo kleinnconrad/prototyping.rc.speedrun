@@ -428,8 +428,8 @@ def one_piece_solid(p, geom=None):
     holder plate. The mount as measured by the owner (deck on the chassis plate, pocket and side lips around its front
     end, ramp, front part 3.0 thick with its bottom face flush with the bottom face of the plate, ears with the hexagon
     recesses of the body posts); its front part is extended to the outline of the splitter (behind the rear edge of the
-    mount only beside the chassis plate). Bosses on H34/H35 for the countersunk screws M3x6 from below (blind tapped
-    holes), H36 tapped through the deck."""
+    mount only beside the chassis plate). Bosses on H34, H35 and H36 for the countersunk screws M3x6 from below (blind
+    tapped holes, not visible from above)."""
     geom = geom or plate_geometry()
     holes = plate_holes(geom)
     cl, dt, ft, rw = p["pocket_clearance"], p["deck_t"], p["front_t"], p["ramp_w"]
@@ -448,12 +448,10 @@ def one_piece_solid(p, geom=None):
     body = body.cut(prism(offset(C, cl), -1.0, PLATE_T))                     # pocket: overhang around the plate
     tap = p["stack_screws"][3] / 2
     depth, d_boss, z_boss = p["stack_screws"][0] + p["one_piece"][0], p["collar"][0], p["one_piece"][2]
-    for hid in ("H34", "H35"):
+    for hid in ("H34", "H35", "H36"):
         x, y = holes[hid]
         body = body.fuse(cyl_z(d_boss / 2, z_deck - 0.5, z_boss, x, y))        # boss for the screw M3x6 from below
-        body = body.cut(cyl_z(tap, -1, depth, x, y))                           # blind tapped hole M3
-    x, y = holes["H36"]
-    body = body.cut(cyl_z(tap, -1, z_deck + 1, x, y))                           # H36: tapped M3, no boss
+        body = body.cut(cyl_z(tap, -1, depth, x, y))                           # blind tapped hole M3 (not open on top)
     ed, eh, eaf, edep = p["ear_boss"]
     ex, ey = p["ear_holes"]
     r, rc = p["screw_hole_d"] / 2, p["ear_csk"] / 2
@@ -507,7 +505,7 @@ def one_piece_drawing(p, solid, plate, posts_, notes, path=ONE_PIECE_DRAWING):
               [(solid, grey)] + [(s.intersect(cq.Solid.makeBox(200, 100, 15, cq.Vector(-100, 280, -1))), red)
                                  for s in posts_]),
              ([0.5, 0.42, 0.5, 0.52], iso_basis(-120, -40), "From below: pocket for the front end of the chassis "
-              "plate, tapped holes H34, H35, H36, countersinks of the post screws", [(solid, grey)])]
+              "plate, blind tapped holes H34, H35, H36, countersinks of the post screws", [(solid, grey)])]
     for rect, basis, title, solids in views:
         ax = fig.add_axes(rect)
         t = [tris(s) for s, _ in solids]
@@ -544,8 +542,18 @@ def one_piece_drawing(p, solid, plate, posts_, notes, path=ONE_PIECE_DRAWING):
     plt.close(fig)
 
 
+def car_parts_in_plate(p=None):
+    """Front splitter used on the car (owner): the one-piece version with the body posts, in chassis plate coordinates:
+    list of (name, kind, solid)."""
+    p = p or load_params(PARAMS)
+    out = [("speedrun front splitter one-piece End A", "onepiece", one_piece_solid(p))]
+    out += [(f"body post End A {side}", "bodypost", s) for side, s in zip(("right", "left"), one_piece_posts(p))]
+    return out
+
+
 def parts_in_plate(p=None):
-    """Mount, body posts, splitter and holder plate in chassis plate coordinates: list of (name, kind, solid)."""
+    """3-part version (alternative): mount, body posts, splitter and holder plate in chassis plate coordinates: list
+    of (name, kind, solid)."""
     p = p or load_params(PARAMS)
     out = [("speedrun front body post mount End A", "bodymount", mount_solid(p))]
     out += [(name, "bodypost", s) for name, s in posts(p)]
@@ -880,7 +888,8 @@ def main():
                  f"{p['front_t']:g}.",
                  f"Overlap with the chassis plate {one.intersect(plate).Volume():.3f} mm3, with the body posts "
                  f"{max(s.intersect(one).Volume() for s in posts_):.3f} mm3. Screws M3x6 from below: tip at z = "
-                 f"{p['stack_screws'][0]:g}, blind tapped holes on H34/H35 in bosses up to z = {p['one_piece'][2]:g}. "
+                 f"{p['stack_screws'][0]:g}, blind tapped holes on H34, H35 and H36 in bosses up to z = "
+                 f"{p['one_piece'][2]:g}. "
                  f"Test print (middle part, bottom face on the bed): {tb.xlen:.0f} x {tb.ylen:.0f} mm."]
     if not args.no_check:
         d, ang, dz = tyre_clearance(p, [("one piece", one)])[0]["one piece"]
