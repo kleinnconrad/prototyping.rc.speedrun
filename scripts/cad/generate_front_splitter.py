@@ -1,28 +1,27 @@
-"""Generate the front body post mount, the speedrun front splitter and the splitter holder plate (End A).
+"""Generate the speedrun front splitter set (End A): body post mount, front splitter and splitter holder plate.
 
-The body post mount sits on the holes H34 and H35 at the front end of the speedrun chassis plate (End A). On the
-original car it holds the 2 front body posts (hexagon press fit in the ears) and the front foam bumper (on the collars
-over H34/H35, with a carbon plate on top of the foam). The car runs without the bumper: the speedrun front splitter
-takes its place and shows below the front edge of the body; the splitter holder plate on top of it follows the carbon
-plate of the original bumper. The mount is the owner's own design, partly based on the T410R (photos and measurements
-of the owner); the splitter and the holder plate are own designs.
+Speedrun parts, designed in this project for the speedruns. The car runs without the front foam bumper: the front
+splitter takes its place and shows below the front edge of the body. The body post mount follows the original mount
+of the T410R (photos and measurements of the owner), the holder plate follows the carbon plate on top of the original
+foam bumper (photo of the owner).
 
-* Body post mount (plastic, 3D print): deck on the top face of the chassis plate with a pocket in the form of the
-  front end of the plate (the overhang around the plate holds the part against turning); in front of the plate the
-  part is cranked down by the thickness of the plate, a ramp on the top face follows the front contour of the plate.
-  Collars on H34/H35 (mounting points of the splitter), an ear on each side with a hexagon recess: press fit of the
-  body posts, each held by a countersunk screw M3x6 from below. The boss on H36 of the original part (stock bumper
-  only) is left out.
-* Front splitter (carbon sheet 2.0): flat plate on the deck of the mount; the collars pass through its holes, hexagon
-  holes fit over the body posts. Front end 70 mm ahead of the axis H34-H35 (owner). Outer form (owner): the assumed
-  lower front edge of the body, offset outward and moved forward to this front end, from tip to tip; broad plate after
-  the reference picture of the owner. The rear edge is straight in the middle and runs around the front corners of the
-  tyres at full steering lock.
-* Splitter holder plate (carbon sheet 2.0): outline as the mount, on top of the splitter, hexagon holes over the body
-  posts. 2 countersunk screws M3 from below through the chassis plate, the collars and the holder plate with nuts on
-  top clamp the splitter between the deck and the holder plate.
+* Body post mount (plastic, 3D print) on the holes H34, H35 and H36 at the front end of the speedrun chassis plate:
+  deck on the top face of the chassis plate with a pocket in the form of the front end of the plate (the overhang
+  around the plate holds the part against turning); in front of the plate the part is cranked down by the thickness of
+  the plate, a ramp on the top face follows the front contour of the plate. Screwed to the chassis plate with
+  countersunk screws M3x6 from below through H34, H35 and H36 (H36 without a boss). Bosses on H34/H35: a base that
+  carries the splitter and a pin through the splitter, tapped M3 for the screw from below and the screw from above;
+  their height follows from the screws (stack_screws). Raised ears with a hexagon recess: press fit of the body
+  posts, each held by a countersunk screw M3x6 from below.
+* Front splitter (carbon sheet 2.0) on the bases of the bosses and on the ears; the pins pass through its holes,
+  hexagon holes fit over the body posts. Front end 70 mm ahead of the axis H34-H35 (owner). Outer form (owner): the
+  assumed lower front edge of the body, offset outward and moved forward to this front end, from tip to tip; broad
+  plate after the reference picture of the owner. The rear edge is straight in the middle and runs around the front
+  corners of the tyres at full steering lock.
+* Splitter holder plate (carbon sheet 2.0): outline as the mount, on top of the splitter, round holes around the body
+  posts. Screws M3x6 from above through the holder plate into the pins clamp the splitter.
 
-All values with their source: cad/parts/front_splitter/front_splitter_parameters.json. Most dimensions of the mount
+All values with their source: cad/front_splitter/front_splitter_parameters.json. Most dimensions of the mount
 are estimates from the photos, the front edge of the body is an assumption; the measurement sheet lists them
 (scripts/cad/generate_front_splitter_measurement_sheet.py).
 
@@ -30,10 +29,10 @@ Usage (from the root directory of the repository):
     python scripts/cad/generate_front_splitter.py [--no-check]
 
 Outputs (chassis plate coordinates):
-* cad/parts/front_splitter/body_post_mount_end_a.step and .stl
-* cad/parts/front_splitter/front_splitter_end_a.step and .stl (position in the car: on the deck of the mount), .dxf
+* cad/front_splitter/body_post_mount_end_a.step and .stl
+* cad/front_splitter/front_splitter_end_a.step and .stl (position in the car: on the deck of the mount), .dxf
   and _geometry.json (geometry data in the format of the chassis plates: z = 0 is the bottom face)
-* cad/parts/front_splitter/front_splitter_holder_plate_end_a.step and .stl (on the splitter), .dxf and _geometry.json
+* cad/front_splitter/front_splitter_holder_plate_end_a.step and .stl (on the splitter), .dxf and _geometry.json
 * photos/cad_front_splitter_drawing.png
 
 Checks: holes of the mount and of the splitter against the holes of the chassis plate, overlap of the mount with the
@@ -58,17 +57,18 @@ from generate_bulkhead_lower import cyl_z, load_params  # noqa: E402
 from generate_dxf import build_dxf  # noqa: E402
 from generate_solid import plate_solid  # noqa: E402
 
-PARAMS = "cad/parts/front_splitter/front_splitter_parameters.json"
+PARAMS = "cad/front_splitter/front_splitter_parameters.json"
 PLATE_GEOM = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
 PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
 ASSEMBLY = "cad/assembly/speedrun_chassis_T410R.step"
-OUT = "cad/parts/front_splitter"
+OUT = "cad/front_splitter"
 MOUNT_STEM = f"{OUT}/body_post_mount_end_a"
 SPLITTER_STEM = f"{OUT}/front_splitter_end_a"
 HOLDER_STEM = f"{OUT}/front_splitter_holder_plate_end_a"
 DRAWING = "photos/cad_front_splitter_drawing.png"
 PLATE_T = 2.0
-OWN_PREFIXES = ("front_body_post_mount", "body_post", "front_splitter")    # names of these parts in the assembly
+OWN_PREFIXES = ("speedrun_front_body_post_mount", "body_post", "speedrun_front_splitter",
+                "speedrun_splitter_holder_plate")                             # names of these parts in the assembly
 
 
 # ------------------------------------------------------------------ helpers
@@ -221,21 +221,38 @@ def mount_solid(p, geom=None):
                                   taper=math.degrees(math.atan(rw / (z_deck - ft))))
     body = outline(ft).fuse(ramp.intersect(outline(z_deck + 1)))
     body = body.cut(prism(offset(C, cl), -1.0, PLATE_T))                     # pocket: overhang around the plate
-    cd, ch = p["collar"]
+    d_pin, d_base = p["collar"]
+    tap = p["stack_screws"][3] / 2
+    zs = splitter_z(p)
     for hid in ("H34", "H35"):
         x, y = holes[hid]
-        body = body.fuse(cyl_z(cd / 2, z_deck - 0.5, z_deck + ch, x, y))
-        body = body.cut(cyl_z(p["screw_hole_d"] / 2, -1, z_deck + ch + 1, x, y))
+        # boss: base from the deck to the bottom face of the splitter, pin through the splitter (0.1 below its top)
+        body = body.fuse(cyl_z(d_base / 2, z_deck - 0.5, zs, x, y))
+        body = body.fuse(cyl_z(d_pin / 2, zs - 0.5, zs + p["splitter_t"] - 0.1, x, y))
+        body = body.cut(cyl_z(tap, -1, zs + p["splitter_t"] + 1, x, y))           # tapped M3: from below and above
+    x, y = holes["H36"]
+    body = body.cut(cyl_z(tap, -1, z_deck + 1, x, y))                           # H36: tapped M3, no boss
     ed, eh, eaf, edep = p["ear_boss"]
     ex, ey = p["ear_holes"]
     r, rc = p["screw_hole_d"] / 2, p["ear_csk"] / 2
     for sx in (1, -1):
-        body = body.fuse(cyl_z(ed / 2, ft - 0.5, eh, sx * ex, ey))
-        body = body.cut(hex_z(eaf, eh - edep, eh + 1, sx * ex, ey))
-        body = body.cut(cyl_z(r, -1, eh + 1, sx * ex, ey))
+        # ear boss up to the bottom face of the splitter; hexagon recess from the original bottom (eh - edep) to the top
+        body = body.fuse(cyl_z(ed / 2, ft - 0.5, zs, sx * ex, ey))
+        body = body.cut(hex_z(eaf, eh - edep, zs + 1, sx * ex, ey))
+        body = body.cut(cyl_z(r, -1, zs + 1, sx * ex, ey))
         # countersink (90 degrees) on the bottom face for the screw M3x6 of the body post
         body = body.cut(cq.Solid.makeCone(rc + 0.5, r, rc - r + 0.5, cq.Vector(sx * ex, ey, -0.5), cq.Vector(0, 0, 1)))
     return body.clean()
+
+
+def stack(p):
+    """Heights of the stack on H34/H35 from the screws (stack_screws): tip of the screw from below, bottom face of the
+    splitter, top face of the holder plate, tip of the screw from above."""
+    l_bot, l_top, gap, _ = p["stack_screws"]
+    t_s, t_h = p["splitter_t"], p["holder_plate"][0]
+    zs = max(PLATE_T + p["deck_t"], l_bot + gap + l_top - t_s - t_h)
+    z_top = zs + t_s + t_h
+    return {"tip_bottom": l_bot, "splitter": zs, "holder_top": z_top, "tip_top": z_top - l_top}
 
 
 def yb_gap(p):
@@ -244,13 +261,13 @@ def yb_gap(p):
 
 
 def splitter_z(p):
-    """Height of the bottom face of the splitter: on the deck of the mount."""
-    return PLATE_T + p["deck_t"]
+    """Height of the bottom face of the splitter: on the bases of the bosses on H34/H35 and on the ears (stack)."""
+    return stack(p)["splitter"]
 
 
 def posts(p):
-    """Body posts (stock parts) in the ears: hexagon section from the bottom of the recess (through the splitter and
-    the holder plate), round post above it up to the given length above the splitter; list of (name, solid)."""
+    """Body posts (stock parts) in the ears: hexagon section from the bottom of the recess (into the hexagon hole of
+    the splitter), round post above it up to the given length above the splitter; list of (name, solid)."""
     ed, eh, eaf, edep = p["ear_boss"]
     ex, ey = p["ear_holes"]
     pd, hl, pl, pb = p["body_post"]
@@ -343,20 +360,20 @@ def holder_z(p):
 
 def holder_geometry(p, holes=None):
     """Geometry data of the splitter holder plate (format of the chassis plates; z = 0 bottom face): outline as the
-    mount (spline as lines of 0.5 mm), holes 3.2 on H34/H35, hexagon holes over the body posts."""
+    mount (spline as lines of 0.5 mm), holes 3.2 on H34/H35, round holes around the body posts."""
     holes = holes or plate_holes()
     P = mount_outline_points(p, 0.5)
-    t, c_hex = p["holder_plate"]
+    t, c_post = p["holder_plate"]
     ex, ey = p["ear_holes"]
     pts = [[round(float(x), 4), round(float(y), 4)] for x, y in P]
     return {"basis": "splitter holder plate End A (generate_front_splitter.py): chassis plate coordinates x, y; z = 0 "
                      f"bottom face (in the car on the splitter, z = {holder_z(p):g}). Outline as the body post mount. "
-                     "U1/U2 on H34/H35 (screws M3 from below, nuts on top), hexagon holes over the body posts.",
+                     "U1/U2 on H34/H35 (screws M3 from above into the bosses), round holes around the body posts.",
             "units": "mm", "thickness": t, "hole_d": p["screw_hole_d"], "csk_d": 0.0, "csk_angle": 90.0,
             "csk_side": "none",
             "outline": [{"type": "line", "start": pts[i], "end": pts[(i + 1) % len(pts)]} for i in range(len(pts))],
-            "cutouts": {"post_right": hex_prims(p["ear_boss"][2] + c_hex, ex, ey),
-                        "post_left": hex_prims(p["ear_boss"][2] + c_hex, -ex, ey)},
+            "cutouts": {"post_right": circle_prims(ex, ey, (p["body_post"][0] + c_post) / 2),
+                        "post_left": circle_prims(-ex, ey, (p["body_post"][0] + c_post) / 2)},
             "holes": [{"id": i, "x": round(float(x), 3), "y": round(float(y), 3)}
                       for i, (x, y) in (("U1", holes["H34"]), ("U2", holes["H35"]))]}
 
@@ -370,10 +387,10 @@ def holder_solid(p, geometry=None):
 def parts_in_plate(p=None):
     """Mount, body posts, splitter and holder plate in chassis plate coordinates: list of (name, kind, solid)."""
     p = p or load_params(PARAMS)
-    out = [("front body post mount End A", "bodymount", mount_solid(p))]
+    out = [("speedrun front body post mount End A", "bodymount", mount_solid(p))]
     out += [(name, "bodypost", s) for name, s in posts(p)]
-    out.append(("front splitter End A", "splitter", splitter_solid(p)))
-    out.append(("front splitter holder plate End A", "splitter", holder_solid(p)))
+    out.append(("speedrun front splitter End A", "splitter", splitter_solid(p)))
+    out.append(("speedrun splitter holder plate End A", "holder", holder_solid(p)))
     return out
 
 
@@ -455,11 +472,11 @@ def drawing(p, parts, geometry, tyre, plate, notes, context=None, path=DRAWING):
     geom = plate_geometry()
     holes = plate_holes(geom)
     named = {n: s for n, _, s in parts}
-    mount, splitter = named["front body post mount End A"], named["front splitter End A"]
-    holder = named["front splitter holder plate End A"]
+    mount, splitter = named["speedrun front body post mount End A"], named["speedrun front splitter End A"]
+    holder = named["speedrun splitter holder plate End A"]
     fig = plt.figure(figsize=(16, 15.5))
-    fig.suptitle("Front body post mount, speedrun front splitter and holder plate (End A): own design partly based on "
-                 "the T410R", fontsize=13, y=0.985)
+    fig.suptitle("Speedrun front splitter set (End A): body post mount, front splitter and splitter holder plate",
+                 fontsize=13, y=0.985)
     # top view
     ax = fig.add_axes([0.03, 0.43, 0.62, 0.52])
     contour = []
@@ -589,9 +606,13 @@ def main():
     geometry = splitter_geometry(p, holes)
     parts = parts_in_plate(p)
     named = {n: s for n, _, s in parts}
-    mount, splitter = named["front body post mount End A"], named["front splitter End A"]
+    mount, splitter = named["speedrun front body post mount End A"], named["speedrun front splitter End A"]
     os.makedirs(OUT, exist_ok=True)
-    holder = named["front splitter holder plate End A"]
+    holder = named["speedrun splitter holder plate End A"]
+    st, st_l = stack(p), p["stack_screws"]
+    print(f"  stack on H34/H35: screw M3x{st_l[0]:g} from below to z = {st['tip_bottom']:g}, splitter z = "
+          f"{st['splitter']:g} to {st['splitter'] + p['splitter_t']:g}, holder plate to {st['holder_top']:g}, screw "
+          f"M3x{st_l[1]:g} from above to z = {st['tip_top']:g} (gap {st['tip_top'] - st['tip_bottom']:.1f})")
     for stem, s in ((MOUNT_STEM, mount), (SPLITTER_STEM, splitter), (HOLDER_STEM, holder)):
         cq.exporters.export(cq.Workplane().add(s), stem + ".step")
         cq.exporters.export(cq.Workplane().add(s), stem + ".stl", tolerance=0.01, angularTolerance=0.1)
@@ -636,9 +657,13 @@ def main():
              f"{splitter.intersect(mount).Volume():.3f} mm3, holder plate / splitter "
              f"{holder.intersect(splitter).Volume():.3f} mm3.",
              f"Holder plate {hb.xlen:.1f} x {hb.ylen:.1f} x {p['holder_plate'][0]:g} (carbon approx. "
-             f"{holder.Volume() / 1000 * 1.6:.0f} g) on the splitter; screws M3 from below through H34/H35, the "
-             "collars and the holder plate, nuts on top."]
+             f"{holder.Volume() / 1000 * 1.6:.0f} g) on the splitter. Screws on H34/H35: M3x{st_l[0]:g} countersunk "
+             f"from below (tip at z = {st['tip_bottom']:g}), M3x{st_l[1]:g} from above (tip at z = "
+             f"{st['tip_top']:g}): gap "
+             f"{st['tip_top'] - st['tip_bottom']:.1f}; H36: M3x6 countersunk from below into the deck."]
     tyre, context = None, None
+    if st["tip_top"] - st["tip_bottom"] < st_l[2] - 1e-6:
+        raise ValueError("the screws from below and from above on H34/H35 touch (stack_screws)")
     if not args.no_check:
         res, tyre = tyre_clearance(p, [("splitter", splitter), ("mount", mount), ("holder plate", holder)])
         need = p["tyre_check"][2]
