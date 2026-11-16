@@ -32,6 +32,8 @@ Outputs (chassis plate coordinates):
 * cad/front_splitter/body_post_mount_end_a.step and .stl
 * cad/front_splitter/front_splitter_end_a.step and .stl (position in the car: on the deck of the mount), .dxf
   and _geometry.json (geometry data in the format of the chassis plates: z = 0 is the bottom face)
+* cad/front_splitter/front_splitter_end_a_test_print.stl: middle part of the splitter over the mount for a test print
+  of the fit (bottom face at z = 0)
 * cad/front_splitter/front_splitter_holder_plate_end_a.step and .stl (on the splitter), .dxf and _geometry.json
 * photos/cad_front_splitter_drawing.png
 
@@ -384,6 +386,16 @@ def holder_solid(p, geometry=None):
     return plate_solid(geometry).val().translate(cq.Vector(0, 0, holder_z(p)))
 
 
+def splitter_test_print(p, splitter=None):
+    """Test print of the splitter: the middle part over the mount (holes over the pins, hexagon holes over the body
+    posts), cut out of the splitter with a rectangle (splitter_test_print), bottom face at z = 0 for the print bed."""
+    splitter = splitter or splitter_solid(p)
+    hw, y0, y1 = p["splitter_test_print"]
+    zs = splitter_z(p)
+    box = cq.Solid.makeBox(2 * hw, y1 - y0, p["splitter_t"] + 2, cq.Vector(-hw, y0, zs - 1))
+    return splitter.intersect(box).translate(cq.Vector(0, 0, -zs))
+
+
 def parts_in_plate(p=None):
     """Mount, body posts, splitter and holder plate in chassis plate coordinates: list of (name, kind, solid)."""
     p = p or load_params(PARAMS)
@@ -621,8 +633,15 @@ def main():
             json.dump(g, f, indent=1)
             f.write("\n")
         build_dxf(g).saveas(stem + ".dxf")
-    print(f"Wrote {MOUNT_STEM}.step/.stl, {SPLITTER_STEM}.step/.stl/.dxf/_geometry.json, "
+    test = splitter_test_print(p, splitter)
+    cq.exporters.export(cq.Workplane().add(test), SPLITTER_STEM + "_test_print.stl", tolerance=0.01,
+                        angularTolerance=0.1)
+    tb = test.BoundingBox()
+    v_test = test.translate(cq.Vector(0, 0, splitter_z(p))).intersect(mount).Volume()
+    print(f"Wrote {MOUNT_STEM}.step/.stl, {SPLITTER_STEM}.step/.stl/.dxf/_geometry.json/_test_print.stl, "
           f"{HOLDER_STEM}.step/.stl/.dxf/_geometry.json")
+    print(f"  test print of the splitter: {tb.xlen:.1f} x {tb.ylen:.1f} x {tb.zlen:.1f} mm (bottom face on the print "
+          f"bed), overlap with the mount in its position: {v_test:.4f} mm3")
     hb = holder.BoundingBox()
     print(f"  holder plate: {hb.xlen:.1f} x {hb.ylen:.1f} x {p['holder_plate'][0]:g} mm, carbon 1.6 g/cm3: "
           f"{holder.Volume() / 1000 * 1.6:.1f} g")
