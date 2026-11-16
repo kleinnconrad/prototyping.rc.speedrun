@@ -68,6 +68,8 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/camber_link`**: Camber links: turnbuckle, rod end, ball stud, assembled front and rear link (STEP, STL, parameter file).
 * **`/running_gear`**: parameter file of the running gear and one folder per group (STEP, STL): `/front_corner` (C-hubs with caster, steering knuckles, axles and hex hubs at End A), `/rear_corner` (hub carriers, axles and hex hubs at End B), `/cvd_drive_shafts`, `/steering` (posts, bellcranks, bridge, spacers, servo horn), `/servo_mount` and `/sway_bars`.
 * **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the further own parts: pivot blocks, drive line, wishbones, camber links and running gear (STEP).
+* **`/studies`**: Design studies that are not part of the build, one subdirectory per study with its own readme:
+  * **`/dual_motor`**: Dual motor mount for 2 motors on the spur gear and a chassis plate with a second motor window on the left side (STEP, STL, geometry data, pictures, script).
 * **STL files in this directory**: 3D printed parts for the car and a maintenance stand
 
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
