@@ -20,7 +20,7 @@ T410R; they are not in the mass total):
 * running gear (scripts/cad/generate_running_gear.py): C-hubs with caster, steering knuckles, rear
   hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the servo mount, dampers,
   sway bars
-* front body post mount on H34 to H36 with the body posts and the speedrun front splitter on the mount
+* front body post mount on H34/H35 with the body posts, the speedrun front splitter on the mount and its holder plate
   (End A, scripts/cad/generate_front_splitter.py)
 
 Outputs:
@@ -98,7 +98,7 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "swaybar": ("Sway bars 1.4", {}),
              "bodymount": ("Front body post mount", {}),
              "bodypost": ("Front body posts", {}),
-             "splitter": ("Front splitter (carbon)", {})}
+             "splitter": ("Front splitter and holder plate (carbon)", {})}
 
 
 def build():
