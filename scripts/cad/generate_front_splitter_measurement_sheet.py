@@ -66,13 +66,13 @@ def values(p):
     holes = F.plate_holes()
     P = F.mount_outline_points(p, 0.2)
     be = F.body_edge(p)
-    half = np.array(p["body_front_edge"])
+    right = be[be[:, 0] >= 0]
     return {"holes": holes, "P": P, "x_max": float(P[:, 0].max()), "y_front": float(P[np.abs(P[:, 0]) < 0.3, 1].max()),
             "ex": p["ear_holes"][0], "ey": p["ear_holes"][1], "ft": p["front_t"], "dt": p["deck_t"],
             "z_deck": F.PLATE_T + p["deck_t"], "cd": p["collar"][0], "cb": p["collar"][1],
             "zs": F.splitter_z(p), "zt": F.splitter_z(p) + p["splitter_t"], "zh": F.holder_z(p) + p["holder_plate"][0],
-        "be": be, "yb": float(half[0][1]),
-            "yb60": float(np.interp(60.0, half[:, 0], half[:, 1])), "over": p["splitter_overhang"],
+        "be": be, "yb": float(be[np.argmin(np.abs(be[:, 0])), 1]),
+            "yb60": float(np.interp(60.0, right[:, 0], right[:, 1])), "over": F.yb_gap(p), "tip": right[-1],
             "rear": p["mount_rear_y"], "lip": p["mount_outline"][0][0], "post": holes["H34"]}
 
 
@@ -117,15 +117,16 @@ def rows(p, v):
                 "at the bottom. Own part: the recess reaches from the same bottom up to the top of the raised boss.",
          f"{edep:g} (bottom at {eh - edep:.2f}) / {p['screw_hole_d']:g} with countersink", "2.1 / 3.2"),
         ("B1", "Lower front edge of the body on the centre line: distance ahead of the front end of the chassis plate "
-               "(body on the posts at the planned height).", f"{v['yb'] - PLATE_END:.1f} (assumed)", ""),
+               "(body on the splitter).", f"{v['yb'] - PLATE_END:.1f} (17.5 behind the front of the splitter)",
+         "splitter 15 to 20 ahead"),
         ("B2", "Lower front edge of the body 60 from the centre line: distance ahead of the front end of the plate.",
-         f"{v['yb60'] - PLATE_END:.1f} (assumed)", ""),
+         f"{v['yb60'] - PLATE_END:.1f} (form assumed)", ""),
         ("B3", "Front corners of the body: half width where the front edge turns into the side, and its distance "
                "ahead of the front end of the plate.",
-         f"approx. {p['body_front_edge'][-2][0]:g} / {p['body_front_edge'][-2][1] - PLATE_END:.0f} (assumed)", ""),
-        ("B4", "Height of the lower front edge of the body above the bottom face of the chassis plate. The splitter "
-               f"shows below the body only if B4 is at least the top face of the splitter ({v['zt']:g}).",
-         f">= {v['zt']:g} (assumed)", ""),
+         f"approx. {v['tip'][0]:.0f} / {v['tip'][1] - PLATE_END:.0f} (form assumed)", ""),
+        ("B4", "Height of the lower front edge of the body above the bottom face of the chassis plate: the body sits "
+               f"on the splitter, so B4 equals the top face of the splitter ({v['zt']:g}). Body posts and body "
+               "mounting holes to be set for this height.", f"{v['zt']:g} (body on the splitter)", ""),
         ("B5", "Front wheel arches of the body: distance of their front edge ahead of the front axle and the height "
                "of their lower edge.", "not modelled", ""),
         ("B6", "Height of the body mounting holes at the front body posts above the bottom face of the chassis plate "
@@ -276,14 +277,15 @@ def body_page(pdf, p, v, parts, geometry):
     ax.plot(be[:, 0], be[:, 1], "--", color="#e8833a", lw=1.2)
     dimv(ax, PLATE_END, yb, -6.0, "B1", ext=[(-2.0, PLATE_END)])
     dimv(ax, PLATE_END, v["yb60"], 60.0, "B2", ext=[(40.0, PLATE_END)], side=1)
-    xc3, yc3 = p["body_front_edge"][-2]
+    xc3, yc3 = v["tip"]
     tag(ax, (-xc3, yc3), (-xc3 + 12, yc3 - 10), "B3")
     tag(ax, (-rg["wheel_centre_x"], J[1] + half + 2), (-rg["wheel_centre_x"] + 16, J[1] + half + 10), "B5")
     y_ax, y_f = v["post"][1], v["post"][1] + p["splitter_front_distance"]
     dimv(ax, y_ax, y_f, 10.0, "S1", ext=[(v["post"][0], y_ax), (1.0, y_f)], side=1)
     ax.plot([-100, 100], [J[1], J[1]], color="#777777", lw=0.4, ls="-.")
     ax.text(-99, J[1] + 1, f"front axle (y = {J[1]:.1f})", fontsize=6.5, color="#555555")
-    ax.text(-45, yb + 3.0, "dashed: assumed lower front edge of the body", ha="center", fontsize=7, color="#e8833a")
+    ax.text(-45, yb + 3.0, "dashed: lower front edge of the body (17.5 behind the front edge)", ha="center",
+            fontsize=7, color="#e8833a")
     ax.set_xlim(-100, 100)
     ax.set_ylim(J[1] - half - 10, y_f + 5)
     ax.set_aspect("equal")
@@ -302,7 +304,7 @@ def body_page(pdf, p, v, parts, geometry):
             ex, (300, 412, -13, 40))
     ax.plot([300, 412], [-10, -10], color="#6b4f2a", lw=1.0)
     ax.text(301, -12.6, "ground at the ride height of 10", fontsize=6.5, color="#6b4f2a")
-    zb = v["zt"] + 4.0
+    zb = v["zt"]                                             # the body sits on the splitter
     ax.plot([yb - 8, yb, yb], [zb + 6, zb, zb], "--", color="#e8833a", lw=1.2)
     ax.text(yb - 8, zb + 7, "body", fontsize=7, color="#c2410c")
     dimv(ax, 0, zb, yb + 3.5, "B4", side=1)
@@ -315,9 +317,9 @@ def body_page(pdf, p, v, parts, geometry):
         "The splitter lies on the bosses of the mount, clamped by the holder plate; its front end lies S1 ahead of the "
         "axis H34-H35, in front of the lower front edge of the body. Its outer parts stay in front of the front "
         "tyres at full steering lock (tyre check of "
-        "generate_front_splitter.py with the droop S3). The front edge of the body is not measured: B1 to B5 set the "
-        "outline of the splitter. B4 must be at least the height of the top face of the splitter, otherwise the body "
-        "hides the splitter or touches it. B6 gives the length of the body posts.", 125)), fontsize=7.2, va="top",
+        "generate_front_splitter.py with the droop S3). The body sits on the splitter, its lower front edge 15 to 20 "
+        "behind the front edge of the splitter (owner); the form of the edge is assumed. B1 to B5 check the form on "
+        "the car, B6 gives the length of the body posts.", 125)), fontsize=7.2, va="top",
         linespacing=1.4)
     pdf.savefig(fig)
     plt.close(fig)

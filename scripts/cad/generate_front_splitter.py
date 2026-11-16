@@ -15,9 +15,10 @@ foam bumper (photo of the owner).
   posts, each held by a countersunk screw M3x6 from below.
 * Front splitter (carbon sheet 2.0) on the bases of the bosses and on the ears; the pins pass through its holes,
   hexagon holes fit over the body posts. Front end 90 mm ahead of the axis H34-H35 (owner). Outer form (owner): the
-  assumed lower front edge of the body, offset outward and moved forward to this front end, from tip to tip; broad
-  plate after the reference picture of the owner. The rear edge is straight in the middle and runs around the front
-  corners of the tyres at full steering lock.
+  form of the lower front edge of the body, moved forward to this front end, from tip to tip; the body sits on the
+  splitter, which shows 15 to 20 mm ahead of the body. Full width only at the front, where the splitter closes the
+  space between the chassis front and the body: concave rear edges, deeper beside the mount and narrower toward the
+  tips (variant C of the design suggestions, owner), clear of the front tyres at full steering lock.
 * Splitter holder plate (carbon sheet 2.0): outline as the mount, on top of the splitter, round holes around the body
   posts. Screws M3x6 from above through the holder plate into the pins clamp the splitter.
 
@@ -30,7 +31,7 @@ Usage (from the root directory of the repository):
 
 Outputs (chassis plate coordinates):
 * cad/front_splitter/body_post_mount_end_a.step and .stl
-* cad/front_splitter/front_splitter_end_a.step and .stl (position in the car: on the deck of the mount), .dxf
+* cad/front_splitter/front_splitter_end_a.step and .stl (position in the car: on the bosses of the mount), .dxf
   and _geometry.json (geometry data in the format of the chassis plates: z = 0 is the bottom face)
 * cad/front_splitter/front_splitter_end_a_test_print.stl: middle part of the splitter over the mount for a test print
   of the fit (bottom face at z = 0)
@@ -258,8 +259,8 @@ def stack(p):
 
 
 def yb_gap(p):
-    """Distance of the front end of the splitter ahead of the assumed lower front edge of the body (centre line)."""
-    return plate_holes()["H34"][1] + p["splitter_front_distance"] - p["body_front_edge"][0][1]
+    """Distance of the front end of the splitter ahead of the lower front edge of the body (owner: 15 to 20)."""
+    return float(np.mean(p["body_overhang"]))
 
 
 def splitter_z(p):
@@ -283,25 +284,40 @@ def posts(p):
     return out
 
 
-def splitter_vertices(p):
-    """Vertices (counterclockwise) and fillet radii of the splitter outline. Outer form (owner): the assumed lower
-    front edge of the body (body_front_edge), offset outward by the overhang and moved forward, so that the front end
-    lies splitter_front_distance ahead of the axis H34-H35, from tip to tip. Rear edge: straight in the middle, then
-    around the front corners of the tyres at full steering lock to the side edges of the tips."""
-    be = body_edge(p)                                             # from the left tip to the right tip
-    over = p["splitter_overhang"]
-    # moved forward: front end on the centre line at splitter_front_distance ahead of the axis H34-H35
-    shift = plate_holes()["H34"][1] + p["splitter_front_distance"] - (p["body_front_edge"][0][1] + over)
-    off = []
-    for i in range(len(be)):
-        segs = ([(be[i - 1], be[i])] if i > 0 else []) + ([(be[i], be[i + 1])] if i < len(be) - 1 else [])
+def offset_open(line, d):
+    """Offset of an open polyline (from left to right) by d to its left (toward the front for d > 0), mitred."""
+    out = []
+    for i in range(len(line)):
+        segs = ([(line[i - 1], line[i])] if i > 0 else []) + ([(line[i], line[i + 1])] if i < len(line) - 1 else [])
         ns = []
         for a_, b_ in segs:
-            d = (b_ - a_) / np.linalg.norm(b_ - a_)
-            ns.append(np.array([-d[1], d[0]]))                    # left of the direction of travel: outward
+            t = (b_ - a_) / np.linalg.norm(b_ - a_)
+            ns.append(np.array([-t[1], t[0]]))
         m = sum(ns) / np.linalg.norm(sum(ns))
-        off.append(be[i] + m * over / float(m @ ns[0]) + np.array([0.0, shift]))
-    n_half = len(p["body_front_edge"])
+        out.append(line[i] + m * d / float(m @ ns[0]))
+    return np.array(out)
+
+
+def front_form_line(p):
+    """Form of the front edge (front_form, both halves, from the left to the right end)."""
+    half = [tuple(q) for q in p["front_form"]]
+    return np.array([(-x, y) for x, y in reversed(half[1:])] + half, float)
+
+
+def outer_form(p):
+    """Front edge of the splitter as a polyline (both halves): front_form offset by front_form_offset and moved
+    forward, so that its centre lies splitter_front_distance ahead of the axis H34-H35."""
+    shift = plate_holes()["H34"][1] + p["splitter_front_distance"] - (p["front_form"][0][1] + p["front_form_offset"])
+    return offset_open(front_form_line(p), p["front_form_offset"]) + np.array([0.0, shift])
+
+
+def splitter_vertices(p):
+    """Vertices (counterclockwise) and fillet radii of the splitter outline. Outer form (owner): the form of the lower
+    front edge of the body (front_form), offset outward and moved forward, so that the front end lies
+    splitter_front_distance ahead of the axis H34-H35, from tip to tip. Rear edge: straight in the middle, then
+    concave around the front corners of the tyres at full steering lock to the tips (splitter_rear_outline)."""
+    off = outer_form(p)
+    n_half = len(p["front_form"])
     front = [(float(x), float(y)) for x, y in off[n_half - 1:]]       # centre line to the right tip
     radii = list(reversed(p["splitter_front_radii"]))               # centre line to the tip
     rear = [(x, y, r) for x, y, r in p["splitter_rear_outline"]]
@@ -311,10 +327,16 @@ def splitter_vertices(p):
     return V, R
 
 
-def body_edge(p):
-    """Assumed lower front edge of the body (both halves, from left to right)."""
-    half = [tuple(q) for q in p["body_front_edge"]]
-    return np.array([(-x, y) for x, y in reversed(half[1:])] + half)
+def body_edge(p, overhang=None):
+    """Lower front edge of the body (both halves, from left to right, points every 0.5): the outer form of the
+    splitter offset inward by the overhang (body_overhang, mean of 15 and 20: the body sits on the splitter)."""
+    over = float(np.mean(p["body_overhang"])) if overhang is None else overhang
+    line = offset_open(outer_form(p), -over)
+    dense = [line[0]]
+    for a_, b_ in zip(line[:-1], line[1:]):
+        n = max(2, int(np.linalg.norm(b_ - a_) / 0.5))
+        dense += [a_ + (b_ - a_) * k / n for k in range(1, n + 1)]
+    return np.array(dense)
 
 
 def circle_prims(x, y, r):
@@ -338,9 +360,9 @@ def splitter_geometry(p, holes=None):
     ex, ey = p["ear_holes"]
     d_c, c_hex = p["splitter_holes"]
     return {"basis": "speedrun front splitter End A (generate_front_splitter.py): chassis plate coordinates x, y; "
-                     "z = 0 bottom face of the splitter (in the car on the deck of the body post mount, z = "
-                     f"{splitter_z(p):g}). S1/S2 on H34/H35 over the collars of the mount, hexagon holes over the body "
-                     "posts in the ears.",
+                     "z = 0 bottom face of the splitter (in the car on the bosses and the ears of the body post "
+                     f"mount, z = {splitter_z(p):g}). S1/S2 on H34/H35 over the pins of the bosses, hexagon holes over "
+                     "the body posts in the ears.",
             "units": "mm", "thickness": p["splitter_t"], "hole_d": p["collar"][0] + d_c, "csk_d": 0.0,
             "csk_angle": 90.0, "csk_side": "none", "outline": filleted_polygon(V, R),
             "cutouts": {"post_right": hex_prims(p["ear_boss"][2] + c_hex, ex, ey),
@@ -350,7 +372,7 @@ def splitter_geometry(p, holes=None):
 
 
 def splitter_solid(p, geometry=None):
-    """Splitter in chassis plate coordinates (on the deck of the mount)."""
+    """Splitter in chassis plate coordinates (on the bosses and the ears of the mount)."""
     geometry = geometry or splitter_geometry(p)
     return plate_solid(geometry).val().translate(cq.Vector(0, 0, splitter_z(p)))
 
@@ -541,14 +563,16 @@ def drawing(p, parts, geometry, tyre, plate, notes, context=None, path=DRAWING):
                 f"{p['tyre_check'][1]:g}:\nstraight (solid), 25 deg (dashed), swept area up to "
                 f"{p['tyre_check'][3]:g} deg (blue)", ha="center", fontsize=7.5, color="#2f6db5")
     be = body_edge(p)
-    yb, over = be[len(be) // 2][1], p["splitter_overhang"]
-    ax.plot(be[:, 0], be[:, 1], "--", color="#e8833a", lw=1.2, zorder=7)
+    yb = float(be[np.argmin(np.abs(be[:, 0])), 1])
+    for o in p["body_overhang"]:
+        b2 = body_edge(p, o)
+        ax.plot(b2[:, 0], b2[:, 1], "--", color="#e8833a", lw=1.0, zorder=7)
     yf = holes["H34"][1] + p["splitter_front_distance"]
-    ax.text(0, yb - 5, f"dashed: assumed lower front edge of the body (y = {yb:g} on the centre line, not measured)",
-            ha="center", fontsize=8, color="#e8833a", zorder=7)
+    lo_, hi_ = p["body_overhang"]
+    ax.text(0, yb - 27, f"dashed: lower front edge of the body, {lo_:g} and {hi_:g} behind the front edge of the "
+            "splitter (owner: the body sits on the splitter)", ha="center", fontsize=8, color="#e8833a", zorder=7)
     ax.text(0, yf + 3, f"front end of the splitter {p['splitter_front_distance']:g} ahead of the axis H34-H35 "
-            f"(y = {yf:.1f}); outer form: body edge offset by {over:g} and moved forward", ha="center", fontsize=8,
-            zorder=7)
+            f"(y = {yf:.1f}); outer form: form of the body edge moved forward", ha="center", fontsize=8, zorder=7)
     ax.set_xlim(-100, 100)
     ax.set_ylim(255, 418)
     ax.set_aspect("equal")
@@ -653,7 +677,7 @@ def main():
     print(f"  mount: volume {mount.Volume() / 1000:.2f} cm3 (PETG 1.27 g/cm3: {mount.Volume() / 1000 * 1.27:.1f} g)")
     print(f"  splitter: {bb.xlen:.1f} x {bb.ylen:.1f} x {bb.zlen:.1f} mm (y {bb.ymin:.1f} to {bb.ymax:.1f}), volume "
           f"{splitter.Volume() / 1000:.2f} cm3 (carbon 1.6 g/cm3: {splitter.Volume() / 1000 * 1.6:.1f} g), "
-          f"{bb.ymax - 325.62:.1f} ahead of the chassis plate, {yb_gap(p):.1f} ahead of the assumed body edge")
+          f"{bb.ymax - 325.62:.1f} ahead of the chassis plate, {yb_gap(p):.1f} ahead of the body edge")
     # holes: mount and splitter on the holes of the chassis plate
     dev = max(math.hypot(h["x"] - holes[k][0], h["y"] - holes[k][1]) for h, k in zip(geometry["holes"], ("H34", "H35")))
     print(f"  holes S1/S2 of the splitter on H34/H35: largest offset {dev:.3f}")
@@ -669,7 +693,7 @@ def main():
           " mm3")
     notes = [f"Splitter {bb.xlen:.0f} x {bb.ylen:.1f} x {p['splitter_t']:g} (carbon approx. "
              f"{splitter.Volume() / 1000 * 1.6:.0f} g), {bb.ymax - 325.62:.1f} ahead of the chassis plate, "
-             f"{yb_gap(p):.1f} ahead of the assumed body edge; bottom face on the deck of the mount "
+             f"{yb_gap(p):.1f} ahead of the lower front edge of the body; bottom face on the bosses of the mount "
              f"(z = {splitter_z(p):g}), {10 + splitter_z(p):g} above the ground at the ride height of 10.",
              f"Mount approx. {mount.Volume() / 1000 * 1.27:.1f} g (PETG). Holes S1/S2 on H34/H35: offset {dev:.3f}; "
              f"overlap mount / chassis plate {mount.intersect(plate).Volume():.3f} mm3, splitter / mount "
