@@ -70,7 +70,7 @@ The speedrun chassis is designed in this project for speeds over 130 km/h. It co
 | Speedrun front body post mount | 1 | $\color{green}\checkmark$ Verified | 6.5 g (PETG) |
 | Speedrun front splitter | 1 | $\color{green}\checkmark$ Verified | 39.3 g (carbon) |
 | Speedrun splitter holder plate | 1 | $\color{green}\checkmark$ Verified | 4.3 g (carbon) |
-| Speedrun front splitter, one-piece alternative (not in the total) | 1 | $\color{gold}\blacktriangle$ Measures qualified | 45 g (PETG) |
+| Speedrun front splitter, one-piece alternative (not in the total) | 1 | $\color{gold}\blacktriangle$ Measures qualified | 47 g (PETG) |
 | **Total** | | | **467 g** |
 
 Further own parts (own design, partly based on the T410R, not in the mass total):

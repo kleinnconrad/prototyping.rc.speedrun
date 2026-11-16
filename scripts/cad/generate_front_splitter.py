@@ -37,9 +37,9 @@ Outputs (chassis plate coordinates):
   of the fit (bottom face at z = 0)
 * cad/front_splitter/front_splitter_holder_plate_end_a.step and .stl (on the splitter), .dxf and _geometry.json
 * photos/cad_front_splitter_drawing.png
-* alternative version, body post mount and front splitter in one piece (no holder plate):
-  cad/front_splitter/front_splitter_one_piece_end_a.step and .stl (position in the car), _test_print.stl (middle part,
-  turned over for the print bed), photos/cad_front_splitter_one_piece_drawing.png
+* alternative version, the body post mount enlarged to the splitter (one part, no separate splitter, no holder
+  plate): cad/front_splitter/front_splitter_one_piece_end_a.step and .stl (position in the car), _test_print.stl
+  (middle part, bottom face on the print bed), photos/cad_front_splitter_one_piece_drawing.png
 
 Checks: holes of the mount and of the splitter against the holes of the chassis plate, overlap of the mount with the
 chassis plate, clearance of the splitter and the mount to the front tyres over the steering angle (static ride
@@ -424,42 +424,68 @@ def splitter_test_print(p, splitter=None):
 
 
 def one_piece_solid(p, geom=None):
-    """Alternative version: body post mount and front splitter in one piece, no separate splitter and no holder plate.
-    The outline of the mount is filled from its bottom face up to the bottom face of the splitter (pocket and side lips
-    around the front end of the chassis plate as the mount), the splitter plate (outline, height and thickness as the
-    splitter) on top. Countersunk screws M3x6 from below through H34, H35 and H36 into blind tapped holes; the body
-    posts in hexagon recesses from the original bottom up through the plate, each held by a countersunk screw M3x6 from
-    below."""
+    """Alternative version: the body post mount is enlarged to the splitter, one part, no separate splitter and no
+    holder plate. The mount as measured by the owner (deck on the chassis plate, pocket and side lips around its front
+    end, ramp, front part 3.0 thick with its bottom face flush with the bottom face of the plate, ears with the hexagon
+    recesses of the body posts); its front part is extended to the outline of the splitter (behind the rear edge of the
+    mount only beside the chassis plate). Bosses on H34/H35 for the countersunk screws M3x6 from below (blind tapped
+    holes), H36 tapped through the deck."""
     geom = geom or plate_geometry()
     holes = plate_holes(geom)
-    zs, t = splitter_z(p), p["splitter_t"]
-    base = cq.Solid.extrudeLinear(mount_outline_wire(p), [], cq.Vector(0, 0, zs + 0.5))
-    base = base.cut(prism(offset(plate_front_contour(geom), p["pocket_clearance"]), -1.0, PLATE_T))
-    outline = splitter_geometry(p, holes)["outline"]
-    plate = wire_from_prims(outline).extrude(t).val().translate(cq.Vector(0, 0, zs))
-    body = base.fuse(plate)
-    tap, depth = p["stack_screws"][3] / 2, p["stack_screws"][0] + p["one_piece"][0]
-    for hid in ("H34", "H35", "H36"):
+    cl, dt, ft, rw = p["pocket_clearance"], p["deck_t"], p["front_t"], p["ramp_w"]
+    z_deck = PLATE_T + dt
+    wire = mount_outline_wire(p)
+
+    def mount_prism(h):
+        return cq.Solid.extrudeLinear(wire, [], cq.Vector(0, 0, h))
+    C = plate_front_contour(geom)
+    ramp = cq.Solid.extrudeLinear(poly_wire(offset(C, cl + rw), ft), [], cq.Vector(0, 0, z_deck - ft),
+                                  taper=math.degrees(math.atan(rw / (z_deck - ft))))
+    # front part of the mount enlarged to the outline of the splitter (not behind the rear edge of the mount)
+    split = wire_from_prims(splitter_geometry(p, holes)["outline"]).extrude(ft).val()
+    split = split.intersect(cq.Solid.makeBox(400, 200, ft + 2, cq.Vector(-200, p["mount_rear_y"], -1)))
+    body = mount_prism(ft).fuse(split).fuse(ramp.intersect(mount_prism(z_deck + 1)))
+    body = body.cut(prism(offset(C, cl), -1.0, PLATE_T))                     # pocket: overhang around the plate
+    tap = p["stack_screws"][3] / 2
+    depth, d_boss, z_boss = p["stack_screws"][0] + p["one_piece"][0], p["collar"][0], p["one_piece"][2]
+    for hid in ("H34", "H35"):
         x, y = holes[hid]
-        body = body.cut(cyl_z(tap, -1, depth, x, y))                     # blind tapped hole M3 from below
+        body = body.fuse(cyl_z(d_boss / 2, z_deck - 0.5, z_boss, x, y))        # boss for the screw M3x6 from below
+        body = body.cut(cyl_z(tap, -1, depth, x, y))                           # blind tapped hole M3
+    x, y = holes["H36"]
+    body = body.cut(cyl_z(tap, -1, z_deck + 1, x, y))                           # H36: tapped M3, no boss
     ed, eh, eaf, edep = p["ear_boss"]
     ex, ey = p["ear_holes"]
     r, rc = p["screw_hole_d"] / 2, p["ear_csk"] / 2
     for sx in (1, -1):
-        body = body.cut(hex_z(eaf, eh - edep, zs + t + 1, sx * ex, ey))
-        body = body.cut(cyl_z(r, -1, eh, sx * ex, ey))
+        body = body.fuse(cyl_z(ed / 2, ft - 0.5, eh, sx * ex, ey))            # ear boss as the original part
+        body = body.cut(hex_z(eaf, eh - edep, eh + 1, sx * ex, ey))
+        body = body.cut(cyl_z(r, -1, eh + 1, sx * ex, ey))
         body = body.cut(cq.Solid.makeCone(rc + 0.5, r, rc - r + 0.5, cq.Vector(sx * ex, ey, -0.5), cq.Vector(0, 0, 1)))
     return body.clean()
 
 
+def one_piece_posts(p):
+    """Body posts in the ears of the one-piece version: hexagon section from the bottom of the recess (8 long), round
+    post above it (assembly and drawing only)."""
+    ed, eh, eaf, edep = p["ear_boss"]
+    ex, ey = p["ear_holes"]
+    pd, hl, pl, pb = p["body_post"]
+    z0 = eh - edep
+    out = []
+    for sx in (1, -1):
+        x = sx * ex
+        s = hex_z(eaf, z0, z0 + hl, x, ey).fuse(cyl_z(pd / 2, z0 + hl - 0.5, z0 + hl + pl, x, ey))
+        out.append(s.cut(cyl_z(pb / 2, z0 - 1, z0 + hl + pl + 1, x, ey)).clean())
+    return out
+
+
 def one_piece_test_print(p, solid=None):
-    """Test print of the one-piece version: the middle part (splitter_test_print), turned over for the print bed
-    (top face of the splitter on the bed)."""
+    """Test print of the one-piece version: the middle part over the chassis plate and the ears (splitter_test_print),
+    bottom face on the print bed (the deck over the pocket is printed as a bridge)."""
     solid = solid or one_piece_solid(p)
     hw, y0, y1 = p["splitter_test_print"]
-    zt = splitter_z(p) + p["splitter_t"]
-    cut = solid.intersect(cq.Solid.makeBox(2 * hw, y1 - y0, zt + 2, cq.Vector(-hw, y0, -1)))
-    return cut.rotate(cq.Vector(0, 0, 0), cq.Vector(1, 0, 0), 180).translate(cq.Vector(0, y0 + y1, zt))
+    return solid.intersect(cq.Solid.makeBox(2 * hw, y1 - y0, 30, cq.Vector(-hw, y0, -1)))
 
 
 def one_piece_drawing(p, solid, plate, posts_, notes, path=ONE_PIECE_DRAWING):
@@ -475,7 +501,7 @@ def one_piece_drawing(p, solid, plate, posts_, notes, path=ONE_PIECE_DRAWING):
     grey, red, light = (0.55, 0.58, 0.63), (0.75, 0.3, 0.25), (0.86, 0.87, 0.89)
     holes = plate_holes()
     fig = plt.figure(figsize=(16, 11))
-    fig.suptitle("Speedrun front splitter, alternative: body post mount and front splitter in one piece (End A)",
+    fig.suptitle("Speedrun front splitter, alternative: the body post mount enlarged to the splitter, one part (End A)",
                  fontsize=13, y=0.985)
     views = [([0.0, 0.42, 0.5, 0.52], iso_basis(-60, 32), "From above (front left), body posts cut at z = 14",
               [(solid, grey)] + [(s.intersect(cq.Solid.makeBox(200, 100, 15, cq.Vector(-100, 280, -1))), red)
@@ -496,7 +522,7 @@ def one_piece_drawing(p, solid, plate, posts_, notes, path=ONE_PIECE_DRAWING):
     for k, (x, title) in enumerate(((holes["H34"][0], f"Section through H34 (x = {holes['H34'][0]:.2f})"),
                                     (p["ear_holes"][0], f"Section through the ear and the body post "
                                                         f"(x = {p['ear_holes'][0]:.2f})"))):
-        ax = fig.add_axes([0.03 + 0.49 * k, 0.12, 0.46, 0.26])
+        ax = fig.add_axes([0.03 + 0.49 * k, 0.2, 0.46, 0.2])
         slab = cq.Solid.makeBox(0.3, 140, 60, cq.Vector(x - 0.15, 290, -20))
         t, col = [], []
         for s, c in [(plate, light), (solid, grey)] + [(q, red) for q in posts_]:
@@ -506,13 +532,13 @@ def one_piece_drawing(p, solid, plate, posts_, notes, path=ONE_PIECE_DRAWING):
                 col.append(np.tile(c, (len(t[-1]), 1)))
         draw_mesh(ax, np.concatenate(t), side, tri_colors=np.concatenate(col), depth_cue=0.0)
         ax.set_xlim(300, 412)
-        ax.set_ylim(-3, 22)
+        ax.set_ylim(-3, 16)
         ax.set_aspect("equal")
         ax.axis("off")
         ax.set_title(title + " (y horizontal, z vertical; chassis plate light, part grey, body post red)",
                      fontsize=9, loc="left")
-    fig.text(0.03, 0.09, "Checks", fontsize=10, fontweight="bold", va="top")
-    fig.text(0.03, 0.07, "\n".join("\n".join(textwrap.wrap(n, 150)) for n in notes), fontsize=8, va="top",
+    fig.text(0.03, 0.155, "Checks", fontsize=10, fontweight="bold", va="top")
+    fig.text(0.03, 0.135, "\n".join("\n".join(textwrap.wrap(n, 190)) for n in notes), fontsize=8, va="top",
              linespacing=1.35)
     fig.savefig(path, dpi=100)
     plt.close(fig)
@@ -846,13 +872,16 @@ def main():
     cq.exporters.export(cq.Workplane().add(one_test), ONE_PIECE_STEM + "_test_print.stl", tolerance=0.01,
                         angularTolerance=0.1)
     ob, tb = one.BoundingBox(), one_test.BoundingBox()
-    posts_ = [s for n, _, s in parts if n.startswith("body post")]
-    one_notes = [f"One piece {ob.xlen:.0f} x {ob.ylen:.1f} x {ob.zlen:.1f} mm, volume {one.Volume() / 1000:.1f} cm3 "
-                 f"(PETG approx. {one.Volume() / 1000 * p['one_piece'][1]:.0f} g); splitter plate as the splitter "
-                 f"(z = {splitter_z(p):g} to {splitter_z(p) + p['splitter_t']:g}), body on the splitter as before.",
+    posts_ = one_piece_posts(p)
+    one_notes = [f"One piece {ob.xlen:.0f} x {ob.ylen:.1f} mm, volume {one.Volume() / 1000:.1f} cm3 (PETG approx. "
+                 f"{one.Volume() / 1000 * p['one_piece'][1]:.0f} g): the mount enlarged to the outline of the splitter "
+                 f"at the thickness of its front part (z = 0 to {p['front_t']:g}, bottom face flush with the chassis "
+                 "plate, 10 above the ground at the ride height of 10); the body sits on it at z = "
+                 f"{p['front_t']:g}.",
                  f"Overlap with the chassis plate {one.intersect(plate).Volume():.3f} mm3, with the body posts "
-                 f"{max(s.intersect(one).Volume() for s in posts_):.3f} mm3. Test print (middle part, turned over): "
-                 f"{tb.xlen:.0f} x {tb.ylen:.0f} x {tb.zlen:.1f} mm."]
+                 f"{max(s.intersect(one).Volume() for s in posts_):.3f} mm3. Screws M3x6 from below: tip at z = "
+                 f"{p['stack_screws'][0]:g}, blind tapped holes on H34/H35 in bosses up to z = {p['one_piece'][2]:g}. "
+                 f"Test print (middle part, bottom face on the bed): {tb.xlen:.0f} x {tb.ylen:.0f} mm."]
     if not args.no_check:
         d, ang, dz = tyre_clearance(p, [("one piece", one)])[0]["one piece"]
         one_notes.append(f"Clearance to the front tyres (steering -{p['tyre_check'][3]:g} to +{p['tyre_check'][3]:g} "
