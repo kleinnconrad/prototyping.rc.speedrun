@@ -15,7 +15,7 @@ Handover of the CAD session that ended on 2026-11-17 (front splitter finished, d
 * Work branch: `ccr-40867872-qk7gsh`, started from `main` at `e100609` (merge of pull request #89, front splitter of the previous session). All changes are committed and pushed (last change: this file). No pull request was created; the branch is not merged into `main`.
 * Commits of this session: `adadd19` (handover of the previous session carried to `main`), `ae25af2` (dual motor study), `9cb49fa` (electronics layout of the dual motor study), `7cf7178` (front splitter: bosses 3 mm higher, status verified), `51018cb` (three-part front splitter set removed), then this file.
 * Generated files are up to date: front splitter files, drawing `photos/cad_front_splitter_one_piece_drawing.png`, measurement sheet `cad/front_splitter/front_splitter_measurement_sheet.pdf`, assembly `cad/assembly/speedrun_chassis_T410R.step` and its picture. `architecture/README.md` and `specs/full_spec.yaml` were not changed.
-* The files of the dual motor study are a snapshot: `cad/studies/dual_motor/dual_motor_study_assembly.step` still contains the front splitter with the bosses up to 7.0 mm (before the change of this session). Regenerate the study when it is used again.
+* The files of the dual motor study are a snapshot: `cad/studies/dual_motor/dual_motor_study_assembly.step` still contains the front splitter with the bosses up to 7.0 mm and the front corner with the kingpin axis in the middle of the wishbone (before the changes of the sessions on 2026-11-17). Regenerate the study when it is used again.
 
 ## Rules of the owner
 * `CLAUDE.md`: English, sentence case also in headings, list items and table entries, table of contents as soon as a Markdown file has more than one heading, no emojis, objective style without filler words.
@@ -41,7 +41,7 @@ Handover of the CAD session that ended on 2026-11-17 (front splitter finished, d
   * `cad/studies/dual_motor/generate_dual_motor_study.py`: parts, assembly, checks and 2 pictures of the dual motor study (approx. 1.5 min; reads the assembly STEP of the build). `cad/studies/dual_motor/generate_dual_motor_electronics.py`: picture of the electronics layout (approx. 1 min; reads the assembly STEP of the study).
   * `scripts/cad/generate_wishbones.py`, `generate_camber_links.py`, `generate_driveshaft.py`, `generate_measurement_sheets.py`, `generate_knuckle_measurement_sheet.py`, `generate_pivot_blocks.py`, `scripts/generate_adr_readme.py`, `scripts/merge_specs.py`.
 * Run long generators in the background and commit only after the checks have passed.
-* Expected check results: running gear "overlaps: 0"; assembly only the 3 known interferences (lower bulkhead End B / pivot block End B, outer: 0.82 mm³; lower bulkhead End A / front wishbone, left and right: 2.16 mm³ each); front splitter: no overlap with the chassis plate, the body posts and the 30 parts at End A, tyre clearance 10.18 mm (required 3 mm); dual motor study and electronics layout: 0 mm³.
+* Expected check results: running gear "overlaps: 0"; assembly only the 3 known interferences (lower bulkhead End B / pivot block End B, outer: 0.82 mm³; lower bulkhead End A / front wishbone, left and right: 2.16 mm³ each); front splitter: no overlap with the chassis plate, the body posts and the 30 parts at End A, tyre clearance 11.44 mm (required 3 mm); dual motor study and electronics layout: 0 mm³.
 * The generators rewrite all STEP, STL and DXF files with new headers. Before a commit, restore the files whose geometry did not change (normalised comparison with `HEAD`). The following script did this in the session (save it in a scratch directory and run it from the root directory):
 
 ```python
@@ -86,14 +86,15 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
 ## Current geometry (key values)
 | Value | Model |
 |:---|:---|
-| Front kingpin axis | x = 63.65 mm, 6.75 mm inside the outer hinge pin (x = 70.4 mm), caster 10 degrees; at the height of the axle y = 286.87 mm, z = 22.0 mm |
+| Front kingpin axis | x = 63.65 mm, 6.75 mm inside the outer hinge pin (x = 70.4 mm), caster 10 degrees; at the height of the axle y = 284.87 mm (2.0 mm toward the middle of the car from the middle of the front wishbone, parameter `kingpin_y`), z = 22.0 mm |
+| Wheelbase | approx. 257.8 mm between the wheel centres (T410R: 258 mm) |
 | Outer faces of the hex hubs | x = ±86.85 mm front and rear (front hex hubs 6 mm, rear 7 mm) |
 | Overall width | 187 mm over tyres of 26 mm (as the original car, owner), 191 mm over tyres of 30 mm |
 | Front wishbone | 49.7 mm axis to axis (measured 45.26 mm, prolonged by 4.44 mm) |
 | Rear wishbone | 54.3 mm axis to axis (measured) |
 | CVD drive shafts | centre to centre front 40.2 mm, rear 41.1 mm |
 | Camber links | gap front 28.0 mm, rear 25.8 mm (turnbuckle M3x37) |
-| Steering | Ackermann 114 / 128 / 144 % at 15 / 20 / 25 degrees; free steering angle 30 degrees toward the middle, 45 degrees or more toward the outside; servo approx. 48 degrees for 25 degrees of the inner wheel (horn 10 mm) |
+| Steering | Ackermann 84 / 100 / 118 % at 15 / 20 / 25 degrees; free steering angle 35 degrees toward the middle, 45 degrees or more toward the outside; servo approx. 51 degrees for 25 degrees of the inner wheel (horn 10 mm) |
 | Motor axis of the motor mount | x = 24.6 to 33.85 mm (spur gear plus pinion 93 to 127 teeth, 48DP) |
 | Front splitter | one part, 187 x 94 mm; front end y = 407.89 mm (90 mm ahead of the axis H34-H35, 82.3 mm ahead of the chassis plate); z = 0 to 3.0 mm (body on it at 3.0 mm); bosses 6.3 mm on H34, H35 and H36 up to z = 10.0 mm, blind tapped holes for countersunk screws M3x6 from below |
 | Lower front edge of the body | 17.5 mm behind the front edge of the splitter (owner: 15 to 20 mm), on the centre line 72.5 mm ahead of the axis H34-H35; form assumed |
@@ -109,10 +110,11 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
 * Front splitter: as a 3D print in PETG the plate (3.0 mm) is less stiff than a carbon plate. Measurement sheet: form of the lower front edge of the body (B1 to B3, the outline of the splitter follows `front_form`), wheel arches (B5), length of the body posts (B6), ramp of the mount (M10), droop of the front wheels (S3). The body posts and the body mounting holes must be set so that the body sits on the splitter (B4 = 3.0 mm).
 * ADR-009 (foam bumper flush with the front apron of the body) and ADR-010 (GPS module on the front foam bumper) still refer to the foam bumper, which is no longer used; the GPS module needs a new position (for example on the splitter).
 * Dual motor study: new position of the battery (on the car it lies on the left side); batteries on edge 48.8 mm high under the body (body not modelled); gap of 3.9 mm between the motor and the ESC for the motor wires; 2 ESCs with the same throttle signal; torque on the spur gear, the rear pinion shaft and the drive line doubles (not evaluated); the study assembly contains the splitter with the old bosses (7.0 mm).
+* Front camber links: in the static position the rod ends lie 0.17 mm beside the narrowed wall of the upper bulkhead at End A (0.28 mm before the kingpin axis was moved 2.0 mm toward the middle of the car); the clearance over the suspension travel is not checked.
 * C-hub: 3D print verification with the guide sleeves; the dimensions of the sleeves are scaled from the manual (a caliper value of the original sleeve confirms them); the wall between the pocket of the lower screw head and the tube on the hinge pin is only 0.3 mm.
 * Steering knuckle: open dimensions K11, K14, K16 and K19 of the measurement sheet.
 * Track: the 0.5 mm gaps between the knuckle ring and the front hex hub and between the tube of the hub carrier and the rear hex hub, and the radius 3.6 mm of the lug of the hub carrier are assumptions. A measurement of the outer faces of the hex hubs on the car, front and rear, confirms the prolonged front wishbone.
 * Rear hub carrier: in the photo the axle lies approx. 17 mm above the hinge pin, in the model 10.4 mm (ride height 15 mm, wishbone horizontal); a caliper value confirms or corrects it. The original part has 2 holes in the top tab; the model has one.
-* Ackermann (114 to 144 %) and servo travel (approx. 48 degrees): the bellcranks are an assumption from the manual; extended end points or a horn of 12.5 mm (approx. 37 degrees).
+* Ackermann (84 to 118 %) and servo travel (approx. 51 degrees): the bellcranks are an assumption from the manual; extended end points or a horn of 12.5 mm (approx. 39 degrees).
 * Wheels are not modelled; the wishbones are horizontal at the ride height of setup sheet 4 (10 mm front, 15 mm rear).
 * Not changed to 130 km/h: the gearing plot `scripts/plots/gearing_plot.py` (100 km/h line thicker), `specs/mechanics/carten_t410r/spec_cartent410r.yaml` (track width 190 mm), the project name "RC100".
