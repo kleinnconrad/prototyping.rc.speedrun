@@ -34,7 +34,7 @@ Handover of the CAD session that ended on 2026-11-16 (front splitter), for the n
 * Generators and run times (approx.):
   * `scripts/cad/generate_running_gear.py`: running gear, drawing, steering lock check, bellcrank sweep and overlap check of all parts (10 to 15 min; `--no-check` skips the overlap check).
   * `scripts/cad/generate_speedrun_assembly.py`: assembly STEP, assembly picture and interference check of all 186 parts (approx. 10 min; with `python -u` the output is not buffered).
-  * `scripts/cad/generate_front_splitter.py`: front splitter (one-piece version and three-part alternative), DXF and geometry data, test prints, drawings `photos/cad_front_splitter_drawing.png` and `photos/cad_front_splitter_one_piece_drawing.png`, checks (approx. 1 min; `--no-check` skips the tyre check and the assembly check). It reads the assembly STEP for the overlap check, so after a change of the splitter run the assembly first and then this script once more.
+  * `scripts/cad/generate_front_splitter.py`: front splitter (one part), test print, drawing `photos/cad_front_splitter_one_piece_drawing.png` (top view with the tyres and the body edge, 3D views, sections), checks (approx. 1 min; `--no-check` skips the tyre check and the assembly check). It reads the assembly STEP for the overlap check, so after a change of the splitter run the assembly first and then this script once more.
   * `scripts/cad/generate_front_splitter_measurement_sheet.py`: measurement sheet `cad/front_splitter/front_splitter_measurement_sheet.pdf` (M1 to M16, B1 to B6, S1 to S4, measured values of the owner in the rows).
   * `scripts/cad/generate_wishbones.py`, `generate_camber_links.py`, `generate_driveshaft.py`, `generate_measurement_sheets.py`, `generate_knuckle_measurement_sheet.py`, `generate_pivot_blocks.py`, `scripts/generate_adr_readme.py`, `scripts/merge_specs.py`.
 * Run long generators in the background and commit only after the checks have passed.
@@ -65,7 +65,7 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
             subprocess.run(["git", "checkout", "--", f])
 ```
 
-* Files that change without a change of geometry and must be restored by hand: `cad/running_gear/steering/spacers_of_the_bridge.step`, `cad/parts/rear_drive/bearing_5x10x4.stl`, `cad/parts/camber_link/turnbuckle_M3x37.stl`; the assembly STEP when only the order of the colours changed; the DXF files of the splitter and the holder plate when their `_geometry.json` is unchanged (only the date and IDs change); an STL file of a cut solid (test print) can come back with another triangle order (compare the number of triangles and the surface area).
+* Files that change without a change of geometry and must be restored by hand: `cad/running_gear/steering/spacers_of_the_bridge.step`, `cad/parts/rear_drive/bearing_5x10x4.stl`, `cad/parts/camber_link/turnbuckle_M3x37.stl`; the assembly STEP when only the order of the colours changed; an STL file of a cut solid (test print) can come back with another triangle order (compare the number of triangles and the surface area).
 * Boolean operations: do not fuse a solid onto an identical existing face; the following booleans fail silently. A closed spline with tangents loops: build the outline of the mount from one half spline with unit tangents (`scale=False`) and mirror it (`mount_outline_wire`).
 
 ## Work of this session
@@ -79,6 +79,7 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
 
 ## Changes after the handover
 * One-piece front splitter: 3D print of the owner. The tightened screws M3x6 broke through the top of the bosses (0.5 mm of material above the blind holes); the bosses on H34, H35 and H36 are 3.0 mm higher (top at z = 10.0 mm, 3.5 mm above the holes, parameter `one_piece`). Status verified (owner). Volume 37.6 cm³, approx. 48 g in PETG; speedrun mass total 465 g.
+* Three-part front splitter set removed (owner): the body post mount, the carbon splitter and the holder plate (STEP, STL, DXF, geometry data, test print) and the drawing `photos/cad_front_splitter_drawing.png` are deleted; only the one part is kept. Generator, measurement sheet (S4 removed, B4 = 3.0 mm), parameter file (`screws`, `collar`, `test_print`; no `stack_screws`, `splitter_t`, `splitter_holes`, `holder_plate`) and readmes describe the one part. The drawing of the one part also shows the top view with the tyres and the body edge.
 * Dual motor study in `cad/studies/dual_motor` (not part of the build): symmetric motor mount for 2 motors 3660, chassis plate with a second motor window on the left side, electronics layout with 2 ESCs and 2 batteries 3S shorty (see its readme).
 
 ## Current geometry (key values)
@@ -93,18 +94,18 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
 | Camber links | gap front 28.0 mm, rear 25.8 mm (turnbuckle M3x37) |
 | Steering | Ackermann 114 / 128 / 144 % at 15 / 20 / 25 degrees; free steering angle 30 degrees toward the middle, 45 degrees or more toward the outside; servo approx. 48 degrees for 25 degrees of the inner wheel (horn 10 mm) |
 | Motor axis of the motor mount | x = 24.6 to 33.85 mm (spur gear plus pinion 93 to 127 teeth, 48DP) |
-| Front splitter | front end y = 407.98 mm (90 mm ahead of the axis H34-H35, 82.3 mm ahead of the chassis plate), width 187 mm; one-piece version z = 0 to 3.0 mm (body on it at 3.0 mm), three-part version 8.5 to 10.5 mm (body at 10.5 mm) |
+| Front splitter | front end y = 407.98 mm (90 mm ahead of the axis H34-H35, 82.3 mm ahead of the chassis plate), width 187 mm; z = 0 to 3.0 mm (body on it at 3.0 mm), bosses on H34, H35 and H36 up to z = 10.0 mm |
 | Lower front edge of the body | 17.5 mm behind the front edge of the splitter (owner: 15 to 20 mm), on the centre line 72.5 mm ahead of the axis H34-H35; form assumed |
 | Body posts | in the ears at x = ±32.8 mm, y = 329.98 mm; hexagon 7.06 mm from 2.31 mm above the bottom face of the chassis plate |
 
 ## Status of the parts
-* Verified (green): chassis plate, bulkheads, top brace, shock towers, pivot blocks, motor mount with cap, steering knuckles, one-piece front splitter (used on the car, 3D print of the owner; bosses 3 mm higher after the print), three-part front splitter (body post mount, splitter, holder plate; alternative, 3D print of the owner).
+* Verified (green): chassis plate, bulkheads, top brace, shock towers, pivot blocks, motor mount with cap, steering knuckles, front splitter (one part, 3D print of the owner; bosses 3 mm higher after the print).
 * Measures qualified (yellow): centre driveshaft, rear and front drive line, differential, spool, front and rear wishbones (the front wishbone is longer than measured).
 * Completely unqualified (red): cup joints, diff outdrives, inner hinge pins, camber links, C-hubs (3D print verification with the guide sleeves planned by the owner), rear hub carriers, axles and hex hubs, CVD drive shafts, steering, sway bars, dampers.
 
 ## Open points
-* One-piece front splitter: as a 3D print in PETG the plate (3.0 mm) is less stiff than the carbon splitter.
-* Front splitter, measurement sheet: form of the lower front edge of the body (B1 to B3, the outline of the splitter follows `front_form`), wheel arches (B5), length of the body posts (B6), ramp of the mount (M10), droop of the front wheels (S3). The body posts and the body mounting holes must be set so that the body sits on the splitter (B4 = 3.0 mm for the one-piece version).
+* Front splitter: as a 3D print in PETG the plate (3.0 mm) is less stiff than a carbon plate.
+* Front splitter, measurement sheet: form of the lower front edge of the body (B1 to B3, the outline of the splitter follows `front_form`), wheel arches (B5), length of the body posts (B6), ramp of the mount (M10), droop of the front wheels (S3). The body posts and the body mounting holes must be set so that the body sits on the splitter (B4 = 3.0 mm).
 * ADR-009 (foam bumper flush with the front apron of the body) and ADR-010 (GPS module on the front foam bumper) still refer to the foam bumper, which is no longer used; the GPS module needs a new position (for example on the splitter).
 * C-hub: 3D print verification with the guide sleeves; the dimensions of the sleeves are scaled from the manual (a caliper value of the original sleeve confirms them); the wall between the pocket of the lower screw head and the tube on the hinge pin is only 0.3 mm.
 * Steering knuckle: open dimensions K11, K14, K16 and K19 of the measurement sheet.

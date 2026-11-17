@@ -1,4 +1,4 @@
-"""Assembly of the speedrun chassis: chassis plate, bulkheads, top brace, shock towers, front splitter set,
+"""Assembly of the speedrun chassis: chassis plate, bulkheads, top brace, shock towers, front splitter,
 drive line, wishbones and running gear.
 
 Parts (the parts besides the speedrun chassis are the owner's own design, partly based on the
@@ -9,9 +9,9 @@ T410R; they are not in the mass total):
 * speedrun top brace on both upper bulkheads (end with the obround at End B)
 * speedrun shock towers on the upper bulkheads: front tower at End A (assumed to be the front),
   rear tower at End B
-* speedrun front splitter at End A (scripts/cad/generate_front_splitter.py): the one-piece version
-  used on the car (body post mount enlarged to the splitter) on H34 to H36; the body posts (stock
-  parts) are not in the mass total
+* speedrun front splitter at End A (scripts/cad/generate_front_splitter.py): one part, the body
+  post mount enlarged to the splitter, on H34 to H36; the body posts (stock parts) are not in the
+  mass total
 * pivot blocks of the wishbones: long block on H01/H02, short blocks on H07/H08, H26/H27 and
   H32/H33
 * centre driveshaft with the fixed metal pins, cup joints, front and rear pinion shaft with the
@@ -141,7 +141,7 @@ def build():
     # running gear: wheel suspension, axles, CVD drive shafts, steering, servo, dampers, sway bars
     rg, _ = running_gear()
     parts += [(f"running gear {name}", kind, s) for name, kind, s in rg]
-    # speedrun front splitter (End A): one-piece version with the body posts
+    # speedrun front splitter (End A, one part) with the body posts
     parts += front_splitter_in_plate()
     return parts
 
