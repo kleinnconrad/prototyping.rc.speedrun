@@ -424,12 +424,12 @@ def splitter_test_print(p, splitter=None):
 
 
 def one_piece_solid(p, geom=None):
-    """Alternative version: the body post mount is enlarged to the splitter, one part, no separate splitter and no
+    """Version used on the car: the body post mount is enlarged to the splitter, one part, no separate splitter and no
     holder plate. The mount as measured by the owner (deck on the chassis plate, pocket and side lips around its front
     end, ramp, front part 3.0 thick with its bottom face flush with the bottom face of the plate, ears with the hexagon
     recesses of the body posts); its front part is extended to the outline of the splitter (behind the rear edge of the
     mount only beside the chassis plate). Bosses on H34, H35 and H36 for the countersunk screws M3x6 from below (blind
-    tapped holes, not visible from above)."""
+    tapped holes, not visible from above; the bosses are 3.0 higher after the 3D print of the owner)."""
     geom = geom or plate_geometry()
     holes = plate_holes(geom)
     cl, dt, ft, rw = p["pocket_clearance"], p["deck_t"], p["front_t"], p["ramp_w"]
@@ -499,8 +499,8 @@ def one_piece_drawing(p, solid, plate, posts_, notes, path=ONE_PIECE_DRAWING):
     grey, red, light = (0.55, 0.58, 0.63), (0.75, 0.3, 0.25), (0.86, 0.87, 0.89)
     holes = plate_holes()
     fig = plt.figure(figsize=(16, 11))
-    fig.suptitle("Speedrun front splitter, alternative: the body post mount enlarged to the splitter, one part (End A)",
-                 fontsize=13, y=0.985)
+    fig.suptitle("Speedrun front splitter used on the car: the body post mount enlarged to the splitter, one part (End A; "
+                 "verified with a 3D print of the owner)", fontsize=13, y=0.985)
     views = [([0.0, 0.42, 0.5, 0.52], iso_basis(-60, 32), "From above (front left), body posts cut at z = 14",
               [(solid, grey)] + [(s.intersect(cq.Solid.makeBox(200, 100, 15, cq.Vector(-100, 280, -1))), red)
                                  for s in posts_]),

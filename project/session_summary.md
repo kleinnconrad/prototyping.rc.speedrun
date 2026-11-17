@@ -7,6 +7,7 @@ Handover of the CAD session that ended on 2026-11-16 (front splitter), for the n
 * [Rules of the owner](#rules-of-the-owner)
 * [Workflow](#workflow)
 * [Work of this session](#work-of-this-session)
+* [Changes after the handover](#changes-after-the-handover)
 * [Current geometry (key values)](#current-geometry-key-values)
 * [Status of the parts](#status-of-the-parts)
 * [Open points](#open-points)
@@ -76,6 +77,10 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
 * Assembly: contains the one-piece version with the body posts (186 parts); the front splitter is a speedrun part with a material (PETG), the speedrun mass total is 464 g. Readmes (root, CAD, parts) updated: the one-piece version as the speedrun front splitter (yellow), the three-part parts as the verified alternative (not in the total).
 * Design study (not in the repository): planform variants A (band and tongue), B (straight taper) and C (curved taper, chosen).
 
+## Changes after the handover
+* One-piece front splitter: 3D print of the owner. The tightened screws M3x6 broke through the top of the bosses (0.5 mm of material above the blind holes); the bosses on H34, H35 and H36 are 3.0 mm higher (top at z = 10.0 mm, 3.5 mm above the holes, parameter `one_piece`). Status verified (owner). Volume 37.6 cm³, approx. 48 g in PETG; speedrun mass total 465 g.
+* Dual motor study in `cad/studies/dual_motor` (not part of the build): symmetric motor mount for 2 motors 3660, chassis plate with a second motor window on the left side, electronics layout with 2 ESCs and 2 batteries 3S shorty (see its readme).
+
 ## Current geometry (key values)
 | Value | Model |
 |:---|:---|
@@ -93,12 +98,12 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
 | Body posts | in the ears at x = ±32.8 mm, y = 329.98 mm; hexagon 7.06 mm from 2.31 mm above the bottom face of the chassis plate |
 
 ## Status of the parts
-* Verified (green): chassis plate, bulkheads, top brace, shock towers, pivot blocks, motor mount with cap, steering knuckles, three-part front splitter (body post mount, splitter, holder plate; alternative, 3D print of the owner).
-* Measures qualified (yellow): centre driveshaft, rear and front drive line, differential, spool, front and rear wishbones (the front wishbone is longer than measured), one-piece front splitter (used on the car, no 3D print verification yet).
+* Verified (green): chassis plate, bulkheads, top brace, shock towers, pivot blocks, motor mount with cap, steering knuckles, one-piece front splitter (used on the car, 3D print of the owner; bosses 3 mm higher after the print), three-part front splitter (body post mount, splitter, holder plate; alternative, 3D print of the owner).
+* Measures qualified (yellow): centre driveshaft, rear and front drive line, differential, spool, front and rear wishbones (the front wishbone is longer than measured).
 * Completely unqualified (red): cup joints, diff outdrives, inner hinge pins, camber links, C-hubs (3D print verification with the guide sleeves planned by the owner), rear hub carriers, axles and hex hubs, CVD drive shafts, steering, sway bars, dampers.
 
 ## Open points
-* One-piece front splitter: 3D print verification with the test print (owner); then status green. As a 3D print in PETG the plate (3.0 mm) is less stiff than the carbon splitter.
+* One-piece front splitter: as a 3D print in PETG the plate (3.0 mm) is less stiff than the carbon splitter.
 * Front splitter, measurement sheet: form of the lower front edge of the body (B1 to B3, the outline of the splitter follows `front_form`), wheel arches (B5), length of the body posts (B6), ramp of the mount (M10), droop of the front wheels (S3). The body posts and the body mounting holes must be set so that the body sits on the splitter (B4 = 3.0 mm for the one-piece version).
 * ADR-009 (foam bumper flush with the front apron of the body) and ADR-010 (GPS module on the front foam bumper) still refer to the foam bumper, which is no longer used; the GPS module needs a new position (for example on the splitter).
 * C-hub: 3D print verification with the guide sleeves; the dimensions of the sleeves are scaled from the manual (a caliper value of the original sleeve confirms them); the wall between the pocket of the lower screw head and the tube on the hinge pin is only 0.3 mm.
