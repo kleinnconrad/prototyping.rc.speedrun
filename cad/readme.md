@@ -70,6 +70,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
 * **`/studies`**: Design studies that are not part of the build, one subdirectory per study with its own readme:
   * **`/dual_motor`**: Dual motor mount for 2 motors on the spur gear and a chassis plate with a second motor window on the left side (STEP, STL, geometry data, pictures, script).
 * **`/3d_print_fdm`**: STL files of 3D printed parts (FDM) for the car and a maintenance stand (see [3D printed parts](#3d-printed-parts))
+* **Technical drawings** (PDF, one PNG per sheet) of the verified parts, the wishbones and the C-hub are stored in the directory of each part. A readme in each directory shows the sheets: [bulkheads](bulkhead/readme.md), [speedrun chassis plate](chassis/chassis_plate_speedrun_wide_motor10/readme.md), [speedrun top brace](chassis/top_brace_speedrun/readme.md), [shock towers](shock_tower/readme.md), [pivot blocks](parts/pivot_block/readme.md), [motor mount and cap](parts/motor_mount/readme.md), [wishbones](parts/wishbone/readme.md), [C-hub and steering knuckle](running_gear/front_corner/readme.md), [front splitter](front_splitter/readme.md).
 
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
 
@@ -1142,6 +1143,8 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_bulkhead_upper.py` | Parameter files of the upper and the lower bulkhead | STEP and STL file of the upper part, test print STL file, assembly STEP file, interference check, geometry checks | cadquery |
 | `generate_bulkhead_upper_drawings.py` | Parameter files, photos of the original upper part | Preview image `photos/cad_bulkhead_upper_preview.png` and measurement sheet of the original upper part (PDF) | cadquery, matplotlib |
 | `generate_bulkhead_technical_drawings.py` | STEP, STL and parameter files of the lower and the upper bulkhead | Technical drawings of both parts (PDF, A3, 2 sheets each, and one PNG per sheet) in `/bulkhead` | cadquery, matplotlib |
+| `generate_technical_drawings.py` | STEP files of the speedrun chassis plate, top brace, shock towers, pivot blocks, motor mount and cap, C-hub, steering knuckle, front splitter and wishbones; hole tables of the plates; parameter file of the running gear (frames of the C-hub and the knuckle) | Technical drawings (PDF, A3, 2 or 3 sheets, one PNG per sheet) and a readme with the sheets in the directory of each part. Scale and layout follow from the size of the part; the holes are read from the STEP files | cadquery, matplotlib |
+| `technical_drawing.py` | – (module) | Helpers of the technical drawings: projection with hidden line removal, sections, dimensions, hole finder (cylinders and countersinks along any axis), hole table, title block | cadquery, matplotlib |
 | `mesh_views.py` | None | Helper module: shaded views of STL files and assemblies, used by the drawing scripts of the bulkheads | matplotlib |
 
 ### Regenerating the files
@@ -1196,6 +1199,7 @@ python scripts/cad/generate_running_gear.py
 python scripts/cad/generate_front_splitter.py
 python scripts/cad/generate_front_splitter_measurement_sheet.py
 python scripts/cad/generate_speedrun_assembly.py
+python scripts/cad/generate_technical_drawings.py
 ```
 
 ### DXF generation
