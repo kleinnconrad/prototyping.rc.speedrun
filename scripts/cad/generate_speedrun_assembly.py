@@ -75,12 +75,12 @@ COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8
 PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
-             "lower": ("Lower bulkhead (2 pieces)", {"7075": 2.81}),
-             "upper": ("Upper bulkhead (2 pieces)", {"7075": 2.81}),
+             "lower": ("Lower bulkhead (2 pieces)", {"PA12": 1.01, "7075": 2.81}),
+             "upper": ("Upper bulkhead (2 pieces)", {"PA12": 1.01, "7075": 2.81}),
              "brace": ("Speedrun top brace", {"carbon": 1.6, "7075": 2.81}),
              "tower_front": ("Speedrun front shock tower", {"carbon": 1.6, "7075": 2.81}),
              "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81}),
-             "onepiece": ("Speedrun front splitter (one piece)", {"PETG": 1.27}),
+             "onepiece": ("Speedrun front splitter (one piece)", {"PA12": 1.01, "PETG": 1.27}),
              "pivot": ("Pivot blocks (4 pieces)", {}),     # no mass
              "shaft": ("Centre driveshaft with fixed pins", {}),
              "cup": ("Cup joints, outdrives, inner hinge pins", {}),

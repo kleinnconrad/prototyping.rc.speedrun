@@ -80,16 +80,16 @@ The speedrun chassis combines the parts that are designed in this project for sp
 ![Speedrun chassis: complete build with the drive line, the wishbones and the running gear](../photos/cad_speedrun_chassis_assembly.png)
 
 ### Parts of the speedrun chassis
-| Part | Quantity | Directory | Status | Material | Mass |
-|:---|---:|:---|:---|:---|---:|
-| [Speedrun chassis plate (wide) with longer motor window](#longer-motor-window-for-a-3660-motor) | 1 | `/chassis/chassis_plate_speedrun_wide_motor10` | $\color{green}\checkmark$ Verified; ordered as CNC part (aluminium 6082) | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
-| [Lower bulkhead](#lower-bulkhead) | 2 | `/bulkhead` | $\color{green}\checkmark$ Verified; ordered as MJF 3D print (nylon PA12) | 7075 | 2 x 34 g |
-| [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | $\color{green}\checkmark$ Verified; ordered as MJF 3D print (nylon PA12) | 7075 | 2 x 53 g |
-| [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | $\color{green}\checkmark$ Verified; ordered as carbon plate (2D milling) | Carbon or 7075 | 14 g (carbon), 25 g (7075) |
-| [Speedrun front shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified; ordered as carbon plate (2D milling) | Carbon or 7075 | 4.4 g (carbon), 7.7 g (7075) |
-| [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified; ordered as carbon plate (2D milling) | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
-| [Speedrun front splitter (one part: body post mount enlarged to the splitter)](#speedrun-front-splitter) | 1 | `/front_splitter` | $\color{green}\checkmark$ Verified (3D print of the owner; bosses of the screws 3 mm higher after the print); ordered as MJF 3D print (nylon PA12) | PETG (3D print) | 48 g |
-| **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace and shock towers carbon, front splitter PETG | **465 g** |
+| Part | Quantity | Directory | Status | Order | Material | Mass |
+|:---|---:|:---|:---|:---|:---|---:|
+| [Speedrun chassis plate (wide) with longer motor window](#longer-motor-window-for-a-3660-motor) | 1 | `/chassis/chassis_plate_speedrun_wide_motor10` | $\color{green}\checkmark$ Verified | CNC part (aluminium 6082) | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
+| [Lower bulkhead](#lower-bulkhead) | 2 | `/bulkhead` | $\color{green}\checkmark$ Verified | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 2 x 12 g |
+| [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | $\color{green}\checkmark$ Verified | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 2 x 19 g |
+| [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 14 g (carbon), 25 g (7075) |
+| [Speedrun front shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 4.4 g (carbon), 7.7 g (7075) |
+| [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
+| [Speedrun front splitter (one part: body post mount enlarged to the splitter)](#speedrun-front-splitter) | 1 | `/front_splitter` | $\color{green}\checkmark$ Verified (3D print of the owner; bosses of the screws 3 mm higher after the print) | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 38 g |
+| **Total** | | | | | Chassis plate 6082, bulkheads and front splitter PA12, top brace and shock towers carbon | **343 g** |
 
 Further own parts (own design of the owner, partly based on the T410R, not in the mass total):
 
@@ -119,7 +119,7 @@ Further own parts (own design of the owner, partly based on the T410R, not in th
 
 Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. The parts marked red are first designs: they still need a lot of refinement (dimensions, strength, fit and function on the car) and are not ready for manufacturing.
 
-* The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³, PETG: 1.27 g/cm³). Screws, bearings and the other parts of the car are not included.
+* The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³, nylon PA12 (MJF): 1.01 g/cm³). Screws, bearings and the other parts of the car are not included.
 * The bulkheads are the same parts at both ends. At End A, they are rotated by 180 degrees, so that both pinions point to the middle of the car.
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
 
@@ -357,7 +357,7 @@ All files are stored in the directory `/chassis/top_brace_speedrun`. They are ge
 
 ## Lower bulkhead
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** CAD model of the lower half of the gear box (bulkhead) of the Carten T410R. The original part is the plastic part ("Gear box"), which is used at the front and at the rear. The model is the basis for a CNC part made of 7075-T6. The interfaces to the chassis plate, the bearings, the gears, the upper bulkhead and the sway bar follow the original part. The shape is designed to match the [upper bulkhead](#upper-bulkhead-new-design) (see [design of the lower bulkhead](#design-of-the-lower-bulkhead)).
+* **Description:** CAD model of the lower half of the gear box (bulkhead) of the Carten T410R. The original part is the plastic part ("Gear box"), which is used at the front and at the rear. The model is designed for a CNC part made of 7075-T6. The ordered parts are MJF 3D prints from nylon PA12. The interfaces to the chassis plate, the bearings, the gears, the upper bulkhead and the sway bar follow the original part. The shape is designed to match the [upper bulkhead](#upper-bulkhead-new-design) (see [design of the lower bulkhead](#design-of-the-lower-bulkhead)).
 * **Status:** $\color{green}\checkmark$ Verified (test prints: see [test print of the lower bulkhead](#measurement-basis-and-test-print-of-the-lower-bulkhead)). The interfaces are based on caliper measurements of the original part. Some positions are taken from photos (accuracy approx. +-0.5 mm) or derived from the caliper values (see [measurement basis of the lower bulkhead](#measurement-basis-and-test-print-of-the-lower-bulkhead)).
 
 ![Views of the lower bulkhead](../photos/cad_bulkhead_lower_preview.png)
@@ -395,7 +395,7 @@ All files are stored in the directory `/bulkhead`. The STEP and STL files and th
 |:---|:---|
 | Size (x by y by z) | 34.48 x 59.4 x 19.62 mm (with the sway bar tabs and the pinion housing) |
 | Volume | 12.2 cm³ |
-| Mass | 34 g in 7075 (2.81 g/cm³), 15 g in PLA (1.24 g/cm³) |
+| Mass | 12 g in nylon PA12 (MJF, 1.01 g/cm³), 34 g in 7075 (2.81 g/cm³), 15 g in PLA (1.24 g/cm³) |
 
 **Coordinate system of the lower bulkhead**
 
@@ -584,7 +584,7 @@ The upper part is a prismatic block: the footprint of the lower part (34.48 mm w
 * The tapped holes of the shock tower (x = +-9.55 mm) are 4.45 mm from the side faces of the narrowed wall (centre to face).
 * The interference check of the assembly of the lower and the upper part gives 0 mm³.
 * The ring gear cavity of the upper part ends at x = 10.4 mm (lower part: 11.35 mm). Up to 11.35 mm, the wall to the tapped hole of the top brace screw was only 0.2 mm. It is now 1.15 mm.
-* Size 34.48 x 53.4 x 31.5 mm, volume 18.8 cm³, mass 53 g in 7075 (2.81 g/cm³), 23 g in PLA.
+* Size 34.48 x 53.4 x 31.5 mm, volume 18.8 cm³, mass 19 g in nylon PA12 (MJF, 1.01 g/cm³), 53 g in 7075 (2.81 g/cm³), 23 g in PLA.
 * The wall is 6 mm thick: the screws M3x8 through the 3 mm shock tower have 5 mm thread engagement. The material above the thread of the upper holes is 1.4 mm (wall top at the height of the original ears, U10).
 * The block over the ring gear is 17.8 mm high. In front of the wall, the zone above 19.8 mm (block plus root radius) is kept free for the shock tower. The cover over the ring gear cavity is 1.4 mm directly behind the wall and 2.5 mm at the contact face.
 * The mass is higher than with shells that follow the gears. Straight pockets in the flat faces can reduce it, if required.
@@ -616,7 +616,7 @@ The measurement sheet `bulkhead_upper_measurement_sheet.pdf` shows the interface
 ### Open points of the upper bulkhead
 * Caliper values of the original upper part that are not measured: U5, U6 (position of the shock tower contact face), U8 (position of the top brace screws along y), U11 (lowest edge of the shock towers), U12 to U14. The test print confirms the part, so these values are not required for manufacturing.
 * Shock tower: the original shock tower plate does not fit. The [speedrun shock towers](#speedrun-shock-towers) (front and rear) are designed for the upper bulkhead.
-* Mass: 53 g in 7075. Straight pockets in the flat faces can reduce the mass.
+* Mass: 19 g in nylon PA12 (ordered part), 53 g in 7075. Straight pockets in the flat faces can reduce the mass.
 
 ## Speedrun shock towers
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -694,7 +694,7 @@ Both shock towers are verified by the owner. The following points are not requir
 
 | Item | Model | Source |
 |:---|:---|:---|
-| Part | One part, 187 x 94 mm, 37.6 cm³, approx. 48 g in PETG (3D print) | Owner (one part), design |
+| Part | One part, 187 x 94 mm, 37.6 cm³, approx. 38 g in nylon PA12 (MJF 3D print), 48 g in PETG (3D print) | Owner (one part), design |
 | Body post mount area | 79.5 mm wide over the ears, 47.7 mm over the side lips. Deck 2.5 mm thick on the top face of the chassis plate (4.5 mm total height at the rear edge), straight rear edge 4.0 mm behind H34/H35, 19.2 mm deep on the centre line. The bottom has a pocket in the form of the front end of the plate (2.0 mm deep, 0.2 mm clearance, side lips around the plate): the overhang holds the part against turning. In front of the plate the part is cranked down by the thickness of the plate (bottom face flush with the bottom face of the plate, 3.0 mm thick); a ramp 4 mm wide on the top face follows the front contour of the plate | Owner (M1 to M9), photo (form of the outline, ramp) |
 | Splitter | The front part of the mount (3.0 mm, z = 0 to 3.0 mm, bottom face flush with the bottom face of the chassis plate; 10 mm above the ground at the ride height of 10 mm) is extended to the outline of the splitter. Front end 90 mm ahead of the axis through H34/H35 (82.3 mm ahead of the chassis plate). Outer form: the form of the lower front edge of the body, moved forward to this front end, from tip to tip. Full width only at the front, where the splitter closes the space between the chassis front and the body (variant C of the design suggestions): straight rear edge in the middle (y = 313 mm), concave rear edges, deeper beside the mount and narrower toward the tips. Behind the rear edge of the mount the splitter area only lies beside the chassis plate | Owner (front end, outer form, variant C), design |
 | Fixing to the chassis plate | 3 countersunk screws M3x6 from below through the countersinks of H34, H35 and H36 into bosses 6.3 mm (as the collar of the original part) up to 10.0 mm above the bottom face of the chassis plate: blind tapped holes 0.5 mm beyond the tip of the screw, 3.5 mm of material above them; the screws are not visible from above. In the 3D print of the owner the bosses reached up to 7.0 mm (0.5 mm of material above the holes) and the tightened screws broke through their top; the bosses are therefore 3.0 mm higher | Owner (screws, M11, 3D print) |
@@ -719,7 +719,7 @@ All files are stored in the directory `/front_splitter` and are generated with `
 Open points:
 * Lower front edge of the body (B1 to B5) and the needed length of the body posts (B6).
 * Ramp of the mount (M10) and droop of the front wheels (S3).
-* As a 3D print in PETG the splitter (3.0 mm) is less stiff than a carbon plate.
+* As a 3D print (PETG or nylon PA12) the splitter (3.0 mm) is less stiff than a carbon plate.
 * The car ran with the front foam bumper so far. ADR-009 (the foam bumper flush with the front apron of the body) and ADR-010 (GPS module on the front foam bumper) refer to it and are not changed yet.
 
 ## Further own parts
