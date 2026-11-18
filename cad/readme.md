@@ -85,9 +85,9 @@ The speedrun chassis combines the parts that are designed in this project for sp
 | [Speedrun chassis plate (wide) with longer motor window](#longer-motor-window-for-a-3660-motor) | 1 | `/chassis/chassis_plate_speedrun_wide_motor10` | $\color{green}\checkmark$ Verified; ordered as CNC part (aluminium 6082) | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
 | [Lower bulkhead](#lower-bulkhead) | 2 | `/bulkhead` | $\color{green}\checkmark$ Verified; ordered as MJF 3D print (nylon PA12) | 7075 | 2 x 34 g |
 | [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | $\color{green}\checkmark$ Verified; ordered as MJF 3D print (nylon PA12) | 7075 | 2 x 53 g |
-| [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | $\color{green}\checkmark$ Verified | Carbon or 7075 | 14 g (carbon), 25 g (7075) |
-| [Speedrun front shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified | Carbon or 7075 | 4.4 g (carbon), 7.7 g (7075) |
-| [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
+| [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | $\color{green}\checkmark$ Verified; ordered as carbon plate (2D milling) | Carbon or 7075 | 14 g (carbon), 25 g (7075) |
+| [Speedrun front shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified; ordered as carbon plate (2D milling) | Carbon or 7075 | 4.4 g (carbon), 7.7 g (7075) |
+| [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified; ordered as carbon plate (2D milling) | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
 | [Speedrun front splitter (one part: body post mount enlarged to the splitter)](#speedrun-front-splitter) | 1 | `/front_splitter` | $\color{green}\checkmark$ Verified (3D print of the owner; bosses of the screws 3 mm higher after the print); ordered as MJF 3D print (nylon PA12) | PETG (3D print) | 48 g |
 | **Total** | | | | Chassis plate 6082, bulkheads 7075, top brace and shock towers carbon, front splitter PETG | **465 g** |
 
