@@ -69,7 +69,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
 * **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the further own parts: pivot blocks, drive line, wishbones, camber links and running gear (STEP).
 * **`/studies`**: Design studies that are not part of the build, one subdirectory per study with its own readme:
   * **`/dual_motor`**: Dual motor mount for 2 motors on the spur gear and a chassis plate with a second motor window on the left side (STEP, STL, geometry data, pictures, script).
-* **STL files in this directory**: 3D printed parts for the car and a maintenance stand
+* **`/3d_print_fdm`**: STL files of 3D printed parts (FDM) for the car and a maintenance stand (see [3D printed parts](#3d-printed-parts))
 
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
 
@@ -1208,6 +1208,8 @@ python scripts/cad/generate_dxf.py cad/chassis/chassis_plate_speedrun_wide_motor
 * The speedrun chassis plate (wide) without the longer motor window has no DXF file. It can be generated from `chassis_plate_speedrun_wide_geometry.json` with the same script.
 
 ## 3D printed parts
+All files are stored in the directory `/3d_print_fdm`.
+
 | File | Part | Author | Status |
 |:---|:---|:---|:---|
 | `fan_mount.stl` | Mount for the 40 mm motor fan from Hobbywing (60 x 50 x 18 mm, 40 mm air opening) | [@kleinnconrad](https://github.com/kleinnconrad) (own design) | Not in use: the motor cooling was removed, since the motor does not heat up significantly during speedruns (ADR-007) |

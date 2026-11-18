@@ -27,7 +27,7 @@ Handover of the CAD session that ended on 2026-11-17 (front splitter finished, d
 * Wording: the parts besides the speedrun parts are "own design, partly based on the (Carten) T410R"; the group is called "further own parts". The word "re-engineered" is not used any more. The front splitter is a speedrun part (owner), directory `cad/front_splitter`.
 * Front splitter: only the one-part design is kept (owner); the three-part set (body post mount, carbon splitter, holder plate) was removed in this session.
 * Studies (owner: "just a study for now"): directory `cad/studies/<name>` with its own readme and script, not part of the build; the parts of the build and the assembly are not changed by a study.
-* Third-party STL files stay in `cad/`. Force push is not allowed. The chassis plate is ordered: only its existing holes can be used (steering posts H24/H25, servo mount H17/H21, motor mount H09/H10, front splitter H34/H35/H36). The plate of the dual motor study is a study only.
+* Third-party STL files stay in `cad/3d_print_fdm` (moved there from `cad/` on request of the owner). Force push is not allowed. The chassis plate is ordered: only its existing holes can be used (steering posts H24/H25, servo mount H17/H21, motor mount H09/H10, front splitter H34/H35/H36). The plate of the dual motor study is a study only.
 * The owner sends photos and caliper values; values of the owner have the source `owner` in the parameter files and the measured column of the measurement sheets.
 
 ## Workflow
