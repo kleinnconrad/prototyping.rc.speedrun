@@ -91,29 +91,29 @@ def parts():
                     "Hole names as in the geometry data of the plate (H01 to H36)."]),
         dict(key="top_brace", folder="cad/chassis/top_brace_speedrun", step="top_brace_T410R_speedrun.step",
              stem="top_brace_T410R_speedrun", title="Speedrun top brace", number="TB", flat=True, rotate=True,
-             material="Carbon plate 2.0 mm or EN AW-7075-T6", density=1.6, density_txt="carbon", quantity="1",
-             tol=GENERAL_CNC, edges="chamfers 0.5 x 45 deg (outline), 0.3 (holes)", status="verified",
+             material="Carbon plate 2.0 mm", density=1.6, density_txt="carbon", quantity="1",
+             tol=GENERAL_CNC, edges="chamfers 0.5 x 45 deg (outline), 0.3 (holes)", status="ordered as carbon plate (2D milling)",
              names=csv_names("cad/chassis/top_brace_speedrun/top_brace_speedrun_hole_table.csv"), label_names=True,
              end_labels=("End with B01 to B04 (End A)", "End with B07 to B15 (End B)"),
              details=[dict(title="Detail X (end with B01 to B04)", box=(-18.5, 18.5, -1.5, 30.0), scale=2.0),
                       dict(title="Detail Y (end with B07 to B15)", box=(-18.5, 18.5, 198.0, 244.8), scale=2.0)],
-             notes=["Laser or waterjet cutting from the DXF file top_brace_T410R_speedrun.dxf; edge chamfers 0.5 x 45 deg "
+             notes=["Ordered as carbon plate, 2D milling. Outline and holes from the DXF file top_brace_T410R_speedrun.dxf; edge chamfers 0.5 x 45 deg "
                     "on both faces of the outline and the obround, 0.3 x 45 deg on the holes (second machining step).",
                     "Hole names as in the hole table of the top brace (B01 to B15; B05 and B06 are closed)."]),
         dict(key="shock_tower_front", folder="cad/shock_tower", step="shock_tower_front_T410R_speedrun.step",
              stem="shock_tower_front_T410R_speedrun", title="Speedrun front shock tower", number="ST-F", flat=True,
-             edge_view=True, material="Carbon plate 3.0 mm or EN AW-7075-T6", density=1.6, density_txt="carbon",
-             quantity="1", tol=GENERAL_CNC, edges="chamfers 0.5 x 45 deg (outline), 0.3 (holes)", status="verified",
+             edge_view=True, material="Carbon plate 3.0 mm", density=1.6, density_txt="carbon",
+             quantity="1", tol=GENERAL_CNC, edges="chamfers 0.5 x 45 deg (outline), 0.3 (holes)", status="ordered as carbon plate (2D milling)",
              names=csv_names("cad/shock_tower/shock_tower_front_hole_table.csv"), label_names=True,
-             notes=["Laser or waterjet cutting from the DXF file shock_tower_front_T410R_speedrun.dxf; edge chamfers and "
+             notes=["Ordered as carbon plate, 2D milling. Outline and holes from the DXF file shock_tower_front_T410R_speedrun.dxf; edge chamfers and "
                     "the relief on the back face (clearance to the root radius of the wall of the upper bulkhead) as in "
                     "the STEP file (second machining step).", "Hole names as in the hole table of the shock tower."]),
         dict(key="shock_tower_rear", folder="cad/shock_tower", step="shock_tower_rear_T410R_speedrun.step",
              stem="shock_tower_rear_T410R_speedrun", title="Speedrun rear shock tower", number="ST-R", flat=True,
-             edge_view=True, material="Carbon plate 3.0 mm or EN AW-7075-T6", density=1.6, density_txt="carbon",
-             quantity="1", tol=GENERAL_CNC, edges="chamfers 0.5 x 45 deg (outline), 0.3 (holes)", status="verified",
+             edge_view=True, material="Carbon plate 3.0 mm", density=1.6, density_txt="carbon",
+             quantity="1", tol=GENERAL_CNC, edges="chamfers 0.5 x 45 deg (outline), 0.3 (holes)", status="ordered as carbon plate (2D milling)",
              names=csv_names("cad/shock_tower/shock_tower_rear_hole_table.csv"), label_names=True,
-             notes=["Laser or waterjet cutting from the DXF file shock_tower_rear_T410R_speedrun.dxf; edge chamfers and "
+             notes=["Ordered as carbon plate, 2D milling. Outline and holes from the DXF file shock_tower_rear_T410R_speedrun.dxf; edge chamfers and "
                     "the relief on the back face as in the STEP file (second machining step).",
                     "Hole names as in the hole table of the shock tower."]),
         dict(key="pivot_block_long", folder="cad/parts/pivot_block", step="pivot_block_long_T410R.step",
