@@ -10,7 +10,8 @@
 * [Generating the drawings](#generating-the-drawings)
 
 ## Overview
-* Technical drawings of the lower and the upper bulkhead (gear box) for the CNC order. Both parts are made from EN AW-7075-T6, 2 pieces each (End A and End B use the same part).
+* Technical drawings of the lower and the upper bulkhead (gear box) for a CNC version in EN AW-7075-T6, 2 pieces each (End A and End B use the same part).
+* The ordered bulkheads are MJF 3D prints from nylon PA12 (see the [parts list](../readme.md#parts-of-the-speedrun-chassis)). The fits, thread tolerances and surface values on the drawings refer to the CNC version in 7075.
 * The drawings are projected from the STEP files of the parts (hidden line removal). The hole table is read from the STEP files, the dimensions refer to the parameter files.
 * The STEP file is the master geometry. Dimensions that are not shown on the drawing are taken from the model.
 * Format: A3 landscape, scale 2:1, first angle projection, 2 sheets per part. The PDF files are for printing and for the order, the PNG files show the sheets on this page.
