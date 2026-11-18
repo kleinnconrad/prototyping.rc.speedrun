@@ -163,15 +163,19 @@ def parts():
                             axes=[(Jc - kd * 17, Jc + kd * 16), (Jc - kn * 9, Jc + kn * 9)],
                             callouts=[(Jc + kd * 12.6 + kn * 2.5, "Ø5.0 H7 (2x), guide sleeves", (32, 6)),
                                       (Jc - kd * 16.5, f"kingpin axis, {rgp['caster']:g} deg to z (caster)", (36, -2)),
-                                      (Jc - kd * 10.8 + kn * 3.5, "counterbore Ø7.0 x 0.55", (18, 4)),
-                                      (Jc - kd * 15.15 + kn * 4.5, "bottom face square to the kingpin axis, flush with the guide sleeve", (12, -24)),
+                                      (Jc - kd * 10.8 + kn * 3.5, "counterbore Ø7.0 x 0.55 (2x), feet of the sleeves", (18, 4)),
+                                      (Jc + kd * 15.05 + kn * 4.5, "top face square to the kingpin axis, sleeve 0.1 proud", (16, 6)),
+                                      (Jc - kd * 15.15 + kn * 4.5, "bottom face square to the kingpin axis, sleeve 0.1 proud", (12, -24)),
                                       (Jc, "O' (axle, CVD joint)", (44, -16))])],
              notes=[f"Kingpin bores Ø5.0 for the flanged guide sleeves Ø4.95 (fit without pressing): Ø5.0 H7 (proposal). "
                     f"Kingpin axis {rgp['caster']:g} deg to z (caster, top toward -y), x = {kx:.2f} from O; at the height of "
                     f"the axle ({rgp['wheel_r'] - rgp['ride_height'][0] - Oc[2]:.2f} above O) {rgp['kingpin_y']:.2f} toward -y from O.",
                     "Bore Ø3.0 for the outer hinge pin 3x26 (fixed with the grub screw M3 from below): Ø3.0 H7 (proposal).",
-                    "Owner: the top guide sleeve is inserted from below (foot approx. 0.6 mm between the C-hub and the "
-                    "knuckle); the model is changed after further measurements (open point)."]),
+                    "Both guide sleeves are inserted from the knuckle side (feet in the counterbores Ø7.0 x 0.55) and stand "
+                    "0.1 proud of the top face and of the bottom face (both square to the kingpin axis), so the ball stud and "
+                    "the screw clamp only the sleeves and the knuckle moves freely (owner).",
+                    "Foot of the sleeves 1.0 as modelled (owner: approx. 0.6, to be measured); the counterbores and the "
+                    "faces follow from the measured sleeve."]),
         dict(key="steering_knuckle", folder="cad/running_gear/front_corner", step="steering_knuckle_end_a.step",
              stem="steering_knuckle_end_a", title="Front steering knuckle, right (left part mirrored)", number="SK",
              frame=(Rk, Jk), material="To be defined (original part: plastic)", quantity="2 (right; left mirrored)",
@@ -338,6 +342,60 @@ def section_scale(secs, bb):
     return q, size(q)[1]
 
 
+def find_cutouts(solid, bb):
+    """Windows and cutouts of a plate: non-circular inner contours of a section at mid-thickness (edge chamfers do not
+    change them). Returns dicts with the id, the bounding box (x0, x1, y0, y1) and the smallest corner radius."""
+    zm = (bb.zmin + bb.zmax) / 2
+    sec = solid.intersect(cq.Solid.makeBox(bb.xlen + 20, bb.ylen + 20, 0.002, cq.Vector(bb.xmin - 10, bb.ymin - 10, zm - 0.001)))
+    cuts = []
+    for f in sec.Faces():
+        if f.geomType() != "PLANE" or f.normalAt().z < 0.999:
+            continue
+        for w in f.innerWires():
+            es = w.Edges()
+            if len(es) == 1 and es[0].geomType() == "CIRCLE":
+                continue
+            b = w.BoundingBox()
+            radii = [e._geomAdaptor().Circle().Radius() for e in es if e.geomType() == "CIRCLE"]
+            cuts.append({"box": (b.xmin, b.xmax, b.ymin, b.ymax), "r": min(radii) if radii else None})
+    cuts.sort(key=lambda c: (round(c["box"][2], 1), round(c["box"][0], 1)))
+    for i, c in enumerate(cuts, 1):
+        c["id"] = f"W{i}"
+    return cuts
+
+
+def cutout_rows(cuts):
+    return [(c["id"], f"{c['box'][0]:+.2f}", f"{c['box'][1]:+.2f}", f"{c['box'][2]:+.2f}", f"{c['box'][3]:+.2f}",
+             f"{c['box'][1] - c['box'][0]:.2f} x {c['box'][3] - c['box'][2]:.2f}",
+             f"R{c['r']:.2f}" if c["r"] else "–", "through") for c in cuts]
+
+
+def draw_cutout(ax, V, c, dims=True):
+    """Label and size of a window or cutout in a view from above."""
+    x0m, x1m, y0m, y1m = c["box"]
+    A, B = V.P((x0m, y0m, 0)), V.P((x1m, y1m, 0))
+    px0, px1, py0, py1 = min(A[0], B[0]), max(A[0], B[0]), min(A[1], B[1]), max(A[1], B[1])
+    text(ax, ((px0 + px1) / 2, (py0 + py1) / 2), c["id"], va="center", fs=8, weight="bold")
+    if not dims:
+        return
+    if px1 - px0 > 6:
+        linear(ax, (px0, py0), (px1, py0), "h", py0 + 4 if py1 - py0 > 14 else py0 - 4, f"{(px1 - px0) / V.s:.2f}",
+               inside=(px1 - px0) > 12, shift=0 if (px1 - px0) > 12 else 8)
+    if py1 - py0 > 6:
+        linear(ax, (px0, py0), (px0, py1), "v", px0 + 4 if px1 - px0 > 14 else px0 - 4, f"{(py1 - py0) / V.s:.2f}",
+               inside=(py1 - py0) > 12, shift=0 if (py1 - py0) > 12 else 8, tside="r" if px1 - px0 > 14 else "l")
+
+
+def in_detail(cfg, c):
+    x0m, x1m, y0m, y1m = c["box"]
+    return any(d["box"][0] <= x0m and x1m <= d["box"][1] and d["box"][2] <= y0m and y1m <= d["box"][3]
+               for d in cfg.get("details", []))
+
+
+CUT_COLS = [("Id", 10), ("x from", 18), ("x to", 18), ("y from", 18), ("y to", 18), ("Size (x by y)", 32),
+            ("Corner radius", 26), ("Depth", 236)]
+
+
 def draw_sheet1(cfg, solid, bb, rows, tb, n_sheets):
     flat = cfg.get("flat", False)
     if flat:
@@ -402,6 +460,12 @@ def draw_sheet1(cfg, solid, bb, rows, tb, n_sheets):
                 text(ax, (Pc[0] + 1.6, Pc[1] + 1.4), lab, ha="left", va="bottom", fs=6.3, color="0.15")
         else:
             TD.place_balloons(ax, items, ((x0 + x1) / 2, (y0 + y1) / 2), dist=7.0, avoid=[P for P, _ in items])
+    if flat:                                               # windows and cutouts: label and size in the view
+        for c in find_cutouts(solid, bb):
+            draw_cutout(ax, views["T"], c, dims=not in_detail(cfg, c))
+    for k, V in views.items():                             # angles of the slanted straight edges
+        if k != "E":
+            TD.auto_angles(ax, solid, V)
     for r in rows:                                         # tilted holes: label in the view closest to their axis
         h = r["hole"]
         if all(abs(h["d"] @ V.d) <= 0.99 for V in views.values()) and not any(abs(abs(c) - 1) < 1e-3 for c in h["d"]):
@@ -428,7 +492,7 @@ def draw_sheet1(cfg, solid, bb, rows, tb, n_sheets):
     return fig, s
 
 
-def draw_detail(fig, solid, rows, det, xdir, left, top, label_names):
+def draw_detail(fig, solid, rows, det, xdir, left, top, label_names, cuts=()):
     """Detail view (enlarged region of the view from above): its own axes clip the drawing to the region."""
     xa, xb, ya, yb = det["box"]
     q = det["scale"]
@@ -448,6 +512,9 @@ def draw_detail(fig, solid, rows, det, xdir, left, top, label_names):
             if left <= Pc[0] <= left + w and top - h <= Pc[1] <= top:
                 centre_mark(axd, Pc, r["hole"]["dia"] / 2 * q)
                 text(axd, (Pc[0] + 1.8, Pc[1] + 1.6), r["id"], ha="left", va="bottom", fs=7.2, color="0.15")
+    for c in cuts:
+        if xa <= c["box"][0] and c["box"][1] <= xb and ya <= c["box"][2] and c["box"][3] <= yb:
+            draw_cutout(axd, V, c)
     return (left, top - h, left + w, top)
 
 
@@ -494,7 +561,8 @@ def draw_sections(fig, ax, solid, bb, rows, cfg, secs, ss):
                 Pf = V.P(p3)
                 leader(ax, Pf, Pf + np.asarray(off, float), txt, ha="left" if off[0] >= 0 else "right")
         else:
-            x0, y0, x1, y1 = draw_detail(fig, solid, rows, it, xdir, xcur, ytop, cfg.get("label_names"))
+            x0, y0, x1, y1 = draw_detail(fig, solid, rows, it, xdir, xcur, ytop, cfg.get("label_names"),
+                                         find_cutouts(solid, bb) if cfg.get("flat") else ())
             ax.add_patch(TD.plt.Rectangle((x0 - 2, y0 - 2), x1 - x0 + 4, y1 - y0 + 4, fill=False, lw=TD.THIN, ls="--", zorder=8))
             view_label(ax, ((x0 + x1) / 2, y1 + 5), it["title"] + f" ({scale_text(it['scale'])})")
         xcur = x1 + 45
@@ -513,7 +581,8 @@ def draw_part(cfg, date):
     has_threads = any(r[5].startswith("M") for r in table)
     secs = cfg.get("sections", [])
     dets = cfg.get("details", [])
-    table_h = (len(table) + 1) * 4.6 + 14
+    cuts = find_cutouts(solid, bb) if cfg.get("flat") else []
+    table_h = (len(table) + 1) * 4.6 + 14 + ((len(cuts) + 1) * 4.6 + 14 if cuts else 0)
     notes_h = 4.0 * sum(len(textwrap.wrap(s, 112)) for s in note_lines(cfg, has_threads)) + 16
     full = [s_ for s_ in secs if not s_.get("clip")]
     ss, sec_h = section_scale(full, bb) if full else (2.0, 0.0)
@@ -543,6 +612,10 @@ def draw_part(cfg, date):
     text(ax, (24, y_table + 3), "Holes (x, y, z of the start point in the drawing frame; O: origin of the drawing frame)",
          ha="left", fs=8, weight="bold")
     y_end = TD.hole_table(ax, 24, y_table, table, cols=HOLE_COLS) if table else y_table - 6
+    if cuts:
+        text(ax, (24, y_end - 8), "Windows and cutouts (inner contours of the plate; x, y in the drawing frame)",
+             ha="left", fs=8, weight="bold")
+        y_end = TD.hole_table(ax, 24, y_end - 11, cutout_rows(cuts), cols=CUT_COLS)
     notes_block(ax, cfg, (24, min(y_end - 10, max(150.0, 14 + notes_h))), has_threads)
     pdf = f"{cfg['folder']}/{cfg['stem']}_technical_drawing.pdf"
     TD.save(figs, pdf, f"{cfg['folder']}/{cfg['stem']}_technical_drawing")

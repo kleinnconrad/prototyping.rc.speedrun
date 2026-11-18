@@ -593,3 +593,62 @@ def place_balloons(ax, items, centre, dist=8.0, avoid=()):
             best = P + dist * _unit(v if np.linalg.norm(v) > 1e-6 else (1, 1))
         placed.append(best)
         balloon(ax, P, best, label)
+
+
+# ------------------------------------------------------------------ angles
+def angle_dim(ax, E, u, ref, r, label):
+    """Angular dimension at the vertex E (paper) between the unit directions ref and u: arc of radius r with arrows,
+    a thin reference line along ref and the text at the middle of the arc."""
+    E, u, ref = (np.asarray(v, float) for v in (E, u, ref))
+    a0, a1 = np.arctan2(ref[1], ref[0]), np.arctan2(u[1], u[0])
+    da = (a1 - a0 + np.pi) % (2 * np.pi) - np.pi                    # shorter way from ref to u
+    ts = a0 + np.linspace(0, da, 40)
+    ax.plot(E[0] + r * np.cos(ts), E[1] + r * np.sin(ts), color="k", lw=THIN, zorder=5)
+    ax.plot([E[0], E[0] + (r + 3) * ref[0]], [E[1], E[1] + (r + 3) * ref[1]], color="k", lw=THIN, zorder=5)
+    s = np.sign(da) or 1.0
+    for t, sg in ((a0, -s), (a0 + da, s)):                           # arrows tangent to the arc, pointing outward
+        tip = E + r * np.array([np.cos(t), np.sin(t)])
+        tang = sg * np.array([-np.sin(t), np.cos(t)])
+        arrow(ax, tip, tang, size=2.2)
+    tm = a0 + da / 2
+    P = E + (r + 2.2) * np.array([np.cos(tm), np.sin(tm)])
+    text(ax, P, label, ha="left" if np.cos(tm) > 0.2 else ("right" if np.cos(tm) < -0.2 else "center"),
+         va="bottom" if np.sin(tm) > 0.2 else ("top" if np.sin(tm) < -0.2 else "center"), fs=7.8)
+
+
+def auto_angles(ax, shape, view, min_len=10.0, max_groups=4, r_max=12.0):
+    """Angles of the slanted straight edges of a view (paper length at least min_len): one dimension per distinct angle
+    (at the longest edge), measured to the horizontal (up to 45 degrees) or to the vertical. Returns the angles."""
+    vis, _ = hlr(shape, view)
+    segs = []
+    for line in vis:
+        if len(line) != 2:
+            continue
+        P1, P2 = view.uv2paper(*line[0]), view.uv2paper(*line[1])
+        d = P2 - P1
+        L = np.linalg.norm(d)
+        if L < min_len:
+            continue
+        th = np.degrees(np.arctan2(abs(d[1]), abs(d[0])))
+        if th < 3.0 or th > 87.0:
+            continue
+        segs.append((L, th, P1, P2))
+    groups = {}
+    for L, th, P1, P2 in segs:
+        key = round(min(th, 90 - th) * 2) / 2 * (1 if th <= 45 else -1)
+        if key not in groups or L > groups[key][0]:
+            groups[key] = (L, th, P1, P2)
+    out = []
+    for key, (L, th, P1, P2) in sorted(groups.items(), key=lambda kv: -kv[1][0])[:max_groups]:
+        E, F = (P1, P2) if P1[1] <= P2[1] else (P2, P1)               # vertex at the lower end
+        u = (F - E) / np.linalg.norm(F - E)
+        if th <= 45:
+            ref = np.array([np.sign(u[0]) or 1.0, 0.0])
+            val = th
+        else:
+            ref = np.array([0.0, 1.0])
+            val = 90 - th
+        lab = f"{val:.0f}°" if abs(val - round(val)) < 0.05 else f"{val:.1f}°"
+        angle_dim(ax, E, u, ref, min(r_max, 0.6 * L), lab)
+        out.append(val)
+    return out

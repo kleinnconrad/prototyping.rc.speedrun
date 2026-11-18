@@ -28,6 +28,7 @@ import numpy as np
 import cadquery as cq
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import technical_drawing as TD  # noqa: E402
 from technical_drawing import (A3, SCALE, LABEL_FS, DENSITY_7075, AUTHOR, View, draw_view, draw_section,  # noqa: E402
                                linear, leader, centre_line, centre_mark, balloon, view_label, section_marker,
                                hole_table, sheet, iso_inset, origin_mark, view_arrow, save, text)
@@ -158,6 +159,8 @@ def lower_drawing(pdf_path, png_stem, lp, date):
     S = View((-1, 0, 0), (0, -1, 0), (248, 205))
     for V in (F, T, S):
         draw_view(ax, solid, V)
+    for V in (F, S):
+        TD.auto_angles(ax, solid, V, max_groups=2)
     xl, xr = F.P((bb.xmin, 0, 0))[0], F.P((bb.xmax, 0, 0))[0]
     view_label(ax, (85, 258), "Front view (from the outer end)")
     view_label(ax, (S.P((0, 0, 0))[0], 258), "Side view (from the left, -x)")
@@ -273,6 +276,8 @@ def upper_drawing(pdf_path, png_stem, lp, up, date):
     S = View((-1, 0, 0), (0, -1, 0), (248, 196), om=(0, 0, zpf))
     for V in (F, T, S):
         draw_view(ax, solid, V)
+    for V in (F, S):
+        TD.auto_angles(ax, solid, V, max_groups=2)
     xl, xr = F.P((bb.xmin, 0, zpf))[0], F.P((bb.xmax, 0, zpf))[0]
     ztop = F.P((0, 0, bb.zmax))[1]
     view_label(ax, (85, ztop + 15), "Front view (from the outer end)")
