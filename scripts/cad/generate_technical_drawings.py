@@ -60,8 +60,8 @@ def csv_names(path, z=0.0):
         return [(r["id"], (float(r["x_mm"]), float(r["y_mm"]), z)) for r in csv.DictReader(f)]
 
 
-def chassis_names():
-    d = json.load(open("cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"))
+def chassis_names(path="cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"):
+    d = json.load(open(path))
     return [(h["id"], (h["x"], h["y"], 0.0)) for h in d["holes"]]
 
 
@@ -164,7 +164,7 @@ def parts():
                             callouts=[(Jc + kd * 12.6 + kn * 2.5, "Ø5.0 H7 (2x), guide sleeves", (32, 6)),
                                       (Jc - kd * 16.5, f"kingpin axis, {rgp['caster']:g} deg to z (caster)", (36, -2)),
                                       (Jc - kd * 10.8 + kn * 3.5, "counterbore Ø7.0 x 0.55", (18, 4)),
-                                      (Jc - kd * 15.4 - kn * 2.85, "pocket Ø5.7 (screw head)", (-16, -10)),
+                                      (Jc - kd * 15.15 + kn * 4.5, "bottom face square to the kingpin axis, flush with the guide sleeve", (12, -24)),
                                       (Jc, "O' (axle, CVD joint)", (44, -16))])],
              notes=[f"Kingpin bores Ø5.0 for the flanged guide sleeves Ø4.95 (fit without pressing): Ø5.0 H7 (proposal). "
                     f"Kingpin axis {rgp['caster']:g} deg to z (caster, top toward -y), x = {kx:.2f} from O; at the height of "
@@ -204,6 +204,32 @@ def parts():
              notes=["Blind holes Ø2.5 in the bosses on H34, H35 and H36: thread M3 cut by hand or formed by the screws "
                     "M3x6 (countersunk, from below through the chassis plate).", "Hexagon recesses 7.06 across the flats "
                     "in the ears: fit of the body posts.", "Orient the part in the printer for a flat bottom face."]),
+        dict(key="dual_motor_mount", folder="cad/studies/dual_motor", step="dual_motor_mount_study.step",
+             stem="dual_motor_mount_study", title="Dual motor mount (study)", number="DM-M", material="EN AW-7075-T6",
+             density=2.81, density_txt="7075", quantity="1", tol=GENERAL_CNC, edges=EDGES_BREAK,
+             status="study, not part of the build",
+             view_callouts=[("F", (0.0, 0.0, 17.2 - 5.3), "U-notch 10.6 (bearing 5x10x4)", (2, 46.2)),
+                            ("F", (23.8, 0.0, 17.2 + 6.5), "long holes 13.0 (motor shafts, 2x)", (16, 31.0)),
+                            ("F", (25.0, 0.0, 28.4 + 1.6), "long holes 3.2 (motor screws, 4x)", (44, 10.5))],
+             notes=["Study (not part of the build): the verified motor mount (drawing RC-SR-MM) with the tall part "
+                    "mirrored to the left side instead of the hook beside the bearing seat; frame of the motor mount "
+                    "(x = 0 pinion axis, y = 0 middle of the plate, z = 0 bottom face).",
+                    "U-shaped notch 10.6 wide for the bearing 5x10x4 of the rear pinion shaft, lip 1.0 wide (opening Ø8.0); "
+                    "cap (drawing RC-SR-MM-C) and its 2 screws M3x18 unchanged.",
+                    "Threads M3 from below for the screws through the holes H09, H10 and H37 of the chassis plate (study)."]),
+        dict(key="chassis_plate_dual_motor", folder="cad/studies/dual_motor", step="chassis_plate_dual_motor_study.step",
+             stem="chassis_plate_dual_motor_study", title="Chassis plate for the dual motor setup (study)", number="CP-DM",
+             flat=True, rotate=True, material="EN AW-6082-T6, plate 2.0 mm", density=2.70, density_txt="6082",
+             quantity="1", tol=GENERAL_CNC, edges="edges broken 0.1 to 0.2", status="study, not part of the build",
+             names=chassis_names("cad/studies/dual_motor/chassis_plate_dual_motor_study_geometry.json"), label_names=True,
+             end_labels=("End B (rear)", "End A (front)"),
+             notes=["Study (not part of the build): the speedrun chassis plate (wide) with the longer motor window "
+                    "(drawing RC-SR-CP), with the right motor window mirrored to the left side (x = -40.06 to -16.59, "
+                    "y = 65.63 to 128.90, corner radius 3.0) and the new hole H37 (H09 mirrored, x = -45.33).",
+                    "The holes H11, H12, H14 and H15 are closed (H12 and H15 lie in the new window, the countersinks of "
+                    "H11 and H14 would open into it).",
+                    "Countersinks Ø6.2 x 90 deg on the bottom face for countersunk screws M3 (ISO 10642). Hole names as "
+                    "in the geometry data of the plate (study)."]),
         dict(key="wishbone_front", folder="cad/parts/wishbone", step="wishbone_front_T410R.step", stem="wishbone_front_T410R",
              title="Front wishbone (used on both sides)", number="WB-F",
              dims=[("T", (0, -16.5, 0), (49.7, -16.5, 0), "h", "below", "49.70 (axis to axis)")], material="To be defined (original part: plastic)",
