@@ -52,7 +52,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/chassis_plate_speedrun_wide`**: Wide variant of the chassis plate for speedruns (STEP, STL, PDF template, geometry data)
   * **`/chassis_plate_speedrun_wide_motor10`**: Wide variant with a longer motor window for a 3660 motor (STEP, STL, DXF, PDF template, geometry data)
   * **`/top_brace_speedrun`**: New design of the top brace that matches the bulkheads of this project (STEP, STL, DXF, PDF templates, geometry data, hole table, test print STL files)
-* **`/bulkhead`**: CAD data of the bulkheads (gear boxes): lower bulkhead, upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets).
+* **`/bulkhead`**: CAD data of the bulkheads (gear boxes): lower bulkhead, upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets, technical drawings; the drawings are shown in [`bulkhead/readme.md`](bulkhead/readme.md)).
 * **`/shock_tower`**: New design of the front and the rear shock tower that match the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
 * **`/front_splitter`**: Speedrun front splitter at End A, one part: the body post mount enlarged to the splitter (STEP, STL, test print STL, parameter file, measurement sheet).
 * **`/parts`**: Drive line, pivot blocks, wishbones and camber links: own design of the owner, partly based on the T410R.
@@ -388,6 +388,7 @@ All files are stored in the directory `/bulkhead`. The STEP and STL files and th
 | `testprint_bulkhead_lower.stl` | STL (binary) | Test print variant (see [test print of the lower bulkhead](#measurement-basis-and-test-print-of-the-lower-bulkhead)) |
 | `bulkhead_lower_parameters.json` | JSON | All dimensions of the model, each with its source and a note |
 | `bulkhead_lower_measurement_sheet.pdf` | PDF (A4, 4 pages) | Caliper measurement sheet with the caliper values and the open values (see [caliper measurement sheet](#measurement-basis-and-test-print-of-the-lower-bulkhead)) |
+| `bulkhead_lower_technical_drawing.pdf` | PDF (A3, 2 sheets), PNG per sheet | Technical drawing for the CNC order: views, sections, hole table, notes (see [`bulkhead/readme.md`](bulkhead/readme.md)) |
 
 | Property | Value |
 |:---|:---|
@@ -599,6 +600,7 @@ All files are stored in the directory `/bulkhead`. The files are generated from 
 | `bulkhead_assembly_T410R.step` | STEP (AP214) | Assembly of the lower and the upper part |
 | `bulkhead_upper_parameters.json` | JSON | Dimensions of the upper part, each with its source and a note. The shared dimensions are read from `bulkhead_lower_parameters.json`. |
 | `bulkhead_upper_measurement_sheet.pdf` | PDF (A4, 2 pages) | Measurement sheet of the original upper part (see below) |
+| `bulkhead_upper_technical_drawing.pdf` | PDF (A3, 2 sheets), PNG per sheet | Technical drawing for the CNC order: views, sections, hole table, notes (see [`bulkhead/readme.md`](bulkhead/readme.md)) |
 
 **Measurement sheet of the original upper bulkhead**
 
@@ -1139,6 +1141,7 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
 | `generate_bulkhead_upper.py` | Parameter files of the upper and the lower bulkhead | STEP and STL file of the upper part, test print STL file, assembly STEP file, interference check, geometry checks | cadquery |
 | `generate_bulkhead_upper_drawings.py` | Parameter files, photos of the original upper part | Preview image `photos/cad_bulkhead_upper_preview.png` and measurement sheet of the original upper part (PDF) | cadquery, matplotlib |
+| `generate_bulkhead_technical_drawings.py` | STEP, STL and parameter files of the lower and the upper bulkhead | Technical drawings of both parts (PDF, A3, 2 sheets each, and one PNG per sheet) in `/bulkhead` | cadquery, matplotlib |
 | `mesh_views.py` | None | Helper module: shaded views of STL files and assemblies, used by the drawing scripts of the bulkheads | matplotlib |
 
 ### Regenerating the files
@@ -1181,6 +1184,7 @@ python scripts/cad/generate_bulkhead_lower.py
 python scripts/cad/generate_bulkhead_drawings.py
 python scripts/cad/generate_bulkhead_upper.py
 python scripts/cad/generate_bulkhead_upper_drawings.py
+python scripts/cad/generate_bulkhead_technical_drawings.py
 python scripts/cad/generate_top_brace_speedrun.py
 python scripts/cad/generate_shock_towers.py
 python scripts/cad/generate_pivot_blocks.py
