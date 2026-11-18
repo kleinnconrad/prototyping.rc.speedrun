@@ -7,6 +7,7 @@ Study of a dual motor setup on the speedrun chassis plate (wide): a dual motor m
 * [Checks](#checks)
 * [Electronics layout](#electronics-layout)
 * [Open points](#open-points)
+* [Technical drawings](#technical-drawings)
 * [Files](#files)
 * [Regenerating the files](#regenerating-the-files)
 
@@ -72,6 +73,21 @@ One battery and one ESC per motor; both ESCs get the same throttle signal. Pictu
 * Load: at full power of both motors, the torque on the spur gear, the rear pinion shaft and the drive line doubles (not evaluated).
 * The motors, the pinions (face width, hub) and the gaps are simple bodies or assumptions.
 
+## Technical drawings
+Technical drawings of the 2 parts of the study for a later order (A3, first angle projection; the STEP file is the master geometry, dimensions that are not shown are taken from the model). The views are projected from the STEP files, the hole table is read from them. The cap of the mount is unchanged: drawing in [`cad/parts/motor_mount`](../../parts/motor_mount/readme.md).
+
+**Dual motor mount (study)**, EN AW-7075-T6, scale 2:1. Sheet 1: views, main dimensions, callouts of the U-notch and the long holes, labels of the holes. Sheet 2: hole table (threads M3 from below for H09, H10 and H37, threads M3 from above for the screws of the cap) and notes.
+
+![Dual motor mount (study), technical drawing, sheet 1](dual_motor_mount_study_technical_drawing_sheet_1.png)
+
+![Dual motor mount (study), technical drawing, sheet 2](dual_motor_mount_study_technical_drawing_sheet_2.png)
+
+**Chassis plate for the dual motor setup (study)**, EN AW-6082-T6, plate 2.0 mm, scale 1:1. Sheet 1: view from above with the 2 motor windows and the hole names (H11, H12, H14 and H15 closed, H37 new). Sheet 2: hole table with the countersinks and notes.
+
+![Chassis plate for the dual motor setup (study), technical drawing, sheet 1](chassis_plate_dual_motor_study_technical_drawing_sheet_1.png)
+
+![Chassis plate for the dual motor setup (study), technical drawing, sheet 2](chassis_plate_dual_motor_study_technical_drawing_sheet_2.png)
+
 ## Files
 | File | Content |
 |:---|:---|
@@ -83,6 +99,8 @@ One battery and one ESC per motor; both ESCs get the same throttle signal. Pictu
 | `dual_motor_study_drawing.png` | Dual motor mount from the motor side, chassis plate (study) with the closed holes and the new hole, check results |
 | `dual_motor_study_electronics.png` | Electronics layout: overview, top view, close-up of the right side and the wiring diagram |
 | `generate_dual_motor_study.py` | Script that generates the parts, the assembly and the first 2 pictures |
+| `dual_motor_mount_study_technical_drawing.pdf`, `..._sheet_1.png`, `..._sheet_2.png` | Technical drawing of the dual motor mount (2 sheets A3) |
+| `chassis_plate_dual_motor_study_technical_drawing.pdf`, `..._sheet_1.png`, `..._sheet_2.png` | Technical drawing of the chassis plate (study), 2 sheets A3 |
 | `generate_dual_motor_electronics.py` | Script that generates the picture of the electronics layout from the assembly of the study |
 
 ## Regenerating the files
@@ -91,6 +109,8 @@ The script reads the parameters of the drive line, the geometry data of the spee
 ```bash
 python cad/studies/dual_motor/generate_dual_motor_study.py
 python cad/studies/dual_motor/generate_dual_motor_electronics.py
+python scripts/cad/generate_technical_drawings.py --part dual_motor_mount
+python scripts/cad/generate_technical_drawings.py --part chassis_plate_dual_motor
 ```
 
 * Options of `generate_dual_motor_study.py`: `--out <directory>` writes the files to another directory, `--no-picture` skips the pictures.

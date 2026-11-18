@@ -61,13 +61,13 @@ The speedrun chassis is designed in this project for speeds over 130 km/h. It co
 
 | Part | Quantity | Status | Mass |
 |:---|---:|:---|---:|
-| Speedrun chassis plate (wide) with longer motor window | 1 | $\color{green}\checkmark$ Verified | 217 g (aluminium 6082) |
-| Lower bulkhead | 2 | $\color{green}\checkmark$ Verified | 2 x 34 g (7075) |
-| Upper bulkhead | 2 | $\color{green}\checkmark$ Verified | 2 x 53 g (7075) |
+| Speedrun chassis plate (wide) with longer motor window | 1 | $\color{green}\checkmark$ Verified; ordered as CNC part (aluminium 6082) | 217 g (aluminium 6082) |
+| Lower bulkhead | 2 | $\color{green}\checkmark$ Verified; ordered as MJF 3D print (nylon PA12) | 2 x 34 g (7075) |
+| Upper bulkhead | 2 | $\color{green}\checkmark$ Verified; ordered as MJF 3D print (nylon PA12) | 2 x 53 g (7075) |
 | Speedrun top brace | 1 | $\color{green}\checkmark$ Verified | 14 g (carbon) |
 | Speedrun front shock tower | 1 | $\color{green}\checkmark$ Verified | 4.4 g (carbon) |
 | Speedrun rear shock tower | 1 | $\color{green}\checkmark$ Verified | 7.6 g (carbon) |
-| Speedrun front splitter (one part: body post mount enlarged to the splitter) | 1 | $\color{green}\checkmark$ Verified | 48 g (PETG) |
+| Speedrun front splitter (one part: body post mount enlarged to the splitter) | 1 | $\color{green}\checkmark$ Verified; ordered as MJF 3D print (nylon PA12) | 48 g (PETG) |
 | **Total** | | | **465 g** |
 
 Further own parts (own design, partly based on the T410R, not in the mass total):

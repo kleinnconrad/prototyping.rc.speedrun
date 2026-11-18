@@ -207,8 +207,8 @@ def corners(p, lp):
 
 # ------------------------------------------------------------------ front corner
 def top_face(p):
-    """Local z (kingpin frame) of the top face of the upper arm of the C-hub (square to the kingpin axis): seat of the
-    flange of the top guide sleeve."""
+    """Local z (kingpin frame) of the top face of the upper arm of the C-hub (square to the kingpin axis); the top
+    guide sleeve (inserted from below) stands guide_sleeve_proud above it."""
     kz1, gap, t_up = p["knuckle"][1], p["front_c_hub"][3], p["front_c_hub"][4]
     return kz1 + gap + t_up
 
@@ -222,11 +222,11 @@ def kingpin_y(p, O, outw):
 def front_camber_ball(p, side=1):
     """Centre of the outer ball of the front camber link (chassis coordinates): the camber ball stud is the top
     kingpin (as the original, manual step 15: ball stud 4.8x9 through the flanged guide sleeve into the knuckle),
-    so the ball sits on the kingpin axis above the flange of the sleeve. side: 1 right, -1 left."""
+    so the ball sits on the kingpin axis above the upper end of the sleeve. side: 1 right, -1 left."""
     ap = W.load_params(W.PARAMS)
     O = W.arm_point("front", 1, (ap["front_arm_length"], 0, 0), W.pin_lines())
     a = math.radians(p["caster"])                                         # front: top toward the middle (outw = +1)
-    zl = top_face(p) + p["guide_sleeve"][3] + p["ball_offset"]
+    zl = top_face(p) + p["guide_sleeve_proud"] + p["ball_offset"]                     # ball stud on the end of the sleeve
     ball = np.array([p["kingpin_x"], kingpin_y(p, O, 1) - math.sin(a) * zl,
                      -p["ride_height"][0] + p["wheel_r"] + math.cos(a) * zl])
     return ball * np.array([side, 1.0, 1.0])
@@ -263,37 +263,45 @@ def front_corner(p, d, c):
     zu = r_ring + 1.0                                                     # bottom of the upper arm: 1.0 above the ring
     rs = r_boss + 0.5                                                     # U-slot around the upper boss
     zf = top_face(p)                                                                      # top face of the upper arm
+    d_sl, d_sl_in, d_fl, t_fl, h_d, h_h = p["guide_sleeve"]
+    proud = p["guide_sleeve_proud"]                                                       # sleeves proud of the C-hub
+    r_sf = d_fl / 2 + 0.3                                                                 # counterbores of the feet
+    zst = zf + proud                                                                      # upper end of the top sleeve
+    l_sh = zst - (kz1 + t_fl)                                                             # shank of the sleeves
+    zl1 = kz0 - t_fl                                                                      # lower foot: zl1 .. kz0
+    zl0 = zl1 - l_sh                                                                      # lower end of the lower sleeve
     # C-hub in 2 frames (owner: the caster lies between the bore of the outer hinge pin and the kingpin bores):
     # the lug on the outer hinge pin, the lower arm and the narrow back plate lie between the rails of the
     # wishbone (chassis coordinates, centred on the middle of the wishbone); the wide back plate (horizontal bottom
     # face at z_w) and the upper arm are built in the frame of the kingpin axis (parallel to the axis and centred on
     # it; top face square to the axis). The upper arm is solid down to 1.0 above the ring of the knuckle, with a
     # U-slot around the upper boss (open toward the wheel: the knuckle slides in); space of the knuckle and U-slot
-    # square to the kingpin
-    hub = fuse(cyl_y(3.6, yc - 6.5, yc + 6.5, O[0], O[2]),
-               box(bx0, O[0], yc - w_low / 2, yc + w_low / 2, O[2], J[2] - 5.0),
-               box(bx0, bx1, yc - w_low / 2, yc + w_low / 2, O[2], z_w + 0.5),
-               K(box(bx0 - J[0], bx1 - J[0], -w_back / 2, w_back / 2, -20.0, zf)).intersect(
-                   box(bx0 - 1.0, bx1 + 1.0, yc - 30.0, yc + 30.0, z_w, J[2] + 30.0)),
-               K(box(bx0 - J[0], 3.5, -w_arm / 2, w_arm / 2, 0.0, zf)))
+    # square to the kingpin. Bottom face of the lower arm and of the narrow back plate square to the kingpin axis
+    # (caster angle), 0.1 above the lower end of the lower guide sleeve: the sleeve stands 0.1 proud, so the head of
+    # the screw bears only on the sleeve (owner); the tube on the outer hinge pin stays complete. The top face of the
+    # upper arm (zf) lies 0.1 below the upper end of the top sleeve (owner) for the same reason (ball stud)
+    body = fuse(box(bx0, O[0], yc - w_low / 2, yc + w_low / 2, O[2] - 6.0, J[2] - 5.0),
+                box(bx0, bx1, yc - w_low / 2, yc + w_low / 2, O[2] - 6.0, z_w + 0.5),
+                K(box(bx0 - J[0], bx1 - J[0], -w_back / 2, w_back / 2, -20.0, zf)).intersect(
+                    box(bx0 - 1.0, bx1 + 1.0, yc - 30.0, yc + 30.0, z_w, J[2] + 30.0)),
+                K(box(bx0 - J[0], 3.5, -w_arm / 2, w_arm / 2, 0.0, zf)))
+    z_bot = zl0 + proud                                                                   # bottom face (local z)
+    body = body.cut(K(box(-60.0, 60.0, -60.0, 60.0, -80.0, z_bot)))                       # bottom face: caster angle
+    hub = fuse(cyl_y(3.6, yc - 6.5, yc + 6.5, O[0], O[2]), body)
     space = K(box(xb, 30, -30, 30, kz0 - gap, zu)).cut(cyl_y(3.6, yc - 6.5, yc + 6.5, O[0], O[2]))
     hub = hub.cut(space)                                                                  # space of the knuckle (tube stays)
     hub = hub.cut(K(fuse(cyl_z(rs, zu - 0.1, kz1 + gap, 0, 0), box(0, 30, -rs, rs, zu - 0.1, kz1 + gap))))  # U-slot
     hub = hub.cut(cyl_y(1.5, yc - 8, yc + 8, O[0], O[2]))                                  # outer hinge pin
     hub = hub.cut(cyl_x(r_pass, bx0 - 1, bx1 + 1, J[1], J[2]))                            # passage of the CVD
-    # bores 5.0 through both arms for the 2 flanged guide sleeves (owner; manual step 15); top: flange outside on the
-    # top face of the upper arm (square to the kingpin axis); bottom: flange inside in a counterbore of the lower arm
-    # (thrust face toward the lower boss), pocket below the lower arm for the head of the screw M3x8 (the outer hinge
-    # pin lies 6.75 beside the kingpin axis: the bore and the pocket stay outside the tube on the pin)
-    d_sl, d_sl_in, d_fl, t_fl, h_d, h_h = p["guide_sleeve"]
-    r_sf = d_fl / 2 + 0.3                                                                 # counterbore of the flange
-    l_sh = zf - kz1                                                                       # shank of the sleeve
-    zl1 = kz0 - t_fl                                                                      # lower flange: zl1 .. kz0
-    zl0 = zl1 - l_sh                                                                      # lower end of the sleeve
+    # bores 5.0 through both arms for the 2 flanged guide sleeves (owner; manual step 15), both inserted from the
+    # knuckle side (owner): the foot of each sleeve lies in a counterbore of the arm toward the boss of the knuckle
+    # (thrust face), the shank stands 0.1 proud of the top face (top sleeve, under the ball stud) and of the bottom
+    # face (lower sleeve, under the head of the screw M3x8), both faces square to the kingpin axis (the outer hinge pin lies 6.75 beside the
+    # kingpin axis: the bore and the head stay outside the tube on the pin)
     hub = hub.cut(K(cyl_z(2.5, kz1 + gap - 1.0, zf + 1.0, 0, 0)))                          # bore 5.0, top
     hub = hub.cut(K(cyl_z(2.5, zl0 - 1.0, kz0 - gap + 1.0, 0, 0)))                         # bore 5.0, bottom (through)
-    hub = hub.cut(K(cyl_z(r_sf, zl1 - 0.05, kz0 - gap + 1.0, 0, 0)))                       # counterbore, lower flange
-    hub = hub.cut(K(cyl_z(h_d / 2 + 0.1, zl0 - 30.0, zl0 + 0.1, 0, 0)))                    # pocket, head of the screw
+    hub = hub.cut(K(cyl_z(r_sf, zl1 - 0.05, kz0 - gap + 1.0, 0, 0)))                       # counterbore, lower foot
+    hub = hub.cut(K(cyl_z(r_sf, kz1 + gap - 1.0, kz1 + t_fl + 0.05, 0, 0)))                 # counterbore, upper foot
     hub = hub.cut(cyl_z(TAP / 2, O[2] - 5, O[2], O[0], yc))                               # thread M3, grub screw
     # knuckle (kingpin frame) as the T410R knuckle (measured by the owner, manual step 15): ring for 2 bearings
     # 5x10x4 from the kingpin axis outward, pressed in from both ends against a lip; from the inner end a wider
@@ -331,15 +339,15 @@ def front_corner(p, d, c):
     # flanged guide sleeve, which it clamps to the lower boss (the screw ends inside the boss, a longer screw reaches
     # into the entry bore). Knuckle, sleeves and screws turn together in the bores 5.0 of the C-hub; threads modelled
     # with the core diameter in the bores 2.7
-    zt0 = zf + t_fl                                                                      # face of the ball stud
+    zt0 = zst                                                                            # face of the ball stud
     pins = cq.Compound.makeCompound([K(fuse(cyl_z(d_kp / 2 - 0.001, zl0, zl0 + 8.0, 0, 0),
                                             cyl_z(h_d / 2, zl0 - h_h, zl0, 0, 0))),               # screw M3x8, bottom
                                      K(stud(np.array([0, 0, zt0 + p["ball_offset"]]), np.array([0, 0, 1.0]),
                                             p["ball_offset"], 9.0))])                            # ball stud 4.8x9, top
     c["camber_ball"] = J + R @ np.array([0, 0, zt0 + p["ball_offset"]])
     sleeves = cq.Compound.makeCompound([
-        K(fuse(cyl_z(d_sl / 2, kz1, zf, 0, 0), cyl_z(d_fl / 2, zf, zf + t_fl, 0, 0)).cut(
-            cyl_z(d_sl_in / 2, kz1 - 1, zf + t_fl + 1, 0, 0))),                                 # flanged, top
+        K(fuse(cyl_z(d_fl / 2, kz1, kz1 + t_fl, 0, 0), cyl_z(d_sl / 2, kz1 + t_fl - 0.01, zst, 0, 0)).cut(
+            cyl_z(d_sl_in / 2, kz1 - 1, zst + 1, 0, 0))),                                       # flanged, top (from below)
         K(fuse(cyl_z(d_sl / 2, zl0, zl1, 0, 0), cyl_z(d_fl / 2, zl1, kz0, 0, 0)).cut(
             cyl_z(d_sl_in / 2, zl0 - 1, kz0 + 1, 0, 0)))])                                     # flanged, bottom
     # walls to the bore of the outer hinge pin (in the plane of the axle: kingpin axis to hinge pin axis along x)
@@ -352,13 +360,14 @@ def front_corner(p, d, c):
                       for z in np.arange(z0, min(z1, kz0 - gap) + 1e-9, 0.02) for t in np.linspace(0, 2 * math.pi, 181)])
         q = q[q[:, 2] >= O[2]]
         return round(float(yc + w_low / 2 - q[:, 1].max()), 2), round(float(q[:, 1].min() - (yc - w_low / 2)), 2)
-    c["kingpin_layout"] = {"top face (local z)": zf, "sleeve shank": l_sh, "lower flange": (zl1, kz0), "lower end": zl0,
+    c["kingpin_layout"] = {"top face (local z)": zf, "upper end of the top sleeve": zst, "sleeve shank": round(l_sh, 3), "lower flange": (zl1, kz0), "lower end": zl0,
                            "bore 5 to the tube on the hinge pin": round(dk - 2.5 - 3.6, 2),
-                           "head pocket to the tube on the hinge pin": round(dk - h_d / 2 - 0.1 - 3.6, 2),
+                           "screw head to the tube on the hinge pin": round(dk - h_d / 2 - 3.6, 2),
                            "screw end (local z)": zl0 + 8.0,
                            "walls of the lower arm (front, rear)": {"bore 5.0": walls(2.5, zl0 - 1.0, kz0),
-                                                                    "counterbore": walls(r_sf, zl1 - 0.05, kz0),
-                                                                    "head pocket": walls(h_d / 2 + 0.1, zl0 - 30.0, zl0 + 0.1)}}
+                                                                    "counterbore": walls(r_sf, zl1 - 0.05, kz0)},
+                           "bottom face (local z, square to the kingpin axis)": round(z_bot, 2),
+                           "sleeve proud of the bottom face": round(z_bot - zl0, 2)}
     kb = J + R @ kb_l
     c["kb"] = kb
     hinge = cyl_y(1.5, yc - 13, yc + 13, O[0], O[2])
