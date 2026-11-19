@@ -673,7 +673,8 @@ def steering(p, cl, c, kb):
     zb0, zb1, wb, d_tw, d_acc, w_bb = p["bridge"]
     br_D, br_B, br_Df, br_Bf, sh_t, sh_D = p["bridge_bearings"]
     z_post = PLATE_T + h_post                                                                  # end of the journal
-    assert abs(bz1 - (z_post - play)) < 1e-6 and abs(bz1 - bz0 - (5.0 + lip_t)) < 1e-6, "bearing stack on the post"
+    assert abs(bz1 - z_post) < 1e-6 and abs(bz1 - bz0 - (5.0 + lip_t)) < 1e-6, "bearing stack on the post, journal flush"
+    t_top = 6.0 - 0.5 - play                                     # full thread on top: screw M3x6 + washer 0.5 bottoms there
     P = np.array([21.7, 242.69])
     zt = bz1 + p["ball_offset"]
     K = kb
@@ -707,16 +708,18 @@ def steering(p, cl, c, kb):
             s = s.cut(cyl_z(hole_d / 2, bz0 - 1, bz1 + 1, q[0], q[1]))                     # through holes
             s = s.cut(hex_z(pk_af, bz0 - 1, bz0 + pk_h, q[0], q[1]))                       # hex pockets from below
         return s.clean()
-    # post: hexagon, shank up to the shoulder (collar) under the inner ring of the lower bearing, journal 0.05 longer than
-    # the bearing stack: the screw M3x6 with washer on top is tightened against the end of the journal (free bellcrank)
+    # post: hexagon, shank up to the shoulder (collar) under the inner ring of the lower bearing, journal flush with the
+    # bearing stack; blind thread M3 on top with a full thread of t_top: the screw M3x6 with washer bottoms at the end of the
+    # thread and cannot be screwed in fully, the washer stays play above the journal (free bellcrank)
     post = fuse(hex_z(af, PLATE_T, PLATE_T + hpost, P[0], P[1]), cyl_z(d_sh / 2, PLATE_T + hpost - 0.1, bz0, P[0], P[1]),
                 cyl_z(jd / 2, bz0 - 0.1, z_post, P[0], P[1]))
-    post = post.cut(cyl_z(TAP / 2, PLATE_T - 1, PLATE_T + 6, P[0], P[1])).cut(cyl_z(TAP / 2, z_post - 6, z_post + 1, P[0], P[1]))
+    post = post.cut(cyl_z(TAP / 2, PLATE_T - 1, PLATE_T + 6, P[0], P[1])).cut(cyl_z(TAP / 2, z_post - t_top - 1.0, z_post + 1, P[0], P[1]))
     brg = cq.Compound.makeCompound([cyl_z(4.0, z0, z0 + 2.5, P[0], P[1]).cut(cyl_z(2.5, z0 - 1, z0 + 4, P[0], P[1]))
                                     for z0 in (bz0, bz1 - 2.5)])
-    washer = fuse(cyl_z(3.0, z_post, z_post + 0.5, P[0], P[1]).cut(cyl_z(1.6, z_post - 1, z_post + 1, P[0], P[1])),  # 3.2x6x0.5
-                  cyl_z(2.85, z_post + 0.5, z_post + 2.15, P[0], P[1]),                                     # screw M3x6
-                  cyl_z(TAP / 2 - 0.001, z_post + 0.5 - 6.0, z_post + 0.51, P[0], P[1]))
+    zw = z_post + play                                                                           # washer at the stop
+    washer = fuse(cyl_z(3.0, zw, zw + 0.5, P[0], P[1]).cut(cyl_z(1.6, zw - 1, zw + 1, P[0], P[1])),   # washer 3.2x6x0.5
+                  cyl_z(2.85, zw + 0.5, zw + 2.15, P[0], P[1]),                                         # screw M3x6
+                  cyl_z(TAP / 2 - 0.001, zw + 0.5 - 6.0, zw + 0.51, P[0], P[1]))
     zh = bz0 + pk_h                                                                              # top of the hex pockets
     up = np.array([0, 0, 1.0])
     ball0 = fuse(sphere(2.4, S), cyl_between(1.5, S, S - up * p["ball_offset"]))                # ball with internal thread
