@@ -94,7 +94,8 @@ Further own parts (own design, partly based on the T410R, not in the mass total)
 | CVD drive shafts | 4 | $\color{red}\times$ Completely unqualified | `cad/running_gear/cvd_drive_shafts` |
 | Bellcranks (symmetric, the same part on both sides) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/running_gear/steering` |
 | Servo mount: top plate, fixed post, floating post; position of the servo and the horn | 1 set | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification (caliper values of the owner) | `cad/running_gear/servo_mount` |
-| Steering: posts, bridge, steering links, servo link, servo horn | 1 set | $\color{red}\times$ Completely unqualified | `cad/running_gear/steering` |
+| Steering bridge (beam with 2 towers on flanged bearings MF63ZZ) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/running_gear/steering` |
+| Steering: posts, steering links, servo link, servo horn | 1 set | $\color{red}\times$ Completely unqualified | `cad/running_gear/steering` |
 | Sway bars with holders, ball ends and drop links | 2 | $\color{red}\times$ Completely unqualified | `cad/running_gear/sway_bars` |
 | Dampers (standard 1:10 on-road, purchased) | 4 | $\color{red}\times$ Completely unqualified | Assembly only |
 

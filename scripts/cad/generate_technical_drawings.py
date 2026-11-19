@@ -62,7 +62,9 @@ def steering_frames():
     from generate_bulkhead_lower import load_params
     p = load_params(G.PARAMS)
     tp, m4 = p["servo_mount"][:2]
+    bb_ = p["bridge_bearings"]
     return {"bellcrank": np.array([21.7, 242.69, p["bellcrank"][0]]), "post": np.array([8.0, 199.15, G.PLATE_T]),
+            "bridge": np.array([0.0, 242.69 - p["bellcrank"][4], p["bellcrank"][1] + bb_[4] + bb_[3]]),
             "plate": np.array([8.0, 199.15, G.PLATE_T + m4 - tp]), "p": p}
 
 
@@ -98,6 +100,13 @@ def parts():
     xfc, xlc = x_ear[0] / 2, x_ear[1]                                        # middle planes of the posts
     xf0, xpe = xfc - sm[2] / 2, xlc + sm[6] / 2                              # inner face of the fixed post, outer end
     ymid = sm[3] - sm[9] - (sm[4] - sm[9] - sm[10]) / 2                      # middle between the pillars
+    bri, brb = sf["p"]["bridge"], sf["p"]["bridge_bearings"]
+    xb_ = 21.7                                                               # axes of the towers (posts H24/H25)
+    zbo = sf["bridge"][2]                                                    # bottom face of the towers (frame z = 0)
+    zb_lo, zb_hi, zb_ball = bri[0] - zbo, bri[1] - zbo, (bri[0] + bri[1]) / 2 - zbo
+    z_seat = 2 * brb[1] - 2 * brb[3]                                         # bearing seats (both bearings without flanges)
+    y_horn_ball = 199.15 + sp[0] + sf["p"]["servo_horn"][3] + sf["p"]["ball_offset"]           # H21 + S1 + S5 + S8
+    dboss = (242.69 - bc[4] - bri[2] / 2) - (y_horn_ball + sf["p"]["ball_offset"])             # depth of the ball boss
     return [
         dict(key="chassis_plate", folder="cad/chassis/chassis_plate_speedrun_wide_motor10",
              step="chassis_plate_T410R_speedrun_wide_motor10.step", stem="chassis_plate_T410R_speedrun_wide_motor10",
@@ -292,7 +301,7 @@ def parts():
                     f"opening Ø{bs[4]:.1f}: contact on the outer rings only). Chamfer {bs[8]:g} x 45 deg at the entries. Check the fit "
                     "after printing (MJF approx. ±0.3); ream to Ø8.0 if the bearings do not fit.",
                     f"Through holes Ø{bs[5]:.1f} at both ends with hex pockets {bs[6]:.1f} across the flats, {bs[7]:.1f} deep from below: "
-                    "bridge end: lock nut M3 (DIN 985) for the screw M3x20 from above through the spacer; ball end: head of the "
+                    "bridge end: lock nut M3 (DIN 985) for the screw M3x16 from above through the bearings of the bridge; ball end: head of the "
                     "screw M3x8 (ISO 4762) from below that holds the ball with internal thread.",
                     "Outline: hull of the hub and the 2 ends (tangent flanks), full height. Print flat on the bottom face."]),
         dict(key="servo_mount_top_plate", folder="cad/running_gear/servo_mount", step="servo_mount_top_plate.step",
@@ -350,6 +359,40 @@ def parts():
                     "flange hangs from the top plate. The lower end of the leg is 2.0 above the chassis plate (floating).",
                     "Threads M3 from above in the flange for the screws M3x6 of the top plate (through the slots), from the "
                     "front for the screws M3x6 of the servo ear (depth 4)."]),
+        dict(key="steering_bridge", folder="cad/running_gear/steering", step="steering_bridge.step", stem="steering_bridge",
+             title="Steering bridge", number="SB", frame=(np.eye(3), sf["bridge"]),
+             material="Nylon PA12 (MJF 3D print)", density=1.01, density_txt="PA12", quantity="1",
+             tol="process tolerance (MJF approx. ±0.3)", edges="as modelled", status="measures qualified, not printed",
+             frame_note=f"Drawing frame: origin O in the middle between the axes of the towers on their bottom face; x across the "
+                        f"car, y toward End A, z up. The STEP file is in the assembly position: O = ({sf['bridge'][0]:.2f}, "
+                        f"{sf['bridge'][1]:.2f}, {sf['bridge'][2]:.2f}).",
+             max_hole_d=8.5, sheets=3,
+             hole_note=lambda h: (f"2 flanged bearings MF63ZZ (3x6x{brb[1]:g}) pressed in from both faces, flanges outside; screw M3x16 "
+                                  "from above through the access bore" if abs(h["dia"] - brb[0]) < 0.05 else
+                                  ("grub screw M3x8, ball of the servo link with internal thread" if abs(h["dia"] - 2.5) < 0.05 else None)),
+             dims=[("T", (-xb_, 0, 0), (xb_, 0, 0), "h", "below", f"{2 * xb_:.2f} (axes of the towers)")],
+             sections=[dict(label="B", point=(0, 0, 0), d=(0, -1, 0), x=(1, 0, 0), title="Section B-B (plane of the tower axes)",
+                            axes=[((q, 0, -1.5), (q, 0, zb_hi + 1.5)) for q in (-xb_, xb_)],
+                            callouts=[((xb_ + brb[0] / 2, 0, z_seat / 2), f"Ø{brb[0]:.1f} through (bearing seats MF63ZZ from both faces)", (28, -12)),
+                                      ((xb_ + bri[4] / 2, 0, zb_hi - 2.0), f"Ø{bri[4]:.1f}, access bore for the screw", (23, 10)),
+                                      ((-8.0, 0, zb_lo), f"beam {bri[2]:g} x {zb_hi - zb_lo:g}", (-14, -20))],
+                            dims=[((-(xb_ - bri[3] / 2), 0, 0), ((xb_ - bri[3] / 2), 0, 0), "h", -8, f"{2 * xb_ - bri[3]:.2f}"),
+                                  ((8.0, 0, 0), (8.0, 0, zb_lo), "v", 0, f"{zb_lo:.2f}")]),
+                       dict(label="C", point=(0, 0, 0), d=(-1, 0, 0), x=(0, -1, 0), title="Section C-C (ball of the servo link)",
+                            clip=(-bri[2] / 2 - 1.5, bri[2] / 2 + 5.0, zb_lo - 3.0, zb_hi + 1.0), scale=5.0,
+                            callouts=[((0, -bri[2] / 2 - 2.0, zb_ball + 1.25), "M3, depth 5.5 (grub screw M3x8)", (18, 16))],
+                            dims=[((0, bri[2] / 2, zb_lo), (0, -bri[2] / 2, zb_lo), "h", -6, f"{bri[2]:.2f}"),
+                                  ((0, -bri[2] / 2, zb_lo), (0, -bri[2] / 2 - dboss, zb_lo), "h", -6, f"{dboss:.2f}"),
+                                  ((0, bri[2] / 2, zb_lo), (0, bri[2] / 2, zb_hi), "v", -6, f"{zb_hi - zb_lo:.2f}"),
+                                  ((0, -bri[2] / 2 - dboss, zb_lo), (0, -bri[2] / 2 - dboss, zb_ball), "v", 6, f"{zb_ball - zb_lo:.2f}")])],
+             notes=["Beam over the centre driveshaft with a tower at each end (portal). The towers turn on the rear arms of the "
+                    "bellcranks: 2 flanged bearings MF63ZZ per tower, shims 3x5x0.3 below and above the inner rings, screw M3x16 "
+                    "from above, lock nut M3 in the hex pocket of the bellcrank.",
+                    f"Bearing seats Ø{brb[0]:.1f} through the lower part of the towers ({z_seat:.1f} long: the 2 bearings without their "
+                    "flanges); check the fit after printing (MJF approx. ±0.3).",
+                    "Ball of the servo link in the middle of the rear face (toward End B): thread M3 for a grub screw M3x8, ball with "
+                    "internal thread screwed onto it. The boss reaches back to the ball of the servo horn.",
+                    "Print flat on the bottom face of the towers."]),
     ]
 
 
@@ -704,7 +747,7 @@ def draw_part(cfg, date):
     if secs and dets:
         sec_h += 24 + max((d_["box"][1] - d_["box"][0] if cfg.get("rotate") else d_["box"][3] - d_["box"][2]) * d_["scale"]
                           for d_ in dets)
-    n_sheets = 3 if (secs or dets) and sec_h + 30 + table_h + notes_h > 255 else 2
+    n_sheets = 3 if cfg.get("sheets") == 3 or ((secs or dets) and sec_h + 30 + table_h + notes_h > 255) else 2
     s = layout_flat(bb, cfg.get("rotate", False), cfg.get("edge_view", False))[0] if cfg.get("flat") else layout_3d(bb)[0]
     tb = title_rows(cfg, vol, s, date)
     fig1, s = draw_sheet1(cfg, solid, bb, rows, tb, n_sheets)

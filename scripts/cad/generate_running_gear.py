@@ -670,7 +670,8 @@ def steering(p, cl, c, kb):
     af, hpost, jd = p["post"]
     bz0, bz1, r_s, a_s, r_b = p["bellcrank"]
     hub_d, end_d, seat_d, lip_t, lip_d, hole_d, pk_af, pk_h, ch = p["bellcrank_shape"]
-    zb0, tb, wb, hbb = p["bridge"]
+    zb0, zb1, wb, d_tw, d_acc, w_bb = p["bridge"]
+    br_D, br_B, br_Df, br_Bf, sh_t, sh_D = p["bridge_bearings"]
     assert abs(bz0 - (PLATE_T + hpost)) < 1e-6 and abs(bz1 - bz0 - (5.0 + lip_t)) < 1e-6, "hub height = 2 bearings + lip"
     P = np.array([21.7, 242.69])
     zt = bz1 + p["ball_offset"]
@@ -740,32 +741,45 @@ def steering(p, cl, c, kb):
     yh0 = yh1 - ht
     horn_ball = np.array([xs, yh1 + p["ball_offset"], zs + hl])
     yball = horn_ball[1]
-    # bridge behind the posts with the boss of the ball stud reaching back to the y of the horn ball
+    # bridge behind the posts (owner: refined, PA12): beam across the car over the centre driveshaft with a tower at each
+    # end; 2 flanged bearings MF63ZZ per tower (flanges outside) on the bellcrank arm, shims 3x5x0.3 below and above the
+    # inner rings, screw M3x16 from above through the access bore, lock nut M3 in the hex pocket of the bellcrank; ball of
+    # the servo link in the middle of the rear face on a grub screw M3x8, the boss reaches back to the y of the horn ball
     yb = P[1] - r_b                                                                              # axis of the bridge
     db = (yb - wb / 2) - (yball + p["ball_offset"])                                              # depth of the boss
     assert db > 1.0, f"boss of the bridge too short ({db:.2f})"
-    zbb = zb0 + hbb
-    L_v = 39.0                                                                                   # servo link: gap 21 (manual)
-    xbb = horn_ball[0] - math.sqrt(L_v ** 2 - (horn_ball[2] - zbb) ** 2)
-    bball = np.array([xbb, yball, zbb])
+    zs_0 = bz1 + sh_t                                                                            # lower bearing (on the shim)
+    zt_0 = zs_0 + br_Bf                                                                          # bottom face of the towers
+    zt_1 = zs_0 + 2 * br_B - br_Bf                                                               # step to the access bore
+    z_st = zs_0 + 2 * br_B                                                                       # top of the bearing stack
+    zbb = (zb0 + zb1) / 2
+    bball = np.array([0.0, yball, zbb])
+    L_v = float(np.linalg.norm(horn_ball - bball))
     BL, BR = pts[-1][2], pts[1][2]
-    bridge = fuse(box(BL[0], BR[0], yb - wb / 2, yb + wb / 2, zb0, zb0 + tb),
-                  cyl_z(wb / 2, zb0, zb0 + tb, BL[0], BL[1]), cyl_z(wb / 2, zb0, zb0 + tb, BR[0], BR[1]),
-                  box(xbb - 3.0, xbb + 3.0, yb - wb / 2 - db, yb, zb0, zbb + 2.5))                 # boss of the ball stud
+    bridge = box(BL[0], BR[0], yb - wb / 2, yb + wb / 2, zb0, zb1)
     for q in (BL, BR):
-        bridge = bridge.cut(cyl_z(2.55, zb0 - 1, zb0 + tb + 2, q[0], q[1]))                 # sleeves of the spacers
-    bridge = bridge.cut(cyl_y(TAP / 2, yb - wb / 2 - db - 0.1, yb - wb / 2 - db + 4.0, xbb, zbb))  # thread M3, ball stud
-    spacers, hardware = [], []
-    zf = zb0 + tb + 0.5                                                                          # top of the flange
+        bridge = bridge.fuse(cyl_z(d_tw / 2, zt_0, zb1, q[0], q[1]))
+    bridge = bridge.fuse(box(-w_bb / 2, w_bb / 2, yb - wb / 2 - db, yb, zb0, zb1))               # boss of the ball
     for q in (BL, BR):
-        sp = fuse(cyl_z(3.5, bz1, zb0, q[0], q[1]), cyl_z(2.5, zb0 - 0.1, zb0 + tb, q[0], q[1]),
-                  cyl_z(4.0, zb0 + tb, zf, q[0], q[1]))
-        spacers.append(sp.cut(cyl_z(1.6, bz1 - 1, zf + 1, q[0], q[1])))
-        hardware.append(fuse(cyl_z(2.85, zf, zf + 1.65, q[0], q[1]), cyl_z(1.45, zf - 20.0, zf + 0.01, q[0], q[1])))  # M3x20
+        bridge = bridge.cut(cyl_z(br_D / 2, zt_0 - 1, zt_1 + 0.01, q[0], q[1]))               # bearing seats from both faces
+        bridge = bridge.cut(cyl_z(d_acc / 2, zt_1, zb1 + 1, q[0], q[1]))                       # access bore for the screw
+    bridge = bridge.cut(cyl_y(TAP / 2, yb - wb / 2 - db - 0.1, yb - wb / 2 - db + 5.5, 0.0, zbb))  # thread M3, grub screw
+    joint = []
+    for q in (BL, BR):
+        bore = cyl_z(1.5, bz1 - 1, z_st + 1, q[0], q[1])
+        joint += [fuse(cyl_z(br_Df / 2, zs_0, zt_0, q[0], q[1]), cyl_z(br_D / 2, zt_0 - 0.01, zs_0 + br_B, q[0], q[1])).cut(bore),
+                  fuse(cyl_z(br_D / 2, zs_0 + br_B, zt_1 + 0.01, q[0], q[1]), cyl_z(br_Df / 2, zt_1, z_st, q[0], q[1])).cut(bore)]
+    hardware = []
+    for q in (BL, BR):
+        hole = cyl_z(1.6, bz1 - 1, z_st + 1, q[0], q[1])
+        hardware += [cyl_z(sh_D / 2, bz1, zs_0, q[0], q[1]).cut(hole), cyl_z(sh_D / 2, z_st, z_st + sh_t, q[0], q[1]).cut(hole)]
+        zh_s = z_st + sh_t                                                                       # screw M3x16 from above
+        hardware.append(fuse(cyl_z(2.85, zh_s, zh_s + 1.65, q[0], q[1]), cyl_z(1.45, zh_s - 16.0, zh_s + 0.01, q[0], q[1])))
         hardware.append(hex_z(5.5, zh - 4.0, zh, q[0], q[1]).cut(cyl_z(1.5, zh - 5, zh + 1, q[0], q[1])))     # lock nut M3
-    out += [("steering bridge", "steer", bridge.clean()), ("spacers of the bridge", "axle", cq.Compound.makeCompound(spacers)),
-            ("bridge screws M3x20 and lock nuts", "link", cq.Compound.makeCompound(hardware)),
-            ("ball stud of the bridge", "link", stud(bball, (0, -1.0, 0), p["ball_offset"], 3.5))]
+    out += [("steering bridge", "steer", bridge.clean()),
+            ("bridge bearings MF63ZZ", "axle", cq.Compound.makeCompound(joint)),
+            ("bridge shims, screws M3x16 and lock nuts", "link", cq.Compound.makeCompound(hardware)),
+            ("ball stud of the bridge", "link", stud(bball, (0, -1.0, 0), p["ball_offset"], 5.0))]
     rods, tb_, gap_a = link(S, -up, K, -c["front"]["kd"], 9.0, cl)                          # ball on top, along the kingpin
     out += [("steering link rod ends right", "rodend", rods), ("steering link turnbuckle right", "link", tb_),
             ("steering link rod ends left", "rodend", mirror_x(rods)), ("steering link turnbuckle left", "link", mirror_x(tb_))]
@@ -846,15 +860,15 @@ def steering(p, cl, c, kb):
 
 def steering_sweep(parts, others, angle):
     """Turns the right bellcrank with its ball stud and the rod end of the steering link about the post and
-    moves the bridge with its spacers (parallelogram) by +-angle; returns the largest overlap with the other
+    moves the bridge with its bearings, shims, screws and ball (parallelogram) by +-angle; returns the largest overlap with the other
     parts (bulkheads, cup joint, centre driveshaft, steering posts)."""
     st = steering.info
     P = np.array([21.7, 242.69, 0.0])
     S = st["S"]
     ring = cyl_between(3.5, S + np.array([0, 0, -3.0]), S + np.array([0, 0, 3.4]))
     turning = [parts["bellcrank right"], parts["bellcrank ball right"], parts["bellcrank ball screw M3x8 right"], ring]
-    moving = [parts["steering bridge"], parts["spacers of the bridge"], parts["ball stud of the bridge"],
-              parts["bridge screws M3x20 and lock nuts"]]
+    moving = [parts["steering bridge"], parts["bridge bearings MF63ZZ"], parts["ball stud of the bridge"],
+              parts["bridge shims, screws M3x16 and lock nuts"]]
     B = st["B"]
     res = {}
     for sg in (1, -1):
@@ -902,13 +916,13 @@ KIND_COLORS = {"upright": (0.86, 0.45, 0.12), "axle": (0.72, 0.74, 0.77), "cvd":
                "link": (0.78, 0.79, 0.82), "arm": (0.4, 0.34, 0.52), "plate": (0.26, 0.27, 0.29),
                "bulkhead": (0.55, 0.56, 0.58)}
 MADE = {"upright", "cvd", "steer", "swaybar"}                  # own parts to manufacture (files)
-MADE_NAMES = ("axle with joint cup", "hex hub 12", "sway bar ball end", "spacers of the bridge")
+MADE_NAMES = ("axle with joint cup", "hex hub 12", "sway bar ball end")
 
 
 FOLDERS = {"front_corner": ("c_hub_end_a", "steering_knuckle_end_a", "axle_with_joint_cup_end_a", "hex_hub_12_end_a"),
            "rear_corner": ("hub_carrier_end_b", "axle_with_joint_cup_end_b", "hex_hub_12_end_b"),
            "cvd_drive_shafts": ("cvd_drive_shaft_end_a", "cvd_drive_shaft_end_b"),
-           "steering": ("steering_post", "bellcrank", "steering_bridge", "spacers_of_the_bridge",
+           "steering": ("steering_post", "bellcrank", "steering_bridge",
                         "servo_horn_aluminium_clamp"),
            "servo_mount": ("servo_mount_top_plate", "servo_mount_fixed_post", "servo_mount_floating_post"),
            "sway_bars": ("sway_bar_end_a", "sway_bar_end_b", "sway_bar_holder_end_a", "sway_bar_holder_end_b",
