@@ -111,10 +111,10 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
 | Dual motor study (not part of the build) | motor axes x = ±31.90 mm, z = 19.20 mm; mount 99.0 x 6.0 x 33.0 mm; ESCs at x = ±9.5 to ±62.3 mm, y = 129.4 to 169.2 mm; batteries on edge at x = ±66.0 to ±90.7 mm, y = 100.0 to 195.7 mm |
 
 ## Status of the parts
-* Verified (green): chassis plate, bulkheads, top brace, shock towers, pivot blocks, motor mount with cap, steering knuckles, front splitter (one part, 3D print of the owner; bosses 3 mm higher after the print).
+* Verified (green): chassis plate, bulkheads, top brace, shock towers, pivot blocks, motor mount with cap, steering knuckles, wishbones (owner, with the pin bores Ø3.1), front splitter (one part, 3D print of the owner; bosses 3 mm higher after the print).
 * Orders (owner; column "Order" in the parts lists of the root and the CAD readme): chassis plate CNC part (aluminium 6082); bulkheads and front splitter MJF 3D print (nylon PA12, 1.01 g/cm³); top brace and shock towers carbon plates (2D milling). Speedrun mass total 343 g (bulkheads 2 x 12 g and 2 x 19 g, front splitter 38 g in PA12). The assembly script lists PA12 as the first material of these parts.
 * Speedrun parts: all verified except the battery tray (yellow, new design).
-* Measures qualified (yellow): centre driveshaft, rear and front drive line, differential, spool, front and rear wishbones (the front wishbone is longer than measured), steering posts (height 20.3, owner), bellcranks (symmetric design, owner), steering bridge (refined design, owner), servo mount with the position of the servo and the horn (caliper values of the owner).
+* Measures qualified (yellow): centre driveshaft, rear and front drive line, differential, spool, steering posts (height 20.3, owner), bellcranks (symmetric design, owner), steering bridge (refined design, owner), servo mount with the position of the servo and the horn (caliper values of the owner).
 * Completely unqualified (red): cup joints, diff outdrives, inner hinge pins, camber links, C-hubs (3D print verification with the guide sleeves planned by the owner), rear hub carriers, axles and hex hubs, CVD drive shafts, steering (links, horn), sway bars, dampers.
 
 ## Open points

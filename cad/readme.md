@@ -109,8 +109,8 @@ Further own parts (own design of the owner, partly based on the T410R, not in th
 | [Differential (End B) with ring gear 42T, inner gears and bearings](#differentials) | 1 | `/parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Spool (End A) with ring gear 42T and bearings](#differentials) | 1 | `/parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Diff outdrives](#centre-driveshaft-and-drive-line) | 4 | `/parts/diff_outdrive` | $\color{red}\times$ Completely unqualified |
-| [Front wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Rear wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Front wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{green}\checkmark$ Verified |
+| [Rear wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{green}\checkmark$ Verified |
 | [Inner hinge pins of the wishbones (3x42)](#wishbones) | 4 | `/parts/wishbone` | $\color{red}\times$ Completely unqualified |
 | [Camber links: turnbuckle M3x37 with rod ends and ball studs](#camber-links) | 4 | `/parts/camber_link` | $\color{red}\times$ Completely unqualified |
 | [Front C-hubs with 10 degrees caster](#running-gear) | 2 | `/running_gear/front_corner` | $\color{red}\times$ Completely unqualified; kingpin bores 5 mm with guide sleeves (owner), 3D print verification planned |
@@ -937,7 +937,7 @@ All files are stored in the directory `/parts/diff` and are generated with `gene
 
 ### Wishbones
 * **Description:** Lower wishbones (suspension arms) of the speedrun chassis (own design, partly based on the T410R) with the inner hinge pins 3 x 42 mm. The manual (step 7 and parts list "Arms (F/R)") and the photos of the owner show two different arms: 2 front arms and 2 rear arms. There is no left or right arm (owner): each arm is used on both sides of its axle, flipped so that the shock plate on rail A faces the outer end of the car.
-* **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification (front and rear wishbone); inner hinge pins: $\color{red}\times$ Completely unqualified. The front wishbone is 4.44 mm longer than measured (owner: equal track front and rear, with the kingpin of the C-hub 6.75 mm inside the outer hinge pin). The main dimensions are caliper measurements of the owner (measurement sheet). The positions of the shock plate and of the holes of the ball studs are estimates from the photos (see the measurement table below).
+* **Status:** $\color{green}\checkmark$ Verified (front and rear wishbone, owner, after the change of the pin bores to Ø3.1 mm for the metal pins Ø3.0 mm); inner hinge pins: $\color{red}\times$ Completely unqualified. The front wishbone is 4.44 mm longer than measured (owner: equal track front and rear, with the kingpin of the C-hub 6.75 mm inside the outer hinge pin). The main dimensions are caliper measurements of the owner (measurement sheet). The positions of the shock plate and of the holes of the ball studs are estimates from the photos (see the measurement table below).
 
 ![Wishbones: plan views, views along the hinge pin and the letters of the measurements](../photos/cad_wishbones_drawing.png)
 
