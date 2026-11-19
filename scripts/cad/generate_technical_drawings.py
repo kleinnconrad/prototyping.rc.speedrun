@@ -291,36 +291,34 @@ def parts():
              view_callouts=[("T", (0, bs[0] / 2, bc[1] - bc[0]), f"Ø{bs[0]:.1f} (hub)", (10, 12)),
                             ("T", (bc[2] + bs[1] / 2, 0, bc[1] - bc[0]), f"R{bs[1] / 2:.2f} (2x, ends)", (8, 12))],
              max_hole_d=8.5, section_gap=16,
-             hole_note=lambda h: (f"hex pocket {bs[6]:.1f} across the flats x {bs[7]:.1f} from the bottom face"
-                                  if abs(h["dia"] - bs[5]) < 0.05 else "bearing seats with the lip"),
+             hole_note=lambda h: (None if abs(h["dia"] - bs[5]) < 0.05 else "bearing seats with the lip"),
              sections=[dict(label="B", point=(0, 0, 0), d=(0, -1, 0), x=(1, 0, 0), title="Section B-B (plane of the 3 axes)",
                             axes=[((q, 0, -1.5), (q, 0, bc[1] - bc[0] + 1.5)) for q in (-bc[4], 0.0, bc[2])],
                             callouts=[((-bs[2] / 2, 0, 0.6), f"Ø{bs[2]:.1f}, 2.5 deep (2x)", (-57.5, -15.5)),
                                       ((bs[4] / 2, 0, 2.5), f"lip {bs[3]:g}, opening Ø{bs[4]:.1f}", (8, -33)),
-                                      ((bc[2] + bs[5] / 2 + 0.8, 0, bs[7]), f"hex {bs[6]:.1f} across the flats, {bs[7]:.1f} deep (2x)", (3.5, -33)),
                                       ((bc[2] - bs[5] / 2, 0, 4.25), f"Ø{bs[5]:.1f} through (2x)", (10.5, 14.25))])],
              notes=["Symmetric part: the same part on both sides and at both ends (no front and rear). One end carries the "
                     "ball of the steering link, the other end the bridge.",
                     f"Bearing seats Ø{bs[2]:.1f} for 2 bearings 5x8x2.5, pressed in from both faces against the lip ({bs[3]:g} thick, "
-                    f"opening Ø{bs[4]:.1f}: contact on the outer rings only). Chamfer {bs[8]:g} x 45 deg at the entries. Check the fit "
+                    f"opening Ø{bs[4]:.1f}: contact on the outer rings only). Chamfer {bs[6]:g} x 45 deg at the entries. Check the fit "
                     "after printing (MJF approx. ±0.3); ream to Ø8.0 if the bearings do not fit.",
-                    f"Through holes Ø{bs[5]:.1f} at both ends with hex pockets {bs[6]:.1f} across the flats, {bs[7]:.1f} deep from below: "
-                    "bridge end: lock nut M3 (DIN 985) for the screw M3x16 from above through the bearings of the bridge; ball end: head of the "
-                    "screw M3x8 (ISO 4762) from below that holds the ball with internal thread.",
+                    f"Plain through holes Ø{bs[5]:.1f} at both ends (owner: no hex pockets). Bridge end: screw M3x18 from above "
+                    "through the bearings of the bridge, washer 3.2x7x0.5 and lock nut M3 (DIN 985) under the arm. Ball end: button "
+                    "head screw M3x10 (ISO 7380) from below that holds the ball with internal thread.",
                     "Outline: hull of the hub and the 2 ends (tangent flanks), full height. Print flat on the bottom face."]),
         dict(key="servo_mount_top_plate", folder="cad/running_gear/servo_mount", step="servo_mount_top_plate.step",
              stem="servo_mount_top_plate", title="Servo mount: top plate", number="SM-T", flat=True, edge_view=True,
              frame=(np.eye(3), sf["plate"]), material="To be defined (e.g. EN AW-7075-T6)", quantity="1", tol=GENERAL_CNC,
-             dims=[("T", (xpe, sm[3] - sm[4], 0), (xpe, sm[3] - sm[4] + sm[5], 0), "v", "right", f"{sm[5]:.2f}"),
-                   ("T", (xf0, sm[3], 0), (xf0 + sm[2] + 2.0, sm[3], 0), "h", "above", f"{sm[2] + 2.0:.2f}")],
+             dims=[("T", (xpe, sm[3] - sm[5], 0), (xpe, sm[3], 0), "v", "right", f"{sm[5]:.2f}"),
+                   ("T", (xf0, sm[3] - sm[4], 0), (xf0 + sm[2] + 2.0, sm[3] - sm[4], 0), "h", "below", f"{sm[2] + 2.0:.2f}")],
              edges="chamfers as modelled, other edges broken 0.1 to 0.2", status="measures qualified (caliper values of the owner)",
              frame_note=f"Drawing frame: origin O above the hole H21 of the chassis plate (front screw of the fixed post), on the "
                         f"lower face of the top plate; axes as the chassis plate coordinates (x across the car toward the servo "
                         f"output, y toward End A). The STEP file is in the assembly position: O = ({sf['plate'][0]:.2f}, "
                         f"{sf['plate'][1]:.2f}, {sf['plate'][2]:.2f}).",
-             notes=[f"Plate {sm[0]:g} thick (M5), top face {sm[1]:g} above the chassis plate (M4). Rear edge straight; "
-                    f"{sm[5]:g} deep over the servo and the floating post; at the fixed post the plate steps forward to the front "
-                    "face of the post (owner, manual). Outer corners chamfered 2.0 x 45 deg, inner corner of the step 3.0 x 45 deg.",
+             notes=[f"Plate {sm[0]:g} thick (M5), top face {sm[1]:g} above the chassis plate (M4). Front edge straight (flush "
+                    f"with the front faces of the posts); {sm[5]:g} deep over the servo and the floating post; at the fixed post the "
+                    "plate reaches back to the rear face of the post (owner, manual). Outer corners chamfered 2.0 x 45 deg, inner corner of the step 3.0 x 45 deg.",
                     "Holes Ø3.2 for the 2 screws M3x6 into the fixed post; slots 3.2 wide along x for the 2 screws M3x6 into the "
                     "floating post (other servo lengths)."]),
         dict(key="servo_mount_fixed_post", folder="cad/running_gear/servo_mount", step="servo_mount_fixed_post.step",
@@ -355,8 +353,8 @@ def parts():
              sections=[dict(label="B", point=(xlc, 0, 0), d=(-1, 0, 0), x=(0, -1, 0), title="Section B-B (middle plane of the post)",
                             callouts=[((xlc, sm[3] - sm[7] - 1.76, sm[1] - sm[0] - sm[8] - 1.76), "gusset R6.0", (26, -22))],
                             dims=[((xlc, sm[3], sp[3]), (xlc, sm[3] - sm[7], sp[3]), "h", -8, f"{sm[7]:.2f}"),
-                                  ((xlc, sm[3], sp[3]), (xlc, sm[3] - sm[4] + 1.0, sm[1] - sm[0] - sm[8]), "h", -16, f"{sm[4] - 1.0:.2f}"),
-                                  ((xlc, sm[3] - sm[4] + 1.0, sm[1] - sm[0] - sm[8]), (xlc, sm[3] - sm[4] + 1.0, sm[1] - sm[0]), "v", 8,
+                                  ((xlc, sm[3], sp[3]), (xlc, sm[3] - sm[5] + 0.5, sm[1] - sm[0] - sm[8]), "h", -16, f"{sm[5] - 0.5:.2f}"),
+                                  ((xlc, sm[3] - sm[5] + 0.5, sm[1] - sm[0] - sm[8]), (xlc, sm[3] - sm[5] + 0.5, sm[1] - sm[0]), "v", 8,
                                    f"{sm[8]:.2f}"),
                                   ((xlc, sm[3], sp[3]), (xlc, sm[3], sm[1] - sm[0]), "v", -8, f"{sm[1] - sm[0] - sp[3]:.2f}")])],
              notes=["L bracket: the leg carries the servo ear on its front face (contact face as the fixed post), the top "
@@ -371,7 +369,7 @@ def parts():
                         f"car, y toward End A, z up. The STEP file is in the assembly position: O = ({sf['bridge'][0]:.2f}, "
                         f"{sf['bridge'][1]:.2f}, {sf['bridge'][2]:.2f}).",
              max_hole_d=8.5, sheets=3,
-             hole_note=lambda h: (f"2 flanged bearings MF63ZZ (3x6x{brb[1]:g}) pressed in from both faces, flanges outside; screw M3x16 "
+             hole_note=lambda h: (f"2 flanged bearings MF63ZZ (3x6x{brb[1]:g}) pressed in from both faces, flanges outside; screw M3x18 "
                                   "from above through the access bore" if abs(h["dia"] - brb[0]) < 0.05 else
                                   ("grub screw M3x8, ball of the servo link with internal thread" if abs(h["dia"] - 2.5) < 0.05 else None)),
              dims=[("T", (-xb_, 0, 0), (xb_, 0, 0), "h", "below", f"{2 * xb_:.2f} (axes of the towers)")],
@@ -391,7 +389,7 @@ def parts():
                                   ((0, -bri[2] / 2 - dboss, zb_lo), (0, -bri[2] / 2 - dboss, zb_ball), "v", 6, f"{zb_ball - zb_lo:.2f}")])],
              notes=["Flat bar over the centre driveshaft (1.0 above it) with round ends (towers). The towers turn on the rear arms "
                     "of the bellcranks: 2 flanged bearings MF63ZZ per tower, shims 3x5x0.3 below and above the inner rings, screw "
-                    "M3x16 from above, lock nut M3 in the hex pocket of the bellcrank.",
+                    "M3x18 from above, washer 3.2x7x0.5 and lock nut M3 under the bellcrank arm.",
                     f"Bearing seats Ø{brb[0]:.1f} through the lower part of the towers ({z_seat:.1f} long: the 2 bearings without their "
                     "flanges); check the fit after printing (MJF approx. ±0.3).",
                     "Ball of the servo link in the middle of the rear face (toward End B): thread M3 for a grub screw M3x8, ball with "

@@ -43,7 +43,7 @@ Material: To be defined (e.g. EN AW-7075-T6). Quantity: 1. Status: measures qual
 ![Servo mount: fixed post, technical drawing, sheet 3](servo_mount_fixed_post_technical_drawing_sheet_3.png)
 
 ## Servo mount: floating post
-Material: To be defined (e.g. EN AW-7075-T6). Quantity: 1. Status: measures qualified (caliper values of the owner). Scale of the views: 2:1. 4 holes in the hole table.
+Material: To be defined (e.g. EN AW-7075-T6). Quantity: 1. Status: measures qualified (caliper values of the owner). Scale of the views: 5:1. 4 holes in the hole table.
 
 **Sheet 1:** views, main dimensions, labels of the holes
 
