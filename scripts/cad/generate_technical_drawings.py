@@ -291,15 +291,17 @@ def parts():
              title="Front wishbone (used on both sides)", number="WB-F",
              dims=[("T", (0, -16.5, 0), (49.7, -16.5, 0), "h", "below", "49.70 (axis to axis)")], material="To be defined (original part: plastic)",
              quantity="2", tol=GENERAL_CNC, edges=EDGES_BREAK, status="measures qualified",
-             notes=["Bores Ø3.0 of the inner lugs for the inner hinge pin 3x42, bores Ø4.3 of the outer lugs for the outer "
-                    "hinge pin (as the original part).", "Threads M3 for the ball studs of the damper (shock plate) and of the "
+             notes=["Bores Ø3.1 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
+                    "pins are exactly Ø3.0 (owner), 0.1 running clearance so that the arm turns freely on the pins (original "
+                    "part: outer lugs Ø4.3).", "Threads M3 for the ball studs of the damper (shock plate) and of the "
                     "sway bar drop link, threads M4 for the droop screws."]),
         dict(key="wishbone_rear", folder="cad/parts/wishbone", step="wishbone_rear_T410R.step", stem="wishbone_rear_T410R",
              title="Rear wishbone (used on both sides)", number="WB-R",
              dims=[("T", (0, -16.5, 0), (54.3, -16.5, 0), "h", "below", "54.30 (axis to axis)")], material="To be defined (original part: plastic)",
              quantity="2", tol=GENERAL_CNC, edges=EDGES_BREAK, status="measures qualified",
-             notes=["Bores Ø3.0 of the inner lugs for the inner hinge pin 3x42, bores Ø4.3 of the outer lugs for the outer "
-                    "hinge pin (as the original part).", "Threads M3 for the ball studs of the damper (shock plate) and of the "
+             notes=["Bores Ø3.1 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
+                    "pins are exactly Ø3.0 (owner), 0.1 running clearance so that the arm turns freely on the pins (original "
+                    "part: outer lugs Ø4.3).", "Threads M3 for the ball studs of the damper (shock plate) and of the "
                     "sway bar drop link, threads M4 for the droop screws."]),
         dict(key="bellcrank", folder="cad/running_gear/steering", step="bellcrank.step", stem="bellcrank",
              title="Bellcrank (same part on both sides)", number="BC", frame=(np.column_stack([(0, 1, 0), (-1, 0, 0), (0, 0, 1)]), sf["bellcrank"]),

@@ -6,7 +6,8 @@
   "source_codes": {"user": "Measurement of the owner (caliper)", "manual": "T410R instruction manual: part numbers, sizes of the screws and pins, layout of the arms in step 7 and in the parts list (no dimensions)", "derived": "Calculated from other parts of the model (pivot blocks, bulkheads, chassis plate) or from other values", "photo": "Estimate from the photos of the owner (plan views, side views and end views), scaled with A = 33.0; not measured", "assumption": "Not measured, assumed for the model"},
   "open_points": "All dimensions marked 'photo' or 'assumption' are to be measured with a caliper; the letter in 'measure' names the measurement in the drawing photos/cad_wishbones_drawing.png. The model is horizontal (inner and outer hinge pin at the same height); the ride height and the travel of the suspension are not modelled.",
   "parameters": {
-    "inner_pin_d": {"value": 3.0, "source": "manual", "measure": "-", "note": "Diameter of the inner hinge pin 3x42 (manual step 7) and of the bores of the inner lugs."},
+    "inner_pin_d": {"value": 3.0, "source": "manual", "measure": "-", "note": "Diameter of the inner hinge pin 3x42 (manual step 7; owner: the metal pins are exactly 3.0). The bores of the lugs: pin_bore_d."},
+    "pin_bore_d": {"value": 3.1, "source": "user", "measure": "-", "note": "Bore of the inner and the outer lugs for the metal hinge pins (owner: pins exactly 3.0, bores a little wider so that the pins are not stuck): 0.1 running clearance, the arm turns on the pins."},
     "inner_pin_length": {"value": 42.0, "source": "manual", "measure": "-", "note": "Length of the inner hinge pin. Its ends sit in the pivot balls in the blind bores of the pivot blocks (bottoms of the bores 42.68 apart at End A and 42.85 at End B along the pin)."},
     "inner_width": {"value": 33.0, "source": "user", "measure": "A", "note": "Length of the arm along the inner hinge pin over the outer faces of the inner lugs (both arms, caliper). Gap between the faces of the pivot blocks: 33.28 (End A) and 33.45 (End B)."},
     "inner_lug_len": {"value": 10.3, "source": "user", "measure": "B", "note": "Length of each inner lug along the hinge pin (both arms)."},
@@ -18,7 +19,7 @@
     "droop_boss_d": {"value": 6.0, "source": "photo", "measure": "-", "note": "Outer diameter of the droop screw bosses."},
     "droop_boss_z": {"value": [-3.6, 4.0], "source": "photo", "measure": "-", "note": "Bottom and top of the droop screw bosses (z): bottom as the inner lugs, top above the rails."},
     "droop_tap_d": {"value": 3.3, "source": "manual", "measure": "-", "note": "Thread M4 for the droop screw M4x10 (manual step 7): tap drill 3.3, through."},
-    "outer_pin_d": {"value": 4.3, "source": "user", "measure": "K", "note": "Bore of the outer lugs (both arms)."},
+    "outer_pin_d": {"value": 4.3, "source": "user", "measure": "K", "note": "Bore of the outer lugs of the original part (both arms, caliper). The model uses pin_bore_d (owner: the pins are 3.0)."},
     "outer_lug_d": {"value": 7.2, "source": "user", "measure": "L", "note": "Outer diameter of the outer lugs (both arms)."},
     "outer_pin_z": {"value": 0.0, "source": "assumption", "measure": "N", "note": "Height of the axis of the outer hinge pin above the axis of the inner hinge pin (arm horizontal)."},
     "ball_tap_d": {"value": 2.5, "source": "manual", "measure": "-", "note": "Holes of the ball studs (set screw M3x8 with ball, manual step 7): thread M3, tap drill 2.5, through."},

@@ -948,6 +948,7 @@ All files are stored in the directory `/parts/diff` and are generated with `gene
 * Rear arm: side rails 24.7 mm wide over the outer faces, 2 mm longer than the front arm, open U between the outer cross bar and the outer lugs (hub carrier).
 * Above each shoulder a boss with a thread M4 for the droop screw M4 x 10 mm (one of the two is used, depending on the side of the car).
 * On side rail A an octagonal plate that reaches above and below the rail, with holes M3 for the ball stud of the shock (set screw M3 x 8 mm with ball): front 2 holes, rear 3 holes. On side rail B holes M3 for the ball stud of the sway bar drop link: front 3 holes, rear 1 hole. The holes go through, so that the ball stud can be set from the side that faces the shock tower.
+* Bores of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): Ø3.1 mm. The metal pins are exactly Ø3.0 mm (owner); the bores are 0.1 mm wider, so the arms turn freely and the pins do not get stuck (original part: outer lugs Ø4.3 mm, caliper value K).
 * Between the outer lugs, the side rails end 0.3 mm before the lug of the C-hub (front) or of the hub carrier (rear), which sits on the outer hinge pin between the outer lugs (see [running gear](#running-gear)).
 * Not modelled: radii, draft angles, the pivot balls at the ends of the hinge pins, the ball studs and the droop screws. The outer hinge pins are part of the running gear.
 
@@ -985,7 +986,7 @@ The letters are shown in the drawing and in the measurement sheet `parts/parts_m
 | H | Droop screw bosses: distance of the axis from the axis of the inner hinge pin | 7.3 | 7.0 | Caliper |
 | I | Droop screw bosses: distance of the axis from the middle of the arm | 9.8 | 10.0 | Caliper |
 | J | Inner hinge pin to outer hinge pin, axis to axis: end to end over the lugs (second measurement of the owner: front 52.46 mm without the loop, rear 61.5 mm) minus 2 x 3.6 mm = 45.26 and 54.3 mm. The front arm is prolonged by 4.44 mm (owner: equal track with the kingpin 6.75 mm inside the outer hinge pin). First measurement (outer edges of the bores minus 4.3 mm: 48.7 and 50.7 mm) was wrong | 49.7 | 54.3 | Caliper, owner |
-| K | Bore of the outer lugs | 4.3 | 4.3 | Caliper |
+| K | Bore of the outer lugs of the original part (the model: Ø3.1 for the pins Ø3.0, owner) | 4.3 | 4.3 | Caliper |
 | L | Outer diameter of the outer lugs | 7.2 | 7.2 | Caliper |
 | M | Length of one outer lug along the outer hinge pin | 5.8 | 5.5 | Caliper |
 | N | Height of the outer hinge pin above the inner hinge pin | 0 | 0 | Assumption |
