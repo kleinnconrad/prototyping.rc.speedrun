@@ -660,19 +660,22 @@ def ackermann(P, S, Kp, K, rear_axle_y):
 
 
 def steering(p, cl, c, kb):
-    """Steering as the T410R (manual steps 10, 13, 14, 21): 2 bellcranks (straight levers) on the posts H24/H25
-    with 2 bearings 5x8x2.5 each: ball arm forward for the steering link, rear arm to a rigid bridge
-    (parallelogram: both bellcranks turn by the same angle, the bridge moves across the car); steering links
-    from the bellcranks to the steering arms of the knuckles; servo across the car on the servo mount
-    (H17/H21) with the output shaft and the horn facing forward (End A); servo link across the car from the
-    horn to the ball of the bridge."""
+    """Steering as the T410R (manual steps 10, 13, 14, 21): 2 symmetric bellcranks (straight levers, the same part on
+    both sides, no front and rear) on the posts H24/H25 with 2 bearings 5x8x2.5 each: ball arm forward for the steering
+    link, rear arm to a rigid bridge (parallelogram: both bellcranks turn by the same angle, the bridge moves across the
+    car); steering links from the bellcranks to the steering arms of the knuckles; servo across the car on the floating
+    servo mount (H17/H21) with the output shaft and the horn facing forward (End A), placed from the caliper values of
+    the owner (S1 to S9, M1 to M5); servo link from the horn ball (up) to the ball of the bridge (inclined)."""
     out = []
-    af, hpost, jd = p["post"]
+    af, hpost, jd, h_post, d_sh, play = p["post"]
     bz0, bz1, r_s, a_s, r_b = p["bellcrank"]
-    zb0, tb, wb, db = p["bridge"]
+    hub_d, end_d, seat_d, lip_t, lip_d, hole_d, pk_af, pk_h, ch = p["bellcrank_shape"]
+    zb0, zb1, wb, d_tw, d_acc, w_bb = p["bridge"]
+    br_D, br_B, br_Df, br_Bf, sh_t, sh_D = p["bridge_bearings"]
+    z_post = PLATE_T + h_post                                                                  # end of the journal
+    assert abs(bz1 - z_post) < 1e-6 and abs(bz1 - bz0 - (5.0 + lip_t)) < 1e-6, "bearing stack on the post, journal flush"
+    t_top = 6.0 - 0.5 - play                                     # full thread on top: screw M3x6 + washer 0.5 bottoms there
     P = np.array([21.7, 242.69])
-    sv_l, sv_w, sv_h, sx0 = p["servo"]
-    hl, hw, ht = p["servo_horn"]
     zt = bz1 + p["ball_offset"]
     K = kb
     pts = {}
@@ -682,136 +685,200 @@ def steering(p, cl, c, kb):
     S = np.array([*pts[1][1], zt])
 
     def bellcrank(side):
+        """Hull of the hub circle and the 2 end circles (full height); bearing seats from both faces with the lip
+        between them; through holes and hex pockets from below at both ends."""
         Pp, Sp, Bp = pts[side]
-        s = cyl_z(6.0, bz0, bz1, Pp[0], Pp[1])
+        R, r = hub_d / 2, end_d / 2
+        s = cyl_z(R, bz0, bz1, Pp[0], Pp[1])
         for q in (Sp, Bp):
-            dv = unit(q - Pp)
-            nv = np.array([-dv[1], dv[0]])
-            poly = [tuple(Pp + nv * 3.0), tuple(q + nv * 3.5), tuple(q - nv * 3.5), tuple(Pp - nv * 3.0)]
-            s = s.fuse(prism_z(poly, bz0, bz1)).fuse(cyl_z(3.5, bz0, bz1, q[0], q[1]))
-        s = s.cut(cyl_z(4.0, bz0 - 1, bz1 + 1, Pp[0], Pp[1]))                                # 2 bearings 5x8x2.5
+            L = float(np.linalg.norm(q - Pp))
+            u = (q - Pp) / L
+            w = np.array([-u[1], u[0]])
+            a = (R - r) / L                                                    # normal of the tangent along u
+            n1, n2 = a * u + math.sqrt(1 - a * a) * w, a * u - math.sqrt(1 - a * a) * w
+            poly = [tuple(Pp + R * n1), tuple(q + r * n1), tuple(q + r * n2), tuple(Pp + R * n2)]
+            s = s.fuse(prism_z(poly, bz0, bz1)).fuse(cyl_z(r, bz0, bz1, q[0], q[1]))
+        s = s.cut(cyl_z(lip_d / 2, bz0 - 1, bz1 + 1, Pp[0], Pp[1]))                         # opening of the lip
+        for z0_, z1_ in ((bz0 - 1, bz0 + 2.5), (bz1 - 2.5, bz1 + 1)):                      # bearing seats
+            s = s.cut(cyl_z(seat_d / 2, z0_, z1_, Pp[0], Pp[1]))
+        for z_, d_ in ((bz0 - 1.0, 1.0), (bz1 + 1.0, -1.0)):                                # chamfers of the entries
+            s = s.cut(cq.Solid.makeCone(seat_d / 2 + ch + 1.0, seat_d / 2, ch + 1.0, cq.Vector(Pp[0], Pp[1], z_),
+                                        cq.Vector(0, 0, d_)))
         for q in (Sp, Bp):
-            s = s.cut(cyl_z(TAP / 2, bz0 - 1, bz1 + 1, q[0], q[1]))                            # threads M3
+            s = s.cut(cyl_z(hole_d / 2, bz0 - 1, bz1 + 1, q[0], q[1]))                     # through holes
+            s = s.cut(hex_z(pk_af, bz0 - 1, bz0 + pk_h, q[0], q[1]))                       # hex pockets from below
         return s.clean()
-    post = fuse(hex_z(af, PLATE_T, PLATE_T + hpost, P[0], P[1]), cyl_z(jd / 2, PLATE_T + hpost - 0.1, bz1 + 0.25, P[0], P[1]))
-    post = post.cut(cyl_z(TAP / 2, PLATE_T - 1, PLATE_T + 6, P[0], P[1])).cut(cyl_z(TAP / 2, bz1 - 5, bz1 + 1, P[0], P[1]))
+    # post: hexagon, shank up to the shoulder (collar) under the inner ring of the lower bearing, journal flush with the
+    # bearing stack; blind thread M3 on top with a full thread of t_top: the screw M3x6 with washer bottoms at the end of the
+    # thread and cannot be screwed in fully, the washer stays play above the journal (free bellcrank)
+    post = fuse(hex_z(af, PLATE_T, PLATE_T + hpost, P[0], P[1]), cyl_z(d_sh / 2, PLATE_T + hpost - 0.1, bz0, P[0], P[1]),
+                cyl_z(jd / 2, bz0 - 0.1, z_post, P[0], P[1]))
+    post = post.cut(cyl_z(TAP / 2, PLATE_T - 1, PLATE_T + 6, P[0], P[1])).cut(cyl_z(TAP / 2, z_post - t_top - 1.0, z_post + 1, P[0], P[1]))
     brg = cq.Compound.makeCompound([cyl_z(4.0, z0, z0 + 2.5, P[0], P[1]).cut(cyl_z(2.5, z0 - 1, z0 + 4, P[0], P[1]))
-                                    for z0 in (PLATE_T + hpost, PLATE_T + hpost + 2.5)])
-    washer = cyl_z(4.0, bz1 + 0.25, bz1 + 0.75, P[0], P[1]).cut(cyl_z(1.6, bz1, bz1 + 1, P[0], P[1]))
+                                    for z0 in (bz0, bz1 - 2.5)])
+    zw = z_post + play                                                                           # washer at the stop
+    washer = fuse(cyl_z(3.0, zw, zw + 0.5, P[0], P[1]).cut(cyl_z(1.6, zw - 1, zw + 1, P[0], P[1])),   # washer 3.2x6x0.5
+                  cyl_z(2.85, zw + 0.5, zw + 2.15, P[0], P[1]),                                         # screw M3x6
+                  cyl_z(TAP / 2 - 0.001, zw + 0.5 - 6.0, zw + 0.51, P[0], P[1]))
+    zh = bz0 + pk_h                                                                              # top of the hex pockets
+    up = np.array([0, 0, 1.0])
+    ball0 = fuse(sphere(2.4, S), cyl_between(1.5, S, S - up * p["ball_offset"]))                # ball with internal thread
+    bscrew = fuse(cyl_z(2.75, zh - 3.0, zh, S[0], S[1]), cyl_z(1.45, zh - 0.01, bz1, S[0], S[1]))   # M3x8, head in the pocket
     for name, kind, sol in (("steering post", "steer", post), ("bellcrank bearings 5x8x2.5", "axle", brg),
-                            ("washer of the bellcrank", "axle", washer)):
+                            ("washer and screw M3x6 of the post", "axle", washer), ("bellcrank ball", "link", ball0),
+                            ("bellcrank ball screw M3x8", "link", bscrew)):
         out += [(f"{name} right", kind, sol), (f"{name} left", kind, mirror_x(sol))]
     bc = bellcrank(1)
     out += [("bellcrank right", "steer", bc), ("bellcrank left", "steer", mirror_x(bc))]
-    # servo across the car, output shaft and horn toward +y (End A), horn vertical in the centre position
+    # servo across the car from the caliper values of the owner (relative to H21 and the top face of the chassis plate)
+    H17, H21 = (7.98, 174.15), (8.0, 199.15)
+    s1, s2, s3, s4 = p["servo_position"]
+    sv_l, sv_h, sv_d, sv_sh, ear_t, ear_l, ear_hx, ear_hz = p["servo"]
+    hl, hw, ht, hf = p["servo_horn"]
+    tp, m4, wp, m1, l_fix, dp, wf, dl, tf, dpf, dpr, zn, ha = p["servo_mount"]
+    xs, zs = H21[0] + s2, PLATE_T + s3                                                         # output shaft
+    ycf = H21[1] + s1                                                                            # front face of the case
+    zs0 = PLATE_T + s4                                                                           # lower face of the case
+    zs1 = zs0 + sv_h
+    zm = (zs0 + zs1) / 2
+    sx0 = xs - (sv_l - sv_sh)                                                                    # inner end of the case
+    yfb = H21[1] + m1                                                                            # front faces of the posts
+    zt1 = PLATE_T + m4                                                                           # top face of the top plate
+    zt0 = zt1 - tp
+    assert zs1 < zt0 and abs(yfb + ear_t - ycf) < 1e-6, "servo below the top plate, ears flush with the case"
+    yh1 = ycf + hf                                                                               # front face of the horn
+    yh0 = yh1 - ht
+    horn_ball = np.array([xs, yh1 + p["ball_offset"], zs + hl])
+    yball = horn_ball[1]
+    # bridge behind the posts (owner: refined, PA12): beam across the car over the centre driveshaft with a tower at each
+    # end; 2 flanged bearings MF63ZZ per tower (flanges outside) on the bellcrank arm, shims 3x5x0.3 below and above the
+    # inner rings, screw M3x16 from above through the access bore, lock nut M3 in the hex pocket of the bellcrank; ball of
+    # the servo link in the middle of the rear face on a grub screw M3x8, the boss reaches back to the y of the horn ball
     yb = P[1] - r_b                                                                              # axis of the bridge
-    zs0 = PLATE_T + 4.0 + 0.5                                                                    # servo on the mount
-    zs = zs0 + sv_w / 2                                                                          # output shaft
-    zc = zs + hl                                                                                 # balls of the servo link
-    yball = yb - wb / 2 - db - p["ball_offset"]                                                  # ball of the bridge
-    case_d = sv_h - 3.4
-    ycf = yball - p["ball_offset"] - ht - 3.4                                                    # front face of the case
-    xs = sx0 + sv_l - 10.2                                                                       # output shaft (outer end)
-    horn_ball = np.array([xs, yball, zc])
+    db = (yb - wb / 2) - (yball + p["ball_offset"])                                              # depth of the boss
+    assert db > 1.0, f"boss of the bridge too short ({db:.2f})"
+    zs_0 = bz1 + sh_t                                                                            # lower bearing (on the shim)
+    zt_0 = zs_0 + br_Bf                                                                          # bottom face of the towers
+    zt_1 = zs_0 + 2 * br_B - br_Bf                                                               # step to the access bore
+    z_st = zs_0 + 2 * br_B                                                                       # top of the bearing stack
+    zbb = (zb0 + zb1) / 2
+    bball = np.array([0.0, yball, zbb])
+    L_v = float(np.linalg.norm(horn_ball - bball))
     BL, BR = pts[-1][2], pts[1][2]
-    xbb = horn_ball[0] - (21.0 + 18.0)                                                           # link gap 21 (manual)
-    bball = np.array([xbb, yball, zc])
-    bridge = fuse(box(BL[0], BR[0], yb - wb / 2, yb + wb / 2, zb0, zb0 + tb),
-                  cyl_z(wb / 2, zb0, zb0 + tb, BL[0], BL[1]), cyl_z(wb / 2, zb0, zb0 + tb, BR[0], BR[1]),
-                  box(xbb - 3.0, xbb + 3.0, yb - wb / 2 - db, yb, zc - 2.5, zc + 2.5))                 # boss of the ball stud
+    assert zb0 > zt_0 - 1e-6, "bar of the bridge below the towers"
+    bridge = box(BL[0], BR[0], yb - wb / 2, yb + wb / 2, zb0, zb1)
     for q in (BL, BR):
-        bridge = bridge.cut(cyl_z(2.55, zb0 - 1, zb0 + tb + 2, q[0], q[1]))                 # sleeves of the spacers
-    bridge = bridge.cut(cyl_y(TAP / 2, yb - wb / 2 - db - 0.1, yb - wb / 2 - db + 4.0, xbb, zc))  # thread M3, ball stud
-    spacers = []
+        bridge = bridge.fuse(cyl_z(d_tw / 2, zt_0, zb1, q[0], q[1]))
+    bridge = bridge.fuse(box(-w_bb / 2, w_bb / 2, yb - wb / 2 - db, yb, zb0, zb1))               # boss of the ball
     for q in (BL, BR):
-        sp = fuse(cyl_z(3.5, bz1, zb0, q[0], q[1]), cyl_z(2.5, zb0 - 0.1, zb0 + tb, q[0], q[1]),
-                  cyl_z(4.0, zb0 + tb, zb0 + tb + 0.5, q[0], q[1]))
-        spacers.append(sp.cut(cyl_z(1.6, bz1 - 1, zb0 + tb + 1, q[0], q[1])))
-    out += [("steering bridge", "steer", bridge.clean()), ("spacers of the bridge", "axle", cq.Compound.makeCompound(spacers)),
-            ("ball stud of the bridge", "link", stud(bball, (0, -1.0, 0), p["ball_offset"], 3.5))]
-    up = np.array([0, 0, 1.0])
-    st0 = stud(S, up, p["ball_offset"], 4.5)
-    out += [("bellcrank ball stud right", "link", st0), ("bellcrank ball stud left", "link", mirror_x(st0))]
-    rods, tb_, gap_a = link(S, -up, K, -c["front"]["kd"], 9.0, cl)                          # ball stud on top, along the kingpin
+        bridge = bridge.cut(cyl_z(br_D / 2, zt_0 - 1, zt_1 + 0.01, q[0], q[1]))               # bearing seats from both faces
+        bridge = bridge.cut(cyl_z(d_acc / 2, zt_1, zb1 + 1, q[0], q[1]))                       # access bore for the screw
+    bridge = bridge.cut(cyl_y(TAP / 2, yb - wb / 2 - db - 0.1, yb - wb / 2 - db + 5.5, 0.0, zbb))  # thread M3, grub screw
+    joint = []
+    for q in (BL, BR):
+        bore = cyl_z(1.5, bz1 - 1, z_st + 1, q[0], q[1])
+        joint += [fuse(cyl_z(br_Df / 2, zs_0, zt_0, q[0], q[1]), cyl_z(br_D / 2, zt_0 - 0.01, zs_0 + br_B, q[0], q[1])).cut(bore),
+                  fuse(cyl_z(br_D / 2, zs_0 + br_B, zt_1 + 0.01, q[0], q[1]), cyl_z(br_Df / 2, zt_1, z_st, q[0], q[1])).cut(bore)]
+    hardware = []
+    for q in (BL, BR):
+        hole = cyl_z(1.6, bz1 - 1, z_st + 1, q[0], q[1])
+        hardware += [cyl_z(sh_D / 2, bz1, zs_0, q[0], q[1]).cut(hole), cyl_z(sh_D / 2, z_st, z_st + sh_t, q[0], q[1]).cut(hole)]
+        zh_s = z_st + sh_t                                                                       # screw M3x16 from above
+        hardware.append(fuse(cyl_z(2.85, zh_s, zh_s + 1.65, q[0], q[1]), cyl_z(1.45, zh_s - 16.0, zh_s + 0.01, q[0], q[1])))
+        hardware.append(hex_z(5.5, zh - 4.0, zh, q[0], q[1]).cut(cyl_z(1.5, zh - 5, zh + 1, q[0], q[1])))     # lock nut M3
+    out += [("steering bridge", "steer", bridge.clean()),
+            ("bridge bearings MF63ZZ", "axle", cq.Compound.makeCompound(joint)),
+            ("bridge shims, screws M3x16 and lock nuts", "link", cq.Compound.makeCompound(hardware)),
+            ("ball stud of the bridge", "link", stud(bball, (0, -1.0, 0), p["ball_offset"], 5.0))]
+    rods, tb_, gap_a = link(S, -up, K, -c["front"]["kd"], 9.0, cl)                          # ball on top, along the kingpin
     out += [("steering link rod ends right", "rodend", rods), ("steering link turnbuckle right", "link", tb_),
             ("steering link rod ends left", "rodend", mirror_x(rods)), ("steering link turnbuckle left", "link", mirror_x(tb_))]
     rods, tb_, gap_v = link(horn_ball, np.array([0, -1.0, 0]), bball, np.array([0, 1.0, 0]), 9.0, cl)
     out += [("servo link rod ends", "rodend", rods), ("servo link turnbuckle", "link", tb_)]
-    # servo: case, ears at both ends (flange 7.5 behind the front face), output spline
-    yf = ycf - 7.5                                                                               # front face of the ears
-    case = box(sx0, sx0 + sv_l, ycf - case_d, ycf, zs0, zs0 + sv_w)
-    ears = [box(sx0 - 6.5, sx0, yf - 2.5, yf, zs0, zs0 + sv_w), box(sx0 + sv_l, sx0 + sv_l + 6.5, yf - 2.5, yf, zs0, zs0 + sv_w)]
+    # servo: case, ears flush with the front face of the case, output spline
+    xe = (sx0 - ear_hx, sx0 + sv_l + ear_hx)                                                     # ear holes (x)
+    ear_holes = [(xx, zz) for xx in xe for zz in (zm - ear_hz / 2, zm + ear_hz / 2)]
+    case = box(sx0, sx0 + sv_l, ycf - sv_d, ycf, zs0, zs1)
+    ears = [box(sx0 - ear_l, sx0, yfb, ycf, zs0, zs1), box(sx0 + sv_l, sx0 + sv_l + ear_l, yfb, ycf, zs0, zs1)]
     servo = fuse(case, *ears, cyl_y(2.95, ycf - 0.1, ycf + 3.4, xs, zs))
-    ear_holes = [(xx, zz) for xx in (sx0 - 3.25, sx0 + sv_l + 3.25) for zz in (zs - 5.0, zs + 5.0)]
     for xx, zz in ear_holes:
-        servo = servo.cut(cyl_y(1.6, yf - 3.5, yf + 1, xx, zz))
-    yh0 = ycf + 3.4
-    horn = fuse(cyl_y(5.5, yh0, yh0 + ht, xs, zs), box(xs - hw / 2, xs + hw / 2, yh0, yh0 + ht, zs, zc),
-                cyl_y(hw / 2, yh0, yh0 + ht, xs, zc))
-    horn = horn.cut(cyl_y(2.95, yh0 - 1, yh0 + ht + 1, xs, zs)).cut(cyl_y(TAP / 2, yh0 - 1, yh0 + ht + 1, xs, zc))
-    horn = horn.cut(cyl_x(TAP / 2, xs - 6, xs + 6, yh0 + ht / 2, zs - 3.8))                      # clamp screw M3
-    # floating servo mount as the T410R (manual step 10): top plate above the servo on 2 posts. Only the fixed post
-    # at the inner end of the servo is screwed onto the chassis plate (H17/H21, threads M3 from below, a foot below
-    # the inner servo ear reaches H21); the floating post at the output end hangs from the top plate and ends at the
-    # bottom of the servo. Servo ears on the front faces of the posts (threads M3 from the front), top plate on the
-    # top faces (threads M3 from above; slots at the floating post)
-    tp, gp, wp, mh, dl, tf, lf, nw, nd, fe = p["servo_mount"]
-    H17, H21 = (7.98, 174.15), (8.0, 199.15)
-    zt0 = zs0 + sv_w + gp                                                                        # bottom of the top plate
-    yfb = yf - 2.5                                                                               # front faces of the posts
-    xa0, xa1 = sx0 - 0.3 - wp, sx0 - 0.3                                                         # fixed post
-    xb0, xb1 = sx0 + sv_l + 0.3, sx0 + sv_l + 0.3 + wp                                           # floating post
-    ya0, yb0_ = H17[1] - mh, yfb - lf                                                            # back ends of the posts
-    xac, xbc = (xa0 + xa1) / 2, (xb0 + xb1) / 2
-    top_a = (ya0 + 4.0, yfb - 9.0)                                                               # top screws, fixed post
-    top_b = (yb0_ + 3.5, yfb - dl - 3.5)                                                         # top screws, floating post
-    fixed = fuse(box(xa0, xa1, ya0, yfb, PLATE_T, zt0), box(xa0, xa1, yfb - 1.0, H21[1] + mh, PLATE_T, zs0 - 0.5))
-    yn = (top_a[0] + top_a[1]) / 2                                                               # U-notch from the top
-    fixed = fixed.cut(fuse(box(xa0 - 1, xa1 + 1, yn - nw / 2, yn + nw / 2, zt0 - nd + nw / 2, zt0 + 1),
-                           cyl_x(nw / 2, xa0 - 1, xa1 + 1, yn, zt0 - nd + nw / 2)))
-    fixed = fixed.cut(cyl_z(TAP / 2, PLATE_T - 1, PLATE_T + 7.0, *H17)).cut(cyl_z(TAP / 2, PLATE_T - 1, zs0, *H21))
-    fl_r = 6.0                                                                                   # radius below the flange
-    floating = fuse(box(xb0, xb1, yfb - dl, yfb, zs0, zt0), box(xb0, xb1, yb0_, yfb - dl + 0.01, zt0 - tf, zt0),
-                    box(xb0, xb1, yfb - dl - fl_r, yfb - dl + 0.01, zt0 - tf - fl_r, zt0 - tf + 0.01).cut(
-                        cyl_x(fl_r, xb0 - 1, xb1 + 1, yfb - dl - fl_r, zt0 - tf - fl_r)))
+        servo = servo.cut(cyl_y(1.6, yfb - 1, ycf + 1, xx, zz))
+    horn = fuse(cyl_y(5.5, yh0, yh1, xs, zs), box(xs - hw / 2, xs + hw / 2, yh0, yh1, zs, horn_ball[2]),
+                cyl_y(hw / 2, yh0, yh1, xs, horn_ball[2]))
+    horn = horn.cut(cyl_y(2.95, yh0 - 1, yh1 + 1, xs, zs)).cut(cyl_y(TAP / 2, yh0 - 1, yh1 + 1, xs, horn_ball[2]))
+    horn = horn.cut(cyl_x(TAP / 2, xs - 6, xs + 6, (yh0 + yh1) / 2, zs - 3.8))                   # clamp screw M3
+    # floating servo mount as the T410R (manual step 10): top plate on 2 posts. Only the fixed post at the inner end of
+    # the servo is screwed onto the chassis plate (H17/H21, threads M3 from below); the floating post (L bracket) at the
+    # output end hangs from the top plate. Servo ears on the front faces of the posts (threads M3 from the front), top
+    # plate on the top faces (threads M3 from above; slots at the floating post)
+    xac = (H21[0] + xe[0]) / 2                                                                   # fixed post: H21 and ear holes
+    xa0, xa1 = xac - wp / 2, xac + wp / 2
+    ya1, ya0 = yfb, yfb - l_fix
+    yp0, yp1 = ya0 + dpr, ya1 - dpf                                                              # between the pillars
+    rn, ra = 3.0, 2.0
+    notch = fuse(box(xa0 - 1, xa1 + 1, yp0, yp1, PLATE_T + zn + rn, zt0 + 1),
+                 box(xa0 - 1, xa1 + 1, yp0 + rn, yp1 - rn, PLATE_T + zn, zt0 + 1),
+                 cyl_x(rn, xa0 - 1, xa1 + 1, yp0 + rn, PLATE_T + zn + rn), cyl_x(rn, xa0 - 1, xa1 + 1, yp1 - rn, PLATE_T + zn + rn))
+    arch = fuse(box(xa0 - 1, xa1 + 1, yp0, yp1, PLATE_T - 1, PLATE_T + ha - ra),
+                box(xa0 - 1, xa1 + 1, yp0 + ra, yp1 - ra, PLATE_T - 1, PLATE_T + ha),
+                cyl_x(ra, xa0 - 1, xa1 + 1, yp0 + ra, PLATE_T + ha - ra), cyl_x(ra, xa0 - 1, xa1 + 1, yp1 - ra, PLATE_T + ha - ra))
+    fixed = box(xa0, xa1, ya0, ya1, PLATE_T, zt0).cut(notch).cut(arch)
+    for h in (H17, H21):
+        fixed = fixed.cut(cyl_z(TAP / 2, PLATE_T - 1, PLATE_T + 5.0, *h))                       # threads M3 from below
+    top_a = (ya1 - 6.5, ya0 + dpr / 2)                                                           # top screws (pillars)
     for hy in top_a:
-        fixed = fixed.cut(cyl_z(TAP / 2, zt0 - 6.0, zt0 + 0.1, xac, hy))
+        fixed = fixed.cut(cyl_z(TAP / 2, zt0 - 5.0, zt0 + 0.1, xac, hy))
+    xbc = xe[1]                                                                                  # floating post
+    xb0, xb1 = xbc - wf / 2, xbc + wf / 2
+    assert xb0 > sx0 + sv_l + 0.2
+    yl0, yfl0, fl_r = yfb - dl, ya0 + 1.0, 6.0                                                   # leg, end of the flange
+    floating = fuse(box(xb0, xb1, yl0, yfb, zs0, zt0), box(xb0, xb1, yfl0, yl0 + 0.01, zt0 - tf, zt0),
+                    box(xb0, xb1, yl0 - fl_r, yl0 + 0.01, zt0 - tf - fl_r, zt0 - tf + 0.01).cut(
+                        cyl_x(fl_r, xb0 - 1, xb1 + 1, yl0 - fl_r, zt0 - tf - fl_r)))
+    top_b = (ya0 + 5.5, ya0 + 15.5)
     for hy in top_b:
         floating = floating.cut(cyl_z(TAP / 2, zt0 - tf - 0.1, zt0 + 0.1, xbc, hy))
     for xx, zz in ear_holes:
-        cut_ = cyl_y(TAP / 2, yfb - 6.0, yfb + 0.1, xx, zz)                                     # threads M3, servo ears
+        cut_ = cyl_y(TAP / 2, yfb - 4.0, yfb + 0.1, xx, zz)                                     # threads M3, servo ears
         fixed, floating = fixed.cut(cut_), floating.cut(cut_)
-    ch = 3.0                                                                                     # chamfer of the top plate
-    yfr = ycf - fe                                                                               # front edge of the top plate
-    plate_top = prism_z([(xa0, ya0), (xa1 + 2.0, ya0), (xa1 + 2.0 + yb0_ - ya0, yb0_), (xb1 - ch, yb0_), (xb1, yb0_ + ch),
-                         (xb1, yfr - ch), (xb1 - ch, yfr), (xa0 + ch, yfr), (xa0, yfr - ch)], zt0, zt0 + tp)
+    cpl, cin = 2.0, 3.0                                                                          # chamfers of the top plate
+    xst, ypm = xa1 + 2.0, ya0 + dp                                                               # step, front edge (main part)
+    plate_top = prism_z([(xa0 + cpl, ya0), (xb1 - cpl, ya0), (xb1, ya0 + cpl), (xb1, ypm - cpl), (xb1 - cpl, ypm),
+                         (xst + cin, ypm), (xst, ypm + cin), (xst, ya1 - cpl), (xst - cpl, ya1), (xa0 + cpl, ya1),
+                         (xa0, ya1 - cpl), (xa0, ya0 + cpl)], zt0, zt1)
     for hy in top_a:
-        plate_top = plate_top.cut(cyl_z(1.6, zt0 - 1, zt0 + tp + 1, xac, hy))
+        plate_top = plate_top.cut(cyl_z(1.6, zt0 - 1, zt1 + 1, xac, hy))
     for hy in top_b:                                                                             # slots along x
-        plate_top = plate_top.cut(fuse(cyl_z(1.6, zt0 - 1, zt0 + tp + 1, xbc - 1.5, hy), cyl_z(1.6, zt0 - 1, zt0 + tp + 1, xbc + 1.5, hy),
-                                       box(xbc - 1.5, xbc + 1.5, hy - 1.6, hy + 1.6, zt0 - 1, zt0 + tp + 1)))
-    steering.mount = {"top plate": (zt0, zt0 + tp), "gap of the floating post": zs0 - PLATE_T,
-                      "fixed post": (xa0, xa1, ya0, H21[1] + mh), "floating post": (xb0, xb1, yb0_, yfb)}
+        plate_top = plate_top.cut(fuse(cyl_z(1.6, zt0 - 1, zt1 + 1, xbc - 1.5, hy), cyl_z(1.6, zt0 - 1, zt1 + 1, xbc + 1.5, hy),
+                                       box(xbc - 1.5, xbc + 1.5, hy - 1.6, hy + 1.6, zt0 - 1, zt1 + 1)))
+    steering.mount = {"top plate": (zt0, zt1), "gap of the floating post": zs0 - PLATE_T,
+                      "fixed post": (xa0, xa1, ya0, ya1), "floating post": (xb0, xb1, yfl0, yfb)}
     hstud = stud(horn_ball, (0, 1.0, 0), p["ball_offset"], 3.5)
     out += [("servo", "servo", servo.clean()), ("servo horn (aluminium clamp)", "steer", horn.clean()),
             ("servo mount top plate", "steer", plate_top.clean()), ("servo mount fixed post", "steer", fixed.clean()),
             ("servo mount floating post", "steer", floating.clean()), ("servo horn ball stud", "link", hstud)]
     ack = ackermann(P, S, c["front"]["J"], K, c["rear"]["O"][1])
+    th = math.radians(ack["bellcrank 25"])
+    travel = r_b * math.sin(th)
     steering.info = {"S": S, "K": K, "B": np.array([*BR, zb0]), "bridge ball": bball, "horn": horn_ball,
-                     "gap steering link": gap_a, "gap servo link": gap_v, "ackermann": ack}
+                     "gap steering link": gap_a, "gap servo link": gap_v, "ackermann": ack,
+                     "bridge travel 25": round(travel, 2), "servo angle 25": round(math.degrees(math.asin(travel / hl)), 1),
+                     "servo link inclination": round(math.degrees(math.asin((horn_ball[2] - zbb) / L_v)), 1),
+                     "boss depth": round(db, 2)}
     return out
 
 
 def steering_sweep(parts, others, angle):
     """Turns the right bellcrank with its ball stud and the rod end of the steering link about the post and
-    moves the bridge with its spacers (parallelogram) by +-angle; returns the largest overlap with the other
+    moves the bridge with its bearings, shims, screws and ball (parallelogram) by +-angle; returns the largest overlap with the other
     parts (bulkheads, cup joint, centre driveshaft, steering posts)."""
     st = steering.info
     P = np.array([21.7, 242.69, 0.0])
     S = st["S"]
     ring = cyl_between(3.5, S + np.array([0, 0, -3.0]), S + np.array([0, 0, 3.4]))
-    turning = [parts["bellcrank right"], parts["bellcrank ball stud right"], ring]
-    moving = [parts["steering bridge"], parts["spacers of the bridge"], parts["ball stud of the bridge"]]
+    turning = [parts["bellcrank right"], parts["bellcrank ball right"], parts["bellcrank ball screw M3x8 right"], ring]
+    moving = [parts["steering bridge"], parts["bridge bearings MF63ZZ"], parts["ball stud of the bridge"],
+              parts["bridge shims, screws M3x16 and lock nuts"]]
     B = st["B"]
     res = {}
     for sg in (1, -1):
@@ -859,13 +926,13 @@ KIND_COLORS = {"upright": (0.86, 0.45, 0.12), "axle": (0.72, 0.74, 0.77), "cvd":
                "link": (0.78, 0.79, 0.82), "arm": (0.4, 0.34, 0.52), "plate": (0.26, 0.27, 0.29),
                "bulkhead": (0.55, 0.56, 0.58)}
 MADE = {"upright", "cvd", "steer", "swaybar"}                  # own parts to manufacture (files)
-MADE_NAMES = ("axle with joint cup", "hex hub 12", "sway bar ball end", "spacers of the bridge")
+MADE_NAMES = ("axle with joint cup", "hex hub 12", "sway bar ball end")
 
 
 FOLDERS = {"front_corner": ("c_hub_end_a", "steering_knuckle_end_a", "axle_with_joint_cup_end_a", "hex_hub_12_end_a"),
            "rear_corner": ("hub_carrier_end_b", "axle_with_joint_cup_end_b", "hex_hub_12_end_b"),
            "cvd_drive_shafts": ("cvd_drive_shaft_end_a", "cvd_drive_shaft_end_b"),
-           "steering": ("steering_post", "bellcrank_right", "bellcrank_left", "steering_bridge", "spacers_of_the_bridge",
+           "steering": ("steering_post", "bellcrank", "steering_bridge",
                         "servo_horn_aluminium_clamp"),
            "servo_mount": ("servo_mount_top_plate", "servo_mount_fixed_post", "servo_mount_floating_post"),
            "sway_bars": ("sway_bar_end_a", "sway_bar_end_b", "sway_bar_holder_end_a", "sway_bar_holder_end_b",
@@ -879,9 +946,9 @@ def write_files(parts):
     folder = {stem: name for name, stems_ in FOLDERS.items() for stem in stems_}
     stems = []
     for name, kind, s in parts:
-        if (kind not in MADE and not name.startswith(MADE_NAMES)) or (name.endswith(" left") and "bellcrank" not in name):
+        if (kind not in MADE and not name.startswith(MADE_NAMES)) or name.endswith(" left"):
             continue
-        base = name[:-6] if name.endswith(" right") and "bellcrank" not in name else name
+        base = name[:-6] if name.endswith(" right") else name
         stem = re.sub(r"[^a-z0-9]+", "_", base.lower().replace("1.4", "")).strip("_")
         if stem not in folder:
             raise KeyError(f"no folder for the part file {stem} (FOLDERS)")
@@ -971,9 +1038,9 @@ def drawing(parts, info, lock, path=DRAWING):
     # 3: steering from above
     ax = fig.add_axes(row([0.69, 0.3, 0.3, 0.64]))
     top = (np.array([0, 0, -1.0]), np.array([1.0, 0, 0]), np.array([0, 1.0, 0]))
-    panel(ax, (-95, 150, -1, 95, 300, 40), top,
+    panel(ax, (-95, 150, -1, 95, 300, 52), top,
           lambda n, k: k not in ("damper", "spring") and not n.startswith(("sway", "CVD")) and ("End B" not in n), 2.0)
-    ax.set_title("Steering from above (End A at the top): bellcranks on H24/H25 joined\nby the bridge (parallelogram), "
+    ax.set_title("Steering from above (End A at the top): symmetric bellcranks on H24/H25\njoined by the bridge (parallelogram), "
                  "servo across the car below the top plate\nof the floating servo mount (H17/H21), horn facing forward",
                  fontsize=9.5, loc="left")
     st = steering.info
@@ -1004,9 +1071,10 @@ def drawing(parts, info, lock, path=DRAWING):
              f"CVD drive shafts: front {info['front'][2]:.1f}, rear {info['rear'][2]:.1f} (centre to centre of the joints); "
              f"dampers {info['damper front']:.1f} front, {info['damper rear']:.1f} rear (centre to centre of the balls)",
              "Threads M3 (tap drill 2.5): C-hub (camber stud, grub screw of the hinge pin), knuckle (steering ball stud), "
-             "hub carrier (camber stud, grub screw), hex hubs (grub screw), steering posts (both ends), bellcranks (ball studs, bridge screws), bridge (ball stud), "
+             "hub carrier (camber stud, grub screw), hex hubs (grub screw), steering posts (both ends), bridge (ball stud), "
              "servo mount (fixed post: H17/H21 from below; both posts: top plate from above, servo ears from the front), "
-             "servo horn (clamp, ball stud), sway bar ball ends (grub screw M3x3)"]
+             "servo horn (clamp, ball stud), sway bar ball ends (grub screw M3x3). Bellcranks: through holes 3.2 with hex pockets "
+             "from below (lock nut of the bridge screw M3x20, head of the ball screw M3x8)"]
     fig.text(0.69, 0.555, "\n\n".join(notes), fontsize=8.3, va="top", wrap=True)
     labels = {"upright": "C-hubs, knuckles, hub carriers", "axle": "axles, hex hubs, pins, bearings",
               "cvd": "CVD drive shafts", "steer": "steering, servo mount, sway bar holders", "damper": "dampers",
@@ -1018,11 +1086,12 @@ def drawing(parts, info, lock, path=DRAWING):
     # 6: servo on the floating servo mount, 3D view from the front right
     ax = fig.add_axes([0.01, 0.01, 0.47, 0.285])
     mt = steering.mount
-    panel(ax, (-2, 160, 0, 70, 232, 33), iso_basis(62, 20),
+    panel(ax, (-2, 160, 0, 72, 232, 52), iso_basis(62, 20),
           lambda n, k: n.startswith(("servo", "steering post right")) or k == "plate", 0.8)
-    ax.set_title("Servo on the floating servo mount (manual step 10), 3D view from the front right: top plate on 2 posts;\n"
-                 "only the fixed post (inner end) is screwed onto H17/H21, the floating post at the output end hangs from the\n"
-                 f"top plate ({mt['gap of the floating post']:.1f} above the chassis plate); servo ears on the front faces of the posts",
+    ax.set_title("Servo on the floating servo mount (manual step 10, caliper values of the owner), 3D view from the front right:\n"
+                 "top plate on 2 posts; only the fixed post (inner end) is screwed onto H17/H21, the floating post (L bracket) at the\n"
+                 f"output end hangs from the top plate ({mt['gap of the floating post']:.1f} above the chassis plate); horn ball "
+                 f"{steering.info['horn'][2] - PLATE_T:.1f} above the chassis plate",
                  fontsize=9.5, loc="left")
     # 7: front sway bar, 3D view from the front right
     ax = fig.add_axes([0.51, 0.01, 0.48, 0.285])
@@ -1068,7 +1137,7 @@ def main():
     lock = steering_lock(p, c["front"], fp, fixed)
     print("  free steering angle (front right knuckle):", lock)
     sweep_o = [(n, s) for n, _, s in others if n.startswith(("lower bulkhead End A", "upper bulkhead End A", "cup joint End A",
-                                                                 "centre driveshaft", "front pinion shaft"))]
+                                                                 "centre driveshaft", "front pinion shaft", "speedrun top brace"))]
     sweep_o += [(n, names[n]) for n in ("steering post right", "steering post left", "servo", "servo mount top plate",
                                          "servo mount fixed post", "servo mount floating post", "servo horn (aluminium clamp)")]
     ang = steering.info["ackermann"]["bellcrank 25"] + 3.0

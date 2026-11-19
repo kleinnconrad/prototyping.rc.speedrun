@@ -444,30 +444,33 @@ def find_holes(solid, max_d=6.5):
             else:
                 clusters.append([ft])
         for feats in clusters:
-            cyl = {}
-            for ft in feats:
-                if ft["type"] == "CYLINDER":
-                    c = cyl.setdefault(round(ft["r"], 3), {"span": 0.0, "t0": ft["t0"], "t1": ft["t1"]})
+            segs = []                                   # cylinders: one segment per radius and continuous range along the axis
+            for ft in sorted((e for e in feats if e["type"] == "CYLINDER"), key=lambda e: e["t0"]):
+                c = next((q for q in segs if q["r"] == round(ft["r"], 3) and ft["t0"] <= q["t1"] + 0.05), None)
+                if c:
                     c["span"] += ft["span"]
-                    c["t0"], c["t1"] = min(c["t0"], ft["t0"]), max(c["t1"], ft["t1"])
-            full = {r: c for r, c in cyl.items() if c["span"] > 2 * np.pi * 0.98}
-            if not full or 2 * min(full) > max_d + 1e-6:
+                    c["t1"] = max(c["t1"], ft["t1"])
+                else:
+                    segs.append({"r": round(ft["r"], 3), "span": ft["span"], "t0": ft["t0"], "t1": ft["t1"]})
+            fulls = [c for c in segs if c["span"] > 2 * np.pi * 0.98]
+            if not fulls or 2 * min(c["r"] for c in fulls) > max_d + 1e-6:
                 continue
-            r_main = min(full)
+            r_main = min(c["r"] for c in fulls)
+            main = max((c for c in fulls if c["r"] == r_main), key=lambda c: c["t1"] - c["t0"])
             t0 = min(ft["t0"] for ft in feats)
             t1 = max(ft["t1"] for ft in feats)
             d, p = g["d"], g["p"]
             open0 = not solid.isInside(cq.Vector(*(p + d * (t0 - 0.05))))
             open1 = not solid.isInside(cq.Vector(*(p + d * (t1 + 0.05))))
             extras = []
-            for r, c in sorted(full.items()):
-                if r != r_main:
-                    extras.append({"kind": "bore", "d": 2 * r, "t0": c["t0"], "t1": c["t1"]})
+            for c in sorted(fulls, key=lambda c: (c["r"], c["t0"])):
+                if c is not main:
+                    extras.append({"kind": "bore", "d": 2 * c["r"], "t0": c["t0"], "t1": c["t1"]})
             for ft in feats:
                 if ft["type"] == "CONE":
                     extras.append({"kind": "csk", "d": 2 * ft["r"], "d_min": 2 * ft["r_min"], "angle": 2 * ft["semi"],
                                    "t0": ft["t0"], "t1": ft["t1"]})
-            holes.append({"d": d, "p": p, "t0": t0, "t1": t1, "dia": 2 * r_main, "main": full[r_main],
+            holes.append({"d": d, "p": p, "t0": t0, "t1": t1, "dia": 2 * r_main, "main": main,
                           "open": (open0, open1), "extras": extras})
     return holes
 
@@ -512,8 +515,8 @@ def hole_rows_generic(holes, names=None, use=None, thread_extra=1.0, centroid=(0
             ends.append(0 if abs((e["t0"] + e["t1"]) / 2 - h["t0"]) < abs((e["t0"] + e["t1"]) / 2 - h["t1"]) else 1)
         if not through:
             start = 0 if h["open"][0] else 1
-        elif csk and any(e["d"] - h["dia"] > 1.2 for e in csk):
-            start = ends[[i for i, e in enumerate(csk) if e["d"] - h["dia"] > 1.2][0]]
+        elif csk and any(e["d"] - e["d_min"] > 1.2 for e in csk):
+            start = ends[[i for i, e in enumerate(csk) if e["d"] - e["d_min"] > 1.2][0]]
         else:                                             # outer end (farther from the centroid), else the upper end
             e0, e1 = (np.linalg.norm(hole_point(h, i) - np.asarray(centroid, float)) for i in (0, 1))
             start = (0 if e0 > e1 else 1) if abs(e0 - e1) > 0.1 else (0 if hole_point(h, 0)[2] >= hole_point(h, 1)[2] else 1)
@@ -526,19 +529,24 @@ def hole_rows_generic(holes, names=None, use=None, thread_extra=1.0, centroid=(0
             drill = (m["t1"] - h["t0"]) if start == 0 else (h["t1"] - m["t0"])
             depth = f"drill {drill:.1f}" + (f", thread {max(drill - thread_extra, 0):.1f}" if thread else "")
         notes = []
-        chamfers = [(e, end) for e, end in zip(csk, ends) if (e["d"] - h["dia"]) / 2 <= 0.6]
+        chamfers = [(e, end) for e, end in zip(csk, ends) if (e["d"] - e["d_min"]) / 2 <= 0.6]
         if chamfers:
-            c = (chamfers[0][0]["d"] - h["dia"]) / 2
-            notes.append(f"chamfer {c:.1f} x 45 deg" + (" on both faces" if len(chamfers) == 2 else ""))
+            e0 = chamfers[0][0]
+            c = (e0["d"] - e0["d_min"]) / 2
+            notes.append(f"chamfer {c:.1f} x 45 deg" + (f" of Ø{e0['d_min']:.1f}" if abs(e0["d_min"] - h["dia"]) > 0.05 else "")
+                         + (" on both faces" if len(chamfers) == 2 else ""))
         for e, end in zip(csk, ends):
-            if (e["d"] - h["dia"]) / 2 > 0.6:
+            if (e["d"] - e["d_min"]) / 2 > 0.6:
                 outward = -h["d"] if end == 0 else h["d"]
                 notes.append(f"countersink Ø{e['d']:.1f} x {e['angle']:.0f} deg on the {face_name(outward)}")
         for e in h["extras"]:
-            if e["kind"] == "bore":
-                end = 0 if abs(e["t0"] - h["t0"]) < 0.05 else (1 if abs(e["t1"] - h["t1"]) < 0.05 else None)
+            if e["kind"] == "bore":                       # a bore that reaches a face through a chamfer starts at the face
+                ch0 = any(abs(c["t0"] - h["t0"]) < 0.05 and abs(c["t1"] - e["t0"]) < 0.05 for c in csk)
+                ch1 = any(abs(c["t1"] - h["t1"]) < 0.05 and abs(c["t0"] - e["t1"]) < 0.05 for c in csk)
+                end = 0 if (abs(e["t0"] - h["t0"]) < 0.05 or ch0) else (1 if (abs(e["t1"] - h["t1"]) < 0.05 or ch1) else None)
+                length = (e["t1"] - h["t0"]) if end == 0 else ((h["t1"] - e["t0"]) if end == 1 else (e["t1"] - e["t0"]))
                 where = f" from the {face_name(-h['d'] if end == 0 else h['d'])}" if end is not None else " (inside)"
-                notes.append(f"Ø{e['d']:.2f} x {e['t1'] - e['t0']:.2f}{where}")
+                notes.append(f"Ø{e['d']:.2f} x {length:.2f}{where}")
         u = use(h) if use else None
         rows.append({"hole": h, "P": P, "dir": dirv, "dirtxt": describe_direction(h["d"] if through else dirv, through),
                      "size": size, "depth": depth, "note": "; ".join(([u] if u else []) + notes),

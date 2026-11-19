@@ -55,6 +55,20 @@ def running_gear_frames():
     return {"c_hub": (np.eye(3), np.asarray(c["O"], float), p), "knuckle": (np.asarray(R, float), np.asarray(J, float), p)}
 
 
+def steering_frames():
+    """Frames of the bellcrank (origin on the hub axis on the bottom face) and of the servo mount parts (origin O at
+    the hole H21 of the chassis plate: on its top face for the posts, on the lower face of the top plate for the plate)."""
+    import generate_running_gear as G
+    from generate_bulkhead_lower import load_params
+    p = load_params(G.PARAMS)
+    tp, m4 = p["servo_mount"][:2]
+    bb_ = p["bridge_bearings"]
+    return {"bellcrank": np.array([21.7, 242.69, p["bellcrank"][0]]), "post": np.array([8.0, 199.15, G.PLATE_T]),
+            "bridge": np.array([0.0, 242.69 - p["bellcrank"][4], p["bellcrank"][1] + bb_[4] + bb_[3]]),
+            "steering_post": np.array([21.7, 242.69, G.PLATE_T]),
+            "plate": np.array([8.0, 199.15, G.PLATE_T + m4 - tp]), "p": p}
+
+
 def csv_names(path, z=0.0):
     with open(path, encoding="utf-8") as f:
         return [(r["id"], (float(r["x_mm"]), float(r["y_mm"]), z)) for r in csv.DictReader(f)]
@@ -79,6 +93,24 @@ def parts():
     kn = np.array([0.0, ca, sa])                                       # square to it in the y-z plane
     Jc = np.array([rgp["kingpin_x"] - Oc[0], -rgp["kingpin_y"], rgp["wheel_r"] - rgp["ride_height"][0] - Oc[2]])
     kx = rgp["kingpin_x"] - Oc[0]
+    sf = steering_frames()
+    sp = sf["p"]["servo_position"]
+    bc, bs, sm, sv = sf["p"]["bellcrank"], sf["p"]["bellcrank_shape"], sf["p"]["servo_mount"], sf["p"]["servo"]
+    xs = sp[1]                                                               # output shaft from H21 (x)
+    x_ear = (xs - (sv[0] - sv[3]) - sv[6], xs + sv[3] + sv[6])               # ear holes from H21 (x)
+    xfc, xlc = x_ear[0] / 2, x_ear[1]                                        # middle planes of the posts
+    xf0, xpe = xfc - sm[2] / 2, xlc + sm[6] / 2                              # inner face of the fixed post, outer end
+    ymid = sm[3] - sm[9] - (sm[4] - sm[9] - sm[10]) / 2                      # middle between the pillars
+    bri, brb = sf["p"]["bridge"], sf["p"]["bridge_bearings"]
+    pst = sf["p"]["post"]
+    z_shoulder = pst[3] - (5.0 + bs[3])                                      # shoulder of the post above the chassis plate
+    t_top = 6.0 - 0.5 - pst[5]                                               # full thread on top (stop of the screw M3x6)
+    xb_ = 21.7                                                               # axes of the towers (posts H24/H25)
+    zbo = sf["bridge"][2]                                                    # bottom face of the towers (frame z = 0)
+    zb_lo, zb_hi, zb_ball = bri[0] - zbo, bri[1] - zbo, (bri[0] + bri[1]) / 2 - zbo
+    z_seat = 2 * brb[1] - 2 * brb[3]                                         # bearing seats (both bearings without flanges)
+    y_horn_ball = 199.15 + sp[0] + sf["p"]["servo_horn"][3] + sf["p"]["ball_offset"]           # H21 + S1 + S5 + S8
+    dboss = (242.69 - bc[4] - bri[2] / 2) - (y_horn_ball + sf["p"]["ball_offset"])             # depth of the ball boss
     return [
         dict(key="chassis_plate", folder="cad/chassis/chassis_plate_speedrun_wide_motor10",
              step="chassis_plate_T410R_speedrun_wide_motor10.step", stem="chassis_plate_T410R_speedrun_wide_motor10",
@@ -248,6 +280,153 @@ def parts():
              notes=["Bores Ø3.0 of the inner lugs for the inner hinge pin 3x42, bores Ø4.3 of the outer lugs for the outer "
                     "hinge pin (as the original part).", "Threads M3 for the ball studs of the damper (shock plate) and of the "
                     "sway bar drop link, threads M4 for the droop screws."]),
+        dict(key="bellcrank", folder="cad/running_gear/steering", step="bellcrank.step", stem="bellcrank",
+             title="Bellcrank (same part on both sides)", number="BC", frame=(np.column_stack([(0, 1, 0), (-1, 0, 0), (0, 0, 1)]), sf["bellcrank"]),
+             material="Nylon PA12 (MJF 3D print)", density=1.01, density_txt="PA12", quantity="2 (same part on both sides)",
+             tol="process tolerance (MJF approx. ±0.3)", edges="as modelled", status="measures qualified, not printed",
+             frame_note=f"Drawing frame: origin O on the axis of the hub on the bottom face; x along the arms (in the car "
+                        f"+x toward End A), z up. The STEP file is in the assembly position of the right bellcrank: O = "
+                        f"({sf['bellcrank'][0]:.2f}, {sf['bellcrank'][1]:.2f}, {sf['bellcrank'][2]:.2f}).",
+             dims=[("T", (-bc[4], 0, 0), (bc[2], 0, 0), "h", "below", f"{bc[4] + bc[2]:.2f} (2 x {bc[2]:.2f})")],
+             view_callouts=[("T", (0, bs[0] / 2, bc[1] - bc[0]), f"Ø{bs[0]:.1f} (hub)", (10, 12)),
+                            ("T", (bc[2] + bs[1] / 2, 0, bc[1] - bc[0]), f"R{bs[1] / 2:.2f} (2x, ends)", (8, 12))],
+             max_hole_d=8.5, section_gap=16,
+             hole_note=lambda h: (f"hex pocket {bs[6]:.1f} across the flats x {bs[7]:.1f} from the bottom face"
+                                  if abs(h["dia"] - bs[5]) < 0.05 else "bearing seats with the lip"),
+             sections=[dict(label="B", point=(0, 0, 0), d=(0, -1, 0), x=(1, 0, 0), title="Section B-B (plane of the 3 axes)",
+                            axes=[((q, 0, -1.5), (q, 0, bc[1] - bc[0] + 1.5)) for q in (-bc[4], 0.0, bc[2])],
+                            callouts=[((-bs[2] / 2, 0, 0.6), f"Ø{bs[2]:.1f}, 2.5 deep (2x)", (-57.5, -15.5)),
+                                      ((bs[4] / 2, 0, 2.5), f"lip {bs[3]:g}, opening Ø{bs[4]:.1f}", (8, -33)),
+                                      ((bc[2] + bs[5] / 2 + 0.8, 0, bs[7]), f"hex {bs[6]:.1f} across the flats, {bs[7]:.1f} deep (2x)", (3.5, -33)),
+                                      ((bc[2] - bs[5] / 2, 0, 4.25), f"Ø{bs[5]:.1f} through (2x)", (10.5, 14.25))])],
+             notes=["Symmetric part: the same part on both sides and at both ends (no front and rear). One end carries the "
+                    "ball of the steering link, the other end the bridge.",
+                    f"Bearing seats Ø{bs[2]:.1f} for 2 bearings 5x8x2.5, pressed in from both faces against the lip ({bs[3]:g} thick, "
+                    f"opening Ø{bs[4]:.1f}: contact on the outer rings only). Chamfer {bs[8]:g} x 45 deg at the entries. Check the fit "
+                    "after printing (MJF approx. ±0.3); ream to Ø8.0 if the bearings do not fit.",
+                    f"Through holes Ø{bs[5]:.1f} at both ends with hex pockets {bs[6]:.1f} across the flats, {bs[7]:.1f} deep from below: "
+                    "bridge end: lock nut M3 (DIN 985) for the screw M3x16 from above through the bearings of the bridge; ball end: head of the "
+                    "screw M3x8 (ISO 4762) from below that holds the ball with internal thread.",
+                    "Outline: hull of the hub and the 2 ends (tangent flanks), full height. Print flat on the bottom face."]),
+        dict(key="servo_mount_top_plate", folder="cad/running_gear/servo_mount", step="servo_mount_top_plate.step",
+             stem="servo_mount_top_plate", title="Servo mount: top plate", number="SM-T", flat=True, edge_view=True,
+             frame=(np.eye(3), sf["plate"]), material="To be defined (e.g. EN AW-7075-T6)", quantity="1", tol=GENERAL_CNC,
+             dims=[("T", (xpe, sm[3] - sm[4], 0), (xpe, sm[3] - sm[4] + sm[5], 0), "v", "right", f"{sm[5]:.2f}"),
+                   ("T", (xf0, sm[3], 0), (xf0 + sm[2] + 2.0, sm[3], 0), "h", "above", f"{sm[2] + 2.0:.2f}")],
+             edges="chamfers as modelled, other edges broken 0.1 to 0.2", status="measures qualified (caliper values of the owner)",
+             frame_note=f"Drawing frame: origin O above the hole H21 of the chassis plate (front screw of the fixed post), on the "
+                        f"lower face of the top plate; axes as the chassis plate coordinates (x across the car toward the servo "
+                        f"output, y toward End A). The STEP file is in the assembly position: O = ({sf['plate'][0]:.2f}, "
+                        f"{sf['plate'][1]:.2f}, {sf['plate'][2]:.2f}).",
+             notes=[f"Plate {sm[0]:g} thick (M5), top face {sm[1]:g} above the chassis plate (M4). Rear edge straight; "
+                    f"{sm[5]:g} deep over the servo and the floating post; at the fixed post the plate steps forward to the front "
+                    "face of the post (owner, manual). Outer corners chamfered 2.0 x 45 deg, inner corner of the step 3.0 x 45 deg.",
+                    "Holes Ø3.2 for the 2 screws M3x6 into the fixed post; slots 3.2 wide along x for the 2 screws M3x6 into the "
+                    "floating post (other servo lengths)."]),
+        dict(key="servo_mount_fixed_post", folder="cad/running_gear/servo_mount", step="servo_mount_fixed_post.step",
+             stem="servo_mount_fixed_post", title="Servo mount: fixed post", number="SM-F", frame=(np.eye(3), sf["post"]),
+             material="To be defined (e.g. EN AW-7075-T6)", quantity="1", tol=GENERAL_CNC, edges=EDGES_BREAK,
+             status="measures qualified (caliper values of the owner)",
+             frame_note=f"Drawing frame: origin O in the hole H21 of the chassis plate (front screw of the post) on the top "
+                        f"face of the chassis plate; axes as the chassis plate coordinates (y toward End A). The STEP file is in "
+                        f"the assembly position: O = ({sf['post'][0]:.2f}, {sf['post'][1]:.2f}, {sf['post'][2]:.2f}).",
+             sections=[dict(label="B", point=(xfc, 0, 0), d=(-1, 0, 0), x=(0, -1, 0), title="Section B-B (middle plane of the post)",
+                            callouts=[((xfc, sm[3] - sm[4] + sm[10] + 3.0 - 2.12, sm[11] + 3.0 - 2.12), "U-notch from the top, R3.0", (54, 29)),
+                                      ((xfc, sm[3] - sm[4] + sm[10] + 2.0 - 1.41, sm[12] - 2.0 + 1.41), "arch from below, R2.0", (53, -8))],
+                            dims=[((xfc, sm[3], 0), (xfc, sm[3] - sm[9], 0), "h", -8, f"{sm[9]:.2f}"),
+                                  ((xfc, sm[3] - sm[9], 0), (xfc, sm[3] - sm[4] + sm[10], 0), "h", -8, f"{sm[4] - sm[9] - sm[10]:.2f}"),
+                                  ((xfc, sm[3] - sm[4] + sm[10], 0), (xfc, sm[3] - sm[4], 0), "h", -8, f"{sm[10]:.2f}"),
+                                  ((xfc, ymid, 0), (xfc, ymid, sm[12]), "v", 0, f"{sm[12]:.2f}"),
+                                  ((xfc, ymid, sm[11]), (xfc, ymid, sm[1] - sm[0]), "v", 0, f"{sm[1] - sm[0] - sm[11]:.2f}")])],
+             notes=[f"Front face {sm[3]:g} ahead of H21 (M1): contact face of the servo ear. Length {sm[4]:g} (measured part: "
+                    "32.0; lengthened to the rear so that the thread of H17 has 2.25 of material behind it, owner). Width "
+                    f"{sm[2]:g} (M3), height up to the lower face of the top plate.",
+                    "Threads M3 from below for the screws through H17 and H21 of the chassis plate (depth 5), from above for the "
+                    "screws M3x6 of the top plate (depth 5), from the front for the screws M3x6 of the servo ear (depth 4).",
+                    "Side view: front and rear pillar joined by a web with a U-notch from the top and an arch from below (as "
+                    "the part in the manual; heights assumed)."]),
+        dict(key="servo_mount_floating_post", folder="cad/running_gear/servo_mount", step="servo_mount_floating_post.step",
+             stem="servo_mount_floating_post", title="Servo mount: floating post", number="SM-L", frame=(np.eye(3), sf["post"]),
+             material="To be defined (e.g. EN AW-7075-T6)", quantity="1", tol=GENERAL_CNC, edges=EDGES_BREAK,
+             status="measures qualified (caliper values of the owner)", section_gap=14,
+             frame_note=f"Drawing frame: origin O in the hole H21 of the chassis plate on its top face (as the fixed post); "
+                        f"axes as the chassis plate coordinates. The STEP file is in the assembly position: O = "
+                        f"({sf['post'][0]:.2f}, {sf['post'][1]:.2f}, {sf['post'][2]:.2f}).",
+             sections=[dict(label="B", point=(xlc, 0, 0), d=(-1, 0, 0), x=(0, -1, 0), title="Section B-B (middle plane of the post)",
+                            callouts=[((xlc, sm[3] - sm[7] - 1.76, sm[1] - sm[0] - sm[8] - 1.76), "gusset R6.0", (26, -22))],
+                            dims=[((xlc, sm[3], sp[3]), (xlc, sm[3] - sm[7], sp[3]), "h", -8, f"{sm[7]:.2f}"),
+                                  ((xlc, sm[3], sp[3]), (xlc, sm[3] - sm[4] + 1.0, sm[1] - sm[0] - sm[8]), "h", -16, f"{sm[4] - 1.0:.2f}"),
+                                  ((xlc, sm[3] - sm[4] + 1.0, sm[1] - sm[0] - sm[8]), (xlc, sm[3] - sm[4] + 1.0, sm[1] - sm[0]), "v", 8,
+                                   f"{sm[8]:.2f}"),
+                                  ((xlc, sm[3], sp[3]), (xlc, sm[3], sm[1] - sm[0]), "v", -8, f"{sm[1] - sm[0] - sp[3]:.2f}")])],
+             notes=["L bracket: the leg carries the servo ear on its front face (contact face as the fixed post), the top "
+                    "flange hangs from the top plate. The lower end of the leg is 2.0 above the chassis plate (floating).",
+                    "Threads M3 from above in the flange for the screws M3x6 of the top plate (through the slots), from the "
+                    "front for the screws M3x6 of the servo ear (depth 4)."]),
+        dict(key="steering_bridge", folder="cad/running_gear/steering", step="steering_bridge.step", stem="steering_bridge",
+             title="Steering bridge", number="SB", frame=(np.eye(3), sf["bridge"]),
+             material="Nylon PA12 (MJF 3D print)", density=1.01, density_txt="PA12", quantity="1",
+             tol="process tolerance (MJF approx. ±0.3)", edges="as modelled", status="measures qualified, not printed",
+             frame_note=f"Drawing frame: origin O in the middle between the axes of the towers on their bottom face; x across the "
+                        f"car, y toward End A, z up. The STEP file is in the assembly position: O = ({sf['bridge'][0]:.2f}, "
+                        f"{sf['bridge'][1]:.2f}, {sf['bridge'][2]:.2f}).",
+             max_hole_d=8.5, sheets=3,
+             hole_note=lambda h: (f"2 flanged bearings MF63ZZ (3x6x{brb[1]:g}) pressed in from both faces, flanges outside; screw M3x16 "
+                                  "from above through the access bore" if abs(h["dia"] - brb[0]) < 0.05 else
+                                  ("grub screw M3x8, ball of the servo link with internal thread" if abs(h["dia"] - 2.5) < 0.05 else None)),
+             dims=[("T", (-xb_, 0, 0), (xb_, 0, 0), "h", "below", f"{2 * xb_:.2f} (axes of the towers)")],
+             sections=[dict(label="B", point=(0, 0, 0), d=(0, -1, 0), x=(1, 0, 0), title="Section B-B (plane of the tower axes)",
+                            axes=[((q, 0, -1.5), (q, 0, zb_hi + 1.5)) for q in (-xb_, xb_)],
+                            callouts=[((xb_ + brb[0] / 2, 0, z_seat / 2), f"Ø{brb[0]:.1f} through (bearing seats MF63ZZ from both faces)", (28, -12)),
+                                      ((xb_ + bri[4] / 2, 0, zb_hi - 2.0), f"Ø{bri[4]:.1f}, access bore for the screw", (23, 10)),
+                                      ((8.0, 0, zb_lo), f"bar {bri[2]:g} x {zb_hi - zb_lo:.2f}, 1.0 above the centre driveshaft", (22, -10))],
+                            dims=[((xb_, 0, 0), (xb_, 0, z_seat), "v", 0, f"{z_seat:.2f}"),
+                                  ((xb_, 0, z_seat), (xb_, 0, zb_hi), "v", 0, f"{zb_hi - z_seat:.2f}")]),
+                       dict(label="C", point=(0, 0, 0), d=(-1, 0, 0), x=(0, -1, 0), title="Section C-C (ball of the servo link)",
+                            clip=(-bri[2] / 2 - 1.5, bri[2] / 2 + 5.0, zb_lo - 3.0, zb_hi + 1.0), scale=5.0,
+                            callouts=[((0, -bri[2] / 2 - 2.0, zb_ball + 1.25), "M3, depth 5.5 (grub screw M3x8)", (18, 16))],
+                            dims=[((0, bri[2] / 2, zb_lo), (0, -bri[2] / 2, zb_lo), "h", -6, f"{bri[2]:.2f}"),
+                                  ((0, -bri[2] / 2, zb_lo), (0, -bri[2] / 2 - dboss, zb_lo), "h", -6, f"{dboss:.2f}"),
+                                  ((0, bri[2] / 2, zb_lo), (0, bri[2] / 2, zb_hi), "v", -6, f"{zb_hi - zb_lo:.2f}"),
+                                  ((0, -bri[2] / 2 - dboss, zb_lo), (0, -bri[2] / 2 - dboss, zb_ball), "v", 6, f"{zb_ball - zb_lo:.2f}")])],
+             notes=["Flat bar over the centre driveshaft (1.0 above it) with round ends (towers). The towers turn on the rear arms "
+                    "of the bellcranks: 2 flanged bearings MF63ZZ per tower, shims 3x5x0.3 below and above the inner rings, screw "
+                    "M3x16 from above, lock nut M3 in the hex pocket of the bellcrank.",
+                    f"Bearing seats Ø{brb[0]:.1f} through the lower part of the towers ({z_seat:.1f} long: the 2 bearings without their "
+                    "flanges); check the fit after printing (MJF approx. ±0.3).",
+                    "Ball of the servo link in the middle of the rear face (toward End B): thread M3 for a grub screw M3x8, ball with "
+                    "internal thread screwed onto it. The boss reaches back to the ball of the servo horn.",
+                    "Print flat on the bottom face."]),
+        dict(key="steering_post", folder="cad/running_gear/steering", step="steering_post.step", stem="steering_post",
+             title="Steering post", number="SP", frame=(np.eye(3), sf["steering_post"]),
+             material="To be defined (e.g. EN AW-7075-T6, turned)", quantity="2", tol=GENERAL_CNC, edges=EDGES_BREAK,
+             status="measures qualified, not made",
+             frame_note=f"Drawing frame: origin O on the axis of the post on the top face of the chassis plate (H25); z up. "
+                        f"The STEP file is in the assembly position of the right post: O = ({sf['steering_post'][0]:.2f}, "
+                        f"{sf['steering_post'][1]:.2f}, {sf['steering_post'][2]:.2f}).",
+             sections=[dict(label="B", point=(0, 0, 0), d=(0, -1, 0), x=(1, 0, 0), title="Section B-B (axis of the post)",
+                            axes=[((0, 0, -1.5), (0, 0, pst[3] + 1.5))],
+                            callouts=[((pst[2] / 2, 0, pst[3] - 2.0), f"journal Ø{pst[2]:.1f}: 2 bearings 5x8x2.5 and the lip 0.5 of the "
+                                       f"bellcrank (5.50)", (48, 6)),
+                                      ((1.25, 0, pst[3] - t_top), f"end of the full thread M3 (stop of the screw M3x6): {t_top:.1f} deep", (52, 2)),
+                                      ((pst[4] / 2, 0, z_shoulder - 0.6), f"shank Ø{pst[4]:.1f}, shoulder under the inner ring of the lower bearing",
+                                       (48, -4)),
+                                      ((pst[0] / 2 / np.cos(np.pi / 6), 0, pst[1] / 2), f"hexagon {pst[0]:g} across the flats", (45, 0))],
+                            dims=[((pst[0] / 2 / np.cos(np.pi / 6), 0, 0), (pst[0] / 2 / np.cos(np.pi / 6), 0, pst[1]), "v", 6, f"{pst[1]:.2f}"),
+                                  ((pst[4] / 2, 0, pst[1]), (pst[4] / 2, 0, z_shoulder), "v", 6 + 5 * (pst[0] / 2 / np.cos(np.pi / 6) - pst[4] / 2),
+                                   f"{z_shoulder - pst[1]:.2f}"),
+                                  ((pst[2] / 2, 0, z_shoulder), (pst[2] / 2, 0, pst[3]), "v", 6 + 5 * (pst[0] / 2 / np.cos(np.pi / 6) - pst[2] / 2),
+                                   f"{pst[3] - z_shoulder:.2f}")])],
+             notes=[f"Height {pst[3]:g} above the top face of the chassis plate (owner, as the original part). The shoulder (Ø{pst[4]:g}) "
+                    "holds the inner ring of the lower bearing of the bellcrank.",
+                    f"Journal Ø{pst[2]:g} (proposal: g6 for the bearings 5x8x2.5), {pst[3] - z_shoulder:.2f} long: flush with the "
+                    "bearing stack (2 bearings and the lip of the bellcrank).",
+                    f"Thread M3 on top: blind thread, full thread depth {t_top:.1f} (bottoming tap), drill Ø2.5 x {t_top + 1.0:.1f}. The "
+                    f"screw M3x6 with washer 3.2x6x0.5 bottoms at the end of the thread and cannot be screwed in fully: the washer "
+                    f"stays {pst[5]:g} above the journal and the bearing (axial play, the bellcrank turns freely). The thread depth is "
+                    f"the stop: keep it within +0/-0.1. Check after assembly: the washer turns by hand.",
+                    "Thread M3 from below (depth 5) for the screw through H24/H25 of the chassis plate. Both threads are tapped "
+                    "(aluminium part; the model shows the tap drill)."]),
     ]
 
 
@@ -413,7 +592,9 @@ def draw_sheet1(cfg, solid, bb, rows, tb, n_sheets):
         if k in ("F", "S", "E"):
             view_label(ax, ((x0 + x1) / 2, y1 + 16), names[k])
         else:
-            text(ax, (24, y1 + 14 if y1 + 14 < 280 else y0 - 12), names[k], fs=TD.LABEL_FS, ha="left", weight="bold")
+            n_above = sum(1 for d_ in cfg.get("dims", []) if d_[0] == k and d_[4] == "above")       # room for dimensions above
+            ly = y1 + 14 + 9 * n_above
+            text(ax, (24, ly if ly < 280 else y0 - 12), names[k], fs=TD.LABEL_FS, ha="left", weight="bold")
     if flat:
         T = views["T"]
         x0, y0, x1, y1 = boxes["T"]
@@ -557,6 +738,11 @@ def draw_sections(fig, ax, solid, bb, rows, cfg, secs, ss):
         if kind == "sec":
             for p0, p1 in it.get("axes", []):
                 centre_line(ax, V.P(p0), V.P(p1))
+            for p0, p1, axis, off, txt in it.get("dims", []):
+                Q0, Q1 = V.P(p0), V.P(p1)
+                k = 1 if axis == "h" else 0
+                at = (min(Q0[k], Q1[k]) + off) if off < 0 else (max(Q0[k], Q1[k]) + off)
+                linear(ax, Q0, Q1, axis, at, txt, tside="r" if (axis == "v" and off > 0) else "l")
             for p3, txt, off in it.get("callouts", []):
                 Pf = V.P(p3)
                 leader(ax, Pf, Pf + np.asarray(off, float), txt, ha="left" if off[0] >= 0 else "right")
@@ -576,8 +762,9 @@ def draw_part(cfg, date):
         solid = TD.to_frame(solid, *cfg["frame"])
     bb = solid.BoundingBox()
     vol = solid.Volume() / 1000
-    holes = TD.find_holes(solid)
-    table, rows = TD.hole_rows_generic(holes, names=cfg.get("names"), centroid=np.array(solid.Center().toTuple()))
+    holes = TD.find_holes(solid, cfg.get("max_hole_d", 6.5))
+    table, rows = TD.hole_rows_generic(holes, names=cfg.get("names"), use=cfg.get("hole_note"),
+                                       centroid=np.array(solid.Center().toTuple()))
     has_threads = any(r[5].startswith("M") for r in table)
     secs = cfg.get("sections", [])
     dets = cfg.get("details", [])
@@ -594,7 +781,7 @@ def draw_part(cfg, date):
     if secs and dets:
         sec_h += 24 + max((d_["box"][1] - d_["box"][0] if cfg.get("rotate") else d_["box"][3] - d_["box"][2]) * d_["scale"]
                           for d_ in dets)
-    n_sheets = 3 if (secs or dets) and sec_h + 30 + table_h + notes_h > 255 else 2
+    n_sheets = 3 if cfg.get("sheets") == 3 or ((secs or dets) and sec_h + 30 + table_h + notes_h > 255) else 2
     s = layout_flat(bb, cfg.get("rotate", False), cfg.get("edge_view", False))[0] if cfg.get("flat") else layout_3d(bb)[0]
     tb = title_rows(cfg, vol, s, date)
     fig1, s = draw_sheet1(cfg, solid, bb, rows, tb, n_sheets)
@@ -608,7 +795,7 @@ def draw_part(cfg, date):
             fig, ax = TD.sheet(tb, 3, n_sheets)
             figs.append(fig)
         else:
-            y_table = y_low - 16
+            y_table = y_low - 16 - cfg.get("section_gap", 0)
     text(ax, (24, y_table + 3), "Holes (x, y, z of the start point in the drawing frame; O: origin of the drawing frame)",
          ha="left", fs=8, weight="bold")
     y_end = TD.hole_table(ax, 24, y_table, table, cols=HOLE_COLS) if table else y_table - 6
@@ -633,6 +820,8 @@ FOLDERS = {
                                       "../../readme.md#running-gear"),
     "cad/front_splitter": ("Speedrun front splitter: technical drawing", "../readme.md#speedrun-front-splitter"),
     "cad/parts/wishbone": ("Wishbones: technical drawings", "../../readme.md#wishbones"),
+    "cad/running_gear/steering": ("Steering: technical drawing of the bellcrank", "../../readme.md#running-gear"),
+    "cad/running_gear/servo_mount": ("Servo mount: technical drawings", "../../readme.md#running-gear"),
 }
 SHEET_TEXT = {1: "views, main dimensions, labels of the holes",
               2: "sections and detail views, hole table and notes",
@@ -682,7 +871,7 @@ def write_readmes(results):
                   "The drawings are generated from the STEP files (from the root directory of the repository; packages "
                   "cadquery and matplotlib). After a change of a part, its generator runs first, then:", "", "```bash",
                   "python scripts/cad/generate_technical_drawings.py", "```", "",
-                  "The option `--part` generates the drawing of one part (keys: " +
+                  "The option `--part` generates the drawings of the given parts (keys separated by commas: " +
                   ", ".join(f"`{cfg['key']}`" for cfg, _ in items) + "), the option `--date` sets the date in the title block."]
         with open(f"{folder}/readme.md", "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
@@ -690,19 +879,22 @@ def write_readmes(results):
 
 def main():
     parser = argparse.ArgumentParser(description="Technical drawings of the verified parts, the wishbones and the C-hub.")
-    parser.add_argument("--part", help="key of one part (default: all)")
+    parser.add_argument("--part", help="keys of the parts, separated by commas (default: all)")
     parser.add_argument("--date", default=datetime.date.today().isoformat())
     args = parser.parse_args()
+    keys = set(args.part.split(",")) if args.part else None
+    cfgs = parts()
     results = []
-    for cfg in parts():
-        if args.part and cfg["key"] != args.part:
+    for cfg in cfgs:
+        if keys and cfg["key"] not in keys:
             continue
         res = draw_part(cfg, args.date)
         results.append((cfg, res))
         print(f"{cfg['key']}: scale {scale_text(res[1])}, {len(res[2])} holes, {res[3]} sheets -> {res[0]}")
-    if not args.part:
-        write_readmes(results)
-        print("wrote the readme files of the part directories")
+    done = {cfg["key"] for cfg, _ in results}               # readme of a directory only if all of its parts are drawn
+    complete = [(cfg, r) for cfg, r in results if all(c["key"] in done for c in cfgs if c["folder"] == cfg["folder"])]
+    write_readmes(complete)
+    print("wrote the readme files of the directories:", sorted({cfg["folder"] for cfg, _ in complete}))
 
 
 if __name__ == "__main__":
