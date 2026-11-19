@@ -289,7 +289,7 @@ def parts():
                     "in the geometry data of the plate (study)."]),
         dict(key="wishbone_front", folder="cad/parts/wishbone", step="wishbone_front_T410R.step", stem="wishbone_front_T410R",
              title="Front wishbone (used on both sides)", number="WB-F",
-             dims=[("T", (0, -16.5, 0), (49.7, -16.5, 0), "h", "below", "49.70 (axis to axis)")], material="To be defined (original part: plastic)",
+             dims=[("T", (0, -16.5, 0), (51.7, -16.5, 0), "h", "below", "51.70 (axis to axis)")], material="To be defined (original part: plastic)",
              quantity="2", tol=GENERAL_CNC, edges=EDGES_BREAK, status="verified",
              notes=["Bores Ø3.1 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
                     "pins are exactly Ø3.0 (owner), 0.1 running clearance so that the arm turns freely on the pins (original "
