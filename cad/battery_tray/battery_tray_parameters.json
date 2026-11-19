@@ -1,0 +1,102 @@
+{
+  "part": "Speedrun battery tray for the LiPo Absima GreenHorn V2 3S 5000 mAh (hardcase), speedrun part designed in this project. MJF 3D print in nylon PA12 (owner).",
+  "units": "mm",
+  "coordinate_system": "Chassis plate coordinates (assembly): x across the car (+x right side seen toward End A), y along the car (End B at y = 0, End A front), z = 0 bottom face of the chassis plate.",
+  "design": "Floor on the top face of the chassis plate on the left side of the car, fixed with 4 countersunk screws M3x6 from below through H11, H12, H22 and H23 (owner) into blind holes in the end stops. The battery lies on the floor between 2 end stops and 2 low side walls. 2 velcro straps 20 mm (owner) hold the battery from left to right: each strap runs over the battery, down through a slot beside the battery on each side and through a channel under the floor, so it wraps battery and floor. The battery stays clear of the top brace (beside it), of the steering (behind it) and of the drive line.",
+  "source_codes": {
+    "spec": "specs/electronics/battery/spec_battery.yaml (manufacturer)",
+    "owner": "Answer of the owner",
+    "plate": "Hole pattern of the speedrun chassis plate (chassis_plate_speedrun_wide_motor10_geometry.json)",
+    "design": "Design choice for the function (own design, not measured)",
+    "derived": "Calculated from the parts of the assembly"
+  },
+  "parameters": {
+    "mount_holes": {
+      "value": [
+        "H11",
+        "H12",
+        "H22",
+        "H23"
+      ],
+      "source": "owner",
+      "note": "Holes of the chassis plate under the end stops: H11 (-42.597, 72.312), H12 (-22.556, 72.366), H22 (-22.516, 218.107), H23 (-42.575, 218.131). Countersunk screws M3x6 from below (owner): 4.0 of thread in the tray."
+    },
+    "battery": {
+      "value": [
+        138.0,
+        46.0,
+        35.0,
+        2.0
+      ],
+      "source": "spec",
+      "note": "Absima GreenHorn V2 3S 5000 mAh 50C hardcase, 370 g: length (along the car), width, height, radius of the vertical edges (design, assumed). Leads (XT60, balancer) at an end face, above the end stops."
+    },
+    "battery_x_inner": {
+      "value": -12.0,
+      "source": "derived",
+      "note": "Inner side of the battery (toward the middle of the car). The top brace (lower face 34.6 above the bottom face of the chassis plate) reaches to x = -7.5 and widens to -10.6 at y = 74 near the rear end stop, so the battery (top 41.0) stands beside it: 1.4 clear at the rear end, 4.5 along the rest. Centred on the holes the inner side would lie at -9.55."
+    },
+    "clearance": {
+      "value": 0.5,
+      "source": "design",
+      "note": "Gap between the battery and the walls and end stops on each side."
+    },
+    "floor_t": {
+      "value": 4.0,
+      "source": "design",
+      "note": "Thickness of the floor on the chassis plate (1.5 above the strap channels). The battery lies 6.0 above the bottom face of the chassis plate, its top at 41.0."
+    },
+    "wall": {
+      "value": [
+        2.0,
+        6.0
+      ],
+      "source": "design",
+      "note": "Side walls along the battery: thickness, height above the floor; interrupted at the straps."
+    },
+    "stop_h": {
+      "value": 8.0,
+      "source": "design",
+      "note": "Height of the end stops above the floor; they hold the battery along the car and contain the blind holes. The leads at the end face of the battery stay free above them."
+    },
+    "stop_margin": {
+      "value": 4.0,
+      "source": "design",
+      "note": "Material of the end stops around the holes, along the car (from the hole centre to the end of the tray)."
+    },
+    "strap": {
+      "value": [
+        20.0,
+        24.0,
+        4.5,
+        2.5,
+        80.0,
+        1.5
+      ],
+      "source": "owner",
+      "note": "Velcro straps (owner: 20 mm, slots with room for easy threading): width of the strap, length of the slots and width of the channels (along the car), width of the slots (across the car, from 0.5 inside the battery outline), depth of the channels under the floor, distance between the 2 straps (symmetric to the middle of the battery), thickness of the strap (model)."
+    },
+    "slot_flange": {
+      "value": 1.5,
+      "source": "design",
+      "note": "Floor material beyond the slots (ears of the floor at the straps)."
+    },
+    "screw_hole": {
+      "value": [
+        2.5,
+        4.5
+      ],
+      "source": "design",
+      "note": "Blind holes from below for the countersunk screws M3x6: diameter (thread M3 formed by the screw or tapped), depth from the bottom face of the tray."
+    },
+    "windows": {
+      "value": [
+        6.0,
+        4.0,
+        3.0
+      ],
+      "source": "design",
+      "note": "Windows in the floor between the straps and the end stops (mass): distance to the side walls (inside), distance to the strap channels and the end stops, corner radius."
+    }
+  }
+}

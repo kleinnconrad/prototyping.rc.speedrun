@@ -30,6 +30,9 @@
 * [Speedrun front splitter](#speedrun-front-splitter)
   * [Design of the speedrun front splitter](#design-of-the-speedrun-front-splitter)
   * [Files and open points of the speedrun front splitter](#files-and-open-points-of-the-speedrun-front-splitter)
+* [Speedrun battery tray](#speedrun-battery-tray)
+  * [Design of the speedrun battery tray](#design-of-the-speedrun-battery-tray)
+  * [Files and open points of the speedrun battery tray](#files-and-open-points-of-the-speedrun-battery-tray)
 * [Further own parts](#further-own-parts)
   * [Pivot blocks](#pivot-blocks)
   * [Centre driveshaft and drive line](#centre-driveshaft-and-drive-line)
@@ -55,6 +58,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
 * **`/bulkhead`**: CAD data of the bulkheads (gear boxes): lower bulkhead, upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets, technical drawings; the drawings are shown in [`bulkhead/readme.md`](bulkhead/readme.md)).
 * **`/shock_tower`**: New design of the front and the rear shock tower that match the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
 * **`/front_splitter`**: Speedrun front splitter at End A, one part: the body post mount enlarged to the splitter (STEP, STL, test print STL, parameter file, measurement sheet).
+* **`/battery_tray`**: Speedrun battery tray for the 3S hardcase LiPo on the left side of the car (STEP, STL, parameter file, technical drawing).
 * **`/parts`**: Drive line, pivot blocks, wishbones and camber links: own design of the owner, partly based on the T410R.
   * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file).
   * **`/driveshaft`**: Centre driveshaft with the fixed metal pins and the cup joints (STEP, STL, parameter file of all drive line parts).
@@ -70,7 +74,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
 * **`/studies`**: Design studies that are not part of the build, one subdirectory per study with its own readme:
   * **`/dual_motor`**: Dual motor mount for 2 motors on the spur gear and a chassis plate with a second motor window on the left side (STEP, STL, geometry data, pictures, script).
 * **`/3d_print_fdm`**: STL files of 3D printed parts (FDM) for the car and a maintenance stand (see [3D printed parts](#3d-printed-parts))
-* **Technical drawings** (PDF, one PNG per sheet) of the verified parts, the wishbones and the C-hub are stored in the directory of each part. A readme in each directory shows the sheets: [bulkheads](bulkhead/readme.md), [speedrun chassis plate](chassis/chassis_plate_speedrun_wide_motor10/readme.md), [speedrun top brace](chassis/top_brace_speedrun/readme.md), [shock towers](shock_tower/readme.md), [pivot blocks](parts/pivot_block/readme.md), [motor mount and cap](parts/motor_mount/readme.md), [wishbones](parts/wishbone/readme.md), [C-hub and steering knuckle](running_gear/front_corner/readme.md), [front splitter](front_splitter/readme.md).
+* **Technical drawings** (PDF, one PNG per sheet) of the verified parts, the wishbones and the C-hub are stored in the directory of each part. A readme in each directory shows the sheets: [bulkheads](bulkhead/readme.md), [speedrun chassis plate](chassis/chassis_plate_speedrun_wide_motor10/readme.md), [speedrun top brace](chassis/top_brace_speedrun/readme.md), [shock towers](shock_tower/readme.md), [pivot blocks](parts/pivot_block/readme.md), [motor mount and cap](parts/motor_mount/readme.md), [wishbones](parts/wishbone/readme.md), [C-hub and steering knuckle](running_gear/front_corner/readme.md), [front splitter](front_splitter/readme.md), [battery tray](battery_tray/readme.md), [steering](running_gear/steering/readme.md), [servo mount](running_gear/servo_mount/readme.md).
 
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
 
@@ -89,7 +93,8 @@ The speedrun chassis combines the parts that are designed in this project for sp
 | [Speedrun front shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 4.4 g (carbon), 7.7 g (7075) |
 | [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
 | [Speedrun front splitter (one part: body post mount enlarged to the splitter)](#speedrun-front-splitter) | 1 | `/front_splitter` | $\color{green}\checkmark$ Verified (3D print of the owner; bosses of the screws 3 mm higher after the print) | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 38 g |
-| **Total** | | | | | Chassis plate 6082, bulkheads and front splitter PA12, top brace and shock towers carbon | **343 g** |
+| [Speedrun battery tray (LiPo Absima GreenHorn 3S 5000 hardcase)](#speedrun-battery-tray) | 1 | `/battery_tray` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification (battery dimensions from the manufacturer) | – | Nylon PA12 (MJF 3D print) | 24 g |
+| **Total** | | | | | Chassis plate 6082, bulkheads, front splitter and battery tray PA12, top brace and shock towers carbon | **368 g** |
 
 Further own parts (own design of the owner, partly based on the T410R, not in the mass total):
 
@@ -128,7 +133,7 @@ Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{g
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
 
 ### Assembly file
-* `assembly/speedrun_chassis_T410R.step`: assembly of the 9 parts of the speedrun chassis (with the front splitter) and 180 further own parts (pivot blocks, wishbones with hinge pins, camber links, centre driveshaft with cup joints, front and rear drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool, 4 diff outdrives, and the running gear: C-hubs, knuckles with guide sleeves and kingpin screws, hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the floating servo mount, dampers, sway bars with drop links; the 2 front body posts) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
+* `assembly/speedrun_chassis_T410R.step`: assembly of the 10 parts of the speedrun chassis (with the front splitter and the battery tray), the battery with its 2 straps and 180 further own parts (pivot blocks, wishbones with hinge pins, camber links, centre driveshaft with cup joints, front and rear drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool, 4 diff outdrives, and the running gear: C-hubs, knuckles with guide sleeves and kingpin screws, hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the floating servo mount, dampers, sway bars with drop links; the 2 front body posts) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
 * The further own parts are not in the mass total (see [further own parts](#further-own-parts)).
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [pivot blocks](#pivot-blocks)) and 2.16 mm³ between the lower bulkhead at End A and each front wishbone (inner lugs 0.14 mm into the side face, see [wishbones](#wishbones)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
@@ -726,6 +731,41 @@ Open points:
 * As a 3D print (PETG or nylon PA12) the splitter (3.0 mm) is less stiff than a carbon plate.
 * The car ran with the front foam bumper so far. ADR-009 (the foam bumper flush with the front apron of the body) and ADR-010 (GPS module on the front foam bumper) refer to it and are not changed yet.
 
+## Speedrun battery tray
+* **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
+* **Description:** Speedrun battery tray for the LiPo Absima GreenHorn V2 3S 5000 mAh 50C hardcase (`specs/electronics/battery/spec_battery.yaml`) on the left side of the car, fixed with 4 countersunk screws M3x6 from below through H11, H12, H22 and H23 of the speedrun chassis plate (owner). 2 velcro straps 20 mm (owner) hold the battery from left to right. MJF 3D print in nylon PA12 (owner).
+* **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification: the battery dimensions are taken from the manufacturer, the holes from the ordered chassis plate.
+
+### Design of the speedrun battery tray
+![Speedrun battery tray: tray alone, tray with the battery and the straps in the car beside the top brace and behind the steering, section across the car at a strap](../photos/cad_battery_tray_drawing.png)
+
+| Item | Model | Source |
+|:---|:---|:---|
+| Battery | 138 x 46 x 35 mm, 370 g; on the tray at x = -58.0 to -12.0 mm, y = 76.2 to 214.2 mm, z = 6.0 to 41.0 mm above the bottom face of the chassis plate | Spec (manufacturer) |
+| Position across the car | The top brace (lower face 34.6 mm above the bottom face of the chassis plate) reaches to x = -7.5 mm and widens near the rear end of the battery; the battery stands beside it, 2.5 mm further out than centred on the holes: 3.1 mm clearance (straps 3.0 mm) | Check |
+| Floor | 4.0 mm on the top face of the chassis plate, 153.8 x 57.0 mm (with the ears at the straps), windows for mass | Design |
+| End stops and walls | End stops 8 mm high at both ends of the battery (they hold it along the car and contain the blind holes), side walls 6 mm high, interrupted at the straps; 0.5 mm clearance all around the battery. The leads at the end face of the battery stay free above the end stops | Design |
+| Fixing | 4 countersunk screws M3x6 from below through the countersinks of H11, H12, H22 and H23 into blind holes Ø2.5 x 4.5 mm in the end stops (4.0 mm of thread, formed by the screws or tapped M3) | Owner |
+| Straps | 2 velcro straps 20 mm, 80 mm apart (y = 105.2 and 185.2 mm): over the battery, down through a slot beside the battery on each side (24 x 4.5 mm, chamfer 0.8 mm at the top) and through a channel under the floor (24 x 2.5 mm), so each strap wraps battery and floor. Lay the straps into the channels before the tray is screwed on, or push them through | Owner (width, easy threading), design |
+| Mass | 24.2 cm³, approx. 24 g in nylon PA12 | Model |
+
+* **Checks** of `generate_battery_tray.py`: no overlap of the tray, the battery and the straps with the parts of the assembly; left steering (bellcrank with ball and screw, bridge with its bearings, shims, screws and lock nuts, rod end of the servo link) turned over the full angle of the bellcranks (±41.2 degrees): no contact, smallest distance 2.4 mm. Distances: top brace 3.1 mm (battery), 3.0 mm (straps); servo mount top plate 16 mm and more; centre driveshaft 7.5 mm; cup joint at End B 6.0 mm; motor mount 3.7 mm; lock nut under the left bellcrank 2.8 mm.
+* **Manufacturing:** MJF 3D print, bottom face down. [Technical drawing](battery_tray/readme.md).
+
+### Files and open points of the speedrun battery tray
+All files are stored in the directory `/battery_tray` and are generated with `generate_battery_tray.py` from `battery_tray_parameters.json` (see [scripts](#scripts)), in the coordinates of the chassis plate (position in the car).
+
+| File | Content |
+|:---|:---|
+| `battery_tray_speedrun.step`, `.stl` | Battery tray in the position in the car |
+| `battery_tray_parameters.json` | All dimensions, each with its source and a note |
+| `battery_tray_speedrun_technical_drawing.pdf` and the PNG files | Technical drawing (A3, 2 sheets) |
+
+Open points:
+* Height of the battery: its top lies 41.0 mm above the bottom face of the chassis plate (the floor adds 4.0 mm); the clearance to the body is not checked (body not modelled).
+* Dimensions of the battery: from the manufacturer; the radius of the vertical edges and the position of the leads are assumed. A caliper value of the battery confirms the pocket (138 + 1.0 by 46 + 1.0 mm).
+* The battery (370 g) is not in the mass total of the speedrun parts.
+
 ## Further own parts
 The drive line, the pivot blocks, the wishbones, the camber links and the running gear are the owner's own design. Some of them are based on parts of the Carten T410R (for example the interfaces: bearings, gears, screws), others deviate strongly from them (for example the C-hubs and the steering knuckles). The assembly of the speedrun chassis contains them, so that the space around the speedrun parts and the function of the build can be checked. Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
 
@@ -1148,6 +1188,7 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_running_gear.py` | Parameter file of the running gear, parameter files of the driveshaft, the bulkheads, the shock towers and the camber links, wishbones | STEP and STL files of the own parts of the running gear, drawing `photos/cad_running_gear_drawing.png`, free steering angle, Ackermann, overlap check of all parts against each other and against the assembly (option `--no-check`) | cadquery, matplotlib |
 | `generate_knuckle_measurement_sheet.py` | Parameter file of the running gear (knuckle of the front corner) | Measurement sheet `running_gear/front_corner/steering_knuckle_measurement_sheet.pdf` of the original steering knuckle (views of the model with the letters K1 to K21, table with the model values and the measured values) | cadquery, matplotlib |
 | `generate_front_splitter.py` | Parameter file of the front splitter, geometry data and STEP file of the speedrun chassis plate, parameter file of the running gear (kingpin, wheels), assembly STEP file (check) | STEP and STL files of the front splitter (one part), test print STL, drawing `photos/cad_front_splitter_one_piece_drawing.png`, checks of the overlap with the chassis plate and the body posts, of the clearance to the front tyres over the steering angle and of the overlap with the parts of the assembly at End A (option `--no-check`) | cadquery, matplotlib |
+| `generate_battery_tray.py` | Parameter file of the battery tray, geometry data of the speedrun chassis plate, parameter file of the running gear (steering), assembly STEP file (check, picture) | STEP and STL files of the battery tray, drawing `photos/cad_battery_tray_drawing.png`, checks of the overlap with the parts of the assembly and of the left steering over the full angle of the bellcranks, distances to the top brace, the servo mount, the steering and the drive line (option `--no-check`) | cadquery, matplotlib |
 | `generate_front_splitter_measurement_sheet.py` | Parameter file of the front splitter | Measurement sheet `front_splitter/front_splitter_measurement_sheet.pdf` of the front splitter, the body posts and the body (letters M1 to M16, B1 to B6, S1 to S3, table with the model values and the measured values of the owner) | cadquery, matplotlib |
 | `generate_speedrun_assembly.py` | STEP file of the speedrun chassis plate with the longer motor window, parameter files of the bulkheads, of the shock towers, of the pivot blocks, of the driveshaft, of the wishbones, of the camber links, of the running gear and of the front splitter, geometry data of the speedrun top brace | Assembly `assembly/speedrun_chassis_T410R.step`, image `photos/cad_speedrun_chassis_assembly.png`, volumes and masses, interference check of all parts | cadquery, matplotlib |
 | `generate_bulkhead_lower.py` | Parameter file of the lower bulkhead | STEP and STL file, test print STL file, geometry checks | cadquery |

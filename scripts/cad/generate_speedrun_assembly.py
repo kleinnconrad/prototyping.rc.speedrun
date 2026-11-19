@@ -9,6 +9,9 @@ T410R; they are not in the mass total):
 * speedrun top brace on both upper bulkheads (end with the obround at End B)
 * speedrun shock towers on the upper bulkheads: front tower at End A (assumed to be the front),
   rear tower at End B
+* speedrun battery tray on H11, H12, H22 and H23 (scripts/cad/generate_battery_tray.py) with the
+  battery Absima GreenHorn 3S 5000 (hardcase) and the 2 velcro straps (battery and straps: not in the
+  mass total)
 * speedrun front splitter at End A (scripts/cad/generate_front_splitter.py): one part, the body
   post mount enlarged to the splitter, on H34 to H36; the body posts (stock parts) are not in the
   mass total
@@ -56,6 +59,7 @@ from generate_wishbones import arms_in_plate  # noqa: E402
 from generate_camber_links import links_in_plate  # noqa: E402
 from generate_running_gear import build as running_gear  # noqa: E402
 from generate_front_splitter import car_parts_in_plate as front_splitter_in_plate  # noqa: E402
+from generate_battery_tray import car_parts_in_plate as battery_tray_in_plate  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
 PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
@@ -65,7 +69,8 @@ OUT_STEP = "cad/assembly/speedrun_chassis_T410R.step"
 OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3),
           "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
-          "onepiece": (0.17, 0.17, 0.18),
+          "onepiece": (0.17, 0.17, 0.18), "battery_tray": (0.85, 0.85, 0.82), "battery": (0.12, 0.42, 0.25),
+          "strap": (0.08, 0.08, 0.09),
           "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77),
           "drive": (0.45, 0.47, 0.5), "mount": (0.6, 0.63, 0.68), "arm": (0.4, 0.34, 0.52),
           "diff": (0.16, 0.16, 0.18), "rodend": (0.12, 0.12, 0.13), "link": (0.78, 0.79, 0.82),
@@ -81,6 +86,9 @@ MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6
              "tower_front": ("Speedrun front shock tower", {"carbon": 1.6, "7075": 2.81}),
              "tower_rear": ("Speedrun rear shock tower", {"carbon": 1.6, "7075": 2.81}),
              "onepiece": ("Speedrun front splitter (one piece)", {"PA12": 1.01, "PETG": 1.27}),
+             "battery_tray": ("Speedrun battery tray", {"PA12": 1.01}),
+             "battery": ("Battery Absima GreenHorn 3S 5000 (hardcase, 370 g)", {}),
+             "strap": ("Velcro straps 20 mm", {}),
              "pivot": ("Pivot blocks (4 pieces)", {}),     # no mass
              "shaft": ("Centre driveshaft with fixed pins", {}),
              "cup": ("Cup joints, outdrives, inner hinge pins", {}),
@@ -143,6 +151,8 @@ def build():
     parts += [(f"running gear {name}", kind, s) for name, kind, s in rg]
     # speedrun front splitter (End A, one part) with the body posts
     parts += front_splitter_in_plate()
+    # speedrun battery tray with the battery and the velcro straps
+    parts += battery_tray_in_plate()
     return parts
 
 

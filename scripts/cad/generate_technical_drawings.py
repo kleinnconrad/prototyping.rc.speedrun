@@ -66,7 +66,24 @@ def steering_frames():
     return {"bellcrank": np.array([21.7, 242.69, p["bellcrank"][0]]), "post": np.array([8.0, 199.15, G.PLATE_T]),
             "bridge": np.array([0.0, 242.69 - p["bellcrank"][4], p["bellcrank"][1] + bb_[4] + bb_[3]]),
             "steering_post": np.array([21.7, 242.69, G.PLATE_T]),
+            "battery_tray": battery_tray_frame(),
             "plate": np.array([8.0, 199.15, G.PLATE_T + m4 - tp]), "p": p}
+
+
+def battery_tray_frame():
+    """Origin of the battery tray frame: middle between the 4 holes H11, H12, H22, H23 on the top face of the chassis plate."""
+    import generate_battery_tray as BT
+    hs = BT.holes(BT.load_params(BT.PARAMS))
+    return np.array([np.mean([h[0] for h in hs]), np.mean([h[1] for h in hs]), BT.PLATE_T])
+
+
+def battery_tray_layout():
+    """Values of the battery tray in its drawing frame (x along the car, y = -x of the car, z up from the plate)."""
+    import generate_battery_tray as BT
+    p = BT.load_params(BT.PARAMS)
+    g = BT.layout(p)
+    o = battery_tray_frame()
+    return p, g, (lambda xc: -(xc - o[0])), (lambda yc: yc - o[1])
 
 
 def csv_names(path, z=0.0):
@@ -101,6 +118,10 @@ def parts():
     xfc, xlc = x_ear[0] / 2, x_ear[1]                                        # middle planes of the posts
     xf0, xpe = xfc - sm[2] / 2, xlc + sm[6] / 2                              # inner face of the fixed post, outer end
     ymid = sm[3] - sm[9] - (sm[4] - sm[9] - sm[10]) / 2                      # middle between the pillars
+    btp, btg, bty, btx = battery_tray_layout()                               # battery tray: params, layout, frame maps
+    bt_rs = btx(btg["ys"][0])                                                # rear strap (frame x)
+    bt_h12 = bty(btg["hs"][1][0])                                            # line of H12 and H22 (frame y)
+    bt_si0, bt_si1 = bty(btg["x_in"] - 0.5), bty(btg["x_in"] - 0.5 + btg["sx"])   # inner slot (frame y)
     bri, brb = sf["p"]["bridge"], sf["p"]["bridge_bearings"]
     pst = sf["p"]["post"]
     z_shoulder = pst[3] - (5.0 + bs[3])                                      # shoulder of the post above the chassis plate
@@ -425,6 +446,43 @@ def parts():
                     f"the stop: keep it within +0/-0.1. Check after assembly: the washer turns by hand.",
                     "Thread M3 from below (depth 5) for the screw through H24/H25 of the chassis plate. Both threads are tapped "
                     "(aluminium part; the model shows the tap drill)."]),
+        dict(key="battery_tray", folder="cad/battery_tray", step="battery_tray_speedrun.step", stem="battery_tray_speedrun",
+             title="Speedrun battery tray", number="BT", frame=(np.column_stack([(0, 1, 0), (-1, 0, 0), (0, 0, 1)]), sf["battery_tray"]),
+             material="Nylon PA12 (MJF 3D print)", density=1.01, density_txt="PA12", quantity="1",
+             tol="process tolerance (MJF approx. ±0.3)", edges="as modelled", status="measures qualified, not printed", section_gap=10,
+             frame_note=f"Drawing frame: origin O in the middle between the holes H11, H12, H22 and H23 of the chassis plate on its "
+                        f"top face; x along the car (+x toward End A), y toward the left side of the car, z up. The STEP file is in "
+                        f"the assembly position: O = ({sf['battery_tray'][0]:.2f}, {sf['battery_tray'][1]:.2f}, {sf['battery_tray'][2]:.2f}).",
+             dims=[("T", (btx(btg["py0"]), bty(btg["px1"]), 0), (btx(btg["py1"]), bty(btg["px1"]), 0), "h", "below",
+                    f"{btg['py1'] - btg['py0']:.2f} (battery {btg['L']:g} + 2 x {btp['clearance']:g})"),
+                   ("T", (btx(btg["ys"][0]), bty(btg["px1"]), 0), (btx(btg["ys"][1]), bty(btg["px1"]), 0), "h", "below",
+                    f"{btg['ys'][1] - btg['ys'][0]:.2f} (straps)"),
+                   ("T", (btx(btg["py1"]), bty(btg["px1"]), 0), (btx(btg["py1"]), bty(btg["px0"]), 0), "v", "right",
+                    f"{btg['px1'] - btg['px0']:.2f} (battery {btg['W']:g} + 2 x {btp['clearance']:g})")],
+             hole_note=lambda h: "countersunk screw M3x6 from below through the chassis plate (4.0 of thread)",
+             sections=[dict(label="B", point=(bt_rs, 0, 0), d=(-1, 0, 0), x=(0, -1, 0), title="Section B-B (rear strap, inner side)",
+                            clip=(-bty(btg["x_in"]) - 13.0, -bty(btg["x_in"]) + 13.0, -1.5, 13.5), scale=5.0,
+                            callouts=[((bt_rs, bt_si1 - 0.4, btp["floor_t"] - 0.4), "chamfer 0.8 x 45 deg", (6, 18)),
+                                      ((bt_rs, bty(btg["x_in"]) + 9.0, btg["cd"] / 2), f"channel 24 wide, {btg['cd']:g} deep under the floor", (12, 34))],
+                            dims=[((bt_rs, bt_si0, 0), (bt_rs, bt_si1, 0), "h", -6, f"{btg['sx']:.2f} (slot, 24 long)"),
+                                  ((bt_rs, bt_si1 + 0.75, 0), (bt_rs, bt_si1 + 0.75, btp["floor_t"]), "v", 8, f"{btp['floor_t']:.2f}"),
+                                  ((bt_rs, bty(btg["x_in"]) + 6.0, 0), (bt_rs, bty(btg["x_in"]) + 6.0, btg["cd"]), "v", 0, f"{btg['cd']:.2f}")]),
+                       dict(label="C", point=(0, bt_h12, 0), d=(0, -1, 0), x=(1, 0, 0), title="Section C-C (rear end stop, line of H12)",
+                            clip=(btx(btg["ty0"]) - 2.0, btx(btg["ty0"]) + 24.0, -1.5, 14.5), scale=5.0,
+                            callouts=[((btx(btg["hs"][1][1]) + 1.25, bt_h12, 3.0), "blind hole Ø2.5 x 4.5 (M3x6 from below)", (40, 10))],
+                            dims=[((btx(btg["ty0"]), bt_h12, btp["floor_t"] + btp["stop_h"]), (btx(btg["py0"]), bt_h12, btp["floor_t"] + btp["stop_h"]),
+                                   "h", 6, f"{btg['py0'] - btg['ty0']:.2f}"),
+                                  ((btx(btg["py0"]), bt_h12, btp["floor_t"]), (btx(btg["py0"]), bt_h12, btp["floor_t"] + btp["stop_h"]), "v", 8,
+                                   f"{btp['stop_h']:.2f}"),
+                                  ((btx(btg["ty0"]), bt_h12, 0), (btx(btg["ty0"]), bt_h12, btp["floor_t"] + btp["stop_h"]), "v", -8,
+                                   f"{btp['floor_t'] + btp['stop_h']:.2f}")])],
+             notes=[f"Battery Absima GreenHorn V2 3S 5000 mAh hardcase ({btg['L']:g} x {btg['W']:g} x {btg['H']:g}, spec): it lies on the floor "
+                    f"between the end stops and the side walls, {btp['clearance']:g} all around.",
+                    "Fixing: 4 countersunk screws M3x6 from below through H11, H12, H22 and H23 of the chassis plate into the blind holes "
+                    "Ø2.5 x 4.5 (thread formed by the screws or tapped M3).",
+                    "Straps: 2 velcro straps 20 mm over the battery, through the slots beside it and through the channels under the floor. "
+                    "Lay the straps into the channels before the tray is screwed on.",
+                    "Windows in the floor: mass. Print flat on the bottom face."]),
     ]
 
 
@@ -820,6 +878,7 @@ FOLDERS = {
     "cad/parts/wishbone": ("Wishbones: technical drawings", "../../readme.md#wishbones"),
     "cad/running_gear/steering": ("Steering: technical drawing of the bellcrank", "../../readme.md#running-gear"),
     "cad/running_gear/servo_mount": ("Servo mount: technical drawings", "../../readme.md#running-gear"),
+    "cad/battery_tray": ("Speedrun battery tray: technical drawing", "../readme.md#speedrun-battery-tray"),
 }
 SHEET_TEXT = {1: "views, main dimensions, labels of the holes",
               2: "sections and detail views, hole table and notes",
