@@ -4,6 +4,7 @@
 * [Overview](#overview)
 * [Bellcrank (same part on both sides)](#bellcrank-same-part-on-both-sides)
 * [Steering bridge](#steering-bridge)
+* [Steering post](#steering-post)
 * [Files](#files)
 * [Generating the drawings](#generating-the-drawings)
 
@@ -41,6 +42,17 @@ Material: Nylon PA12 (MJF 3D print). Quantity: 1. Status: measures qualified, no
 
 ![Steering bridge, technical drawing, sheet 3](steering_bridge_technical_drawing_sheet_3.png)
 
+## Steering post
+Material: To be defined (e.g. EN AW-7075-T6, turned). Quantity: 2. Status: measures qualified, not made. Scale of the views: 5:1. 2 holes in the hole table.
+
+**Sheet 1:** views, main dimensions, labels of the holes
+
+![Steering post, technical drawing, sheet 1](steering_post_technical_drawing_sheet_1.png)
+
+**Sheet 2:** sections, hole table and notes
+
+![Steering post, technical drawing, sheet 2](steering_post_technical_drawing_sheet_2.png)
+
 ## Files
 | File | Content |
 |:---|:---|
@@ -50,6 +62,9 @@ Material: Nylon PA12 (MJF 3D print). Quantity: 1. Status: measures qualified, no
 | `steering_bridge_technical_drawing.pdf` | Steering bridge: technical drawing, 3 sheets A3 |
 | `steering_bridge_technical_drawing_sheet_1.png`, `steering_bridge_technical_drawing_sheet_2.png`, `steering_bridge_technical_drawing_sheet_3.png` | The sheets as images (150 dpi) |
 | `steering_bridge.step` | Master geometry of the part |
+| `steering_post_technical_drawing.pdf` | Steering post: technical drawing, 2 sheets A3 |
+| `steering_post_technical_drawing_sheet_1.png`, `steering_post_technical_drawing_sheet_2.png` | The sheets as images (150 dpi) |
+| `steering_post.step` | Master geometry of the part |
 
 ## Generating the drawings
 The drawings are generated from the STEP files (from the root directory of the repository; packages cadquery and matplotlib). After a change of a part, its generator runs first, then:
@@ -58,4 +73,4 @@ The drawings are generated from the STEP files (from the root directory of the r
 python scripts/cad/generate_technical_drawings.py
 ```
 
-The option `--part` generates the drawings of the given parts (keys separated by commas: `bellcrank`, `steering_bridge`), the option `--date` sets the date in the title block.
+The option `--part` generates the drawings of the given parts (keys separated by commas: `bellcrank`, `steering_bridge`, `steering_post`), the option `--date` sets the date in the title block.

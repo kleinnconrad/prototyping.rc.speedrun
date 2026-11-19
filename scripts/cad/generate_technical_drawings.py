@@ -65,6 +65,7 @@ def steering_frames():
     bb_ = p["bridge_bearings"]
     return {"bellcrank": np.array([21.7, 242.69, p["bellcrank"][0]]), "post": np.array([8.0, 199.15, G.PLATE_T]),
             "bridge": np.array([0.0, 242.69 - p["bellcrank"][4], p["bellcrank"][1] + bb_[4] + bb_[3]]),
+            "steering_post": np.array([21.7, 242.69, G.PLATE_T]),
             "plate": np.array([8.0, 199.15, G.PLATE_T + m4 - tp]), "p": p}
 
 
@@ -101,6 +102,8 @@ def parts():
     xf0, xpe = xfc - sm[2] / 2, xlc + sm[6] / 2                              # inner face of the fixed post, outer end
     ymid = sm[3] - sm[9] - (sm[4] - sm[9] - sm[10]) / 2                      # middle between the pillars
     bri, brb = sf["p"]["bridge"], sf["p"]["bridge_bearings"]
+    pst = sf["p"]["post"]
+    z_shoulder = pst[3] - pst[5] - (5.0 + bs[3])                             # shoulder of the post above the chassis plate
     xb_ = 21.7                                                               # axes of the towers (posts H24/H25)
     zbo = sf["bridge"][2]                                                    # bottom face of the towers (frame z = 0)
     zb_lo, zb_hi, zb_ball = bri[0] - zbo, bri[1] - zbo, (bri[0] + bri[1]) / 2 - zbo
@@ -375,9 +378,9 @@ def parts():
                             axes=[((q, 0, -1.5), (q, 0, zb_hi + 1.5)) for q in (-xb_, xb_)],
                             callouts=[((xb_ + brb[0] / 2, 0, z_seat / 2), f"Ø{brb[0]:.1f} through (bearing seats MF63ZZ from both faces)", (28, -12)),
                                       ((xb_ + bri[4] / 2, 0, zb_hi - 2.0), f"Ø{bri[4]:.1f}, access bore for the screw", (23, 10)),
-                                      ((-8.0, 0, zb_lo), f"beam {bri[2]:g} x {zb_hi - zb_lo:g}", (-14, -20))],
-                            dims=[((-(xb_ - bri[3] / 2), 0, 0), ((xb_ - bri[3] / 2), 0, 0), "h", -8, f"{2 * xb_ - bri[3]:.2f}"),
-                                  ((8.0, 0, 0), (8.0, 0, zb_lo), "v", 0, f"{zb_lo:.2f}")]),
+                                      ((8.0, 0, zb_lo), f"bar {bri[2]:g} x {zb_hi - zb_lo:.2f}, 0.95 above the centre driveshaft", (22, -10))],
+                            dims=[((xb_, 0, 0), (xb_, 0, z_seat), "v", 0, f"{z_seat:.2f}"),
+                                  ((xb_, 0, z_seat), (xb_, 0, zb_hi), "v", 0, f"{zb_hi - z_seat:.2f}")]),
                        dict(label="C", point=(0, 0, 0), d=(-1, 0, 0), x=(0, -1, 0), title="Section C-C (ball of the servo link)",
                             clip=(-bri[2] / 2 - 1.5, bri[2] / 2 + 5.0, zb_lo - 3.0, zb_hi + 1.0), scale=5.0,
                             callouts=[((0, -bri[2] / 2 - 2.0, zb_ball + 1.25), "M3, depth 5.5 (grub screw M3x8)", (18, 16))],
@@ -385,14 +388,40 @@ def parts():
                                   ((0, -bri[2] / 2, zb_lo), (0, -bri[2] / 2 - dboss, zb_lo), "h", -6, f"{dboss:.2f}"),
                                   ((0, bri[2] / 2, zb_lo), (0, bri[2] / 2, zb_hi), "v", -6, f"{zb_hi - zb_lo:.2f}"),
                                   ((0, -bri[2] / 2 - dboss, zb_lo), (0, -bri[2] / 2 - dboss, zb_ball), "v", 6, f"{zb_ball - zb_lo:.2f}")])],
-             notes=["Beam over the centre driveshaft with a tower at each end (portal). The towers turn on the rear arms of the "
-                    "bellcranks: 2 flanged bearings MF63ZZ per tower, shims 3x5x0.3 below and above the inner rings, screw M3x16 "
-                    "from above, lock nut M3 in the hex pocket of the bellcrank.",
+             notes=["Flat bar over the centre driveshaft (0.95 above it) with round ends (towers). The towers turn on the rear arms "
+                    "of the bellcranks: 2 flanged bearings MF63ZZ per tower, shims 3x5x0.3 below and above the inner rings, screw "
+                    "M3x16 from above, lock nut M3 in the hex pocket of the bellcrank.",
                     f"Bearing seats Ø{brb[0]:.1f} through the lower part of the towers ({z_seat:.1f} long: the 2 bearings without their "
                     "flanges); check the fit after printing (MJF approx. ±0.3).",
                     "Ball of the servo link in the middle of the rear face (toward End B): thread M3 for a grub screw M3x8, ball with "
                     "internal thread screwed onto it. The boss reaches back to the ball of the servo horn.",
-                    "Print flat on the bottom face of the towers."]),
+                    "Print flat on the bottom face."]),
+        dict(key="steering_post", folder="cad/running_gear/steering", step="steering_post.step", stem="steering_post",
+             title="Steering post", number="SP", frame=(np.eye(3), sf["steering_post"]),
+             material="To be defined (e.g. EN AW-7075-T6, turned)", quantity="2", tol=GENERAL_CNC, edges=EDGES_BREAK,
+             status="measures qualified, not made",
+             frame_note=f"Drawing frame: origin O on the axis of the post on the top face of the chassis plate (H25); z up. "
+                        f"The STEP file is in the assembly position of the right post: O = ({sf['steering_post'][0]:.2f}, "
+                        f"{sf['steering_post'][1]:.2f}, {sf['steering_post'][2]:.2f}).",
+             sections=[dict(label="B", point=(0, 0, 0), d=(0, -1, 0), x=(1, 0, 0), title="Section B-B (axis of the post)",
+                            axes=[((0, 0, -1.5), (0, 0, pst[3] + 1.5))],
+                            callouts=[((pst[2] / 2, 0, pst[3] - 2.0), f"journal Ø{pst[2]:.1f}: 2 bearings 5x8x2.5 and the lip 0.5 of the "
+                                       f"bellcrank (5.50) + {pst[5]:g} play", (48, 6)),
+                                      ((pst[4] / 2, 0, z_shoulder - 0.6), f"shank Ø{pst[4]:.1f}, shoulder under the inner ring of the lower bearing",
+                                       (48, -4)),
+                                      ((pst[0] / 2 / np.cos(np.pi / 6), 0, pst[1] / 2), f"hexagon {pst[0]:g} across the flats", (45, 0))],
+                            dims=[((pst[0] / 2 / np.cos(np.pi / 6), 0, 0), (pst[0] / 2 / np.cos(np.pi / 6), 0, pst[1]), "v", 6, f"{pst[1]:.2f}"),
+                                  ((pst[4] / 2, 0, pst[1]), (pst[4] / 2, 0, z_shoulder), "v", 6 + 5 * (pst[0] / 2 / np.cos(np.pi / 6) - pst[4] / 2),
+                                   f"{z_shoulder - pst[1]:.2f}"),
+                                  ((pst[2] / 2, 0, z_shoulder), (pst[2] / 2, 0, pst[3]), "v", 6 + 5 * (pst[0] / 2 / np.cos(np.pi / 6) - pst[2] / 2),
+                                   f"{pst[3] - z_shoulder:.2f}")])],
+             notes=[f"Height {pst[3]:g} above the top face of the chassis plate (owner, as the original part). The shoulder (Ø{pst[4]:g}) "
+                    "holds the inner ring of the lower bearing of the bellcrank.",
+                    f"Journal Ø{pst[2]:g} (proposal: g6 for the bearings 5x8x2.5), {pst[3] - z_shoulder:.2f} long: the bearing stack "
+                    f"(5.50) plus {pst[5]:g}. The screw M3x6 with washer 3.2x6x0.5 on top is tightened against the end of the journal; "
+                    f"the bellcrank keeps {pst[5]:g} of axial play and turns freely.",
+                    "Threads M3 at both ends: from below for the screw through H24/H25 of the chassis plate, from above for the "
+                    "screw M3x6 that holds the bellcrank."]),
     ]
 
 
