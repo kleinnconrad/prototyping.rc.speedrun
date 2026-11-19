@@ -7,9 +7,9 @@ the floating servo mount, dampers and sway bars (trapezoid with ball ends and dr
 follows the principle of the T410R and deviates from it where the function requires. All values
 with their source: cad/running_gear/running_gear_parameters.json.
 
-Placement (chassis plate coordinates): ride height 10 mm front / 15 mm rear (setup sheet 4), wheel
-centres of the original car at +-80.5 mm (overall width 187 mm over tyres of 26 mm), caster 10 degrees front, rear toe
-from the pivot blocks.
+Placement (chassis plate coordinates): ride height 10 mm front / 15 mm rear (setup sheet 4), rear
+wheel centres as the original car at +-80.5 mm (overall width 187 mm over tyres of 26 mm), front 2 mm further out
+(front wishbone 51.7 mm for the front CVD drive shafts, owner), caster 10 degrees front, rear toe from the pivot blocks.
 The wishbones are horizontal at this ride height. The parts of the right side are built and
 mirrored to the left side.
 
