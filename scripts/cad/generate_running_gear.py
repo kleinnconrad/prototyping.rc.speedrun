@@ -214,13 +214,13 @@ def corners(p, lp):
         yb, sign, _, _, tt = faces[end]
         y_front = yb - sign * tt                                         # damper side of the tower
         outw = -sign                                                     # toward the outer end of the car
-        # damper: lower ball on the outer face of the shock plate (hole with the lowest position >= 6)
-        # damper in the plane 8.3 in front of the tower (collar 15); lower ball on a stud along the hole of
-        # the shock plate (hole with the lowest position >= 6 above the bottom face of the chassis plate)
+        # damper in the plane 8.3 in front of the tower (collar 15); lower ball on a stud along the hole of the shock
+        # plate given by damper_hole_z (height above the bottom face of the chassis plate)
         y_d = y_front + outw * p["damper_plane"]
-        faces_a = sorted([(W.arm_point(end, 1, (hx, -yo, hz), lines), W.arm_point(end, 1, (hx, -yo - 1, hz), lines))
-                          for hx, hz in ap[f"{kind}_shock_holes"]], key=lambda f: f[0][2])
-        fa, fa1 = [f for f in faces_a if f[0][2] >= 6.0][0]
+        faces_a = [(W.arm_point(end, 1, (hx, -yo, hz), lines), W.arm_point(end, 1, (hx, -yo - 1, hz), lines))
+                   for hx, hz in ap[f"{kind}_shock_holes"]]
+        z_hole = p["damper_hole_z"][0 if end == "front" else 1]
+        fa, fa1 = min(faces_a, key=lambda f: abs(f[0][2] - z_hole))
         n_a = unit(fa1 - fa)
         t_a = (y_d - fa[1]) / n_a[1]
         bot = fa + n_a * t_a
