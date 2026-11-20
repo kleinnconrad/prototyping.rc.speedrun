@@ -75,6 +75,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/dual_motor`**: Dual motor mount for 2 motors on the spur gear and a chassis plate with a second motor window on the left side (STEP, STL, geometry data, pictures, script).
 * **`/3d_print_fdm`**: STL files of 3D printed parts (FDM) for the car and a maintenance stand (see [3D printed parts](#3d-printed-parts))
 * **Technical drawings** (PDF, one PNG per sheet) of the verified parts, the wishbones and the C-hubs (right and left) are stored in the directory of each part. A readme in each directory shows the sheets: [bulkheads](bulkhead/readme.md), [speedrun chassis plate](chassis/chassis_plate_speedrun_wide_motor10/readme.md), [speedrun top brace](chassis/top_brace_speedrun/readme.md), [shock towers](shock_tower/readme.md), [pivot blocks](parts/pivot_block/readme.md), [motor mount and cap](parts/motor_mount/readme.md), [wishbones](parts/wishbone/readme.md), [C-hub and steering knuckle](running_gear/front_corner/readme.md), [front splitter](front_splitter/readme.md), [battery tray](battery_tray/readme.md), [steering](running_gear/steering/readme.md), [servo mount](running_gear/servo_mount/readme.md).
+* **Colour scheme of the CAD pictures** (owner, 2026-11-20): blue and grey shades only, one colour per group of parts and the same in all pictures (assembly, running gear, drive line, bulkheads, shock towers, battery tray, front splitter, wishbones, studies), defined in `scripts/cad/palette.py`. Annotations (dimensions, labels, markers of new or closed holes) and the red and black battery wires (plus and minus) keep their own colours. The assembly picture has no legend.
 
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
 
@@ -559,7 +560,7 @@ Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The insid
 
 ![Views and sections of the upper bulkhead](../photos/cad_bulkhead_upper_preview.png)
 
-The preview shows the upper part, the assemblies at End A (front) and End B (rear) with the lower part, the [speedrun shock towers](#speedrun-shock-towers) and the end of the [speedrun top brace](#speedrun-top-brace) (dark grey), and two sections of the assembly at End A. The bearings (light grey), the gears (yellow) and the diff case (dark grey) are simplified bodies that show the positions only.
+The preview shows the upper part, the assemblies at End A (front) and End B (rear) with the lower part, the [speedrun shock towers](#speedrun-shock-towers) and the end of the [speedrun top brace](#speedrun-top-brace) (dark grey), and two sections of the assembly at End A. The bearings (light grey), the gears (blue-grey) and the diff case (dark grey) are simplified bodies that show the positions only.
 
 ### Interfaces and design of the upper bulkhead
 | Interface | Original parts | Model | Source |
@@ -1208,6 +1209,7 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `generate_technical_drawings.py` | STEP files of the speedrun chassis plate, top brace, shock towers, pivot blocks, motor mount and cap, C-hubs (right and left), steering knuckle, front splitter and wishbones; hole tables of the plates; parameter file of the running gear (frames of the C-hub and the knuckle) | Technical drawings (PDF, A3, 2 or 3 sheets, one PNG per sheet) and a readme with the sheets in the directory of each part. Scale and layout follow from the size of the part; the holes are read from the STEP files | cadquery, matplotlib |
 | `technical_drawing.py` | – (module) | Helpers of the technical drawings: projection with hidden line removal, sections, dimensions, hole finder (cylinders and countersinks along any axis), hole table, title block | cadquery, matplotlib |
 | `mesh_views.py` | None | Helper module: shaded views of STL files and assemblies, used by the drawing scripts of the bulkheads | matplotlib |
+| `palette.py` | None | Helper module: colour scheme of the CAD pictures (blue and grey shades, one colour per group of parts), used by the picture scripts | – |
 
 ### Regenerating the files
 The following commands regenerate the files of the speedrun chassis plates in this order:

@@ -30,14 +30,15 @@ import cadquery as cq  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mesh_views import subdivide, draw_mesh, iso_basis  # noqa: E402
+import palette as P  # noqa: E402
 from generate_bulkhead_lower import bulkhead_lower, cyl_x, cyl_y, box, load_params  # noqa: E402
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 from generate_bulkhead_drawings import section, frame, balloon, DIM_COLOR, A4_LANDSCAPE  # noqa: E402
 from generate_shock_towers import tower_in_bulkhead  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
-COL = {"lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3), "steel": (0.78, 0.8, 0.82),
-       "gear": (0.85, 0.72, 0.35), "carbon": (0.22, 0.22, 0.24), "case": (0.3, 0.3, 0.32)}
+COL = {"lower": P.rgb("lower"), "upper": P.rgb("upper"), "steel": P.rgb("cup"),        # colour scheme (palette.py)
+       "gear": P.rgb("gear"), "carbon": P.rgb("tower_front"), "case": P.rgb("diff")}
 
 
 def tess(shape, tol=0.05):

@@ -36,6 +36,7 @@ import numpy as np
 import cadquery as cq
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import palette as P  # noqa: E402  (colour scheme of the CAD pictures)
 from generate_bulkhead_lower import box, cyl_y, cyl_z, load_params  # noqa: E402
 from generate_pivot_blocks import PARAMS as PIVOT, POSITIONS, PLATE_T, plate_holes  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y  # noqa: E402
@@ -253,7 +254,7 @@ def drawing(path, p, solids):
         n = "2 pieces: End A left and right" if kind == "front" else "2 pieces: End B left and right"
         # plan view
         ax = fig.add_axes([0.03, y0, 0.45, 0.29])
-        draw_mesh(ax, t, "top", color=(0.5, 0.52, 0.58), depth_cue=0.35)
+        draw_mesh(ax, t, "top", color=P.rgb("arm"), depth_cue=0.35)
         gap, lo_len = p[f"{kind}_outer_gap"], p[f"{kind}_outer_lug_len"]
         dim(ax, (-6, -half), (-6, half), "A", off=(-1.6, 0))
         dim(ax, (-2.5, half - p["inner_lug_len"]), (-2.5, half), "B", off=(-1.6, 0))
@@ -282,7 +283,7 @@ def drawing(path, p, solids):
                      loc="left")
         # side view (along y): heights
         ax2 = fig.add_axes([0.5, y0 + 0.155, 0.48, 0.135])
-        draw_mesh(ax2, t, "end_outer", color=(0.5, 0.52, 0.58), depth_cue=0.35)
+        draw_mesh(ax2, t, "end_outer", color=P.rgb("arm"), depth_cue=0.35)
         dim(ax2, (-5, -h), (-5, h), "D", off=(-1.6, 0))
         tag(ax2, (0, p["inner_lug_d"] / 2), "C", (2.5, z1 + 2.5))
         tag(ax2, (length, p["outer_pin_z"] + p["outer_lug_d"] / 2), "L", (length - 4, z1 + 2.5))
@@ -301,7 +302,7 @@ def drawing(path, p, solids):
                       loc="left")
         # axonometric view
         ax3 = fig.add_axes([0.53, y0 - 0.005, 0.42, 0.16])
-        draw_mesh(ax3, t, iso_basis(-120, 32), color=(0.5, 0.52, 0.58), depth_cue=0.35)
+        draw_mesh(ax3, t, iso_basis(-120, 32), color=P.rgb("arm"), depth_cue=0.35)
         ax3.set_aspect("equal")
         ax3.autoscale_view()
         ax3.axis("off")

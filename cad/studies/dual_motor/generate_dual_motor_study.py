@@ -41,6 +41,7 @@ import numpy as np
 import cadquery as cq
 
 sys.path.insert(0, os.path.abspath("scripts/cad"))
+import palette as P  # noqa: E402
 from generate_bulkhead_lower import box, cyl_y, cyl_z, load_params  # noqa: E402
 from generate_driveshaft import (LOWER, PARAMS, PLATE_T, INCH, layout, motor_axis_range,  # noqa: E402
                                  motor_mount_cap_solid, motor_mount_solid, mount_outline, section_polys)
@@ -48,6 +49,9 @@ from generate_solid import contour_samples, plate_solid  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ASSEMBLY = "cad/assembly/speedrun_chassis_T410R.step"
+# battery of the build with its tray and straps (added after the study): not part of the study, which places 2
+# batteries beside the ESCs (generate_dual_motor_electronics.py)
+BUILD_BATTERY = ("battery", "speedrun_battery_tray", "velcro")
 PLATE_GEOM = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
 PINION_TEETH = 48                       # 72T/48T = 1.50: same ratio as 68T/45T (over 130 km/h, spec_gearing.yaml)
 PINION_FACE = 6.0                       # face width of the pinion (assumed)
@@ -57,8 +61,8 @@ MOTOR_D, MOTOR_L, MOTOR_SHAFT = 36.0, 60.0, 5.0       # 3660 motor (spec_brushle
 NEW_HOLE = {"id": "H37", "x": -45.333, "y": 62.475}   # H09 mirrored
 CLOSED_HOLES = ("H11", "H12", "H14", "H15")
 DENSITY = {"6082": 2.70, "7075": 2.81}
-COLOURS = {"dualmount": (0.85, 0.55, 0.2), "motor": (0.15, 0.35, 0.55), "motorshaft": (0.75, 0.76, 0.78),
-           "pinion": (0.85, 0.75, 0.3)}
+COLOURS = {"dualmount": P.rgb("study"), "motor": P.rgb("motor"), "motorshaft": (0.75, 0.76, 0.78),   # palette.py
+           "pinion": P.rgb("gear")}
 HIDE_IN_CLOSEUP = ("speedrun top brace", "speedrun rear shock tower End B", "speedrun front shock tower End A")
 
 
@@ -287,7 +291,7 @@ def assembly_picture(path, parts):
     tris, cols = mesh(parts)
     ax = fig.add_axes([0.0, 0.47, 0.6, 0.47])
     view(ax, tris, cols, iso_basis(-35, 28), "Complete build with 2 motors 3660 (simple bodies, blue) and the dual "
-                                             "motor mount (orange)")
+                                             "motor mount (bright blue)")
     top = tuple(np.asarray(v, float) for v in ((0, 0, -1), (1, 0, 0), (0, 1, 0)))
     tb, cb = mesh(parts, (-101, -12, -5, 202, 150, 80), edge=1.5, tol=0.03)
     ax = fig.add_axes([0.6, 0.47, 0.4, 0.47])
@@ -338,7 +342,7 @@ def drawing(path, r):
     z, yv = lay["z"], p["mount_y"]
     # ---- dual motor mount from the motor side
     ax = fig.add_axes([0.04, 0.47, 0.55, 0.47])
-    for solid, col in ((dual, "#e3a35c"), (cap, "#b3b8bf")):
+    for solid, col in ((dual, P.hexcolor("study")), (cap, "#b3b8bf")):
         sec = section_polys(solid, "y", yv)
         for outer, poly in sec:
             if outer:
@@ -353,7 +357,7 @@ def drawing(path, r):
     for sx in (1, -1):
         xm = sx * centre
         ax.add_patch(Circle((xm, z), MOTOR_D / 2, fill=False, ec="#2c5d8a", lw=0.9, ls=":"))
-        ax.add_patch(Circle((xm, z), pinion_od / 2, fill=False, ec="#9a7d1e", lw=0.8, ls="--"))
+        ax.add_patch(Circle((xm, z), pinion_od / 2, fill=False, ec=P.hexcolor("gear"), lw=0.8, ls="--"))
         ax.plot([xm], [z], "+", color="#2c5d8a", ms=8)
         for xx, zz in ((xm - sx * dx, z + dz), (xm + sx * dx, z - dz)):        # motor screws on the diagonal
             ax.add_patch(Circle((xx, zz), 1.5, fill=False, ec="#2c5d8a", lw=0.7))
@@ -361,7 +365,7 @@ def drawing(path, r):
         ax.text(sx * (x0 + x1) / 2, -4.6, f"usable motor axis\n{x0:.2f} to {x1:.2f}", ha="center", va="top",
                 fontsize=7.5)
         ax.text(xm, z - pinion_od / 2 - 0.5, f"pinion {PINION_TEETH}T", ha="center", va="top", fontsize=7,
-                color="#7a6216")
+                color="#3d4a5c")
     ax.annotate("", (-centre, 46.0), (centre, 46.0), arrowprops=dict(arrowstyle="<->", lw=0.7))
     ax.text(0, 46.4, f"motor axes {2 * centre:.2f} (x = +-{centre:.2f}), z = {z:.2f}", ha="center", va="bottom",
             fontsize=8)
@@ -399,7 +403,7 @@ def drawing(path, r):
         ax.add_patch(MPoly(prims_polyline(c), closed=True, fc="white", ec="#c0392b" if new else "#1d2025",
                            lw=1.2 if new else 0.8))
     m0, m1 = lay["mount"]
-    ax.add_patch(MPoly([(bb.xmin, m0), (bb.xmax, m0), (bb.xmax, m1), (bb.xmin, m1)], closed=True, fc="#e3a35c",
+    ax.add_patch(MPoly([(bb.xmin, m0), (bb.xmax, m0), (bb.xmax, m1), (bb.xmin, m1)], closed=True, fc=P.hexcolor("study"),
                        ec="#1d2025", lw=0.6, alpha=0.45, zorder=1))
     ax.text(bb.xmax + 1.5, m0 - 1.0, "dual motor\nmount", ha="left", va="top", fontsize=7)
     ids = {h["id"] for h in geom["holes"]}
@@ -491,6 +495,8 @@ def build_and_check(out):
     # assembly: study chassis plate and dual motor mount instead of the parts of the build, motors added
     parts = []
     for nm, s, col in read_assembly(ASSEMBLY):
+        if nm.startswith(BUILD_BATTERY):
+            continue                       # the study has its own batteries (electronics layout) instead of the build's
         if nm == "chassis_plate":
             parts.append(("chassis plate (study, 2 motor windows)", "plate", plate, srgb(col)))
         elif nm == "motor_mount":

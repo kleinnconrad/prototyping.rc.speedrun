@@ -30,6 +30,7 @@ import cadquery as cq
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.abspath("scripts/cad"))
+import palette as P  # noqa: E402
 from generate_dual_motor_study import mesh, read_assembly, srgb, view  # noqa: E402
 
 ASSEMBLY = os.path.join(HERE, "dual_motor_study_assembly.step")
@@ -49,10 +50,10 @@ PLUG = (14.0, 2.6, 7.6)                # servo plug (length along x, thickness, 
 CH_Y = {1: 200.0, 2: 194.0}            # channel 1 steering, channel 2 throttle (plugs on the inner face)
 JUNCTION = (9.0, 12.0, 4.8)            # Y junction (heat shrink) on the top brace
 JUNCTION_Y0, BRACE_TOP = 154.0, 36.6
-COLOURS = {"esc": (0.55, 0.13, 0.13), "escfan": (0.22, 0.22, 0.24), "battery": (0.18, 0.5, 0.28),
-           "xt60": (0.95, 0.78, 0.1), "receiver": (0.25, 0.55, 0.85), "plug": (0.15, 0.15, 0.16),
-           "junction": (0.85, 0.85, 0.87), "motorwire": (0.95, 0.5, 0.1), "red": (0.85, 0.08, 0.08),
-           "black": (0.08, 0.08, 0.09), "signal": (0.55, 0.3, 0.78), "servocable": (0.1, 0.6, 0.6)}
+COLOURS = {"esc": P.rgb("esc"), "escfan": (0.22, 0.22, 0.24), "battery": P.rgb("battery"),           # palette.py
+           "xt60": P.rgb("link"), "receiver": P.rgb("receiver"), "plug": (0.15, 0.15, 0.16),
+           "junction": P.rgb("ghost"), "motorwire": P.rgb("wire"), "red": (0.85, 0.08, 0.08),
+           "black": (0.08, 0.08, 0.09), "signal": P.rgb("signal"), "servocable": P.rgb("swaybar")}
 LABELS = {"esc": "ESC (2 x Hobbywing QuicRun WP 10BL120 G2)", "battery": "battery 3S shorty hardcase (2 x, on edge)",
           "xt60": "XT60 connector pair", "receiver": "receiver (4 channels) on the servo plate",
           "junction": "Y junction of the ESC signal cables", "motorwire": "motor wires A, B, C",
@@ -152,7 +153,8 @@ def electronics():
     pts = [(0.0, JUNCTION_Y0 + JUNCTION[1], 39.2), (0.0, 171.0, 40.2), (6.0, 182.0, 39.5), (12.0, 191.0, 37.0),
            (RX_X0 - PLUG[0], CH_Y[2], zp)]
     parts.append(("Y cable to channel 2", "signal", tube(pts, 1.0), ("Y junction", "plug channel 2")))
-    pts = [(55.0, 212.2, 12.0), (55.5, 215.3, 15.0), (56.0, 215.3, 27.0), (55.0, 211.5, 36.0), (40.0, 212.0, 38.5),
+    # behind the servo horn (y > 213.2 since the servo mount was refined on 2026-11-19)
+    pts = [(55.0, 212.2, 12.0), (55.5, 215.3, 15.0), (56.0, 215.3, 27.0), (55.0, 216.0, 36.0), (40.0, 216.0, 38.5),
            (26.0, 210.0, 37.5), (21.0, 204.0, 36.2), (RX_X0 - PLUG[0], CH_Y[1], zp)]
     parts.append(("servo cable to channel 1", "servocable", tube(pts, 1.0), ("running gear servo", "plug channel 1")))
     return parts
@@ -186,10 +188,10 @@ def schematic(ax):
     from matplotlib.patches import FancyBboxPatch
     boxes = {"bat_l": (0.02, 0.70, "battery left\n3S shorty", COLOURS["battery"]),
              "esc_l": (0.30, 0.70, "ESC left", COLOURS["esc"]),
-             "mot_l": (0.58, 0.70, "motor left\n3660", (0.15, 0.35, 0.55)),
+             "mot_l": (0.58, 0.70, "motor left\n3660", P.rgb("motor")),
              "bat_r": (0.02, 0.10, "battery right\n3S shorty", COLOURS["battery"]),
              "esc_r": (0.30, 0.10, "ESC right", COLOURS["esc"]),
-             "mot_r": (0.58, 0.10, "motor right\n3660", (0.15, 0.35, 0.55)),
+             "mot_r": (0.58, 0.10, "motor right\n3660", P.rgb("motor")),
              "y": (0.32, 0.42, "Y junction", COLOURS["junction"]),
              "rx": (0.62, 0.42, "receiver", COLOURS["receiver"]),
              "servo": (0.84, 0.42, "servo", (0.2, 0.2, 0.22))}
