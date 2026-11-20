@@ -170,7 +170,9 @@ def parts():
                            f"Kingpin axis {rgp['caster']:g} deg to z (caster, top toward -y), x = {side * kx:.2f} from O; at the "
                            f"height of the axle ({rgp['wheel_r'] - rgp['ride_height'][0] - Oc[2]:.2f} above O) "
                            f"{rgp['kingpin_y']:.2f} toward -y from O.",
-                           "Bore Ø3.0 for the outer hinge pin 3x26 (fixed with the grub screw M3 from below): Ø3.0 H7 (proposal).",
+                           "Bore Ø3.0 for the outer hinge pin 3x26: Ø3.0 H7 (proposal). The pin is fixed with a grub screw M3x4 "
+                           "from below in the boss Ø6.0 below the tube (thread M3 4.2 long, face 5.7 below the axis of the pin: "
+                           "the screw lies fully in the thread with its tip on the pin).",
                            "Both guide sleeves are inserted from the knuckle side (feet in the counterbores Ø7.0 x 0.55) and "
                            "stand 0.1 proud of the top face and of the bottom face (both square to the kingpin axis), so the ball "
                            "stud and the screw clamp only the sleeves and the knuckle moves freely (owner).",
