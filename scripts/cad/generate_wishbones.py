@@ -108,7 +108,7 @@ def arm_solid(p, kind):
     # hub carrier and the spacers sit there)
     s = s.cut(box(length - p["outer_lug_d"] / 2 - 0.3, length + p["outer_lug_d"] / 2 + 0.2, -gap / 2, gap / 2, -20, 20))
     # bores and holes
-    s = s.cut(cyl_y(p["pin_bore_d"] / 2, -half - 1, half + 1, 0, 0))                      # pins 3.0 with 0.1 clearance
+    s = s.cut(cyl_y(p["pin_bore_d"] / 2, -half - 1, half + 1, 0, 0))                      # pins 3.0 with clearance
     s = s.cut(cyl_y(p["pin_bore_d"] / 2, -half - 1, half + 1, length, p["outer_pin_z"]))
     for sy in (1, -1):
         s = s.cut(cyl_z(p["droop_tap_d"] / 2, zd0 - 1, zd1 + 1, p[f"{kind}_droop_x"], sy * p[f"{kind}_droop_y"]))
@@ -232,8 +232,8 @@ def drawing(path, p, solids):
                     arrowprops=dict(arrowstyle="-", lw=0.6, color=color), bbox=dict(fc="white", ec="none", pad=0.4))
 
     fig = plt.figure(figsize=(16, 15.5))
-    fig.suptitle("Lower wishbones with hinge pin (own design, partly based on the T410R; verified, pin bores Ø3.1 "
-                 "for the metal pins Ø3.0)", fontsize=12, y=0.992)
+    fig.suptitle(f"Lower wishbones with hinge pin (own design, partly based on the T410R; verified, pin bores "
+                 f"Ø{p['pin_bore_d']:g} for the metal pins Ø3.0)", fontsize=12, y=0.992)
     half, h = p["inner_width"] / 2, p["rail_h"] / 2
     z0, z1 = p["shock_plate_z"]
     for row, kind in enumerate(KINDS):
@@ -314,7 +314,8 @@ def drawing(path, p, solids):
             ("I", "Droop screw bosses: distance of the axis from the middle of the arm", "{k}_droop_y"),
             ("J", "Inner hinge pin to outer hinge pin, axis to axis (outer edges of the bores minus 1 bore diameter)",
              "{k}_arm_length"),
-            ("K", "Bore of the outer lugs (original part; the model: pin_bore_d 3.1 for the pins 3.0)", "outer_pin_d"),
+            ("K", f"Bore of the outer lugs (original part; the model: pin_bore_d {p['pin_bore_d']:g} for the pins 3.0)",
+             "outer_pin_d"),
             ("L", "Outer diameter of the outer lugs", "outer_lug_d"),
             ("M", "Length of one outer lug along the outer hinge pin", "{k}_outer_lug_len"),
             ("N", "Height of the outer hinge pin above the inner hinge pin (arm on a flat surface)", "outer_pin_z"),

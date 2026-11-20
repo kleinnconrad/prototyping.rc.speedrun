@@ -312,19 +312,23 @@ def parts():
                     "in the geometry data of the plate (study)."]),
         dict(key="wishbone_front", folder="cad/parts/wishbone", step="wishbone_front_T410R.step", stem="wishbone_front_T410R",
              title="Front wishbone (used on both sides)", number="WB-F",
-             dims=[("T", (0, -16.5, 0), (51.7, -16.5, 0), "h", "below", "51.70 (axis to axis)")], material="To be defined (original part: plastic)",
-             quantity="2", tol=GENERAL_CNC, edges=EDGES_BREAK, status="verified",
-             notes=["Bores Ø3.1 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
-                    "pins are exactly Ø3.0 (owner), 0.1 running clearance so that the arm turns freely on the pins (original "
-                    "part: outer lugs Ø4.3).", "Threads M3 for the ball studs of the damper (shock plate) and of the "
+             dims=[("T", (0, -16.5, 0), (51.7, -16.5, 0), "h", "below", "51.70 (axis to axis)")], material="Nylon PA12 (MJF 3D print)",
+             density=1.01, density_txt="PA12", quantity="2", tol="process tolerance (MJF approx. ±0.3)", edges="as modelled",
+             status="verified",
+             notes=["Bores Ø3.2 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
+                    "pins are exactly Ø3.0 (owner), 0.2 clearance so that the pins slide in without force and the arm turns "
+                    "freely (owner: Ø3.1 was too tight on an FDM print; original part: outer lugs Ø4.3). If an MJF part is "
+                    "tight, ream the bores with a drill Ø3.1 to Ø3.2 instead of pressing the pins in.", "Threads M3 for the ball studs of the damper (shock plate) and of the "
                     "sway bar drop link, threads M4 for the droop screws."]),
         dict(key="wishbone_rear", folder="cad/parts/wishbone", step="wishbone_rear_T410R.step", stem="wishbone_rear_T410R",
              title="Rear wishbone (used on both sides)", number="WB-R",
-             dims=[("T", (0, -16.5, 0), (54.3, -16.5, 0), "h", "below", "54.30 (axis to axis)")], material="To be defined (original part: plastic)",
-             quantity="2", tol=GENERAL_CNC, edges=EDGES_BREAK, status="verified",
-             notes=["Bores Ø3.1 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
-                    "pins are exactly Ø3.0 (owner), 0.1 running clearance so that the arm turns freely on the pins (original "
-                    "part: outer lugs Ø4.3).", "Threads M3 for the ball studs of the damper (shock plate) and of the "
+             dims=[("T", (0, -16.5, 0), (54.3, -16.5, 0), "h", "below", "54.30 (axis to axis)")], material="Nylon PA12 (MJF 3D print)",
+             density=1.01, density_txt="PA12", quantity="2", tol="process tolerance (MJF approx. ±0.3)", edges="as modelled",
+             status="verified",
+             notes=["Bores Ø3.2 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
+                    "pins are exactly Ø3.0 (owner), 0.2 clearance so that the pins slide in without force and the arm turns "
+                    "freely (owner: Ø3.1 was too tight on an FDM print; original part: outer lugs Ø4.3). If an MJF part is "
+                    "tight, ream the bores with a drill Ø3.1 to Ø3.2 instead of pressing the pins in.", "Threads M3 for the ball studs of the damper (shock plate) and of the "
                     "sway bar drop link, threads M4 for the droop screws."]),
         dict(key="bellcrank", folder="cad/running_gear/steering", step="bellcrank.step", stem="bellcrank",
              title="Bellcrank (same part on both sides)", number="BC", frame=(np.column_stack([(0, 1, 0), (-1, 0, 0), (0, 0, 1)]), sf["bellcrank"]),
