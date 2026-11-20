@@ -239,7 +239,8 @@ def drawing(own, path=DRAWING):
             "lower_bulkhead_End_A", "upper_bulkhead_End_A")
     srgb = lambda c: tuple(float(v) ** (1 / 2.2) for v in c[:3]) if c is not None else (0.6, 0.6, 0.62)  # noqa: E731
     asm = [(nm, s, srgb(c)) for nm, s, c in read_assembly(ASSEMBLY) if nm.startswith(keep)]
-    col = {"battery_tray": (0.85, 0.85, 0.82), "battery": (0.12, 0.42, 0.25), "strap": (0.08, 0.08, 0.09)}
+    import palette as P                                      # colour scheme of the CAD pictures: blue and grey
+    col = {k: P.rgb(k) for k in ("battery_tray", "battery", "strap")}
 
     def tess(s, me=1.5):
         v, idx = s.tessellate(0.03, 0.2)

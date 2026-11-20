@@ -43,6 +43,10 @@ from generate_drawing import contour_points  # noqa: E402
 from generate_dxf import build_dxf  # noqa: E402
 from generate_solid import edge_chamfer_tools, hole_chamfer_cones, wire_from_prims  # noqa: E402
 from generate_top_brace_speedrun import filleted_polygon  # noqa: E402
+import palette as P  # noqa: E402
+
+# colour scheme of the CAD pictures (palette.py): upper bulkhead in light blue
+UPPER_FILL, UPPER_FILL2, UPPER_EDGE, UPPER_TEXT = "#d6e3f2", "#e6eef8", P.hexcolor("upper"), "#2f4f78"
 
 LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
 UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
@@ -271,12 +275,12 @@ def drawing(path, name, g, lay, tp, lp, up, tower_b, upper, lower):
     zg, zr, zw = up["gear_block_h"], up["gear_block_h"] + up["wall_root_r"], up["wall_top_h"]
     zs = up.get("side_step_h", zg)
     ax.add_patch(MPoly([(-hw, zs - 2), (hw, zs - 2), (hw, zs), (xw, zs), (xw, zg), (-xw, zg), (-xw, zs), (-hw, zs)],
-                       closed=True, fc="#f1e2cf", ec="#b08a5a", lw=0.8, ls="--", zorder=1))
-    ax.add_patch(Rectangle((-xw, zg), 2 * xw, zw - zg, fc="#f6ead9", ec="#b08a5a", lw=0.8, ls="--", zorder=1))
-    ax.plot([-xw, xw], [zr, zr], color="#b08a5a", lw=0.6, ls=":", zorder=1)
+                       closed=True, fc=UPPER_FILL, ec=UPPER_EDGE, lw=0.8, ls="--", zorder=1))
+    ax.add_patch(Rectangle((-xw, zg), 2 * xw, zw - zg, fc=UPPER_FILL2, ec=UPPER_EDGE, lw=0.8, ls="--", zorder=1))
+    ax.plot([-xw, xw], [zr, zr], color=UPPER_EDGE, lw=0.6, ls=":", zorder=1)
     ax.text(-hw - 0.8, zs - 1.0, f"block in front of the wall {zg:g}\nside steps {zs:g}", fontsize=7.5,
-            color="#8a6a40", ha="right", va="center")
-    ax.add_patch(MPoly(pts, closed=True, fc="#3b4048", ec="#1d2025", lw=1.0, alpha=0.88, zorder=2))
+            color=UPPER_TEXT, ha="right", va="center")
+    ax.add_patch(MPoly(pts, closed=True, fc=P.hexcolor("tower_front"), ec="#1d2025", lw=1.0, alpha=0.88, zorder=2))
     for h in g["holes"]:
         ax.add_patch(Circle((h["x"], h["y"]), hole_d(g, h) / 2, fc="white", ec="#1d2025", lw=0.6, zorder=4))
         off = 4 + 5 * (hole_d(g, h) - g["hole_d"]) / 2           # labels of larger holes further outward
@@ -320,7 +324,7 @@ def drawing(path, name, g, lay, tp, lp, up, tower_b, upper, lower):
     # section x = 0: wall, root radius and the relief on the back face of the tower
     ax2 = fig.add_axes([0.66, 0.5, 0.32, 0.42])
     plane = cq.Face.makePlane(400, 400, cq.Vector(0, 0, 0), cq.Vector(1, 0, 0))
-    for solid, fc in ((upper, "#d9a35f"), (tower_b, "#3b4048")):
+    for solid, fc in ((upper, P.hexcolor("upper")), (tower_b, P.hexcolor("tower_front"))):
         for f in solid.intersect(plane).Faces():
             ex = BRepTools_WireExplorer(f.outerWire().wrapped)
             poly = []
@@ -341,13 +345,13 @@ def drawing(path, name, g, lay, tp, lp, up, tower_b, upper, lower):
     ax2.set_title("Section x = 0: relief of the tower at the root radius", fontsize=10)
     ax2.set_xlabel("y [mm] (outer end to the left)")
     ax2.set_ylabel("height above the parting face [mm]")
-    ax2.text(fy - 6.6, zg - 1.9, "tower", fontsize=8, color="#3b4048")
-    ax2.text(fy + 0.6, zg - 1.9, "wall and block of the upper bulkhead", fontsize=8, color="#8a6a40")
+    ax2.text(fy - 6.6, zg - 1.9, "tower", fontsize=8, color=P.hexcolor("tower_front"))
+    ax2.text(fy + 0.6, zg - 1.9, "wall and block of the upper bulkhead", fontsize=8, color=UPPER_TEXT)
 
     # assembly view
     ax3 = fig.add_axes([0.03, 0.02, 0.94, 0.4])
     tris, cols = [], []
-    for solid, col in ((lower, (0.56, 0.62, 0.69)), (upper, (0.85, 0.62, 0.38)), (tower_b, (0.25, 0.27, 0.3))):
+    for solid, col in ((lower, P.rgb("lower")), (upper, P.rgb("upper")), (tower_b, P.rgb("tower_front"))):
         vs, ts = solid.tessellate(0.02, 0.1)
         v = np.array([[p.x, p.y, p.z] for p in vs])
         t_ = subdivide(v[np.array(ts)], 1.2)

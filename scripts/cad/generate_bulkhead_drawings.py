@@ -29,6 +29,7 @@ import cadquery as cq  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mesh_views import load_stl, subdivide, draw_mesh, iso_basis  # noqa: E402
+import palette as P  # noqa: E402
 
 A4_LANDSCAPE = (11.69, 8.27)
 DIM_COLOR = "#c0392b"
@@ -382,7 +383,7 @@ def preview(path, tris):
              ([0.66, 0.02, 0.33, 0.44], "side", "Side view")]
     for rect, view, title in specs:
         ax = fig.add_axes(rect)
-        lo, hi = draw_mesh(ax, tris, view)
+        lo, hi = draw_mesh(ax, tris, view, color=P.rgb("lower"))                 # colour scheme (palette.py)
         frame(ax, lo, hi, pad=(2, 2, 2, 2), title=title)
     fig.suptitle("Carten T410R lower bulkhead, design matching the upper part (verified)",
                  fontsize=13, y=0.985)

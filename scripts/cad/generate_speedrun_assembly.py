@@ -57,6 +57,7 @@ from generate_pivot_blocks import blocks_in_plate  # noqa: E402
 from generate_shock_towers import tower_in_bulkhead  # noqa: E402
 from generate_wishbones import arms_in_plate  # noqa: E402
 from generate_camber_links import links_in_plate  # noqa: E402
+from palette import PARTS  # noqa: E402
 from generate_running_gear import build as running_gear  # noqa: E402
 from generate_front_splitter import car_parts_in_plate as front_splitter_in_plate  # noqa: E402
 from generate_battery_tray import car_parts_in_plate as battery_tray_in_plate  # noqa: E402
@@ -67,16 +68,7 @@ LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
 UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
 OUT_STEP = "cad/assembly/speedrun_chassis_T410R.step"
 OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
-COLORS = {"plate": (0.26, 0.27, 0.29), "lower": (0.45, 0.5, 0.56), "upper": (0.8, 0.56, 0.3),
-          "brace": (0.55, 0.62, 0.72), "tower_front": (0.2, 0.21, 0.23), "tower_rear": (0.2, 0.21, 0.23),
-          "onepiece": (0.17, 0.17, 0.18), "battery_tray": (0.85, 0.85, 0.82), "battery": (0.12, 0.42, 0.25),
-          "strap": (0.08, 0.08, 0.09),
-          "pivot": (0.1, 0.1, 0.11), "shaft": (0.72, 0.2, 0.16), "cup": (0.72, 0.74, 0.77),
-          "drive": (0.45, 0.47, 0.5), "mount": (0.6, 0.63, 0.68), "arm": (0.4, 0.34, 0.52),
-          "diff": (0.16, 0.16, 0.18), "rodend": (0.12, 0.12, 0.13), "link": (0.78, 0.79, 0.82),
-          "upright": (0.86, 0.45, 0.12), "axle": (0.62, 0.64, 0.68), "cvd": (0.5, 0.52, 0.56),
-          "steer": (0.3, 0.45, 0.75), "damper": (0.75, 0.2, 0.2), "spring": (0.95, 0.8, 0.2),
-          "servo": (0.2, 0.2, 0.22), "swaybar": (0.35, 0.65, 0.4), "bodypost": (0.62, 0.63, 0.66)}
+COLORS = dict(PARTS)                       # colour scheme of the CAD pictures: blue and grey (palette.py)
 PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
@@ -166,7 +158,6 @@ def image(parts, path):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    from matplotlib.patches import Patch
     from mesh_views import subdivide, draw_mesh, iso_basis
     tris, cols = [], []
     for _, key, s in parts:
@@ -175,12 +166,12 @@ def image(parts, path):
         cols.append(np.tile(COLORS[key], (len(t), 1)))
     tris, cols = np.concatenate(tris), np.concatenate(cols)
     fig = plt.figure(figsize=(16, 15))
-    fig.suptitle("Speedrun chassis (own design, partly based on the T410R): complete build with the running gear", fontsize=13, y=0.987)
+    fig.suptitle("Speedrun Chassis", fontsize=13, y=0.987)                                    # owner
     top = 1 / 3                                             # overview in the upper 2/3, close-ups below
 
     def upper(rect):
         return [rect[0], top + rect[1] * (1 - top), rect[2], rect[3] * (1 - top)]
-    views = [(upper([0.0, 0.27, 0.68, 0.53]), iso_basis(-35, 28), ""),
+    views = [(upper([0.0, 0.27, 0.68, 0.68]), iso_basis(-35, 28), ""),                  # no legend (owner)
              (upper([0.0, 0.0, 0.68, 0.3]), ((-1, 0, 0), (0, 1, 0), (0, 0, 1)), "Side view"),
              (upper([0.66, 0.02, 0.34, 0.88]), ((0, 0, -1), (1, 0, 0), (0, 1, 0)), "Top view")]
     for rect, view, title in views:
@@ -234,11 +225,6 @@ def image(parts, path):
         ax.set_aspect("equal")
         ax.axis("off")
         ax.set_title(title, fontsize=10, loc="left")
-    handles = [Patch(color=np.clip(np.asarray(COLORS[k]) + 0.08, 0, 1), label=MATERIALS[k][0]) for k in COLORS]
-    fig.legend(handles=handles, loc="upper left", bbox_to_anchor=(0.01, top + 0.95 * (1 - top)), fontsize=8.3,
-               frameon=False, ncol=3, columnspacing=1.2)
-    fig.text(0.013, top + 0.95 * (1 - top) - 0.13, "Parts without a material in the list: modelled for the completeness of the "
-             "build, not in the mass total", fontsize=8.5, color="#4a4f57")
     fig.savefig(path, dpi=100)
     plt.close(fig)
 

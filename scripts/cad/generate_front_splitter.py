@@ -413,7 +413,8 @@ def drawing(p, solid, plate, posts_, notes, tyre, path=ONE_PIECE_DRAWING):
     def tris(s, tol=0.03, edge=1.0):
         v, idx = s.tessellate(tol, 0.2)
         return subdivide(np.array([[q.x, q.y, q.z] for q in v])[np.array(idx)], edge)
-    grey, red, light = (0.55, 0.58, 0.63), (0.75, 0.3, 0.25), (0.86, 0.87, 0.89)
+    import palette as P                                      # colour scheme of the CAD pictures: blue and grey
+    grey, red, light = (0.55, 0.58, 0.63), P.rgb("steer"), (0.86, 0.87, 0.89)               # red: body posts (blue)
     geom = plate_geometry()
     holes = plate_holes(geom)
     fig = plt.figure(figsize=(16, 13.2))
@@ -438,7 +439,7 @@ def drawing(p, solid, plate, posts_, notes, tyre, path=ONE_PIECE_DRAWING):
                 color="white", zorder=6)
     ex, ey = p["ear_holes"]
     for sx in (1, -1):
-        ax.add_patch(Circle((sx * ex, ey), p["body_post"][0] / 2, fc="#b42318", ec="black", lw=0.6, zorder=6))
+        ax.add_patch(Circle((sx * ex, ey), p["body_post"][0] / 2, fc=P.hexcolor("steer"), ec="black", lw=0.6, zorder=6))
     # front tyres at the top face of the splitter (chord of the tyre), turned about the kingpin axis
     rg, J, kd = tyre
     width, droop = p["tyre_check"][:2]
@@ -466,11 +467,11 @@ def drawing(p, solid, plate, posts_, notes, tyre, path=ONE_PIECE_DRAWING):
     yb = float(be[np.argmin(np.abs(be[:, 0])), 1])
     for o in p["body_overhang"]:
         b2 = body_edge(p, o)
-        ax.plot(b2[:, 0], b2[:, 1], "--", color="#e8833a", lw=1.0, zorder=7)
+        ax.plot(b2[:, 0], b2[:, 1], "--", color=P.hexcolor("spring"), lw=1.0, zorder=7)       # light blue on the dark part
     yf = holes["H34"][1] + p["splitter_front_distance"]
     lo_, hi_ = p["body_overhang"]
     ax.text(0, yb - 27, f"dashed: lower front edge of the body, {lo_:g} and {hi_:g} behind the front edge of the "
-            "splitter (owner: the body sits on the splitter)", ha="center", fontsize=8, color="#e8833a", zorder=7)
+            "splitter (owner: the body sits on the splitter)", ha="center", fontsize=8, color=P.hexcolor("spring"), zorder=7)
     ax.text(0, yf + 3, f"front end of the splitter {p['splitter_front_distance']:g} ahead of the axis H34-H35 "
             f"(y = {yf:.1f}); outer form: form of the body edge moved forward", ha="center", fontsize=8, zorder=7)
     ax.set_xlim(-100, 100)
@@ -478,7 +479,7 @@ def drawing(p, solid, plate, posts_, notes, tyre, path=ONE_PIECE_DRAWING):
     ax.set_aspect("equal")
     ax.grid(True, lw=0.25, color="#bbbbbb")
     ax.set_title("Top view (mm): chassis plate light grey, splitter dark grey (outline of the body post mount dashed), "
-                 "bosses on H34, H35, H36, body posts red", fontsize=9, loc="left")
+                 "bosses on H34, H35, H36, body posts blue", fontsize=9, loc="left")
     # 3D views from above and from below
     views = [([0.64, 0.69, 0.35, 0.26], iso_basis(-60, 32), "From above (front left), body posts cut at z = 14",
               [(solid, grey)] + [(s.intersect(cq.Solid.makeBox(200, 100, 15, cq.Vector(-100, 280, -1))), red)
@@ -508,13 +509,13 @@ def drawing(p, solid, plate, posts_, notes, tyre, path=ONE_PIECE_DRAWING):
                 t.append(tris(cut, 0.02, 0.6))
                 col.append(np.tile(c, (len(t[-1]), 1)))
         draw_mesh(ax, np.concatenate(t), side, tri_colors=np.concatenate(col), depth_cue=0.0)
-        ax.plot([300, 412], [-10, -10], color="#6b4f2a", lw=1.2)
-        ax.text(301, -12.5, "ground at the ride height of 10 (setup sheet 4)", fontsize=7.5, color="#6b4f2a")
+        ax.plot([300, 412], [-10, -10], color="#4a4f57", lw=1.2)
+        ax.text(301, -12.5, "ground at the ride height of 10 (setup sheet 4)", fontsize=7.5, color="#4a4f57")
         ax.set_xlim(300, 412)
         ax.set_ylim(-14, 16)
         ax.set_aspect("equal")
         ax.axis("off")
-        ax.set_title(title + " (y horizontal, z vertical; chassis plate light, part grey, body post red)",
+        ax.set_title(title + " (y horizontal, z vertical; chassis plate light, part grey, body post blue)",
                      fontsize=9, loc="left")
     fig.text(0.03, 0.17, "Checks", fontsize=10, fontweight="bold", va="top")
     fig.text(0.03, 0.148, "\n".join("\n".join(textwrap.wrap(n, 205)) for n in notes), fontsize=8.5, va="top",

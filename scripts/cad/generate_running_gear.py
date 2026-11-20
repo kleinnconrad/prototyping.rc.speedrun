@@ -38,6 +38,7 @@ from generate_bulkhead_lower import box, cyl_x, cyl_y, cyl_z, load_params  # noq
 from generate_top_brace_speedrun import BULKHEAD_Y  # noqa: E402
 import generate_camber_links as CL  # noqa: E402
 import generate_wishbones as W  # noqa: E402
+import palette as P  # noqa: E402
 
 PARAMS = "cad/running_gear/running_gear_parameters.json"
 DRIVE = "cad/parts/driveshaft/driveshaft_parameters.json"
@@ -971,11 +972,9 @@ def check(parts, others):
     return sorted(bad, reverse=True)
 
 
-KIND_COLORS = {"upright": (0.86, 0.45, 0.12), "axle": (0.72, 0.74, 0.77), "cvd": (0.55, 0.57, 0.6),
-               "steer": (0.3, 0.45, 0.75), "damper": (0.75, 0.2, 0.2), "spring": (0.95, 0.8, 0.2),
-               "servo": (0.2, 0.2, 0.22), "swaybar": (0.35, 0.65, 0.4), "rodend": (0.12, 0.12, 0.13),
-               "link": (0.78, 0.79, 0.82), "arm": (0.4, 0.34, 0.52), "plate": (0.26, 0.27, 0.29),
-               "bulkhead": (0.55, 0.56, 0.58)}
+KIND_COLORS = {k: P.rgb(k) for k in ("upright", "axle", "cvd", "steer", "damper", "spring", "servo", "swaybar",
+                                     "rodend", "link", "arm", "plate")}
+KIND_COLORS["bulkhead"] = P.rgb("lower")                  # colour scheme of the CAD pictures (palette.py)
 MADE = {"upright", "cvd", "steer", "swaybar"}                  # own parts to manufacture (files)
 MADE_NAMES = ("axle with joint cup", "hex hub 12", "sway bar ball end")
 HANDED = ("C-hub",)              # parts without a plane of symmetry (caster): a left and a right part (mirror images)
@@ -1117,7 +1116,7 @@ def drawing(parts, info, lock, path=DRAWING):
     # 5: front corner, iso view
     ax = fig.add_axes(row([0.38, 0.04, 0.3, 0.42]))
     panel(ax, (45, yc - 20, 0, 100, yc + 14, 42), iso_basis(-60, 25), keep_f, 0.8)
-    ax.set_title("Front right corner, 3D view: C-hub (orange), knuckle with steering arm,\n"
+    ax.set_title("Front right corner, 3D view: C-hub (blue), knuckle with steering arm,\n"
                  "guide sleeves and kingpin screws, axle, hex hub", fontsize=9.5, loc="left")
     # notes
     fmt = lambda v: f"{v:g} deg" + (" or more (limit of the check)" if v >= 45 else "")

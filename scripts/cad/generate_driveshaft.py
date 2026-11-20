@@ -39,6 +39,7 @@ import cadquery as cq
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_bulkhead_lower import box, bulkhead_lower, cyl_x, cyl_y, cyl_z, load_params  # noqa: E402
+import palette as P  # noqa: E402
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
@@ -745,8 +746,8 @@ def diff_drawing(p, lp, path=DIFF_DRAWING):
     yd = BULKHEAD_Y["rear"] + lp["diff_axis_y"]
     rear = {n: q for n, _, q in rear_drive_line(p, lay)}
     to_local = lambda sol: sol.translate(cq.Vector(0, -yd, -lay["z"]))
-    C = {"case": (0.17, 0.17, 0.19), "ring": (0.66, 0.6, 0.5), "gear": (0.62, 0.63, 0.66), "bearing": (0.45, 0.65, 0.85),
-         "out": (0.3, 0.3, 0.33), "shim": (0.85, 0.8, 0.55), "pin": (0.8, 0.8, 0.82), "pinion": (0.75, 0.55, 0.3)}
+    C = {"case": P.rgb("diff"), "ring": P.rgb("gear"), "gear": (0.62, 0.63, 0.66), "bearing": P.rgb("steer"),   # palette.py
+         "out": (0.3, 0.3, 0.33), "shim": P.rgb("spring"), "pin": (0.8, 0.8, 0.82), "pinion": P.rgb("gear")}
     items = [("case", ds["case"], -16, "case"), ("ring gear 42T", ds["ring"], 12, "ring"),
              ("bearing", ds["bearings"][0], 20, "bearing"), ("bearing", ds["bearings"][1], -26, "bearing"),
              ("outdrive", od.translate(cq.Vector(xo, 0, 0)), 28, "out"),
@@ -820,9 +821,9 @@ def drive_assembly_drawing(p, lp, path=ASSEMBLY_DRAWING):
     low_a = lower.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180).translate(cq.Vector(0, BULKHEAD_Y["front"], PLATE_T))
     shaft = parts["centre driveshaft"]
     seg = lambda y0, y1: shaft.intersect(cq.Solid.makeBox(20, y1 - y0, 20, cq.Vector(-10, y0, 10)))
-    C = {"pinion": "#c8962e", "bearing": "#a0a6ad", "shaft": "#6b7078", "spur": "#7d8590", "mount": "#c9ccd1",
-         "cap": "#b3b8bf", "pin": "#2e6da4", "cup": "#b8bcc2", "drive": "#c0392b", "bulkhead": "#8c96a3",
-         "ring": "#9a9da3", "diff": "#3f4349"}
+    C = {"pinion": P.hexcolor("gear"), "bearing": "#a0a6ad", "shaft": "#6b7078", "spur": "#7d8590", "mount": "#c9ccd1",
+         "cap": "#b3b8bf", "pin": "#2e6da4", "cup": "#b8bcc2", "drive": P.hexcolor("shaft"), "bulkhead": P.hexcolor("lower"),
+         "ring": "#9a9da3", "diff": "#3f4349"}                                               # colour scheme (palette.py)
     rear = [("pinion", "pinion 17T", "pinion", (0, -24, 0), "u"),
             ("bearing in the bulkhead, inner", "bearing 5x10x4, inner", "bearing", (0, -16, 0), "d"),
             ("bearing in the bulkhead, outer", "bearing 5x10x4, outer", "bearing", (0, -8, 0), "u"),
@@ -952,13 +953,13 @@ def main():
     c = sum(brace_offset(brace_g, up["deck_screw_y"])) / 2
     brace = brace_solid(brace_g).rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 180).translate(
         cq.Vector(0, c, PLATE_T + lp["axis_z"] + up["deck_h"]))
-    items = [(plate, "#5b5f66"), (brace, "#9aa7b8")]
-    items += [(b, "#8c96a3" if k % 2 == 0 else "#d9a35f") for k, b in enumerate(bulkheads)]
+    items = [(plate, P.hexcolor("plate")), (brace, P.hexcolor("brace"))]                    # colour scheme (palette.py)
+    items += [(b, P.hexcolor("lower") if k % 2 == 0 else P.hexcolor("upper")) for k, b in enumerate(bulkheads)]
     items += [(parts["motor mount"], "#c9ccd1"), (parts["cap of the motor mount"], "#b3b8bf"),
               (parts["rear pinion shaft with flange"], "#6b7078"),
               (parts["spur gear"], "#7d8590"), (parts["bearing in the motor mount"], "#a0a6ad"),
               (parts["cup joint End B"], "#b8bcc2"), (parts["cup joint End A"], "#b8bcc2"),
-              (parts["centre driveshaft"], "#c0392b")]
+              (parts["centre driveshaft"], P.hexcolor("shaft"))]
     drawing(DRAWING, p, lay, items)
     diff_drawing(p, lp)
     print(f"Wrote {DIFF_DRAWING}")

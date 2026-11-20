@@ -25,7 +25,7 @@ from matplotlib.patches import Circle
 from matplotlib.patches import Polygon as MPoly
 
 CAD = "cad/chassis"
-FILL, EDGE, CSK, LABEL = "#3c4046", "#1b1b1b", "#c77dff", "#ff8c00"
+FILL, EDGE, CSK, LABEL = "#3c4046", "#1b1b1b", "#6e99cc", "#ff8c00"     # CSK: light blue (palette "upper")
 
 
 def contour_points(prims, n=40):
