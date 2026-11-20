@@ -78,15 +78,16 @@ def arm_solid(p, kind):
                            p["outer_pin_z"]))                                                            # outer lug
         parts.append(cyl_z(p["droop_boss_d"] / 2, zd0, zd1, p[f"{kind}_droop_x"], sy * p[f"{kind}_droop_y"]))
     parts.append(box(b0, b1, -yi - 0.01, yi + 0.01, -h, h))                                              # inner cross bar
+    # closed notch between the inner lugs (owner, 2026-11-20): the inner lugs become one tube of constant diameter on
+    # the hinge pin, the space between the tube and the inner cross bar is closed at the height of the rails
+    parts.append(cyl_y(p["inner_lug_d"] / 2, -ylug - 0.01, ylug + 0.01, 0, 0))
+    yc = max(ylug, yi)                                                       # up to the inner faces of the rails
+    parts.append(box(0, b0 + 0.01, -yc - 0.01, yc + 0.01, -h, h))
     parts.append(box(c0, c1, -yi - 0.01, yi + 0.01, -h, h))                                              # outer cross bar
-    # X-shaped ribs in the open window between the cross bars
-    rw = p["rib_w"] / 2
-    for sy in (1, -1):
-        ya, yb = sy * yi, -sy * yi
-        ang = math.atan2(yb - ya, c0 - b1)
-        dx, dy = -math.sin(ang) * rw, math.cos(ang) * rw
-        parts.append(prism([(b1 + dx, ya + dy), (c0 + dx, yb + dy), (c0 - dx, yb - dy), (b1 - dx, ya - dy)],
-                           -h, p["rib_top"]))
+    # closed web in the window between the cross bars (design concept E, owner): as high as the rails (no step),
+    # centred on the axis of the inner hinge pin, so both arms of an axle look the same (one is mounted upside down)
+    wt, wz = p["web"]
+    parts.append(box(b1 - 0.01, c0 + 0.01, -yi - 0.01, yi + 0.01, wz - wt / 2, wz + wt / 2))
     # octagonal plate of the shock ball stud on side rail A (y < 0)
     q0, q1 = p[f"{kind}_shock_plate_x"]
     z0, z1 = p["shock_plate_z"]
@@ -117,6 +118,9 @@ def arm_solid(p, kind):
         s = s.cut(cyl_y(rb, -yo - 1, -yi + 0.01, x, z))
     for x, z in p[f"{kind}_sway_holes"]:
         s = s.cut(cyl_y(rb, yi - 0.01, yo + 1, x, z))
+    d_h, *xs_h = p[f"{kind}_web_holes"]                                                 # lightening holes in the web
+    for x in xs_h:
+        s = s.cut(cyl_z(d_h / 2, -h - 1, h + 1, x, 0))
     return s.clean()
 
 

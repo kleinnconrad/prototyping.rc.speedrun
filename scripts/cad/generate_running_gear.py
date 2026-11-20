@@ -50,6 +50,13 @@ TAP = 2.5                                                    # tap drill M3
 AXIS_Z = PLATE_T + 17.2                                      # diff axes
 
 
+def grub_boss_depth(p):
+    """Depth of the boss of the grub screw below the axis of the hinge pin: pin radius + screw length + recess, so
+    the grub screw M3x4 lies fully in the thread with its tip on the pin (owner)."""
+    length, recess, _ = p["grub_screw_boss"]
+    return 1.5 + length + recess
+
+
 # ------------------------------------------------------------------ helpers
 def unit(v):
     v = np.asarray(v, float)
@@ -214,13 +221,13 @@ def corners(p, lp):
         yb, sign, _, _, tt = faces[end]
         y_front = yb - sign * tt                                         # damper side of the tower
         outw = -sign                                                     # toward the outer end of the car
-        # damper: lower ball on the outer face of the shock plate (hole with the lowest position >= 6)
-        # damper in the plane 8.3 in front of the tower (collar 15); lower ball on a stud along the hole of
-        # the shock plate (hole with the lowest position >= 6 above the bottom face of the chassis plate)
+        # damper in the plane 8.3 in front of the tower (collar 15); lower ball on a stud along the hole of the shock
+        # plate given by damper_hole_z (height above the bottom face of the chassis plate)
         y_d = y_front + outw * p["damper_plane"]
-        faces_a = sorted([(W.arm_point(end, 1, (hx, -yo, hz), lines), W.arm_point(end, 1, (hx, -yo - 1, hz), lines))
-                          for hx, hz in ap[f"{kind}_shock_holes"]], key=lambda f: f[0][2])
-        fa, fa1 = [f for f in faces_a if f[0][2] >= 6.0][0]
+        faces_a = [(W.arm_point(end, 1, (hx, -yo, hz), lines), W.arm_point(end, 1, (hx, -yo - 1, hz), lines))
+                   for hx, hz in ap[f"{kind}_shock_holes"]]
+        z_hole = p["damper_hole_z"][0 if end == "front" else 1]
+        fa, fa1 = min(faces_a, key=lambda f: abs(f[0][2] - z_hole))
         n_a = unit(fa1 - fa)
         t_a = (y_d - fa[1]) / n_a[1]
         bot = fa + n_a * t_a
@@ -326,6 +333,8 @@ def front_corner(p, d, c):
     space = K(box(xb, 30, -30, 30, kz0 - gap, zu)).cut(cyl_y(3.6, yc - 6.5, yc + 6.5, O[0], O[2]))
     hub = hub.cut(space)                                                                  # space of the knuckle (tube stays)
     hub = hub.cut(K(fuse(cyl_z(rs, zu - 0.1, kz1 + gap, 0, 0), box(0, 30, -rs, rs, zu - 0.1, kz1 + gap))))  # U-slot
+    zg = grub_boss_depth(p)                                                               # boss of the grub screw M3x4
+    hub = fuse(hub, cyl_z(p["grub_screw_boss"][2] / 2, O[2] - zg, O[2] - 1.0, O[0], yc))
     hub = hub.cut(cyl_y(1.5, yc - 8, yc + 8, O[0], O[2]))                                  # outer hinge pin
     hub = hub.cut(cyl_x(r_pass, bx0 - 1, bx1 + 1, J[1], J[2]))                            # passage of the CVD
     # bores 5.0 through both arms for the 2 flanged guide sleeves (owner; manual step 15), both inserted from the
@@ -337,7 +346,7 @@ def front_corner(p, d, c):
     hub = hub.cut(K(cyl_z(2.5, zl0 - 1.0, kz0 - gap + 1.0, 0, 0)))                         # bore 5.0, bottom (through)
     hub = hub.cut(K(cyl_z(r_sf, zl1 - 0.05, kz0 - gap + 1.0, 0, 0)))                       # counterbore, lower foot
     hub = hub.cut(K(cyl_z(r_sf, kz1 + gap - 1.0, kz1 + t_fl + 0.05, 0, 0)))                 # counterbore, upper foot
-    hub = hub.cut(cyl_z(TAP / 2, O[2] - 5, O[2], O[0], yc))                               # thread M3, grub screw
+    hub = hub.cut(cyl_z(TAP / 2, O[2] - zg - 1, O[2], O[0], yc))                          # thread M3, grub screw
     # knuckle (kingpin frame) as the T410R knuckle (measured by the owner, manual step 15): ring for 2 bearings
     # 5x10x4 from the kingpin axis outward, pressed in from both ends against a lip; from the inner end a wider
     # bore around the joint cup up to the inner bearing; kingpin bosses above and below the inner end of the ring
@@ -500,11 +509,13 @@ def rear_corner(p, d, c):
     if xs < x0:                                                  # sloped arm from the inner end of the tube to the seat
         arm = [(x0 + 1.0, za + rt - 1.0), (x0 + w_web, za + rt - 1.0), (x0 + w_web, zt - 3.4), (xs, zt - 3.4)]
         car = fuse(car, cq.Workplane("XZ").polyline(arm).close().extrude(4.0, both=True).val())
+    zg = grub_boss_depth(p)                                                               # boss of the grub screw M3x4
+    car = fuse(car, cyl_z(p["grub_screw_boss"][2] / 2, -zg, -1.0, 0, 0))
     car = car.cut(cyl_y(pin_bore / 2, -6, 6, 0, 0))                                       # bore of the hinge pin
     car = car.cut(cyl_x(rb, x0 - 1, x0 + wb, 0, za)).cut(cyl_x(rb, x1 - wb, x1 + 1, 0, za))       # bearing seats
     car = car.cut(cyl_x(rb - lip_h, x0 - 1, x1 + 1, 0, za))                                       # lip between them
     car = car.cut(cyl_z(TAP / 2, zt - 4.5, zt + 1, xc, 0))                                 # thread M3, camber stud
-    car = car.cut(cyl_z(TAP / 2, -5, 0, 0, 0))                                            # thread M3, grub screw
+    car = car.cut(cyl_z(TAP / 2, -zg - 1, 0, 0, 0))                                       # thread M3, grub screw
     spacers = cq.Compound.makeCompound([cyl_y(3.5, s0, s0 + 3.0, 0, 0).cut(cyl_y(1.5, s0 - 1, s0 + 4, 0, 0))
                                         for s0 in (4.7, -7.7)])
     hinge = cyl_y(1.5, -13, 13, 0, 0)

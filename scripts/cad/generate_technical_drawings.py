@@ -170,7 +170,9 @@ def parts():
                            f"Kingpin axis {rgp['caster']:g} deg to z (caster, top toward -y), x = {side * kx:.2f} from O; at the "
                            f"height of the axle ({rgp['wheel_r'] - rgp['ride_height'][0] - Oc[2]:.2f} above O) "
                            f"{rgp['kingpin_y']:.2f} toward -y from O.",
-                           "Bore Ø3.0 for the outer hinge pin 3x26 (fixed with the grub screw M3 from below): Ø3.0 H7 (proposal).",
+                           "Bore Ø3.0 for the outer hinge pin 3x26: Ø3.0 H7 (proposal). The pin is fixed with a grub screw M3x4 "
+                           "from below in the boss Ø6.0 below the tube (thread M3 4.2 long, face 5.7 below the axis of the pin: "
+                           "the screw lies fully in the thread with its tip on the pin).",
                            "Both guide sleeves are inserted from the knuckle side (feet in the counterbores Ø7.0 x 0.55) and "
                            "stand 0.1 proud of the top face and of the bottom face (both square to the kingpin axis), so the ball "
                            "stud and the screw clamp only the sleeves and the knuckle moves freely (owner).",
@@ -318,7 +320,10 @@ def parts():
              notes=["Bores Ø3.2 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
                     "pins are exactly Ø3.0 (owner), 0.2 clearance so that the pins slide in without force and the arm turns "
                     "freely (owner: Ø3.1 was too tight on an FDM print; original part: outer lugs Ø4.3). If an MJF part is "
-                    "tight, ream the bores with a drill Ø3.1 to Ø3.2 instead of pressing the pins in.", "Threads M3 for the ball studs of the damper (shock plate) and of the "
+                    "tight, ream the bores with a drill Ø3.1 to Ø3.2 instead of pressing the pins in.",
+                    "Closed plate as high as the rails from the tube on the inner hinge pin to the outer cross bar, with 3 "
+                    "lightening holes Ø3.5 of the same size (design, owner; the original part has an open notch and "
+                    "X-shaped ribs there).", "Threads M3 for the ball studs of the damper (shock plate) and of the "
                     "sway bar drop link, threads M4 for the droop screws."]),
         dict(key="wishbone_rear", folder="cad/parts/wishbone", step="wishbone_rear_T410R.step", stem="wishbone_rear_T410R",
              title="Rear wishbone (used on both sides)", number="WB-R",
@@ -328,7 +333,10 @@ def parts():
              notes=["Bores Ø3.2 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
                     "pins are exactly Ø3.0 (owner), 0.2 clearance so that the pins slide in without force and the arm turns "
                     "freely (owner: Ø3.1 was too tight on an FDM print; original part: outer lugs Ø4.3). If an MJF part is "
-                    "tight, ream the bores with a drill Ø3.1 to Ø3.2 instead of pressing the pins in.", "Threads M3 for the ball studs of the damper (shock plate) and of the "
+                    "tight, ream the bores with a drill Ø3.1 to Ø3.2 instead of pressing the pins in.",
+                    "Closed plate as high as the rails from the tube on the inner hinge pin to the outer cross bar, with 4 "
+                    "lightening holes Ø5.0 of the same size (design, owner; the original part has an open notch and "
+                    "X-shaped ribs there).", "Threads M3 for the ball studs of the damper (shock plate) and of the "
                     "sway bar drop link, threads M4 for the droop screws."]),
         dict(key="bellcrank", folder="cad/running_gear/steering", step="bellcrank.step", stem="bellcrank",
              title="Bellcrank (same part on both sides)", number="BC", frame=(np.column_stack([(0, 1, 0), (-1, 0, 0), (0, 0, 1)]), sf["bellcrank"]),
