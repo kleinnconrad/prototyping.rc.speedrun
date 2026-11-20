@@ -369,7 +369,7 @@ def parts():
              frame=(np.eye(3), sf["plate"]), material="To be defined (e.g. EN AW-7075-T6)", quantity="1", tol=GENERAL_CNC,
              dims=[("T", (xpe, sm[3] - sm[5], 0), (xpe, sm[3], 0), "v", "right", f"{sm[5]:.2f}"),
                    ("T", (xf0, sm[3] - sm[4], 0), (xf0 + sm[2] + 2.0, sm[3] - sm[4], 0), "h", "below", f"{sm[2] + 2.0:.2f}")],
-             edges="chamfers as modelled, other edges broken 0.1 to 0.2", status="measures qualified (caliper values of the owner)",
+             edges="chamfers as modelled, other edges broken 0.1 to 0.2", status="verified (owner)",
              frame_note=f"Drawing frame: origin O above the hole H21 of the chassis plate (front screw of the fixed post), on the "
                         f"lower face of the top plate; axes as the chassis plate coordinates (x across the car toward the servo "
                         f"output, y toward End A). The STEP file is in the assembly position: O = ({sf['plate'][0]:.2f}, "
@@ -382,7 +382,7 @@ def parts():
         dict(key="servo_mount_fixed_post", folder="cad/running_gear/servo_mount", step="servo_mount_fixed_post.step",
              stem="servo_mount_fixed_post", title="Servo mount: fixed post", number="SM-F", frame=(np.eye(3), sf["post"]),
              material="To be defined (e.g. EN AW-7075-T6)", quantity="1", tol=GENERAL_CNC, edges=EDGES_BREAK,
-             status="measures qualified (caliper values of the owner)",
+             status="verified (owner)",
              frame_note=f"Drawing frame: origin O in the hole H21 of the chassis plate (front screw of the post) on the top "
                         f"face of the chassis plate; axes as the chassis plate coordinates (y toward End A). The STEP file is in "
                         f"the assembly position: O = ({sf['post'][0]:.2f}, {sf['post'][1]:.2f}, {sf['post'][2]:.2f}).",
@@ -394,7 +394,8 @@ def parts():
                                   ((xfc, sm[3] - sm[4] + sm[10], 0), (xfc, sm[3] - sm[4], 0), "h", -8, f"{sm[10]:.2f}"),
                                   ((xfc, ymid, 0), (xfc, ymid, sm[12]), "v", 0, f"{sm[12]:.2f}"),
                                   ((xfc, ymid, sm[11]), (xfc, ymid, sm[1] - sm[0]), "v", 0, f"{sm[1] - sm[0] - sm[11]:.2f}")])],
-             notes=[f"Front face {sm[3]:g} ahead of H21 (M1): contact face of the servo ear. Length {sm[4]:g} (measured part: "
+             notes=["Before printing: check the holes for the servo ears (threads M3 for the screws M3x6 of the servo ears; positions assumed: spacing 49.5 between the ears, 10 between the holes of an ear) against the servo (owner).",
+                    f"Front face {sm[3]:g} ahead of H21 (M1): contact face of the servo ear. Length {sm[4]:g} (measured part: "
                     "32.0; lengthened to the rear so that the thread of H17 has 2.25 of material behind it, owner). Width "
                     f"{sm[2]:g} (M3), height up to the lower face of the top plate.",
                     "Threads M3 from below for the screws through H17 and H21 of the chassis plate (depth 5), from above for the "
@@ -404,7 +405,7 @@ def parts():
         dict(key="servo_mount_floating_post", folder="cad/running_gear/servo_mount", step="servo_mount_floating_post.step",
              stem="servo_mount_floating_post", title="Servo mount: floating post", number="SM-L", frame=(np.eye(3), sf["post"]),
              material="To be defined (e.g. EN AW-7075-T6)", quantity="1", tol=GENERAL_CNC, edges=EDGES_BREAK,
-             status="measures qualified (caliper values of the owner)", section_gap=14,
+             status="verified (owner)", section_gap=14,
              frame_note=f"Drawing frame: origin O in the hole H21 of the chassis plate on its top face (as the fixed post); "
                         f"axes as the chassis plate coordinates. The STEP file is in the assembly position: O = "
                         f"({sf['post'][0]:.2f}, {sf['post'][1]:.2f}, {sf['post'][2]:.2f}).",
@@ -415,7 +416,8 @@ def parts():
                                   ((xlc, sm[3] - sm[5] + 0.5, sm[1] - sm[0] - sm[8]), (xlc, sm[3] - sm[5] + 0.5, sm[1] - sm[0]), "v", 8,
                                    f"{sm[8]:.2f}"),
                                   ((xlc, sm[3], sp[3]), (xlc, sm[3], sm[1] - sm[0]), "v", -8, f"{sm[1] - sm[0] - sp[3]:.2f}")])],
-             notes=["L bracket: the leg carries the servo ear on its front face (contact face as the fixed post), the top "
+             notes=["Before printing: check the holes for the servo ears (threads M3 for the screws M3x6 of the servo ears; positions assumed: spacing 49.5 between the ears, 10 between the holes of an ear) against the servo (owner).",
+                    "L bracket: the leg carries the servo ear on its front face (contact face as the fixed post), the top "
                     "flange hangs from the top plate. The lower end of the leg is 2.0 above the chassis plate (floating).",
                     "Threads M3 from above in the flange for the screws M3x6 of the top plate (through the slots), from the "
                     "front for the screws M3x6 of the servo ear (depth 4)."]),

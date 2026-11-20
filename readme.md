@@ -94,7 +94,7 @@ Further own parts (own design, partly based on the T410R, not in the mass total)
 | Axles with joint cup, hex hubs 12 mm | 4 + 4 | $\color{red}\times$ Completely unqualified | `cad/running_gear/front_corner`, `cad/running_gear/rear_corner` |
 | CVD drive shafts | 4 | $\color{red}\times$ Completely unqualified | `cad/running_gear/cvd_drive_shafts` |
 | Bellcranks (symmetric, the same part on both sides) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/running_gear/steering` |
-| Servo mount: top plate, fixed post, floating post; position of the servo and the horn | 1 set | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification (caliper values of the owner) | `cad/running_gear/servo_mount` |
+| Servo mount: top plate, fixed post, floating post; position of the servo and the horn | 1 set | $\color{green}\checkmark$ Verified (owner); the holes for the servo ears (positions assumed) are to be checked against the servo before printing | `cad/running_gear/servo_mount` |
 | Steering bridge (beam with 2 towers on flanged bearings MF63ZZ) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/running_gear/steering` |
 | Steering posts (height 20.3 mm, shoulder for the bellcrank bearings) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/running_gear/steering` |
 | Steering: steering links, servo link, servo horn | 1 set | $\color{red}\times$ Completely unqualified | `cad/running_gear/steering` |
