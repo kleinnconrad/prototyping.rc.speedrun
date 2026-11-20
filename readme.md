@@ -90,7 +90,7 @@ Further own parts (own design, partly based on the T410R, not in the mass total)
 | Camber links: turnbuckle M3x37 with rod ends and ball studs | 4 | $\color{red}\times$ Completely unqualified | `cad/parts/camber_link` |
 | Front C-hubs with 10 degrees caster (right and left part) | 2 | $\color{red}\times$ Completely unqualified; kingpin bores 5 mm with guide sleeves (owner), 3D print verification planned | `cad/running_gear/front_corner` |
 | Front steering knuckles | 2 | $\color{green}\checkmark$ Verified (3D print of the owner) | `cad/running_gear/front_corner` |
-| Rear hub carriers | 2 | $\color{red}\times$ Completely unqualified | `cad/running_gear/rear_corner` |
+| Rear hub carriers | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/running_gear/rear_corner` |
 | Axles with joint cup, hex hubs 12 mm | 4 + 4 | $\color{red}\times$ Completely unqualified | `cad/running_gear/front_corner`, `cad/running_gear/rear_corner` |
 | CVD drive shafts | 4 | $\color{red}\times$ Completely unqualified | `cad/running_gear/cvd_drive_shafts` |
 | Bellcranks (symmetric, the same part on both sides) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/running_gear/steering` |
