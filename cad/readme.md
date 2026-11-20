@@ -93,7 +93,7 @@ The speedrun chassis combines the parts that are designed in this project for sp
 | [Speedrun front shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 4.4 g (carbon), 7.7 g (7075) |
 | [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
 | [Speedrun front splitter (one part: body post mount enlarged to the splitter)](#speedrun-front-splitter) | 1 | `/front_splitter` | $\color{green}\checkmark$ Verified (3D print of the owner; bosses of the screws 3 mm higher after the print) | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 38 g |
-| [Speedrun battery tray (LiPo Absima GreenHorn 3S 5000 hardcase)](#speedrun-battery-tray) | 1 | `/battery_tray` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification (battery dimensions from the manufacturer) | – | Nylon PA12 (MJF 3D print) | 24 g |
+| [Speedrun battery tray (LiPo Absima GreenHorn 3S 5000 hardcase)](#speedrun-battery-tray) | 1 | `/battery_tray` | $\color{green}\checkmark$ Verified (owner) | – | Nylon PA12 (MJF 3D print) | 24 g |
 | **Total** | | | | | Chassis plate 6082, bulkheads, front splitter and battery tray PA12, top brace and shock towers carbon | **368 g** |
 
 Further own parts (own design of the owner, partly based on the T410R, not in the mass total):
@@ -734,7 +734,7 @@ Open points:
 ## Speedrun battery tray
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Speedrun battery tray for the LiPo Absima GreenHorn V2 3S 5000 mAh 50C hardcase (`specs/electronics/battery/spec_battery.yaml`) on the left side of the car, fixed with 4 countersunk screws M3x6 from below through H11, H12, H22 and H23 of the speedrun chassis plate (owner). 2 velcro straps 20 mm (owner) hold the battery from left to right. MJF 3D print in nylon PA12 (owner).
-* **Status:** $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification: the battery dimensions are taken from the manufacturer, the holes from the ordered chassis plate.
+* **Status:** $\color{green}\checkmark$ Verified by the owner (2026-11-20). The battery dimensions are taken from the manufacturer, the holes from the ordered chassis plate.
 
 ### Design of the speedrun battery tray
 ![Speedrun battery tray: tray alone, tray with the battery and the straps in the car beside the top brace and behind the steering, section across the car at a strap](../photos/cad_battery_tray_drawing.png)

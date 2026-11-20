@@ -68,7 +68,7 @@ The speedrun chassis is designed in this project for speeds over 130 km/h. It co
 | Speedrun front shock tower | 1 | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | 4.4 g (carbon) |
 | Speedrun rear shock tower | 1 | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | 7.6 g (carbon) |
 | Speedrun front splitter (one part: body post mount enlarged to the splitter) | 1 | $\color{green}\checkmark$ Verified | MJF 3D print (nylon PA12) | 38 g (PA12) |
-| Speedrun battery tray (LiPo Absima GreenHorn 3S 5000 hardcase) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | – | 24 g (PA12) |
+| Speedrun battery tray (LiPo Absima GreenHorn 3S 5000 hardcase) | 1 | $\color{green}\checkmark$ Verified | – | 24 g (PA12) |
 | **Total** | | | | **368 g** |
 
 Further own parts (own design, partly based on the T410R, not in the mass total):
