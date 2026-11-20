@@ -166,7 +166,7 @@ def image(parts, path):
         cols.append(np.tile(COLORS[key], (len(t), 1)))
     tris, cols = np.concatenate(tris), np.concatenate(cols)
     fig = plt.figure(figsize=(16, 15))
-    fig.suptitle("Speedrun chassis (own design, partly based on the T410R): complete build with the running gear", fontsize=13, y=0.987)
+    fig.suptitle("Speedrun Chassis", fontsize=13, y=0.987)                                    # owner
     top = 1 / 3                                             # overview in the upper 2/3, close-ups below
 
     def upper(rect):
