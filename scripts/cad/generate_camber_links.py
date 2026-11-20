@@ -8,7 +8,7 @@ ends are turned by 90 degrees about the link axis.
 
 * front links (End A): the outer ball sits on the top kingpin of the knuckle (manual set up C: gap 24.0 mm)
 * rear links (End B): the outer ball sits on the ball stud in the camber stud bore on top of the hub carrier,
-  13.3 mm from the outer end of the part (owner; manual set up D: gap 25.8 mm)
+  13.7 mm from the outer face of the bearing tube (owner; manual set up D: gap 25.8 mm)
 
 The positions of the outer balls come from the running gear (generate_running_gear.py); the gaps between the
 rod ends follow from them.
@@ -121,8 +121,8 @@ def front_outer_ball(side):
 
 
 def rear_outer_ball(side):
-    """Rear: the outer ball sits on the ball stud in the camber stud bore on top of the hub carrier (13.3 from the
-    outer end of the part, owner); its position comes from the running gear."""
+    """Rear: the outer ball sits on the ball stud in the camber stud bore on top of the hub carrier (13.7 from the
+    outer face of the bearing tube, owner); its position comes from the running gear."""
     import generate_running_gear as G
     return G.rear_camber_ball(G.load_params(G.PARAMS), side)
 
