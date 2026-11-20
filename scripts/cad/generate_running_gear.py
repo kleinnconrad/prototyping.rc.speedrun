@@ -7,10 +7,11 @@ the floating servo mount, dampers and sway bars (trapezoid with ball ends and dr
 follows the principle of the T410R and deviates from it where the function requires. All values
 with their source: cad/running_gear/running_gear_parameters.json.
 
-Placement (chassis plate coordinates): ride height 10 mm front / 15 mm rear (setup sheet 4), rear
+Placement (chassis plate coordinates): ride height 10 mm front (setup sheet 4); rear axle height from the hub carrier
+with the wishbones horizontal (ride height 10.3 mm in the model, setup sheet 4: 15 mm), rear
 wheel centres as the original car at +-80.5 mm (overall width 187 mm over tyres of 26 mm), front 2 mm further out
 (front wishbone 51.7 mm for the front CVD drive shafts, owner), caster 10 degrees front, rear toe from the pivot blocks.
-The wishbones are horizontal at this ride height. The parts of the right side are built and
+The wishbones are horizontal. The parts of the right side are built and
 mirrored to the left side.
 
 Usage (from the root directory of the repository):
@@ -162,6 +163,40 @@ def link(a, open_a, b, open_b, e, cl, hex_af=4.0):
 
 
 # ------------------------------------------------------------------ geometry of the car
+def outer_pin_frame(end, lines=None, ap=None):
+    """Frame of the outer hinge pin of the right arm: origin O on the outer hinge pin in the middle of the arm,
+    ex along the arm (horizontal, toe), ey along the outer hinge pin."""
+    lines = lines or W.pin_lines()
+    ap = ap or W.load_params(W.PARAMS)
+    J = ap[f"{end}_arm_length"]
+    O = W.arm_point(end, 1, (J, 0, 0), lines)
+    ex = unit(W.arm_point(end, 1, (J + 1, 0, 0), lines) - O)              # along the arm (horizontal)
+    ey = np.array([-ex[1], ex[0], 0.0])                                  # along the outer hinge pin
+    return O, ex, ey
+
+
+def rear_carrier_layout(p):
+    """Main positions of the rear hub carrier in the frame of the rear arm (origin on the outer hinge pin, x along
+    the arm, z up), from the values of the owner: radius of the tube on the hinge pin, outer and inner end of the
+    bearing tube, axle (za), top face, x of the camber stud bore (centred on the middle plane of the part, y = 0)."""
+    t_len, t_d, _, height, stud, tube_low = p["rear_carrier"]
+    r_lug = p["rear_carrier_bores"][2]
+    x1 = r_lug                                                   # outer end of the tube, flush with the tube on the pin
+    return {"r_lug": r_lug, "x1": x1, "x0": x1 - t_len, "za": tube_low - r_lug + t_d / 2, "zt": height - r_lug,
+            "stud_x": x1 - stud}
+
+
+def rear_camber_ball(p, side=1):
+    """Centre of the outer ball of the rear camber link (chassis coordinates): the ball stud is screwed vertically
+    into the camber stud bore on top of the hub carrier (13.7 from the outer face of the bearing tube, owner); the ball lies
+    the neck of the stud above the top face. side: 1 right, -1 left."""
+    O, ex, ey = outer_pin_frame("rear")
+    lay = rear_carrier_layout(p)
+    R = np.column_stack([ex, ey, [0, 0, 1.0]])
+    ball = O + R @ np.array([lay["stud_x"], 0.0, lay["zt"] + CL.load_params(CL.PARAMS)["outer_neck"]])
+    return ball * np.array([side, 1.0, 1.0])
+
+
 def corners(p, lp):
     """Points of the right side: outer hinge pins, axle heights, damper and sway ball positions."""
     lines = W.pin_lines()
@@ -172,11 +207,8 @@ def corners(p, lp):
     rf, rr = p["ride_height"]
     out = {}
     for end, kind, ride in (("front", "front", rf), ("rear", "rear", rr)):
-        J = ap[f"{kind}_arm_length"]
         yi, yo = ap[f"{kind}_rail_y"]
-        O = W.arm_point(end, 1, (J, 0, 0), lines)
-        ex = unit(W.arm_point(end, 1, (J + 1, 0, 0), lines) - O)          # along the arm (horizontal)
-        ey = np.array([-ex[1], ex[0], 0.0])                              # along the outer hinge pin
+        O, ex, ey = outer_pin_frame(end, lines, ap)
         tp = load_params(T.TOWERS[end]["params"])
         dx_t, dz_t = T.layout(tp, lp, load_params(UPPER))["damper"]
         yb, sign, _, _, tt = faces[end]
@@ -197,7 +229,10 @@ def corners(p, lp):
         fb = W.arm_point(end, 1, (sx, yo, sz), lines)
         n_b = unit(W.arm_point(end, 1, (sx, yo + 1, sz), lines) - fb)
         sway = fb + n_b * p["ball_offset"]
-        out[end] = {"O": O, "ex": ex, "ey": ey, "axle_z": ride * -1 + p["wheel_r"], "camber": links[(end, 1)][1],
+        # front: axle height from the ride height (wishbones horizontal); rear: from the hub carrier with the
+        # wishbones horizontal (owner), the rear ride height follows from it
+        axle_z = p["wheel_r"] - ride if end == "front" else O[2] + rear_carrier_layout(p)["za"]
+        out[end] = {"O": O, "ex": ex, "ey": ey, "axle_z": axle_z, "camber": links[(end, 1)][1],
                     "damper_top": top, "damper_bot": bot, "tower_front": y_front, "outw": outw, "sway": sway,
                     "n_a": n_a, "t_a": t_a, "n_b": n_b,
                     "plate_face": W.arm_point(end, 1, (ap[f"{kind}_shock_holes"][0][0], -yo, 0), lines)[1],
@@ -442,31 +477,34 @@ def axle_group(p, d, joint, ax_dir, bearings, hub_x0, hub_w, shoulder=None, cup_
 
 # ------------------------------------------------------------------ rear corner
 def rear_corner(p, d, c):
-    """Rear right corner (End B): hub carrier as the original part (photos of the owner) in the frame of the rear
-    arm (origin on the outer hinge pin, x along the arm, y along the pin: toe): lug on the outer hinge pin between
-    2 spacers 3x7x3, tube (bearing housing, 10 long) whose outer end is flush with the lug, 2 bearings 5x10x4 in
-    the ends of the tube against a lip, web on the inner end of the tube and a sloped arm up to the seat of the
-    camber stud (the position of the camber ball comes from the camber link); outer hinge pin, axle group."""
+    """Rear right corner (End B): hub carrier (values of the owner) in the frame of the rear arm (origin on the
+    outer hinge pin, x along the arm, y along the pin: toe): tube on the outer hinge pin (bore 3.1 for the pin 3.0)
+    between 2 spacers 3x7x3, the pin secured from below with a grub screw M3; bearing tube 10 long whose outer end is
+    flush with the tube on the pin (outer end of the part), 2 bearings 5x10x4 in the ends of the tube, separated by
+    a lip 1.0 high; lower end of the bearing tube 11.4 above the outer lower end of the tube on the pin; web on the
+    inner end of the tube and a sloped arm up to the top tab, 30.4 above the outer lower end of the tube on the pin;
+    camber stud bore 13.7 from the outer face of the bearing tube (the outer ball of the rear camber link sits on its
+    stud); outer hinge pin, axle group."""
     O, ex, ey = c["O"], c["ex"], c["ey"]
     za = c["axle_z"] - O[2]
-    t_len, t_d, w_web, ztop = p["rear_carrier"]
-    zt = ztop - O[2]
+    t_len, t_d, w_web = p["rear_carrier"][:3]
+    pin_bore, lip_h, _ = p["rear_carrier_bores"]
+    lay = rear_carrier_layout(p)
+    r_lug, x1, x0, zt, xc = lay["r_lug"], lay["x1"], lay["x0"], lay["zt"], lay["stud_x"]
     R = np.column_stack([ex, ey, [0, 0, 1.0]])
-    cam = np.linalg.solve(R, c["camber"] - O)
-    r_lug, rt = 3.6, t_d / 2
-    x1 = r_lug                                                                          # outer end, flush with the lug
-    x0 = x1 - t_len                                                                     # inner end of the tube
-    xs = min(cam[0] - 3.5, x0)                                                          # inner end of the seat
+    rt = t_d / 2
+    rb, wb = 5.0, 4.0                                                                   # bearings 5x10x4
+    xs = min(xc - 3.5, x0)                                                              # inner end of the seat
     car = fuse(cyl_y(r_lug, -4.6, 4.6, 0, 0), box(-3.0, 3.0, -4.0, 4.0, 0, za - 5.0), cyl_x(rt, x0, x1, 0, za),
                box(x0, x0 + w_web, -4.0, 4.0, za, zt), box(xs, x0 + w_web, -4.0, 4.0, zt - 3.5, zt))
     if xs < x0:                                                  # sloped arm from the inner end of the tube to the seat
         arm = [(x0 + 1.0, za + rt - 1.0), (x0 + w_web, za + rt - 1.0), (x0 + w_web, zt - 3.4), (xs, zt - 3.4)]
         car = fuse(car, cq.Workplane("XZ").polyline(arm).close().extrude(4.0, both=True).val())
-    car = car.cut(cyl_y(1.5, -6, 6, 0, 0))
-    car = car.cut(cyl_x(5.0, x0 - 1, x0 + 4.0, 0, za)).cut(cyl_x(5.0, x1 - 4.0, x1 + 1, 0, za))   # bearing seats
-    car = car.cut(cyl_x(3.5, x0 - 1, x1 + 1, 0, za))                                              # lip
-    car = car.cut(cyl_z(TAP / 2, zt - 4.5, zt + 1, cam[0], cam[1]))                        # thread M3, camber stud
-    car = car.cut(cyl_z(TAP / 2, -5, 0, 0, 0))                                            # thread M3, grub pin
+    car = car.cut(cyl_y(pin_bore / 2, -6, 6, 0, 0))                                       # bore of the hinge pin
+    car = car.cut(cyl_x(rb, x0 - 1, x0 + wb, 0, za)).cut(cyl_x(rb, x1 - wb, x1 + 1, 0, za))       # bearing seats
+    car = car.cut(cyl_x(rb - lip_h, x0 - 1, x1 + 1, 0, za))                                       # lip between them
+    car = car.cut(cyl_z(TAP / 2, zt - 4.5, zt + 1, xc, 0))                                 # thread M3, camber stud
+    car = car.cut(cyl_z(TAP / 2, -5, 0, 0, 0))                                            # thread M3, grub screw
     spacers = cq.Compound.makeCompound([cyl_y(3.5, s0, s0 + 3.0, 0, 0).cut(cyl_y(1.5, s0 - 1, s0 + 4, 0, 0))
                                         for s0 in (4.7, -7.7)])
     hinge = cyl_y(1.5, -13, 13, 0, 0)
@@ -929,9 +967,11 @@ KIND_COLORS = {"upright": (0.86, 0.45, 0.12), "axle": (0.72, 0.74, 0.77), "cvd":
                "bulkhead": (0.55, 0.56, 0.58)}
 MADE = {"upright", "cvd", "steer", "swaybar"}                  # own parts to manufacture (files)
 MADE_NAMES = ("axle with joint cup", "hex hub 12", "sway bar ball end")
+HANDED = ("C-hub",)              # parts without a plane of symmetry (caster): a left and a right part (mirror images)
 
 
-FOLDERS = {"front_corner": ("c_hub_end_a", "steering_knuckle_end_a", "axle_with_joint_cup_end_a", "hex_hub_12_end_a"),
+FOLDERS = {"front_corner": ("c_hub_end_a_right", "c_hub_end_a_left", "steering_knuckle_end_a", "axle_with_joint_cup_end_a",
+                            "hex_hub_12_end_a"),
            "rear_corner": ("hub_carrier_end_b", "axle_with_joint_cup_end_b", "hex_hub_12_end_b"),
            "cvd_drive_shafts": ("cvd_drive_shaft_end_a", "cvd_drive_shaft_end_b"),
            "steering": ("steering_post", "bellcrank", "steering_bridge",
@@ -943,15 +983,18 @@ FOLDERS = {"front_corner": ("c_hub_end_a", "steering_knuckle_end_a", "axle_with_
 
 def write_files(parts):
     """STEP and STL of the own parts of the right side (assembly position, chassis plate coordinates), one folder per
-    group of parts (FOLDERS)."""
+    group of parts (FOLDERS). The other parts are the same on both sides; the handed parts (HANDED: no plane of
+    symmetry) get a file for the right and one for the left side (mirror image)."""
     import re
     folder = {stem: name for name, stems_ in FOLDERS.items() for stem in stems_}
     stems = []
     for name, kind, s in parts:
-        if (kind not in MADE and not name.startswith(MADE_NAMES)) or name.endswith(" left"):
+        handed = name.startswith(HANDED)
+        if (kind not in MADE and not name.startswith(MADE_NAMES)) or (name.endswith(" left") and not handed):
             continue
-        base = name[:-6] if name.endswith(" right") else name
-        stem = re.sub(r"[^a-z0-9]+", "_", base.lower().replace("1.4", "")).strip("_")
+        side = name.rsplit(" ", 1)[1] if name.endswith((" right", " left")) else ""
+        base = name[:-len(side) - 1] if side else name
+        stem = re.sub(r"[^a-z0-9]+", "_", base.lower().replace("1.4", "")).strip("_") + (f"_{side}" if handed else "")
         if stem not in folder:
             raise KeyError(f"no folder for the part file {stem} (FOLDERS)")
         path = f"{OUT}/{folder[stem]}/{stem}"
@@ -1058,7 +1101,8 @@ def drawing(parts, info, lock, path=DRAWING):
     panel(ax, (15, yr - 35, -1, 100, yr + 25, 52), back,
           lambda n, k: ("End B" in n and "left" not in n) or k in ("plate",))
     ax.set_title(f"Rear right corner (End B), view from the rear: hub carrier on the outer hinge pin\n"
-                 f"(axle height {c['rear']['axle_z']:g}, ride height {p['ride_height'][1]:g}), damper, sway bar", fontsize=9.5, loc="left")
+                 f"(axle height {c['rear']['axle_z']:.1f}, ride height {p['wheel_r'] - c['rear']['axle_z']:.1f}), damper, sway bar",
+                 fontsize=9.5, loc="left")
     # 5: front corner, iso view
     ax = fig.add_axes(row([0.38, 0.04, 0.3, 0.42]))
     panel(ax, (45, yc - 20, 0, 100, yc + 14, 42), iso_basis(-60, 25), keep_f, 0.8)

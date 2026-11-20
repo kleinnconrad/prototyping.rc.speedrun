@@ -132,6 +132,50 @@ def parts():
     z_seat = 2 * brb[1] - 2 * brb[3]                                         # bearing seats (both bearings without flanges)
     y_horn_ball = 199.15 + sp[0] + sf["p"]["servo_horn"][3] + sf["p"]["ball_offset"]           # H21 + S1 + S5 + S8
     dboss = (242.69 - bc[4] - bri[2] / 2) - (y_horn_ball + sf["p"]["ball_offset"])             # depth of the ball boss
+
+    def c_hub(side):
+        """Front C-hub, right (side = 1) or left (side = -1). The C-hub has no plane of symmetry (caster, kingpin axis
+        2.0 toward the middle of the car): the left part is the mirror image of the right part (x mirrored), it is
+        drawn in the mirrored frame and the section is seen from its wheel."""
+        m = np.array([side, 1.0, 1.0])
+        name, other = ("right", "left") if side > 0 else ("left", "right")
+        O_, J_ = Oc * m, Jc * m
+
+        def off(dx, dy):                                    # paper offsets of the callouts (left: column right of the view)
+            return (dx, dy)
+        return dict(key="c_hub" if side > 0 else "c_hub_left", folder="cad/running_gear/front_corner",
+                    step=f"c_hub_end_a_{name}.step", stem=f"c_hub_end_a_{name}",
+                    title=f"Front C-hub, {name}", number="CH-R" if side > 0 else "CH-L", frame=(Rc, O_),
+                    material="To be defined (3D print verification planned)", quantity="1", tol=GENERAL_CNC,
+                    edges=EDGES_BREAK, status="not verified",
+                    frame_note=f"Drawing frame: origin O on the axis of the outer hinge pin in the middle of the lug, axes as "
+                               f"in the chassis plate coordinates (x across the car, y along the car, z up); the STEP file is "
+                               f"in the assembly position: O = ({O_[0]:.2f}, {O_[1]:.3f}, {O_[2]:.2f}).",
+                    sections=[dict(label="B", point=(side * kx, 0, 0), d=(side, 0, 0), x=(0, side, 0), labels_right=side < 0,
+                                   title="Section B-B (plane of the kingpin axis, seen from the wheel)",
+                                   axes=[(J_ - kd * 17, J_ + kd * 16), (J_ - kn * 9, J_ + kn * 9)],
+                                   callouts=[(J_ + kd * 12.6 + kn * 2.5, "Ø5.0 H7 (2x), guide sleeves", off(32, 6)),
+                                             (J_ - kd * 16.5, f"kingpin axis, {rgp['caster']:g} deg to z (caster)", off(36, -2)),
+                                             (J_ - kd * 10.8 + kn * 3.5, "counterbore Ø7.0 x 0.55 (2x), feet of the sleeves",
+                                              off(18, 4)),
+                                             (J_ + kd * 15.05 + kn * 4.5, "top face square to the kingpin axis, sleeve 0.1 proud",
+                                              off(16, 6)),
+                                             (J_ - kd * 15.15 + kn * 4.5, "bottom face square to the kingpin axis, sleeve 0.1 proud",
+                                              off(12, -24)),
+                                             (J_, "O' (axle, CVD joint)", off(44, -16))])],
+                    notes=[f"{name.capitalize()} part. The C-hub has no plane of symmetry (caster, kingpin axis toward the middle "
+                           f"of the car): the {other} part (CH-{other[0].upper()}) is its mirror image; the same part cannot "
+                           f"be used on both sides.",
+                           f"Kingpin bores Ø5.0 for the flanged guide sleeves Ø4.95 (fit without pressing): Ø5.0 H7 (proposal). "
+                           f"Kingpin axis {rgp['caster']:g} deg to z (caster, top toward -y), x = {side * kx:.2f} from O; at the "
+                           f"height of the axle ({rgp['wheel_r'] - rgp['ride_height'][0] - Oc[2]:.2f} above O) "
+                           f"{rgp['kingpin_y']:.2f} toward -y from O.",
+                           "Bore Ø3.0 for the outer hinge pin 3x26 (fixed with the grub screw M3 from below): Ø3.0 H7 (proposal).",
+                           "Both guide sleeves are inserted from the knuckle side (feet in the counterbores Ø7.0 x 0.55) and "
+                           "stand 0.1 proud of the top face and of the bottom face (both square to the kingpin axis), so the ball "
+                           "stud and the screw clamp only the sleeves and the knuckle moves freely (owner).",
+                           "Foot of the sleeves 1.0 as modelled (owner: approx. 0.6, to be measured); the counterbores and the "
+                           "faces follow from the measured sleeve."])
     return [
         dict(key="chassis_plate", folder="cad/chassis/chassis_plate_speedrun_wide_motor10",
              step="chassis_plate_T410R_speedrun_wide_motor10.step", stem="chassis_plate_T410R_speedrun_wide_motor10",
@@ -204,34 +248,11 @@ def parts():
              notes=["Notch 7.0 wide and 4.3 deep across the top face; thread M3 in its bottom for the set screw M3x3 that "
                     "presses on the outer ring of the bearing in the motor mount (part MM).",
                     "Through holes Ø3.2 for the 2 screws M3x18 from the top brace into the motor mount."]),
-        dict(key="c_hub", folder="cad/running_gear/front_corner", step="c_hub_end_a.step", stem="c_hub_end_a",
-             title="Front C-hub, right (left part mirrored)", number="CH", frame=(Rc, Oc),
-             material="To be defined (3D print verification planned)", quantity="2 (right; left mirrored)", tol=GENERAL_CNC,
-             edges=EDGES_BREAK, status="not verified",
-             frame_note=f"Drawing frame: origin O on the axis of the outer hinge pin in the middle of the lug, axes as in the "
-                        f"chassis plate coordinates (x across the car, y along the car, z up); the STEP file is in the "
-                        f"assembly position: O = ({Oc[0]:.2f}, {Oc[1]:.3f}, {Oc[2]:.2f}).",
-             sections=[dict(label="B", point=(kx, 0, 0), d=(1, 0, 0), x=(0, 1, 0),
-                            title="Section B-B (plane of the kingpin axis, seen from the wheel)",
-                            axes=[(Jc - kd * 17, Jc + kd * 16), (Jc - kn * 9, Jc + kn * 9)],
-                            callouts=[(Jc + kd * 12.6 + kn * 2.5, "Ø5.0 H7 (2x), guide sleeves", (32, 6)),
-                                      (Jc - kd * 16.5, f"kingpin axis, {rgp['caster']:g} deg to z (caster)", (36, -2)),
-                                      (Jc - kd * 10.8 + kn * 3.5, "counterbore Ø7.0 x 0.55 (2x), feet of the sleeves", (18, 4)),
-                                      (Jc + kd * 15.05 + kn * 4.5, "top face square to the kingpin axis, sleeve 0.1 proud", (16, 6)),
-                                      (Jc - kd * 15.15 + kn * 4.5, "bottom face square to the kingpin axis, sleeve 0.1 proud", (12, -24)),
-                                      (Jc, "O' (axle, CVD joint)", (44, -16))])],
-             notes=[f"Kingpin bores Ø5.0 for the flanged guide sleeves Ø4.95 (fit without pressing): Ø5.0 H7 (proposal). "
-                    f"Kingpin axis {rgp['caster']:g} deg to z (caster, top toward -y), x = {kx:.2f} from O; at the height of "
-                    f"the axle ({rgp['wheel_r'] - rgp['ride_height'][0] - Oc[2]:.2f} above O) {rgp['kingpin_y']:.2f} toward -y from O.",
-                    "Bore Ø3.0 for the outer hinge pin 3x26 (fixed with the grub screw M3 from below): Ø3.0 H7 (proposal).",
-                    "Both guide sleeves are inserted from the knuckle side (feet in the counterbores Ø7.0 x 0.55) and stand "
-                    "0.1 proud of the top face and of the bottom face (both square to the kingpin axis), so the ball stud and "
-                    "the screw clamp only the sleeves and the knuckle moves freely (owner).",
-                    "Foot of the sleeves 1.0 as modelled (owner: approx. 0.6, to be measured); the counterbores and the "
-                    "faces follow from the measured sleeve."]),
+        c_hub(1),
+        c_hub(-1),
         dict(key="steering_knuckle", folder="cad/running_gear/front_corner", step="steering_knuckle_end_a.step",
-             stem="steering_knuckle_end_a", title="Front steering knuckle, right (left part mirrored)", number="SK",
-             frame=(Rk, Jk), material="To be defined (original part: plastic)", quantity="2 (right; left mirrored)",
+             stem="steering_knuckle_end_a", title="Front steering knuckle (same part on both sides)", number="SK",
+             frame=(Rk, Jk), material="To be defined (original part: plastic)", quantity="2 (the left one turned upside down)",
              tol=GENERAL_CNC, edges=EDGES_BREAK, status="verified (3D print)",
              frame_note=f"Drawing frame: kingpin frame, origin O in the centre of the outer CVD joint (kingpin axis at the "
                         f"height of the axle), x along the axle (toward the wheel), z along the kingpin axis; the STEP file is "
@@ -240,7 +261,9 @@ def parts():
                             callouts=[((4.0, 0, 5.0), "Ø10 K7 (2x), bearings 5x10x4", (10, 18)),
                                       ((8.4, 0, 4.0), "lip Ø8.0", (12, 9)),
                                       ((2.0, 0, -6.2), "entry bore Ø12.4", (12, -10))])],
-             notes=["Bearing seats Ø10 for 2 bearings 5x10x4, pressed in from both ends against the lip: Ø10 K7 (proposal; "
+             notes=["The knuckle is symmetric to the plane through the axle square to the kingpin axis: the same part is "
+                    "used on both sides (drawn: right side; on the left side it is turned upside down).",
+                    "Bearing seats Ø10 for 2 bearings 5x10x4, pressed in from both ends against the lip: Ø10 K7 (proposal; "
                     "original part 9.98).", "Kingpin bores Ø2.7 in the bosses: thread formed by the set screws M3 (as the "
                     "original part).", "Threads M3 in the steering arm for the ball stud of the steering link."]),
         dict(key="front_splitter", folder="cad/front_splitter", step="front_splitter_one_piece_end_a.step",
@@ -289,19 +312,23 @@ def parts():
                     "in the geometry data of the plate (study)."]),
         dict(key="wishbone_front", folder="cad/parts/wishbone", step="wishbone_front_T410R.step", stem="wishbone_front_T410R",
              title="Front wishbone (used on both sides)", number="WB-F",
-             dims=[("T", (0, -16.5, 0), (51.7, -16.5, 0), "h", "below", "51.70 (axis to axis)")], material="To be defined (original part: plastic)",
-             quantity="2", tol=GENERAL_CNC, edges=EDGES_BREAK, status="verified",
-             notes=["Bores Ø3.1 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
-                    "pins are exactly Ø3.0 (owner), 0.1 running clearance so that the arm turns freely on the pins (original "
-                    "part: outer lugs Ø4.3).", "Threads M3 for the ball studs of the damper (shock plate) and of the "
+             dims=[("T", (0, -16.5, 0), (51.7, -16.5, 0), "h", "below", "51.70 (axis to axis)")], material="Nylon PA12 (MJF 3D print)",
+             density=1.01, density_txt="PA12", quantity="2", tol="process tolerance (MJF approx. ±0.3)", edges="as modelled",
+             status="verified",
+             notes=["Bores Ø3.2 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
+                    "pins are exactly Ø3.0 (owner), 0.2 clearance so that the pins slide in without force and the arm turns "
+                    "freely (owner: Ø3.1 was too tight on an FDM print; original part: outer lugs Ø4.3). If an MJF part is "
+                    "tight, ream the bores with a drill Ø3.1 to Ø3.2 instead of pressing the pins in.", "Threads M3 for the ball studs of the damper (shock plate) and of the "
                     "sway bar drop link, threads M4 for the droop screws."]),
         dict(key="wishbone_rear", folder="cad/parts/wishbone", step="wishbone_rear_T410R.step", stem="wishbone_rear_T410R",
              title="Rear wishbone (used on both sides)", number="WB-R",
-             dims=[("T", (0, -16.5, 0), (54.3, -16.5, 0), "h", "below", "54.30 (axis to axis)")], material="To be defined (original part: plastic)",
-             quantity="2", tol=GENERAL_CNC, edges=EDGES_BREAK, status="verified",
-             notes=["Bores Ø3.1 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
-                    "pins are exactly Ø3.0 (owner), 0.1 running clearance so that the arm turns freely on the pins (original "
-                    "part: outer lugs Ø4.3).", "Threads M3 for the ball studs of the damper (shock plate) and of the "
+             dims=[("T", (0, -16.5, 0), (54.3, -16.5, 0), "h", "below", "54.30 (axis to axis)")], material="Nylon PA12 (MJF 3D print)",
+             density=1.01, density_txt="PA12", quantity="2", tol="process tolerance (MJF approx. ±0.3)", edges="as modelled",
+             status="verified",
+             notes=["Bores Ø3.2 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
+                    "pins are exactly Ø3.0 (owner), 0.2 clearance so that the pins slide in without force and the arm turns "
+                    "freely (owner: Ø3.1 was too tight on an FDM print; original part: outer lugs Ø4.3). If an MJF part is "
+                    "tight, ream the bores with a drill Ø3.1 to Ø3.2 instead of pressing the pins in.", "Threads M3 for the ball studs of the damper (shock plate) and of the "
                     "sway bar drop link, threads M4 for the droop screws."]),
         dict(key="bellcrank", folder="cad/running_gear/steering", step="bellcrank.step", stem="bellcrank",
              title="Bellcrank (same part on both sides)", number="BC", frame=(np.column_stack([(0, 1, 0), (-1, 0, 0), (0, 0, 1)]), sf["bellcrank"]),
@@ -803,7 +830,10 @@ def draw_sections(fig, ax, solid, bb, rows, cfg, secs, ss):
                 linear(ax, Q0, Q1, axis, at, txt, tside="r" if (axis == "v" and off > 0) else "l")
             for p3, txt, off in it.get("callouts", []):
                 Pf = V.P(p3)
-                leader(ax, Pf, Pf + np.asarray(off, float), txt, ha="left" if off[0] >= 0 else "right")
+                if it.get("labels_right"):                  # labels in a column right of the view (mirrored parts)
+                    leader(ax, Pf, np.array([x1 + 10.0, Pf[1] + off[1]]), txt, ha="left")
+                else:
+                    leader(ax, Pf, Pf + np.asarray(off, float), txt, ha="left" if off[0] >= 0 else "right")
         else:
             x0, y0, x1, y1 = draw_detail(fig, solid, rows, it, xdir, xcur, ytop, cfg.get("label_names"),
                                          find_cutouts(solid, bb) if cfg.get("flat") else ())
@@ -874,7 +904,7 @@ FOLDERS = {
     "cad/shock_tower": ("Speedrun shock towers: technical drawings", "../readme.md#speedrun-shock-towers"),
     "cad/parts/pivot_block": ("Pivot blocks: technical drawings", "../../readme.md#pivot-blocks"),
     "cad/parts/motor_mount": ("Motor mount and cap: technical drawings", "../../readme.md#centre-driveshaft-and-drive-line"),
-    "cad/running_gear/front_corner": ("Front corner: technical drawings of the C-hub and the steering knuckle",
+    "cad/running_gear/front_corner": ("Front corner: technical drawings of the C-hubs and the steering knuckle",
                                       "../../readme.md#running-gear"),
     "cad/front_splitter": ("Speedrun front splitter: technical drawing", "../readme.md#speedrun-front-splitter"),
     "cad/parts/wishbone": ("Wishbones: technical drawings", "../../readme.md#wishbones"),
