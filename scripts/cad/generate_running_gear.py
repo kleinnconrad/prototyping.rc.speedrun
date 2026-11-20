@@ -961,9 +961,11 @@ KIND_COLORS = {"upright": (0.86, 0.45, 0.12), "axle": (0.72, 0.74, 0.77), "cvd":
                "bulkhead": (0.55, 0.56, 0.58)}
 MADE = {"upright", "cvd", "steer", "swaybar"}                  # own parts to manufacture (files)
 MADE_NAMES = ("axle with joint cup", "hex hub 12", "sway bar ball end")
+HANDED = ("C-hub",)              # parts without a plane of symmetry (caster): a left and a right part (mirror images)
 
 
-FOLDERS = {"front_corner": ("c_hub_end_a", "steering_knuckle_end_a", "axle_with_joint_cup_end_a", "hex_hub_12_end_a"),
+FOLDERS = {"front_corner": ("c_hub_end_a_right", "c_hub_end_a_left", "steering_knuckle_end_a", "axle_with_joint_cup_end_a",
+                            "hex_hub_12_end_a"),
            "rear_corner": ("hub_carrier_end_b", "axle_with_joint_cup_end_b", "hex_hub_12_end_b"),
            "cvd_drive_shafts": ("cvd_drive_shaft_end_a", "cvd_drive_shaft_end_b"),
            "steering": ("steering_post", "bellcrank", "steering_bridge",
@@ -975,15 +977,18 @@ FOLDERS = {"front_corner": ("c_hub_end_a", "steering_knuckle_end_a", "axle_with_
 
 def write_files(parts):
     """STEP and STL of the own parts of the right side (assembly position, chassis plate coordinates), one folder per
-    group of parts (FOLDERS)."""
+    group of parts (FOLDERS). The other parts are the same on both sides; the handed parts (HANDED: no plane of
+    symmetry) get a file for the right and one for the left side (mirror image)."""
     import re
     folder = {stem: name for name, stems_ in FOLDERS.items() for stem in stems_}
     stems = []
     for name, kind, s in parts:
-        if (kind not in MADE and not name.startswith(MADE_NAMES)) or name.endswith(" left"):
+        handed = name.startswith(HANDED)
+        if (kind not in MADE and not name.startswith(MADE_NAMES)) or (name.endswith(" left") and not handed):
             continue
-        base = name[:-6] if name.endswith(" right") else name
-        stem = re.sub(r"[^a-z0-9]+", "_", base.lower().replace("1.4", "")).strip("_")
+        side = name.rsplit(" ", 1)[1] if name.endswith((" right", " left")) else ""
+        base = name[:-len(side) - 1] if side else name
+        stem = re.sub(r"[^a-z0-9]+", "_", base.lower().replace("1.4", "")).strip("_") + (f"_{side}" if handed else "")
         if stem not in folder:
             raise KeyError(f"no folder for the part file {stem} (FOLDERS)")
         path = f"{OUT}/{folder[stem]}/{stem}"
