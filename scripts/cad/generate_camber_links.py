@@ -6,11 +6,12 @@ sits on a ball stud in the camber link hole of the shock tower (behind the tower
 outer rod end on a vertical ball stud of the C-hub (front) or of the hub carrier (rear). The two rod
 ends are turned by 90 degrees about the link axis.
 
-* front links (End A): gap between the rod ends 24.0 mm (manual)
-* rear links (End B): gap between the rod ends 25.8 mm (manual)
+* front links (End A): the outer ball sits on the top kingpin of the knuckle (manual set up C: gap 24.0 mm)
+* rear links (End B): the outer ball sits on the ball stud in the camber stud bore on top of the hub carrier,
+  13.3 mm from the outer end of the part (owner; manual set up D: gap 25.8 mm)
 
-The C-hubs and hub carriers are not modelled: the outer ball lies in the plane of the middle of the
-wishbone (plane of the wheel) at the height of the inner ball (link horizontal, assumption).
+The positions of the outer balls come from the running gear (generate_running_gear.py); the gaps between the
+rod ends follow from them.
 
 Usage (from the root directory of the repository):
     python scripts/cad/generate_camber_links.py
@@ -119,43 +120,39 @@ def front_outer_ball(side):
     return G.front_camber_ball(G.load_params(G.PARAMS), side)
 
 
+def rear_outer_ball(side):
+    """Rear: the outer ball sits on the ball stud in the camber stud bore on top of the hub carrier (13.3 from the
+    outer end of the part, owner); its position comes from the running gear."""
+    import generate_running_gear as G
+    return G.rear_camber_ball(G.load_params(G.PARAMS), side)
+
+
 def link_points(p=None):
-    """Centres of the inner and outer balls of the camber links: {(end, side): (p1, p2)}. Rear: the outer ball
-    follows from the gap of the manual (link in the plane of the middle of the wishbone); front: the outer ball
-    sits on the top kingpin of the knuckle."""
+    """Centres of the inner and outer balls of the camber links: {(end, side): (p1, p2)}. The outer ball sits on the
+    camber stud of the hub carrier (rear) or on the top kingpin of the knuckle (front)."""
     p = p or load_params(PARAMS)
-    from generate_wishbones import pin_lines
-    lines = pin_lines()
     faces = tower_faces()
     off = p["ball"][1]
     out = {}
-    for end, gap in (("rear", p["gap_rear"]), ("front", None)):
+    for end, outer_ball in (("rear", rear_outer_ball), ("front", front_outer_ball)):
         yf, sign, zc, cx, tt = faces[end]
         for side in (1, -1):
             p1 = np.array([side * cx, yf + sign * off, zc])
-            if gap is None:
-                p2 = front_outer_ball(side)
-            else:
-                L = link_parts(p, gap)[3]
-                dy = lines[(end, side)][0][1] - p1[1]
-                dz = p["outer_height_offset"]
-                p2 = p1 + np.array([side * math.sqrt(L ** 2 - dy ** 2 - dz ** 2), dy, dz])
-            out[(end, side)] = (p1, p2)
+            out[(end, side)] = (p1, outer_ball(side))
     return out
 
 
 def gaps(p):
-    """Gap between the rod ends: rear from the manual, front from the position of the outer ball."""
-    p1, p2 = link_points(p)[("front", 1)]
-    return {"front": float(np.linalg.norm(p2 - p1)) - 2 * p["rod_end"][0], "rear": p["gap_rear"]}
+    """Gap between the rod ends from the positions of the balls (front and rear)."""
+    pts = link_points(p)
+    return {end: float(np.linalg.norm(pts[(end, 1)][1] - pts[(end, 1)][0])) - 2 * p["rod_end"][0]
+            for end in ("front", "rear")}
 
 
 def links_in_plate(p=None):
     """Camber links on the speedrun chassis (chassis plate coordinates): list of (name, kind, solid),
     kind "rodend" (2 rod ends of a link), "link" (turnbuckle, ball studs)."""
     p = p or load_params(PARAMS)
-    from generate_wishbones import pin_lines
-    lines = pin_lines()
     faces = tower_faces()
     bd, off, nd = p["ball"]
     out = []
@@ -190,7 +187,7 @@ DRAWING = "photos/cad_camber_links_drawing.png"
 
 
 def drawing(p, path=DRAWING):
-    """Side views of the front and the rear camber link with the set-up gap of the manual."""
+    """Side views of the front and the rear camber link with the gap between the rod ends."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -216,7 +213,7 @@ def drawing(p, path=DRAWING):
         ax = fig.add_axes([0.04, 0.52 - 0.46 * row, 0.6, 0.36])
         lo, hi = draw_mesh(ax, np.concatenate(T), basis((0, 1, 0), (1, 0, 0), (0, 0, 1)),
                            tri_colors=np.concatenate(C), depth_cue=0.2)
-        src = "manual" if row == 1 else "ball on the top kingpin"
+        src = "ball on the hub carrier" if row == 1 else "ball on the top kingpin"
         for x0, x1, yy, txt in ((e, L - e, -6.0, f"{gap:.1f} (gap between the rod ends, {src})"),
                                 (0, L, -9.5, f"{L:.1f} between the ball centres")):
             ax.annotate("", (x0, yy), (x1, yy), arrowprops=dict(arrowstyle="<->", lw=0.8, color="#b42318"))
@@ -274,8 +271,8 @@ def main():
         inner, outer, tb, L = link_parts(p, gap)
         files.append((f"camber_link_{name}_T410R", cq.Compound.makeCompound([inner, outer, tb]), L))
     files += [("rod_end", rod_end(p, "y", -1), None),
-              ("turnbuckle_M3x37", link_parts(p, p["gap_rear"])[2].translate(
-                  cq.Vector(-link_parts(p, p["gap_rear"])[3] / 2, 0, 0)), None),
+              ("turnbuckle_M3x37", link_parts(p, g["rear"])[2].translate(
+                  cq.Vector(-link_parts(p, g["rear"])[3] / 2, 0, 0)), None),
               ("ball_stud", ball_stud(p, (0, -1, 0), p["ball"][1] + 4.0), None)]
     for stem, s, L in files:
         bb = s.BoundingBox()

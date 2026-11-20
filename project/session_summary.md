@@ -1,24 +1,25 @@
 # Session summary (handover)
 
-Handover of the CAD session that ended on 2026-11-19 (steering and servo mount refined, battery tray, wishbones verified, front wishbone 2 mm longer), for the next session. Read this file, `CLAUDE.md` and the [CAD readme](../cad/readme.md) first.
+Handover of the CAD session that ended on 2026-11-20 (rear hub carrier reworked with the values of the owner; before, on 2026-11-19: steering and servo mount refined, battery tray, wishbones verified, front wishbone 2 mm longer), for the next session. Read this file, `CLAUDE.md` and the [CAD readme](../cad/readme.md) first.
 
 ## Table of contents
 * [State of the repository](#state-of-the-repository)
-* [Next step: rework of the rear hub carrier](#next-step-rework-of-the-rear-hub-carrier)
+* [Next step: track of the rear axle](#next-step-track-of-the-rear-axle)
 * [Rules of the owner](#rules-of-the-owner)
 * [Workflow](#workflow)
 * [Work of this session](#work-of-this-session)
+* [Work of the session on 2026-11-19](#work-of-the-session-on-2026-11-19)
 * [Current geometry (key values)](#current-geometry-key-values)
 * [Status of the parts](#status-of-the-parts)
 * [Open points](#open-points)
 
 ## State of the repository
-* Work branch: `claude/beautiful-babbage-509a4n`. Everything up to pull request #100 (wishbones verified, pin bores Ø3.1) is merged into `main`. After it, the commit `e21424f` (front wishbone 2 mm longer) and the commit of this handover are pushed to the branch and not merged; no pull request is open.
-* Generated files are up to date: wishbones, running gear, camber links, assembly with its picture, front splitter and battery tray (pictures and checks), technical drawing of the front wishbone, parts measurement sheet. The other technical drawings keep their date (not redrawn). `architecture/README.md` and `specs/full_spec.yaml` were not changed.
+* Work branch: `claude/confident-brahmagupta-htvja9`. Everything up to pull request #101 (front wishbone 2 mm longer, previous handover) is merged into `main`. The commit of the rear hub carrier rework with this handover is pushed to the branch and not merged; no pull request is open.
+* Generated files are up to date: running gear (hub carrier, drawing), camber links (rear link, drawing), assembly with its picture; front splitter and battery tray regenerated with the new assembly (geometry unchanged, checks passed). The technical drawings keep their date (not redrawn; the hub carrier has none). `architecture/README.md` and `specs/full_spec.yaml` were not changed.
 * The files of the dual motor study are a snapshot: `cad/studies/dual_motor/dual_motor_study_assembly.step` still contains the front splitter with the bosses up to 7.0 mm and the front corner with the kingpin axis in the middle of the wishbone (before the changes of the sessions on 2026-11-17). Regenerate the study when it is used again.
 
-## Next step: rework of the rear hub carrier
-The owner wants the rear hub carrier reworked next. It is completely unqualified (model from photos) and is the suspected source of the difference in track.
+## Next step: track of the rear axle
+The rear hub carrier is reworked with the values of the owner (this session). The difference in track remains: the owner described the part, but not the position of the bearing tube along the axle relative to the hinge pin beyond "flush with the tube on the hinge pin".
 
 * **Problem:** in the model the front track is 4.0 mm wider than the rear track (outer faces of the hex hubs at x = ±88.85 mm front, ±86.85 mm rear). On the original car the track is the same front and rear (owner).
 * **Confirmed by the owner (not the source):**
@@ -26,27 +27,27 @@ The owner wants the rear hub carrier reworked next. It is completely unqualified
   * rear wishbone 54.3 mm axis to axis (print compared with the original)
   * steering knuckle (verified, close to the original)
   * C-hub: the kingpin 6.75 mm inside the outer hinge pin agrees with the fit of the front CVD drive shafts (42.3 mm)
+  * rear hub carrier (2026-11-20): bearing tube 10 long, 2 bearings 5x10x4 separated by a lip 1.0 high, hinge pin bore slightly larger than the pin 3.0 (model 3.1), grub screw from below on the hinge pin, camber stud bore 13.3 from the outer end of the part, 30.4 from the outer lower end of the tube on the hinge pin to the upper end of the part
 * **Dimension chain per side (model, centre line to the outer face of the hex hub):**
 
 | Link | Front | Rear |
 |:---|:---|:---|
 | Centre line to inner hinge pin (pivot blocks) | 20.70 | 21.50 |
 | Inner to outer hinge pin (wishbone) | 51.70 | 54.26 (54.3 at 2.3 degrees toe) |
-| Outer hinge pin to outer face of the hex hub | 16.45 (kingpin -6.75, knuckle ring 16.7, gap 0.5, hex hub 6) | 11.09 (tube flush with the lug, lug radius 3.6, gap 0.5, hex hub 7) |
+| Outer hinge pin to outer face of the hex hub | 16.45 (kingpin -6.75, knuckle ring 16.7, gap 0.5, hex hub 6) | 11.09 (bearing tube flush with the tube on the hinge pin, radius 3.6 assumed, gap 0.5, hex hub 7) |
 | Total | 88.85 | 86.85 |
 
-* **Requirement:** for equal track the outer face of the rear hex hub must lie 13.1 mm beyond the axis of the outer hinge pin (along the axle) instead of 11.1 mm. The weakest value is the position of the bearing tube: its outer end face 3.6 mm beyond the hinge pin axis (assumption: flush with a lug of radius 3.6).
-* **Measurements asked from the owner (not answered yet):**
-  * R1: outer end face of the bearing tube to the axis of the hinge pin bore, along the axle (from the end face to the side of a pin Ø3 in the bore that faces the wheel, plus 1.5 mm); model 3.6
-  * R2: length of the bearing tube (owner earlier: 10.0), to be confirmed
-  * R3: bearings flush with the tube ends or recessed (knuckle: 0.29)
+* **Requirement:** for equal track the outer face of the rear hex hub must lie 13.1 mm beyond the axis of the outer hinge pin (along the axle) instead of 11.1 mm. Not measured: the radius 3.6 of the tube on the hinge pin (it sets the outer end of the part), the gap 0.5 between the bearing and the hex hub.
+* **Questions still open (asked in the previous session):**
+  * R1: outer end face of the bearing tube to the axis of the hinge pin bore, along the axle; model 3.6 (flush with the tube on the hinge pin of radius 3.6)
   * R4: shim or collar between the outer bearing and the hex hub (model: gap 0.5)
   * R5: on the assembled original car: outer face of the rear hex hub to the axis of the outer hinge pin, along the axle; model 11.1, equal track needs 13.1 (this value alone settles the track)
-  * R6: height of the axle axis above the hinge pin axis (photo approx. 17, model 10.4)
+  * R6: height of the axle axis above the hinge pin axis (photo approx. 17, model 10.4 from the ride height); the total height 30.4 of the owner is implemented
   * CVD: are the front and rear CVD drive shafts the same part? If yes, the rear outer joint lies approx. 1.1 mm further out (rear CVD 41.1 mm in the model, front 42.3 mm)
+  * Answered in this session: R2 (tube 10.0), R3 (bearings in the ends of the tube, lip 1.0 high: flush with the ends, lip 2.0 wide)
 * **Interim option offered to the owner (not decided):** move the bearing tube 2.0 mm outward (R1 = 5.6) as a derived value until the measurements are available.
-* **Where to change:** parameter `rear_carrier` in `cad/running_gear/running_gear_parameters.json` and `rear_corner()` in `scripts/cad/generate_running_gear.py` (lug radius 3.6, tube end `x1 = r_lug`, joint 1.0 before the inner bearing, hex hub 0.5 beyond the tube, `rear_corner.hub_face`). A measurement sheet for the hub carrier (as `generate_knuckle_measurement_sheet.py`) can collect R1 to R6.
-* **Consequences to update after the rework:** rear CVD length, rear camber link (outer ball on the carrier), `wheel_centre_x` and its note (the wheel offset 6.35 mm was derived from the rear chain 86.85 mm and the measured overall width 187 mm; with equal track at 88.85 mm the offset or the overall width changes), the track and wheel centre rows of the CAD readme and of this file. Generators: running gear, camber links, assembly, then front splitter and battery tray (they read the assembly); expected: running gear "overlaps: 0", assembly only the 3 known interferences.
+* **Where to change:** parameters `rear_carrier` and `rear_carrier_bores` in `cad/running_gear/running_gear_parameters.json`, `rear_carrier_layout()` and `rear_corner()` in `scripts/cad/generate_running_gear.py` (tube end `x1 = r_lug`, joint 1.0 before the inner bearing, hex hub 0.5 beyond the tube, `rear_corner.hub_face`). The rear camber ball follows the stud (`rear_camber_ball()`): a change of the hub carrier moves the rear camber link.
+* **Consequences to update after a change of the track:** rear CVD length, `wheel_centre_x` and its note (the wheel offset 6.35 mm was derived from the rear chain 86.85 mm and the measured overall width 187 mm; with equal track at 88.85 mm the offset or the overall width changes), the track and wheel centre rows of the CAD readme and of this file. Generators: running gear, camber links, assembly, then front splitter and battery tray (they read the assembly); expected: running gear "overlaps: 0", assembly only the 3 known interferences.
 
 ## Rules of the owner
 * `CLAUDE.md`: English, sentence case also in headings, list items and table entries, table of contents as soon as a Markdown file has more than one heading, no emojis, objective style without filler words.
@@ -108,6 +109,16 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
 * The assembly STEP can be read with the part names and colours through XCAF (`read_assembly` in `generate_dual_motor_study.py`, approx. 6 s for 192 parts); the colours in the file are linear RGB.
 
 ## Work of this session
+* Rear hub carrier reworked with the values of the owner (2026-11-20; parameters `rear_carrier` and `rear_carrier_bores`):
+  * Tube on the hinge pin: bore 3.1 for the metal hinge pin 3.0 (owner: slightly larger, so that the pin does not stick; 0.1 as the wishbones), secured from below with a grub screw M3 (thread through the bottom of the tube, as before). Radius 3.6 still assumed.
+  * Bearing tube 10 long (owner), outer end flush with the tube on the hinge pin (outer end of the part, unchanged); 2 bearings 5x10x4 in the ends of the tube, separated by a lip 1.0 high (owner; bore 8.0, width 2.0 = 10 - 2 x 4; before: lip 1.5 high, bore 7.0).
+  * Height 30.4 from the outer lower end of the tube on the hinge pin to the upper end of the part (owner): top face at z = 33.4 (before 34.5).
+  * Camber stud bore 13.3 from the outer end of the part (owner): x = -9.7 from the outer hinge pin, in the middle of the part (before: 17.9, at the position given by the manual gap of the camber link). The owner confirmed that the "king pin bore" in the description is this stud bore on top of the rear hub carrier.
+  * Track, axle, bearings, hex hub and rear CVD (41.1) unchanged; the difference in track of 4.0 remains (see next step).
+* Rear camber links: the outer ball sits on the stud of the hub carrier (`rear_camber_ball()` in the running gear, used by `generate_camber_links.py` as for the front); the gap follows from it: 30.5 (manual set up D: 25.8), ball centres 48.5 apart, ball at z = 37.2 (1.1 below the inner ball, link no longer horizontal). Turnbuckle M3x37 engages 3.25 per rod end. Parameter `outer_height_offset` removed (not used any more).
+* Checks: running gear "overlaps: 0"; camber links largest overlap 0 (rear rod ends 0.24 beside the narrowed wall of the upper bulkhead, before 0.30); assembly only the 3 known interferences; front splitter and battery tray unchanged, checks passed.
+
+## Work of the session on 2026-11-19
 * Handover of the previous session carried to `main` (the updated file was not part of pull request #89).
 * Dual motor study (`cad/studies/dual_motor`, see its readme; owner: study, then committed on request):
   * Dual motor mount: the verified motor mount with the tall part mirrored to the left side instead of the hook beside the bearing seat; plate 6.0 mm at y = 59.48 to 65.48 mm, 99.0 mm wide, 33.0 mm above the chassis plate, approx. 33.7 g in 7075 (single mount 18.1 g). Bearing seat and cap unchanged. 3 screws M3 from below: H09, H10 and a new hole H37 (H09 mirrored, x = -45.33 mm).
@@ -134,7 +145,8 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
 | Front wishbone | 51.7 mm axis to axis (measured 45.26 mm, prolonged by 4.44 mm for equal track and by 2.0 mm for the front CVD drive shafts of the T410R) |
 | Rear wishbone | 54.3 mm axis to axis (measured) |
 | CVD drive shafts | centre to centre front 42.3 mm, rear 41.1 mm |
-| Camber links | gap front 30.3 mm, rear 25.8 mm (turnbuckle M3x37: thread engagement 3.4 and 5.6 mm per rod end) |
+| Camber links | gap front 30.3 mm, rear 30.5 mm (turnbuckle M3x37: thread engagement 3.4 and 3.25 mm per rod end); outer balls on the top kingpin (front) and on the stud of the hub carrier (rear) |
+| Rear hub carrier | bearing tube 10 mm (bearings 5x10x4, lip 1.0 mm high), outer end flush with the tube on the hinge pin (x = 3.6 mm from the hinge pin axis, radius assumed); hinge pin bore Ø3.1 mm, grub screw M3 from below; height 30.4 mm (top face z = 33.4 mm); camber stud bore 13.3 mm from the outer end (owner) |
 | Steering | Posts 20.3 high (owner), bellcranks at z = 16.8 to 22.3 on the shoulder of the post (screw M3x6 on top bottoms in a thread of 5.2: washer 0.3 above the journal), steering ball at z = 26.3; symmetric bellcranks (arms 15 mm, same part on both sides), bridge as a flat bar at z = 23.2 to 29.5: Ackermann 85 / 99 / 116 % at 15 / 20 / 25 degrees; free steering angle 35 degrees toward the middle, 45 degrees or more toward the outside; steering link gap 21.0; bellcranks 38.5 degrees, bridge 9.3 mm, servo approx. 19 degrees for 25 degrees of the inner wheel (horn ball 28.4 mm from the output shaft, measured) |
 | Servo and mount | Caliper values of the owner (S1 to S9, M1 to M5, relative to H21 and the top face of the chassis plate): case front face 8.0 ahead of H21, output shaft 37.0 across and 15.0 high, case 2.0 above the plate; top plate 2.3 thick, top face 23.4; fixed post front face 5.5 ahead of H21, 7 wide, 34 long (measured 32, lengthened for H17); horn ball at z = 45.4 (plate coordinates); ball of the bridge in the middle at z = 26.35, servo link inclined 22.9 degrees, gap 30.9 |
 | Motor axis of the motor mount | x = 24.6 to 33.85 mm (spur gear plus pinion 93 to 127 teeth, 48DP) |
@@ -155,13 +167,13 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
 * ADR-009 (foam bumper flush with the front apron of the body) and ADR-010 (GPS module on the front foam bumper) still refer to the foam bumper, which is no longer used; the GPS module needs a new position (for example on the splitter).
 * Dual motor study: new position of the battery (on the car it lies on the left side); batteries on edge 48.8 mm high under the body (body not modelled); gap of 3.9 mm between the motor and the ESC for the motor wires; 2 ESCs with the same throttle signal; torque on the spur gear, the rear pinion shaft and the drive line doubles (not evaluated); the study assembly contains the splitter with the old bosses (7.0 mm).
 * Front camber links: the rod end on the top kingpin lies 0.38 mm above the top face of the C-hub in the static position (1.28 mm before the top face was raised by 0.9 mm for the top guide sleeve inserted from below); the clearance over the suspension travel is not checked. Option: keep the raised top face only around the sleeve (boss) and lower the rest by 0.9 mm.
-* Front camber links: in the static position the rod ends lie 0.19 mm beside the narrowed wall of the upper bulkhead at End A; the clearance over the suspension travel is not checked. With the front wishbone 51.7 the gap between the rod ends is 30.3 mm: the turnbuckle M3x37 engages only 3.4 mm in each rod end (manual set up: 24.0 mm, 6.5 mm). A longer turnbuckle (M3x40 or M3x42: 4.9 or 5.9 mm) is to be decided by the owner.
+* Camber links: in the static position the rod ends lie 0.19 mm (End A) and 0.24 mm (End B) beside the narrowed wall of the upper bulkhead; the clearance over the suspension travel is not checked. With the front wishbone 51.7 and the rear camber stud 13.3 from the outer end of the hub carrier the gaps between the rod ends are 30.3 mm (front) and 30.5 mm (rear): the turnbuckle M3x37 engages only 3.4 and 3.25 mm in each rod end (manual set up: 24.0 and 25.8 mm). A longer turnbuckle (M3x40: 4.9 and 4.75 mm, M3x42: 5.9 and 5.75 mm) is to be decided by the owner.
 * Technical drawings of the other parts: the materials of the pivot blocks, the wishbones, the C-hub and the steering knuckle are to be defined; the fits are proposals (C-hub kingpin bores Ø5.0 H7 and hinge pin bore Ø3.0 H7, knuckle bearing seats Ø10 K7, pivot block bores Ø5.0 to be confirmed with the inserts).
 * Technical drawings of the bulkheads: the tolerances of the bearing seats (Ø15 H7, Ø10 H7), the position of the bore axes to the parting face (±0.02 mm) and the flatness of the parting face (0.02 mm) are a proposal (note 7 on sheet 2); to be confirmed by the owner before the CNC order.
 * C-hub: Owner: both guide sleeves are inserted from the knuckle side and stand 0.1 mm proud of the C-hub (implemented, parameter `guide_sleeve_proud`). The thickness of the foot (model 1.0 mm, owner: approx. 0.6 mm) and the total length of the sleeve (model 4.6 mm) are still to be measured. 3D print verification with the guide sleeves; the dimensions of the sleeves are scaled from the manual (a caliper value of the original sleeve confirms them); the bottom face of the C-hub is square to the kingpin axis (caster angle), the lower guide sleeve stands 0.1 mm proud of it, so the head of the screw bears only on the sleeve (owner); the head of the lower screw lies 0.4 mm beside the tube on the hinge pin.
 * Steering knuckle: open dimensions K11, K14, K16 and K19 of the measurement sheet.
-* Track: the front track is 4.0 mm wider than the rear track; the rear hub carrier is the suspected source and is reworked next (see [next step](#next-step-rework-of-the-rear-hub-carrier)). The 0.5 mm gaps between the knuckle ring and the front hex hub and between the tube of the hub carrier and the rear hex hub, and the radius 3.6 mm of the lug of the hub carrier are assumptions.
-* Rear hub carrier (to be reworked next, see above): in the photo the axle lies approx. 17 mm above the hinge pin, in the model 10.4 mm (ride height 15 mm, wishbone horizontal); a caliper value confirms or corrects it. The original part has 2 holes in the top tab; the model has one.
+* Track: the front track is 4.0 mm wider than the rear track; the rear hub carrier is reworked with the values of the owner, the position of its bearing tube along the axle is still open (see [next step](#next-step-track-of-the-rear-axle)). The 0.5 mm gaps between the knuckle ring and the front hex hub and between the tube of the hub carrier and the rear hex hub, and the radius 3.6 mm of the tube of the hub carrier on the hinge pin are assumptions.
+* Rear hub carrier: in the photo the axle lies approx. 17 mm above the hinge pin, in the model 10.4 mm (ride height 15 mm, wishbone horizontal); a caliper value confirms or corrects it (the total height 30.4 mm of the owner is implemented). The original part has 2 holes in the top tab; the model has the one given by the owner (13.3 mm from the outer end). Status still red: the owner decides whether the values of 2026-11-20 make it yellow (measures qualified).
 * Steering: servo angle only approx. 19 degrees for 25 degrees of the inner wheel with the horn ball at 28.4 mm (a hole closer to the output shaft gives more servo angle); servo height 19.0 between S4 and the top plate (spec 20.2) and output shaft 13.0 above the lower face of the case from the caliper values, to be confirmed; ear holes of the servo, floating post and the heights of the U-notch and the arch of the fixed post assumed; clearance of the horn (43.4 above the chassis plate) to the body not checked; fit of the bearings in the MJF bellcrank to be checked.
 * Wheels are not modelled; the wishbones are horizontal at the ride height of setup sheet 4 (10 mm front, 15 mm rear).
 * Not changed to 130 km/h: the gearing plot `scripts/plots/gearing_plot.py` (100 km/h line thicker), `specs/mechanics/carten_t410r/spec_cartent410r.yaml` (track width 190 mm), the project name "RC100".
