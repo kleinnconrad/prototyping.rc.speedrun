@@ -909,7 +909,7 @@ def draw_part(cfg, date):
 
 FOLDERS = {
     "cad/chassis/chassis_plate_speedrun_wide_motor10": ("Speedrun chassis plate (wide) with longer motor window: technical drawing",
-                                                        "../../readme.md#longer-motor-window-for-a-3660-motor"),
+                                                        "../../readme.md#speedrun-chassis-plate-wide-with-longer-motor-window"),
     "cad/chassis/top_brace_speedrun": ("Speedrun top brace: technical drawing", "../../readme.md#speedrun-top-brace"),
     "cad/shock_tower": ("Speedrun shock towers: technical drawings", "../readme.md#speedrun-shock-towers"),
     "cad/parts/pivot_block": ("Pivot blocks: technical drawings", "../../readme.md#pivot-blocks"),

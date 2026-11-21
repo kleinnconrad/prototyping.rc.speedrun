@@ -5,13 +5,12 @@
 * [Speedrun chassis](#speedrun-chassis)
   * [Parts of the speedrun chassis](#parts-of-the-speedrun-chassis)
   * [Assembly file](#assembly-file)
-* [Chassis plate and top brace](#chassis-plate-and-top-brace)
-  * [Parts, files and coordinate system](#parts-files-and-coordinate-system)
-  * [Measurement basis and test print](#measurement-basis-and-test-print)
-  * [Open points](#open-points)
-* [Speedrun chassis plate (wide)](#speedrun-chassis-plate-wide)
-  * [Print template](#print-template)
+* [Speedrun chassis plate (wide) with longer motor window](#speedrun-chassis-plate-wide-with-longer-motor-window)
+  * [Design of the speedrun chassis plate](#design-of-the-speedrun-chassis-plate)
   * [Longer motor window for a 3660 motor](#longer-motor-window-for-a-3660-motor)
+  * [Measurement basis and test print](#measurement-basis-and-test-print)
+  * [Print template](#print-template)
+  * [Files and coordinate system of the speedrun chassis plate](#files-and-coordinate-system-of-the-speedrun-chassis-plate)
 * [Speedrun top brace](#speedrun-top-brace)
   * [Design and fit of the speedrun top brace](#design-and-fit-of-the-speedrun-top-brace)
   * [Files and open points of the speedrun top brace](#files-and-open-points-of-the-speedrun-top-brace)
@@ -48,13 +47,10 @@
 
 ## Overview
 This directory contains CAD data and 3D print files for the RC car **Carten T410R**:
-* **`/chassis`**: CAD data of the chassis plate and the top brace, with one subdirectory per part:
-  * **`/chassis_plate`**: Chassis plate (STEP, STL, DXF, OpenSCAD, PDF templates, geometry data, hole table)
-  * **`/top_brace`**: Top brace (STEP, STL, DXF, OpenSCAD, PDF template, geometry data, hole table)
-  * **`/test_print`**: STL files of the chassis plate and the top brace for a test print on a home 3D printer
-  * **`/chassis_plate_speedrun_wide`**: Wide variant of the chassis plate for speedruns (STEP, STL, PDF template, geometry data)
-  * **`/chassis_plate_speedrun_wide_motor10`**: Wide variant with a longer motor window for a 3660 motor (STEP, STL, DXF, PDF template, geometry data)
-  * **`/top_brace_speedrun`**: New design of the top brace that matches the bulkheads of this project (STEP, STL, DXF, PDF templates, geometry data, hole table, test print STL files)
+* **`/chassis`**: CAD data of the speedrun chassis plate and the speedrun top brace:
+  * **`/chassis_plate_speedrun_wide_motor10`**: Speedrun chassis plate (wide) with the longer motor window for a 3660 motor (STEP, STL, DXF, PDF template, geometry data, technical drawing)
+  * **`/top_brace_speedrun`**: Speedrun top brace that matches the bulkheads of this project (STEP, STL, DXF, PDF templates, geometry data, hole table, test print STL files, technical drawing)
+  * The other subdirectories contain source data of these two parts (see [scripts](#scripts)).
 * **`/bulkhead`**: CAD data of the bulkheads (gear boxes): lower bulkhead, upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets, technical drawings; the drawings are shown in [`bulkhead/readme.md`](bulkhead/readme.md)).
 * **`/shock_tower`**: New design of the front and the rear shock tower that match the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
 * **`/front_splitter`**: Speedrun front splitter at End A, one part: the body post mount enlarged to the splitter (STEP, STL, test print STL, parameter file, measurement sheet).
@@ -87,7 +83,7 @@ The speedrun chassis combines the parts that are designed in this project for sp
 ### Parts of the speedrun chassis
 | Part | Quantity | Directory | Status | Order | Material | Mass |
 |:---|---:|:---|:---|:---|:---|---:|
-| [Speedrun chassis plate (wide) with longer motor window](#longer-motor-window-for-a-3660-motor) | 1 | `/chassis/chassis_plate_speedrun_wide_motor10` | $\color{green}\checkmark$ Verified | CNC part (aluminium 6082) | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
+| [Speedrun chassis plate (wide) with longer motor window](#speedrun-chassis-plate-wide-with-longer-motor-window) | 1 | `/chassis/chassis_plate_speedrun_wide_motor10` | $\color{green}\checkmark$ Verified | CNC part (aluminium 6082) | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
 | [Lower bulkhead](#lower-bulkhead) | 2 | `/bulkhead` | $\color{green}\checkmark$ Verified | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 2 x 12 g |
 | [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | $\color{green}\checkmark$ Verified | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 2 x 19 g |
 | [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 14 g (carbon), 25 g (7075) |
@@ -143,191 +139,109 @@ Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{g
   * both ends with the bulkheads, the shock tower, the corners of the running gear, the dampers and the sway bar, seen from the outer end;
   * the drive line at End B (spur gear, motor mount with cap, cup joint), seen from the middle of the car, without the top brace and the shock tower.
 
-## Chassis plate and top brace
+## Speedrun chassis plate (wide) with longer motor window
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** CAD models of the chassis plate and the top brace of the Carten T410R. The geometry is derived from photos of the original parts and scaled to caliper measurements (see [measurement basis](#measurement-basis-and-test-print)).
-* **Status:** $\color{green}\checkmark$ Verified with a test print. The printed chassis plate and top brace fit the car, the hole positions and the overall lengths are correct (see [test print](#measurement-basis-and-test-print)).
+* **Description:** Chassis plate of the speedrun chassis: wide middle section and a motor window for a 3660 motor. The hole pattern, the countersinks, the slot and both narrow ends are taken from the chassis plate of the T410R (see [measurement basis](#measurement-basis-and-test-print)).
+* **Status:** $\color{green}\checkmark$ Verified. Order: CNC part (aluminium 6082). Technical drawing: [`chassis/chassis_plate_speedrun_wide_motor10/readme.md`](chassis/chassis_plate_speedrun_wide_motor10/readme.md).
 
-![Top view of the chassis plate and the top brace with hole labels](../photos/cad_chassis_drawing.png)
+![Top view of the speedrun chassis plate (wide) with the longer motor window and hole labels](../photos/cad_chassis_speedrun_wide_motor10_preview.png)
 
-### Parts, files and coordinate system
-| Part | Size (width × length × thickness) | Holes | Cutouts | Volume |
-|:---|:---|:---|:---|---:|
-| Chassis plate | 100.0 × 325.6 × 2.0 mm | 36 through holes Ø3.2 mm (H01 to H36), countersunk Ø6.2 mm × 90° on the bottom face | Window approx. 23.5 × 53.3 mm, slot approx. 22.3 × 6.7 mm | 49.4 cm³ |
-| Top brace | 38.0 × 243.3 × 2.0 mm | 15 through holes Ø3.2 mm (B01 to B15), not countersunk | Hexagon, short slot approx. 3.2 × 17.5 mm, long slot approx. 3.2 × 88.2 mm, obround approx. 27.0 × 9.3 mm | 7.8 cm³ |
+### Design of the speedrun chassis plate
+| Property | Value |
+|:---|:---|
+| Size (width × length × thickness) | 199.98 × 325.6 × 2.0 mm |
+| Holes | 36 through holes Ø3.2 mm (H01 to H36), countersunk Ø6.2 mm × 90° on the bottom face |
+| Cutouts | Motor window 23.47 × 63.27 mm (corner radius 3.0 mm), slot approx. 22.3 × 6.7 mm |
+| Volume | 80.2 cm³ |
+| Mass | 217 g (aluminium 6082), 128 g (carbon) |
 
-* The width of the main section of the chassis plate is 99.98 mm. The bar of the top brace is 15.09 mm wide.
-* The hole diameter of 3.2 mm is the clearance hole for M3 screws.
-* Sizes and volumes are taken from the STL files. The cutout sizes are approximate values from the geometry data.
-
-**Files**
-
-The files of the chassis plate are stored in the directory `/chassis/chassis_plate`, the files of the top brace in `/chassis/top_brace` and the test print files in `/chassis/test_print`. The STEP, STL, DXF, OpenSCAD and PDF files and the hole tables are generated from the geometry data (`*_geometry.json`). The DXF files can be regenerated with a script (see [DXF generation](#dxf-generation)). The PDF templates and the drawing `photos/cad_chassis_drawing.png` are generated with the script `generate_chassis_templates.py` (see [scripts](#scripts)).
-
-| File | Format | Use |
-|:---|:---|:---|
-| `chassis_plate_T410R.step`, `top_brace_T410R.step` | STEP (AP214) | Solid models for CAD programs |
-| `chassis_plate_T410R.stl`, `top_brace_T410R.stl` | STL (binary) | Complete parts as triangle meshes |
-| `testprint_chassis_plate_halfA.stl`, `testprint_chassis_plate_halfB.stl` | STL (binary) | Chassis plate in two halves for the test print |
-| `testprint_top_brace_halfA.stl`, `testprint_top_brace_halfB.stl` | STL (binary) | Top brace in two halves for the test print |
-| `chassis_plate_T410R.dxf`, `top_brace_T410R.dxf` | DXF | 2D drawings for CNC manufacturing with the layers `OUTLINE`, `CUTOUT`, `HOLE_THROUGH` and `CSK_BOTTOM_INFO` (countersinks, chassis plate only) |
-| `chassis_plate_T410R.scad`, `top_brace_T410R.scad` | OpenSCAD | Parametric models. The parameters `thickness`, `hole_d`, `csk_d` and `csk_angle` are defined at the top of the file. |
-| `chassis_plate_T410R_1to1_A3.pdf` | PDF (A3, 1 page) | 1:1 template of the chassis plate |
-| `chassis_plate_T410R_1to1_A4x2.pdf` | PDF (A4, 2 pages) | 1:1 template of the chassis plate on two A4 sheets (portrait) with a 20 mm overlap zone |
-| `top_brace_T410R_1to1_A4.pdf` | PDF (A4, 1 page) | 1:1 template of the top brace |
-| `chassis_plate_T410R_1to1_A3_print97.pdf`, `chassis_plate_T410R_1to1_A4x2_print97.pdf`, `top_brace_T410R_1to1_A4_print97.pdf` | PDF | The same templates pre-scaled to 103.09 % for a PDF viewer that prints at 97 % |
-| `chassis_plate_hole_table.csv`, `top_brace_hole_table.csv` | CSV | Hole coordinates (x, y), through hole diameter and countersink diameter |
-| `chassis_plate_geometry.json`, `top_brace_geometry.json` | JSON | Geometry data: outline, cutouts, holes, thickness and countersink parameters |
-
-The PDF templates without suffix must be printed at 100 % scale. The templates with the suffix `_print97` are pre-scaled to 103.09 % (100/97) and must be printed at 97 %: printed at 97 %, the drawing is 1:1. The 100 mm bars on each page are used to check the scale. For a PDF viewer with another fixed print scale, the script `generate_chassis_templates.py` generates matching templates (options `--print-scale` and `--suffix`).
-
-**Coordinate system**
-
-* Units are millimeters. All coordinates refer to the top view.
-* x = 0 is the center line of the part.
-* y = 0 is the end edge: on the chassis plate the end with the 2 × 2 hole pattern (holes H01 to H04), on the top brace the end with the hexagon cutout. The OpenSCAD files refer to this edge as the rear end edge.
-* z = 0 is the bottom face. The countersinks of the chassis plate are located on the bottom face.
-
-### Measurement basis and test print
-The outlines were taken from photos of the original parts and scaled to caliper measurements:
-* **Chassis plate:** x scaled by 1.00522 (width of the main section 99.98 mm), y scaled by 1.00609 (distance between the holes H11 and H23 145.82 mm)
-* **Top brace:** uniformly scaled by 1.006 (bar width 15.09 mm)
-* **Holes:** through holes Ø3.2 mm (measured on the original part: 3.18 mm)
-* **Shape:** The window and the slot of the chassis plate are part of the model. Two marks on the surface of the original parts are not holes and are therefore not modelled.
-
-**Test print**
-
-The test print checks the hole positions and the overall length with a home 3D printer before the parts are manufactured. Both parts are split into two halves that are connected with dovetails. The files are stored in the directory `/chassis/test_print`.
-
-**Result:** The test print of the chassis plate and the top brace fits the car. The holes at both ends of both parts align with the mounting points. This confirms the hole positions and the overall lengths of 325.6 mm (chassis plate) and 243.3 mm (top brace).
-
-![Test print halves of the chassis plate and the top brace](../photos/cad_chassis_test_print.png)
-
-| File | Size (width × length × thickness) | Split |
-|:---|:---|:---|
-| `testprint_chassis_plate_halfA.stl` | 100.0 × 168.7 × 2.0 mm | Split at half length (y = 162.8 mm), three dovetails, 0.2 mm joint gap |
-| `testprint_chassis_plate_halfB.stl` | 100.0 × 162.7 × 2.0 mm | See half A |
-| `testprint_top_brace_halfA.stl` | 34.9 × 97.4 × 2.0 mm | Split at y = 92.5 mm between the short and the long slot, so that the long slot is not cut. One dovetail, 0.2 mm joint gap. |
-| `testprint_top_brace_halfB.stl` | 38.0 × 150.7 × 2.0 mm | See half A |
-
-* The halves of the chassis plate are oriented with the top side on the print bed, so that the countersinks face upwards.
-* The largest half requires a print area of 100.0 × 168.7 mm.
-
-Recommended procedure:
-* Print with 100 % infill.
-* Disable the XY hole compensation of the slicer for a true check of the hole positions.
-* Printed holes with Ø3.2 mm are usually undersized. Ream them with a 3.2 mm drill before screws are inserted.
-* Glue the halves together on a flat surface, preferably on the 1:1 template.
-* Check the fit on the car: if the holes at both ends of the parts align with the mounting points, the overall length is correct.
-
-### Open points
-There are no open points for the chassis plate and the top brace. The following points were clarified:
-* **Overall length:** With the caliper scaling, the chassis plate is 325.6 mm and the top brace 243.3 mm long, while measurements with a ruler resulted in 324 mm and 242 mm. The test print confirms the lengths from the caliper scaling, so the ruler readings were too short.
-* **Thickness of the chassis plate:** The chassis specification listed 2.25 mm for the bottom plate. A measurement of the chassis plate of the car with a precise caliper resulted in 2.03 mm, so the value of the specification was wrong. It is corrected in `specs/mechanics/carten_t410r/spec_cartent410r.yaml`. The model uses 2.0 mm. For manufacturing, the thickness is determined by the carbon sheet that is used. The thickness of the model can be changed with the parameter `thickness` in the OpenSCAD file.
-
-## Speedrun chassis plate (wide)
-* **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** Variant of the chassis plate for speedruns with a widened middle section. The hole pattern, the countersinks, the window, the slot and both narrow ends are identical to the chassis plate.
-* **Files:** `chassis_plate_T410R_speedrun_wide.step` (STEP AP214, one solid), `chassis_plate_T410R_speedrun_wide.stl` (binary STL), `chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf` (1:1 template, see [print template](#print-template)) and `chassis_plate_speedrun_wide_geometry.json` (geometry data) in the directory `/chassis/chassis_plate_speedrun_wide`. This variant has no DXF, OpenSCAD or test print files. The STEP and STL files are the source data of this variant. The geometry data is derived from the STEP file (see [scripts](#scripts)).
-
-![Top view of the speedrun chassis plate (wide) with hole labels and the outline of the chassis plate](../photos/cad_chassis_speedrun_wide_drawing.png)
-
-| Property | Chassis plate | Speedrun chassis plate (wide) |
-|:---|:---|:---|
-| Size (width × length × thickness) | 99.98 × 325.6 × 2.0 mm | 199.98 × 325.6 × 2.0 mm |
-| Holes | 36 through holes Ø3.2 mm, countersunk Ø6.2 mm × 90° on the bottom face | Identical |
-| Cutouts | Window and slot | Identical |
-| Volume | 49.4 cm³ | 80.7 cm³ |
-
-The outline differs from the chassis plate only between y = 55.3 mm and y = 246.5 mm (coordinate system as for the chassis plate, see [coordinate system](#parts-files-and-coordinate-system)):
+The outline (coordinate system see [files and coordinate system](#files-and-coordinate-system-of-the-speedrun-chassis-plate)):
 
 | Section | Position (y) | Width |
 |:---|:---|:---|
-| End with the 2 × 2 hole pattern | 0 to 55.3 mm | Identical to the chassis plate |
+| End with the 2 × 2 hole pattern (H01 to H04, End B) | 0 to 55.3 mm | 99.98 mm (main section of the T410R plate) |
 | Transition, 30.3° to the cross direction | 55.3 to 85.5 mm | Increases from 100 to 200 mm |
 | Wide section | 85.5 to 205.0 mm | 199.98 mm |
 | Transition, 38.4° to the cross direction | 205.0 to 246.5 mm | Decreases from 200 to 100 mm |
-| Opposite end | 246.5 to 325.6 mm | Identical to the chassis plate |
+| End with the holes H34 to H36 (End A) | 246.5 to 325.6 mm | As the T410R plate |
 
+* The wide section is 10 mm wider than the width over the tires (190 mm, `spec_cartent410r.yaml`) and the body width (190 mm, `spec_body.yaml`). It protrudes by 5 mm per side.
 * The values are taken from the STL file.
-* The wide section is 10 mm wider than the width over the tires (190 mm, `spec_cartent410r.yaml`) and the body width (190 mm, `spec_body.yaml`). It protrudes by 5 mm per side. The speedrun chassis plate with the longer motor window is verified (see [longer motor window for a 3660 motor](#longer-motor-window-for-a-3660-motor)).
-* The thickness of 2.0 mm is the same as for the chassis plate. The chassis plate of the car measures 2.03 mm (see [open points](#open-points)).
-* The hole pattern and both narrow ends are identical to the chassis plate and are therefore confirmed by its [test print](#measurement-basis-and-test-print). The widened section is not part of the test print.
+
+### Longer motor window for a 3660 motor
+* The motor of the car (Hobbywing 3660SL G2) has a diameter of 36 mm and a length of 60 mm (`specs/electronics/brushless_combo/spec_brushless_combo.yaml`). It is 10 mm longer than a 3650 motor. The motor window is therefore 10 mm longer than the window of the T410R plate (23.47 × 53.27 mm).
+
+| Property | Value |
+|:---|:---|
+| Motor window (width × length) | 23.47 × 63.27 mm |
+| Position of the window (x) | 16.59 to 40.06 mm |
+| Position of the window (y) | 65.63 to 128.90 mm |
+| Corner radius of the window | 3.0 mm |
+
+* The window is extended only toward the end with the holes H34 to H36 (+y). The end edge at y = 65.63 mm is at the position of the T410R plate.
+* Distance between the window and the countersink of hole H16 (Ø6.2 mm, bottom face): 23.3 mm. The countersinks of the holes H07, H09, H10 and H13 are closer to the window; their distances are the same as on the T410R plate.
+* The preview image above shows the end of the shorter window as a red dashed line.
+
+### Measurement basis and test print
+* **Source:** the hole pattern, the countersinks, the slot and both narrow ends were taken from photos of the chassis plate of the T410R and scaled to caliper measurements: x by 1.00522 (width of the main section 99.98 mm), y by 1.00609 (distance between the holes H11 and H23 145.82 mm).
+* **Holes:** through holes Ø3.2 mm, the clearance hole for M3 screws (measured on the original part: 3.18 mm). Two marks on the surface of the original part are not holes and are not modelled.
+* **Test print:** a test print of the T410R plate (two halves with dovetails, home 3D printer) fitted the car: the holes at both ends align with the mounting points. This confirms the hole positions and the overall length of 325.6 mm (a ruler reading of 324 mm was too short). The wide section is not part of this test print.
+* **Thickness:** the model has 2.0 mm. The chassis plate of the car measures 2.03 mm (the value of 2.25 mm in the chassis specification was wrong and is corrected in `specs/mechanics/carten_t410r/spec_cartent410r.yaml`). For manufacturing, the thickness is given by the sheet that is used.
 
 ### Print template
-Both speedrun chassis plates have a 1:1 template on two A4 pages in landscape format. The templates are used to check the hole positions against the actual part.
+The 1:1 template `chassis_plate_T410R_speedrun_wide_motor10_1to1_A4x2_print97.pdf` (two A4 pages, landscape) is used to check the hole positions against the actual part.
 
-| File | Directory | Window (solid line) | Green dashed line |
-|:---|:---|:---|:---|
-| `chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf` | `/chassis/chassis_plate_speedrun_wide` | Window 23.47 × 53.27 mm | Longer motor window (see [longer motor window for a 3660 motor](#longer-motor-window-for-a-3660-motor)) |
-| `chassis_plate_T410R_speedrun_wide_motor10_1to1_A4x2_print97.pdf` | `/chassis/chassis_plate_speedrun_wide_motor10` | Longer motor window 23.47 × 63.27 mm | End of the previous window |
-
-* **Scale:** The drawing is pre-scaled to 103.09 % (100/97) for a PDF viewer that prints at 97 %. Printed at 97 %, the drawing is 1:1. Printed at 100 % ("actual size"), it is 3.1 % too large. This differs from the templates of the chassis plate, which are printed at 100 %.
+* **Scale:** The drawing is pre-scaled to 103.09 % (100/97) for a PDF viewer that prints at 97 %. Printed at 97 %, the drawing is 1:1. Printed at 100 % ("actual size"), it is 3.1 % too large.
 * **Scale check:** Each page has a 100 mm bar in x and a 100 mm bar in y. Both bars must measure 100 mm before the template is used. After joining the pages, the distance between the centres of the holes H11 and H23 is 145.82 mm.
 * **Joining:** Page 2 is laid over page 1 so that the two blue dashed lines of the 20 mm overlap zone coincide. The holes H16 to H20 are shown on both pages.
 * **Orientation:** The template shows the top view (side without countersinks). The part is placed with the countersinks facing down.
-* **Content:** Outline, window and slot (black), through holes Ø3.2 mm with centre cross (red), countersinks Ø6.2 mm on the bottom face (dashed), outline of the chassis plate (grey, dashed) and the other motor window (green, dashed, see table).
-* The positions on both PDF files were checked on raster images with 600 dpi. All 36 holes deviate by less than 0.06 mm from the geometry data. The window ends of the template with the longer motor window deviate by less than 0.05 mm.
-* The templates are generated with `scripts/cad/generate_print_template.py` (option `--plate wide` or `--plate motor10`). For a PDF viewer with another print scale, the option `--print-scale` generates a matching template (see [scripts](#scripts)).
+* **Content:** Outline, motor window and slot (black), through holes Ø3.2 mm with centre cross (red), countersinks Ø6.2 mm on the bottom face (dashed), the narrow outline of the T410R plate (grey, dashed) and the end of the shorter window (green, dashed).
+* The positions were checked on raster images with 600 dpi: all 36 holes deviate by less than 0.06 mm from the geometry data, the window ends by less than 0.05 mm.
+* The template is generated with `scripts/cad/generate_print_template.py --plate motor10`. For a PDF viewer with another print scale, the option `--print-scale` generates a matching template (see [scripts](#scripts)).
 
-### Longer motor window for a 3660 motor
-* **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** Variant of the speedrun chassis plate (wide) with a motor window that is 10 mm longer. The window is lengthened to fit a 3660 motor. The motor of the car (Hobbywing 3660SL G2) has a diameter of 36 mm and a length of 60 mm (`specs/electronics/brushless_combo/spec_brushless_combo.yaml`) and is 10 mm longer than a 3650 motor.
-* **Status:** $\color{green}\checkmark$ Verified. The hole pattern is also confirmed by the [test print](#measurement-basis-and-test-print) of the chassis plate.
-
-![Top view of the wide chassis plate with the longer motor window and hole labels](../photos/cad_chassis_speedrun_wide_motor10_preview.png)
-
-| Property | Speedrun chassis plate (wide) | Longer motor window |
-|:---|:---|:---|
-| Motor window (width × length) | 23.47 × 53.27 mm | 23.47 × 63.27 mm |
-| Position of the window (x) | 16.59 to 40.06 mm | Identical |
-| Position of the window (y) | 65.63 to 118.90 mm | 65.63 to 128.90 mm |
-| Corner radius of the window | 3.0 mm | Identical |
-| Volume | 80.7 cm³ | 80.2 cm³ |
-
-* The window is extended only toward the end with the holes H34 to H36 (+y). The end edge at y = 65.63 mm is not moved.
-* The outline, the slot, the 36 holes with the countersinks and the thickness are identical to the speedrun chassis plate (wide).
-* The extension reduces the distance between the window and the countersink of hole H16 (Ø6.2 mm, bottom face) from 30.0 mm to 23.3 mm. The distances to the countersinks of the holes H07, H09, H10 and H13, which are closer to the window than H16, do not change.
-* The [print template](#print-template) of the speedrun chassis plate (wide) shows the longer window as a green dashed line. The print template of this variant shows the longer window as a solid line and the end of the previous window as a green dashed line.
+### Files and coordinate system of the speedrun chassis plate
+All files are stored in the directory `/chassis/chassis_plate_speedrun_wide_motor10`. The STEP, STL and DXF files are generated from the geometry data (see [scripts](#scripts)).
 
 | File | Format | Use |
 |:---|:---|:---|
 | `chassis_plate_T410R_speedrun_wide_motor10.step` | STEP (AP214) | Solid model for CAD programs (one solid) |
 | `chassis_plate_T410R_speedrun_wide_motor10.stl` | STL (binary) | Complete part as triangle mesh |
-| `chassis_plate_T410R_speedrun_wide_motor10.dxf` | DXF | 2D drawing for CNC manufacturing with the same layers as `chassis_plate_T410R.dxf` |
+| `chassis_plate_T410R_speedrun_wide_motor10.dxf` | DXF | 2D drawing for CNC manufacturing with the layers `OUTLINE`, `CUTOUT`, `HOLE_THROUGH` and `CSK_BOTTOM_INFO` (see [DXF generation](#dxf-generation)) |
 | `chassis_plate_speedrun_wide_motor10_geometry.json` | JSON | Geometry data: outline, cutouts, holes, thickness and countersink parameters |
 | `chassis_plate_T410R_speedrun_wide_motor10_1to1_A4x2_print97.pdf` | PDF (A4, 2 pages) | 1:1 template for a PDF viewer that prints at 97 % (see [print template](#print-template)) |
+| `chassis_plate_T410R_speedrun_wide_motor10_technical_drawing.pdf` | PDF (A3, 2 sheets) | Technical drawing, shown with its PNG sheets in [`readme.md`](chassis/chassis_plate_speedrun_wide_motor10/readme.md) of the directory |
 
-* All files are stored in the directory `/chassis/chassis_plate_speedrun_wide_motor10`. The preview image above (`photos/cad_chassis_speedrun_wide_motor10_preview.png`) shows the previous window as a red dashed line. The STEP, STL and DXF files are generated from the geometry data. All files and the preview image can be regenerated with scripts (see [scripts](#scripts)).
-* The geometry data is the geometry data of the speedrun chassis plate (wide) (`chassis_plate_speedrun_wide_geometry.json`) with the longer window. That file combines the outline of `chassis_plate_T410R_speedrun_wide.step` with the holes, cutouts and countersink parameters of `chassis_plate_geometry.json` and reproduces `chassis_plate_T410R_speedrun_wide.step` exactly.
+* Units are millimetres. All coordinates refer to the top view.
+* x = 0 is the centre line of the part.
+* y = 0 is the end edge with the 2 × 2 hole pattern (holes H01 to H04, End B).
+* z = 0 is the bottom face. The countersinks are located on the bottom face.
 
 ## Speedrun top brace
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
-* **Description:** New design of the top brace for the bulkheads of this project, in the same style as the bulkheads: straight lines and radii only. The original top brace (see [chassis plate and top brace](#chassis-plate-and-top-brace)) is kept unchanged.
-* **Status:** $\color{green}\checkmark$ Verified. The holes are taken from the original top brace, which is confirmed by its test print. The fit to the new bulkheads is also checked in the CAD model (see [fit to the bulkheads](#design-and-fit-of-the-speedrun-top-brace)). After the verification, the obsolete window at the end with B01 to B04 was closed. The holes, the outline and the fit to the bulkheads are not changed by this.
+* **Description:** Top brace for the bulkheads of this project, in the same style as the bulkheads: straight lines and radii only.
+* **Status:** $\color{green}\checkmark$ Verified. The holes are taken from the top brace of the T410R, whose hole positions and length (243.3 mm) are confirmed by a test print. The fit to the new bulkheads is also checked in the CAD model (see [fit to the bulkheads](#design-and-fit-of-the-speedrun-top-brace)). After the verification, the obsolete window at the end with B01 to B04 was closed. The holes, the outline and the fit to the bulkheads are not changed by this.
 
-![Top view of the speedrun top brace with the outline of the original top brace](../photos/cad_top_brace_speedrun_drawing.png)
+![Top view of the speedrun top brace (dashed: outline of the T410R top brace)](../photos/cad_top_brace_speedrun_drawing.png)
 
 The assembly with the chassis plate and the bulkheads is shown in the section [speedrun chassis](#speedrun-chassis).
 
 ### Design and fit of the speedrun top brace
-| Feature | Original top brace | Speedrun top brace |
-|:---|:---|:---|
-| Holes | 15 holes Ø3.2 mm (B01 to B15) | 13 holes, positions unchanged. B05 and B06 in the middle part are closed. |
-| Ends | 32.7 to 38.0 mm wide, with a notch in the middle of each end | 34.48 mm wide (same as the bulkheads, flush with their sides), flat end edges, corner radius 4 mm |
-| Middle part | Bar 15.09 mm wide with a short slot (3.2 x 17.5 mm) and a long slot (3.2 x 88.2 mm) | Solid bar 15.09 mm wide |
-| Transitions | Approx. 42 degrees (end with B01 to B04) and 29 degrees (end with B07 to B15) to the y axis | 30 degrees on both ends, fillets 3 mm |
-| Cutout at the end with B01 to B04 | Hexagon | None: the cutout is obsolete and closed |
-| Cutout at the end with B07 to B15 | Obround 27.0 x 9.3 mm | Unchanged |
-| Edges | Sharp edges | Edge chamfers 0.5 mm on both faces (outline and obround), chamfers 0.3 mm on the holes, as the bulkheads and the shock towers |
-| Size | 38.0 x 243.3 x 2.0 mm | 34.48 x 243.3 x 2.0 mm |
-| Volume | 7.84 cm³ | 8.78 cm³ |
-| Mass | 12.5 g in carbon (1.6 g/cm³) | 14.0 g in carbon, 24.7 g in 7075 (2.81 g/cm³) |
+| Feature | Speedrun top brace |
+|:---|:---|
+| Holes | 13 holes Ø3.2 mm (B01 to B04, B07 to B15) at the positions of the T410R top brace |
+| Ends | 34.48 mm wide (same as the bulkheads, flush with their sides), flat end edges, corner radius 4 mm |
+| Middle part | Solid bar 15.09 mm wide |
+| Transitions | 30 degrees on both ends, fillets 3 mm |
+| Cutout at the end with B01 to B04 | None |
+| Cutout at the end with B07 to B15 | Obround 27.0 x 9.3 mm (area of the spur gear) |
+| Edges | Edge chamfers 0.5 mm on both faces (outline and obround), chamfers 0.3 mm on the holes, as the bulkheads and the shock towers |
+| Size | 34.48 x 243.3 x 2.0 mm |
+| Volume | 8.78 cm³ |
+| Mass | 14.0 g in carbon (1.6 g/cm³), 24.7 g in 7075 (2.81 g/cm³) |
 
-* The notches at the ends of the original top brace most likely clear the raised rib on top of the original upper bulkhead. The upper bulkhead of this project has a flat contact face there. The speedrun top brace therefore fits only the bulkheads of this project. With the original bulkheads, the original top brace is used.
-* The new outline lies within the outline of the original top brace, except at the ends: the closed notches and the wider ends (222 mm² in total) lie on the contact faces of the bulkheads. Outside the contact faces, the new outline does not exceed the original outline (0 mm², checked by the script).
-* The obround is kept unchanged, because it lies in the area of the spur gear.
-* The closed holes and slots make the middle part stiffer. The manual (step 25) shows a part with a screw M3x6 in the middle part of the top brace. It has no mounting hole on the speedrun top brace.
+* The ends lie on the flat contact faces of the upper bulkheads of this project. The speedrun top brace fits only these bulkheads.
+* Outside the contact faces of the bulkheads, the outline lies within the outline of the T410R top brace (0 mm² outside, checked by the script).
+* The solid middle part without slots is stiff. The manual (step 25) shows a part with a screw M3x6 in the middle part of the top brace. It has no mounting hole on the speedrun top brace.
 
 **Fit to the bulkheads**
 
@@ -358,13 +272,13 @@ All files are stored in the directory `/chassis/top_brace_speedrun`. They are ge
 | `top_brace_speedrun_geometry.json` | JSON | Geometry data: outline, cutouts, holes, thickness |
 | `top_brace_speedrun_hole_table.csv` | CSV | Hole coordinates (x, y) and diameter |
 
-* The coordinate system is the same as for the original top brace: x = 0 centre line, y = 0 end edge with B01 to B04.
+* Coordinate system: x = 0 centre line, y = 0 end edge with B01 to B04.
 * The design values (bar width, corner radii, angle of the transitions, chamfers) are defined at the top of the script.
 
 **Open points of the speedrun top brace**
 
-* **Spacing B01 to B02:** 26.10 mm in the geometry data of the original top brace, 25.65 mm between B14 and B15 and 25.6 mm between the top brace screws of the original upper bulkhead (U7). Both bulkheads are the same part, so both ends of the top brace should have the same spacing. With a hole of 3.2 mm, a screw M3 has approx. 0.1 mm radial clearance, so an offset of 0.25 mm per side can block the screws. The verification of the speedrun top brace shows that the screws fit. A measurement of the spacing B01 to B02 on the carbon top brace can still confirm the value of the geometry data.
-* Function of the part (manual step 25) in the middle part of the original top brace.
+* **Spacing B01 to B02:** 26.10 mm in the geometry data (taken from the T410R top brace), 25.65 mm between B14 and B15 and 25.6 mm between the top brace screws of the original upper bulkhead (U7). Both bulkheads are the same part, so both ends of the top brace should have the same spacing. With a hole of 3.2 mm, a screw M3 has approx. 0.1 mm radial clearance, so an offset of 0.25 mm per side can block the screws. The verification of the speedrun top brace shows that the screws fit. A measurement of the spacing B01 to B02 on the carbon top brace can still confirm the value of the geometry data.
+* Function of the part with the screw M3x6 in the middle part of the top brace (manual step 25).
 
 ## Lower bulkhead
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -545,7 +459,7 @@ Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The insid
 * The interference of the lower and the upper part, and of all parts of the speedrun chassis, is 0 mm³. The top brace fits the upper bulkheads unchanged.
 
 ### Open points of the lower bulkhead
-* **Chassis plate:** the bottom holes of the original bulkhead are 28.0 x 20.0 mm apart. The chassis plate and the speedrun chassis plates have 28.17 x 20.22 mm (H03 to H06) and 28.13 x 20.19 mm (H28 to H31). Countersunk screws center themselves in the countersinks, so the difference of approx. 0.1 mm per hole is not compensated by clearance. The hole spacings of the carbon chassis plate are to be measured before the aluminium plate is ordered.
+* **Chassis plate:** the bottom holes of the original bulkhead are 28.0 x 20.0 mm apart. The speedrun chassis plate has 28.17 x 20.22 mm (H03 to H06) and 28.13 x 20.19 mm (H28 to H31), as the chassis plate of the T410R. Countersunk screws center themselves in the countersinks, so the difference of approx. 0.1 mm per hole is not compensated by clearance. The hole spacings of the carbon chassis plate are to be measured before the aluminium plate is ordered.
 * Open caliper values of the measurement sheet (nos. 21, 26, 30 to 36, 38 to 41).
 * The value 22 (5 mm) is interpreted as the height of the end faces of the contact block, and the value 25 (4.35 mm) as the thickness of the sway bar tabs with the top face in the parting face.
 * Width over the outer faces of the diff bearing walls: 34.48 mm in the model, 34.2 mm measured (no. 10).
@@ -1176,20 +1090,18 @@ All files are stored in the directory `/running_gear` and are generated with `ge
 * Wheels are not modelled.
 
 ## Scripts
-The directory `scripts/cad` contains the Python scripts that generate the files of the chassis plates and the bulkheads. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plates read and write the files of the speedrun chassis plates (except `generate_chassis_templates.py`, which writes the templates of the chassis plate and the top brace), and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
+The directory `scripts/cad` contains the Python scripts that generate the CAD files. The scripts are run from the root directory of the repository. Without arguments, the scripts of the chassis plate read and write the files of the speedrun chassis plate, and the scripts of the bulkhead read and write the files of the lower bulkhead and the upper bulkhead. The option `--help` lists the arguments of each script. The required packages are installed with `pip install cadquery ezdxf matplotlib reportlab`.
 
 | Script | Input | Output | Package |
 |:---|:---|:---|:---|
-| `geometry_from_step.py` | STEP file of the speedrun chassis plate (wide), geometry data of the chassis plate | Geometry data of the speedrun chassis plate (wide). The option `--check` compares the rebuilt solid with the STEP file. | cadquery |
-| `lengthen_motor_window.py` | Geometry data of the speedrun chassis plate (wide) | Geometry data with the motor window 10 mm longer toward End A (option `--length`) | None |
+| `geometry_from_step.py` | Source data: STEP file of the first wide plate without the longer window (`/chassis/chassis_plate_speedrun_wide`), geometry data of the T410R plate (`/chassis/chassis_plate`) | Geometry data of the first wide plate: its outline with the holes, cutouts and countersinks of the T410R plate. The option `--check` compares the rebuilt solid with the STEP file. | cadquery |
+| `lengthen_motor_window.py` | Geometry data of the first wide plate | Geometry data of the speedrun chassis plate: motor window 10 mm longer toward End A (option `--length`) | None |
 | `generate_solid.py` | Geometry data | STEP and STL file. Helper module: plates with edge chamfers and hole chamfers (speedrun top brace, speedrun shock towers) | cadquery |
 | `generate_dxf.py` | Geometry data | DXF file (see [DXF generation](#dxf-generation)) | ezdxf |
-| `check_motor_window.py` | STEP files and geometry data of both speedrun chassis plates | Check results: solid, volume, section through the window, holes, distances to the countersinks | cadquery |
-| `generate_drawing.py` | Geometry data of the speedrun chassis plate (wide) and the chassis plate | Drawing `photos/cad_chassis_speedrun_wide_drawing.png` | matplotlib |
-| `generate_window_preview.py` | Geometry data of both speedrun chassis plates | Preview image `photos/cad_chassis_speedrun_wide_motor10_preview.png` | matplotlib |
-| `generate_print_template.py` | Geometry data of both speedrun chassis plates and the chassis plate | Print templates of both speedrun chassis plates (option `--plate wide` or `--plate motor10`). The option `--print-scale` sets the scale of the PDF viewer. | reportlab |
-| `generate_chassis_templates.py` | Geometry data of the chassis plate and the top brace | Print templates `chassis_plate_T410R_1to1_A3.pdf`, `chassis_plate_T410R_1to1_A4x2.pdf`, `top_brace_T410R_1to1_A4.pdf` and the drawing `photos/cad_chassis_drawing.png`. The options `--print-scale` and `--suffix` generate pre-scaled templates (for example `_print97`). | matplotlib, reportlab |
-| `generate_top_brace_speedrun.py` | Geometry data of the original top brace, parameter files of the bulkheads | All files of the speedrun top brace, drawing `photos/cad_top_brace_speedrun_drawing.png`, checks of the outline and of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
+| `check_motor_window.py` | STEP files and geometry data of the speedrun chassis plate and of the first wide plate | Check results: solid, volume, section through the window, holes, distances to the countersinks | cadquery |
+| `generate_window_preview.py` | Geometry data of the speedrun chassis plate and of the first wide plate | Preview image `photos/cad_chassis_speedrun_wide_motor10_preview.png` | matplotlib |
+| `generate_print_template.py` | Geometry data of the speedrun chassis plate, of the first wide plate and of the T410R plate | Print template of the speedrun chassis plate (option `--plate motor10`). The option `--print-scale` sets the scale of the PDF viewer. | reportlab |
+| `generate_top_brace_speedrun.py` | Geometry data of the T410R top brace (holes), parameter files of the bulkheads | All files of the speedrun top brace, drawing `photos/cad_top_brace_speedrun_drawing.png`, checks of the outline and of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
 | `generate_shock_towers.py` | Parameter files of the bulkheads and of the shock towers (option `--tower front`, `rear` or `all`) | All files of the speedrun front and rear shock tower, drawings `photos/cad_shock_tower_front_drawing.png` and `photos/cad_shock_tower_rear_drawing.png`, checks of the fit to the bulkheads | cadquery, ezdxf, matplotlib, reportlab |
 | `generate_pivot_blocks.py` | Parameter file of the pivot blocks, geometry data of the speedrun chassis plate, parameter files of the bulkheads | STEP and STL files of the pivot blocks, drawing `photos/cad_pivot_blocks_drawing.png`, checks of the mounting holes and of the clearance to the bulkheads | cadquery, matplotlib |
 | `generate_driveshaft.py` | Parameter file of the driveshaft, parameter files of the bulkheads, STEP file of the speedrun chassis plate | STEP and STL files of the centre driveshaft, cup joint, rear pinion shaft, spur gear, bearing, motor mount with cap and diff outdrive, drawings `photos/cad_driveshaft_drawing.png`, `photos/cad_differential_drawing.png` and the assembly pictures of the rear and the front drive `photos/cad_drive_line_assembly.png`, checks of the play and of the fit | cadquery, matplotlib |
@@ -1214,7 +1126,7 @@ The directory `scripts/cad` contains the Python scripts that generate the files 
 | `palette.py` | None | Helper module: colour scheme of the CAD pictures (blue and grey shades, one colour per group of parts), used by the picture scripts | – |
 
 ### Regenerating the files
-The following commands regenerate the files of the speedrun chassis plates in this order:
+The following commands regenerate the files of the speedrun chassis plate in this order:
 
 ```bash
 python scripts/cad/geometry_from_step.py --check
@@ -1222,21 +1134,12 @@ python scripts/cad/lengthen_motor_window.py
 python scripts/cad/generate_solid.py cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10
 python scripts/cad/generate_dxf.py cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.dxf
 python scripts/cad/check_motor_window.py
-python scripts/cad/generate_drawing.py
 python scripts/cad/generate_window_preview.py
-python scripts/cad/generate_print_template.py --plate wide
 python scripts/cad/generate_print_template.py --plate motor10
 ```
 
-The following command regenerates the print templates of the chassis plate and the top brace and the drawing `photos/cad_chassis_drawing.png` from their geometry data:
-
-```bash
-python scripts/cad/generate_chassis_templates.py
-python scripts/cad/generate_chassis_templates.py --print-scale 0.97 --suffix _print97
-```
-
 * The regenerated geometry data, STL files and images are identical to the files in the repository. The STEP, DXF and PDF files differ only in header data such as the creation date and internal IDs.
-* The STEP and STL files of the speedrun chassis plate (wide) are the source data and are not regenerated.
+* The STEP and STL files of the first wide plate (`/chassis/chassis_plate_speedrun_wide`) are source data and are not regenerated.
 
 Both generators of the bulkheads check the solid after each run:
 * **Enclosure check:** the intended openings (parting face, lip openings, end of the pinion seat, floor opening below the ring gear) are closed with plugs. The gear cavity must then be a closed void. If it is not, the part has an unwanted opening to the outside.
@@ -1270,17 +1173,15 @@ python scripts/cad/generate_technical_drawings.py
 ```
 
 ### DXF generation
-The script `scripts/cad/generate_dxf.py` generates a DXF file for CNC manufacturing from the geometry data (`*_geometry.json`). The geometry data and the DXF file of each part are stored in the same directory:
+The script `scripts/cad/generate_dxf.py` generates the DXF file of the speedrun chassis plate for CNC manufacturing from its geometry data (`*_geometry.json`, same directory):
 
 ```bash
-python scripts/cad/generate_dxf.py cad/chassis/chassis_plate/chassis_plate_geometry.json cad/chassis/chassis_plate/chassis_plate_T410R.dxf
-python scripts/cad/generate_dxf.py cad/chassis/top_brace/top_brace_geometry.json cad/chassis/top_brace/top_brace_T410R.dxf
 python scripts/cad/generate_dxf.py cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.dxf
 ```
 
-* The DXF file contains the layers `OUTLINE` (outer contour), `CUTOUT` (window and slots), `HOLE_THROUGH` (through holes Ø3.2 mm), `CSK_BOTTOM_INFO` (countersink diameter Ø6.2 mm on the bottom face, for information only) and `NOTES` (empty). The top brace has no countersinks, so its layer `CSK_BOTTOM_INFO` is empty.
-* For the three parts, the generated geometry is identical to the existing DXF files. Only the creation date and internal IDs of the files differ.
-* The speedrun chassis plate (wide) without the longer motor window has no DXF file. It can be generated from `chassis_plate_speedrun_wide_geometry.json` with the same script.
+* The DXF file contains the layers `OUTLINE` (outer contour), `CUTOUT` (motor window and slot), `HOLE_THROUGH` (through holes Ø3.2 mm), `CSK_BOTTOM_INFO` (countersink diameter Ø6.2 mm on the bottom face, for information only) and `NOTES` (empty).
+* The generated geometry is identical to the existing DXF file. Only the creation date and internal IDs of the file differ.
+* The DXF files of the speedrun top brace and the speedrun shock towers are written by their own generators.
 
 ## 3D printed parts
 All files are stored in the directory `/3d_print_fdm`.
