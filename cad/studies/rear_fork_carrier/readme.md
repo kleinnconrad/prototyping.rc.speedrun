@@ -99,8 +99,8 @@ Results of `generate_rear_fork_carrier_study.py`:
 | File | Content |
 |:---|:---|
 | `generate_rear_fork_carrier_study.py` | Script of the study: parts, checks, pictures, STEP and STL files |
-| `rear_wishbone_tongue_study_right.step`, `rear_wishbone_tongue_study_right.stl`, `rear_wishbone_tongue_study_left.step`, `rear_wishbone_tongue_study_left.stl` | Right and left rear wishbone of the study (A-frame, mirror images) in arm coordinates (as the wishbones in `cad/parts/wishbone`) |
-| `rear_hub_carrier_fork_study.step`, `rear_hub_carrier_fork_study.stl` | Rear hub carrier of the study, right side, in chassis plate coordinates (as the files in `cad/running_gear/rear_corner`); the left one is its mirror image |
+| `rear_wishbone_tongue_study_right.step`, `rear_wishbone_tongue_study_right.stl`, `rear_wishbone_tongue_study_left.step`, `rear_wishbone_tongue_study_left.stl` | Right and left rear wishbone of the study (A-frame, mirror images) in arm coordinates (as the wishbones in `cad/generic_parts/wishbone`) |
+| `rear_hub_carrier_fork_study.step`, `rear_hub_carrier_fork_study.stl` | Rear hub carrier of the study, right side, in chassis plate coordinates (as the files in `cad/generic_parts/rear_corner`); the left one is its mirror image |
 | `rear_fork_carrier_study_parts.step` | All study parts of both sides in chassis plate coordinates (wishbones, hub carriers, shims, pins) with the colours of the scheme |
 | `rear_fork_carrier_study.png` | Rear right corner of the build and of the study |
 | `rear_fork_carrier_study_section.png` | Sections at the axis of the outer hinge pin, build and study |

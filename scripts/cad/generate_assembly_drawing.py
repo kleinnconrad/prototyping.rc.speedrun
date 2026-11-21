@@ -43,7 +43,7 @@ from technical_drawing import View, text, linear, centre_line, centre_mark, view
 FOLDER = "cad/assembly"
 STEM = "speedrun_chassis_T410R"
 STEP = f"{FOLDER}/{STEM}.step"
-PARAMS = "cad/running_gear/running_gear_parameters.json"
+PARAMS = "cad/generic_parts/running_gear_parameters.json"
 NUMBER = "AS"
 SCALE = 0.5
 MEASURED_TRACK = 173.7          # outer face to outer face of the hex hubs, front and rear (owner, original car)

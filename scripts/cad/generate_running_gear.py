@@ -5,7 +5,7 @@ hub carriers), axles with hex hubs, CVD drive shafts, steering (posts, bellcrank
 rigid bridge, steering links, servo link), servo across the car with the horn facing forward in
 the floating servo mount, dampers and sway bars (trapezoid with ball ends and drop links as the T410R). The design
 follows the principle of the T410R and deviates from it where the function requires. All values
-with their source: cad/running_gear/running_gear_parameters.json.
+with their source: cad/generic_parts/running_gear_parameters.json.
 
 Placement (chassis plate coordinates): ride height 10 mm front (setup sheet 4); rear axle height from the hub carrier
 with the wishbones horizontal (ride height 10.3 mm in the model, setup sheet 4: 15 mm), rear
@@ -38,17 +38,19 @@ from generate_bulkhead_lower import box, cyl_x, cyl_y, cyl_z, load_params  # noq
 from generate_top_brace_speedrun import BULKHEAD_Y  # noqa: E402
 import generate_camber_links as CL  # noqa: E402
 import generate_wishbones as W  # noqa: E402
+import edge_treatment as ET  # noqa: E402
 import palette as P  # noqa: E402
 
-PARAMS = "cad/running_gear/running_gear_parameters.json"
-DRIVE = "cad/parts/driveshaft/driveshaft_parameters.json"
-LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
-UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
-OUT = "cad/running_gear"
+PARAMS = "cad/generic_parts/running_gear_parameters.json"
+DRIVE = "cad/generic_parts/driveshaft/driveshaft_parameters.json"
+LOWER = "cad/speedrun_parts/bulkhead/bulkhead_lower_parameters.json"
+UPPER = "cad/speedrun_parts/bulkhead/bulkhead_upper_parameters.json"
+OUT = "cad/generic_parts"
 DRAWING = "photos/cad_running_gear_drawing.png"
 PLATE_T = 2.0
 TAP = 2.5                                                    # tap drill M3
 AXIS_Z = PLATE_T + 17.2                                      # diff axes
+EDGE_REPORT = {}                                             # edge treatment of the printed parts (name -> report)
 
 
 def grub_boss_depth(p):
@@ -323,16 +325,20 @@ def front_corner(p, d, c):
     # (caster angle), 0.1 above the lower end of the lower guide sleeve: the sleeve stands 0.1 proud, so the head of
     # the screw bears only on the sleeve (owner); the tube on the outer hinge pin stays complete. The top face of the
     # upper arm (zf) lies 0.1 below the upper end of the top sleeve (owner) for the same reason (ball stud)
-    body = fuse(box(bx0, O[0], yc - w_low / 2, yc + w_low / 2, O[2] - 6.0, J[2] - 5.0),
+    # lower arm up to 3.0 beyond the axis of the outer hinge pin: its end face meets the tube at 146 deg and is at
+    # least 1.5 high below the face toward the lower boss (no sliver face for the edge treatment)
+    body = fuse(box(bx0, O[0] + 3.0, yc - w_low / 2, yc + w_low / 2, O[2] - 6.0, J[2] - 5.0),
                 box(bx0, bx1, yc - w_low / 2, yc + w_low / 2, O[2] - 6.0, z_w + 0.5),
                 K(box(bx0 - J[0], bx1 - J[0], -w_back / 2, w_back / 2, -20.0, zf)).intersect(
                     box(bx0 - 1.0, bx1 + 1.0, yc - 30.0, yc + 30.0, z_w, J[2] + 30.0)),
-                K(box(bx0 - J[0], 3.5, -w_arm / 2, w_arm / 2, 0.0, zf)))
+                K(box(bx0 - J[0], r_sf + 1.0, -w_arm / 2, w_arm / 2, 0.0, zf)))      # wall 1.0 around the counterbore
     z_bot = zl0 + proud                                                                   # bottom face (local z)
     body = body.cut(K(box(-60.0, 60.0, -60.0, 60.0, -80.0, z_bot)))                       # bottom face: caster angle
     hub = fuse(cyl_y(3.6, yc - 6.5, yc + 6.5, O[0], O[2]), body)
-    space = K(box(xb, 30, -30, 30, kz0 - gap, zu)).cut(cyl_y(3.6, yc - 6.5, yc + 6.5, O[0], O[2]))
-    hub = hub.cut(space)                                                                  # space of the knuckle (tube stays)
+    # space of the knuckle; it also trims the top of the tube on the hinge pin where the tube reaches above the face
+    # toward the lower boss (up to approx. 0.2 at the inner end, the face is square to the kingpin axis): no sliver
+    space = K(box(xb, 30, -30, 30, kz0 - gap, zu))
+    hub = hub.cut(space)
     hub = hub.cut(K(fuse(cyl_z(rs, zu - 0.1, kz1 + gap, 0, 0), box(0, 30, -rs, rs, zu - 0.1, kz1 + gap))))  # U-slot
     zg = grub_boss_depth(p)                                                               # boss of the grub screw M3x4
     hub = fuse(hub, cyl_z(p["grub_screw_boss"][2] / 2, O[2] - zg, O[2] - 1.0, O[0], yc))
@@ -348,6 +354,12 @@ def front_corner(p, d, c):
     hub = hub.cut(K(cyl_z(r_sf, zl1 - 0.05, kz0 - gap + 1.0, 0, 0)))                       # counterbore, lower foot
     hub = hub.cut(K(cyl_z(r_sf, kz1 + gap - 1.0, kz1 + t_fl + 0.05, 0, 0)))                 # counterbore, upper foot
     hub = hub.cut(cyl_z(TAP / 2, O[2] - zg - 1, O[2], O[0], yc))                          # thread M3, grub screw
+    # edge treatment (owner): chamfers on the sharp outer edges, radii in the sharp inner corners; the counterbores of
+    # the guide sleeve feet (thrust faces) stay sharp, their open edges get the entry chamfer
+    e_ch, e_r, e_ang = p["edge_treatment"]
+    keep = [K(cyl_z(r_sf + 0.05, zl1 - 0.3, kz0 - gap - 0.05, 0, 0)),
+            K(cyl_z(r_sf + 0.05, kz1 + gap + 0.05, kz1 + t_fl + 0.3, 0, 0))]
+    hub, EDGE_REPORT["C-hub"] = ET.treat(hub, e_ch, e_r, keep, e_ang)
     # knuckle (kingpin frame) as the T410R knuckle (measured by the owner, manual step 15): ring for 2 bearings
     # 5x10x4 from the kingpin axis outward, pressed in from both ends against a lip; from the inner end a wider
     # bore around the joint cup up to the inner bearing; kingpin bosses above and below the inner end of the ring
@@ -416,7 +428,7 @@ def front_corner(p, d, c):
     kb = J + R @ kb_l
     c["kb"] = kb
     hinge = cyl_y(1.5, yc - 13, yc + 13, O[0], O[2])
-    parts = {"C-hub": ("upright", hub.clean()), "steering knuckle": ("upright", K(knu.clean())), "kingpins": ("axle", pins),
+    parts = {"C-hub": ("upright", hub), "steering knuckle": ("upright", K(knu.clean())), "kingpins": ("axle", pins),
              "guide sleeves": ("axle", sleeves), "outer hinge pin 3x26": ("axle", hinge)}
     parts.update(axle_group(p, d, J, np.array([1.0, 0, 0]), (J[0] + xl0 - 4.0, J[0] + xl1), J[0] + xr1 + 0.5,
                             p["hex_hub"][1], shoulder=J[0] + xl0 - 4.1, cup_end=J[0] + xs0 - 0.2))    # bearings on the lip
@@ -505,7 +517,9 @@ def rear_corner(p, d, c):
     rt = t_d / 2
     rb, wb = 5.0, 4.0                                                                   # bearings 5x10x4
     xs = min(xc - 3.5, x0)                                                              # inner end of the seat
-    car = fuse(cyl_y(r_lug, -4.6, 4.6, 0, 0), box(-3.0, 3.0, -4.0, 4.0, 0, za - 5.0), cyl_x(rt, x0, x1, 0, za),
+    # column from the tube on the pin to the bearing tube: 1.0 inside the ends of both tubes (space for the edge
+    # treatment: radius 0.5 and chamfer 0.3 side by side)
+    car = fuse(cyl_y(r_lug, -4.6, 4.6, 0, 0), box(-2.6, 2.6, -3.6, 3.6, 0, za - 5.0), cyl_x(rt, x0, x1, 0, za),
                box(x0, x0 + w_web, -4.0, 4.0, za, zt), box(xs, x0 + w_web, -4.0, 4.0, zt - 3.5, zt))
     if xs < x0:                                                  # sloped arm from the inner end of the tube to the seat
         arm = [(x0 + 1.0, za + rt - 1.0), (x0 + w_web, za + rt - 1.0), (x0 + w_web, zt - 3.4), (xs, zt - 3.4)]
@@ -515,13 +529,16 @@ def rear_corner(p, d, c):
     car = car.cut(cyl_y(pin_bore / 2, -6, 6, 0, 0))                                       # bore of the hinge pin
     car = car.cut(cyl_x(rb, x0 - 1, x0 + wb, 0, za)).cut(cyl_x(rb, x1 - wb, x1 + 1, 0, za))       # bearing seats
     car = car.cut(cyl_x(rb - lip_h, x0 - 1, x1 + 1, 0, za))                                       # lip between them
-    car = car.cut(cyl_z(TAP / 2, zt - 4.5, zt + 1, xc, 0))                                 # thread M3, camber stud
+    car = car.cut(cyl_z(TAP / 2, zt - 6.0, zt + 1, xc, 0))                                 # thread M3, camber stud (through)
     car = car.cut(cyl_z(TAP / 2, -zg - 1, 0, 0, 0))                                       # thread M3, grub screw
+    e_ch, e_r, e_ang = p["edge_treatment"]                                                # edge treatment (owner)
+    keep = [cyl_x(rb + 0.05, x0 + 0.05, x1 - 0.05, 0, za)]                                # bearing seats and lip sharp
+    car, EDGE_REPORT["hub carrier"] = ET.treat(car, e_ch, e_r, keep, e_ang)
     spacers = cq.Compound.makeCompound([cyl_y(3.5, s0, s0 + 3.0, 0, 0).cut(cyl_y(1.5, s0 - 1, s0 + 4, 0, 0))
                                         for s0 in (4.7, -7.7)])
     hinge = cyl_y(1.5, -13, 13, 0, 0)
     to_w = lambda s: place(s, R, O)
-    parts = {"hub carrier": ("upright", to_w(car.clean())), "spacers 3x7x3": ("axle", to_w(spacers)),
+    parts = {"hub carrier": ("upright", to_w(car)), "spacers 3x7x3": ("axle", to_w(spacers)),
              "outer hinge pin 3x26": ("axle", to_w(hinge))}
     j = x0 - 5.0                                                     # joint cup 1.0 before the inner bearing
     ag = axle_group(p, d, np.array([j, 0, 0]), np.array([1.0, 0, 0]), (x0, x1 - 4.0), x1 + 0.5, p["hex_hub"][2])
@@ -1180,6 +1197,8 @@ def main():
     print("  steering:", {k: (v.round(2) if hasattr(v, "round") else (v if isinstance(v, dict) else round(v, 2))) for k, v in steering.info.items()})
     invalid = [n for n, _, s in parts if not s.isValid()]
     print("  invalid solids:", invalid)
+    for n, rep in EDGE_REPORT.items():
+        print(f"  edge treatment {n}:", rep)
     stems = write_files(parts)
     print(f"  wrote {len(stems)} parts to {OUT}: " + ", ".join(stems))
     import generate_speedrun_assembly as A

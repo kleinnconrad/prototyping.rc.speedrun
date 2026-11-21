@@ -74,7 +74,7 @@ One battery and one ESC per motor; both ESCs get the same throttle signal. Pictu
 * The motors, the pinions (face width, hub) and the gaps are simple bodies or assumptions.
 
 ## Technical drawings
-Technical drawings of the 2 parts of the study for a later order (A3, first angle projection; the STEP file is the master geometry, dimensions that are not shown are taken from the model). The views are projected from the STEP files, the hole table is read from them. The cap of the mount is unchanged: drawing in [`cad/parts/motor_mount`](../../parts/motor_mount/readme.md).
+Technical drawings of the 2 parts of the study for a later order (A3, first angle projection; the STEP file is the master geometry, dimensions that are not shown are taken from the model). The views are projected from the STEP files, the hole table is read from them. The cap of the mount is unchanged: drawing in [`cad/generic_parts/motor_mount`](../../generic_parts/motor_mount/readme.md).
 
 **Dual motor mount (study)**, EN AW-7075-T6, scale 2:1. Sheet 1: views, main dimensions, callouts of the U-notch and the long holes, labels of the holes. Sheet 2: hole table (threads M3 from below for H09, H10 and H37, threads M3 from above for the screws of the cap) and notes.
 

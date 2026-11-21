@@ -24,7 +24,7 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Circle
 from matplotlib.patches import Polygon as MPoly
 
-CAD = "cad/chassis"
+CAD = "cad/speedrun_parts/chassis"
 FILL, EDGE, CSK, LABEL = "#3c4046", "#1b1b1b", "#6e99cc", "#ff8c00"     # CSK: light blue (palette "upper")
 
 

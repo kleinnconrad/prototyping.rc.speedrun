@@ -15,11 +15,11 @@ Usage (from the root directory of the repository):
 
 --plate wide (default): speedrun chassis plate (wide). The green dashed line
 shows the longer motor window. Output:
-cad/chassis/chassis_plate_speedrun_wide/chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf
+cad/speedrun_parts/chassis/chassis_plate_speedrun_wide/chassis_plate_T410R_speedrun_wide_1to1_A4x2_print97.pdf
 
 --plate motor10: speedrun chassis plate (wide) with the longer motor window. The
 green dashed line shows the end of the previous motor window. Output:
-cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10_1to1_A4x2_print97.pdf
+cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10_1to1_A4x2_print97.pdf
 
 Use --output for another print scale.
 
@@ -33,7 +33,7 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
 
-CAD = "cad/chassis"
+CAD = "cad/speedrun_parts/chassis"
 MARGIN = 5.0                     # printed mm between page edge and drawing area
 ZONE = (150.0, 170.0)            # overlap zone (plate y), no holes inside
 TOP = 329.1                      # upper end of page 2 (plate y)

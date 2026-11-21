@@ -703,10 +703,10 @@ def enclosed_voids(body, plugs):
 
 def main():
     parser = argparse.ArgumentParser(description="Generate the lower bulkhead of the T410R.")
-    parser.add_argument("--params", default="cad/bulkhead/bulkhead_lower_parameters.json")
-    parser.add_argument("--out", default="cad/bulkhead/bulkhead_lower_T410R",
+    parser.add_argument("--params", default="cad/speedrun_parts/bulkhead/bulkhead_lower_parameters.json")
+    parser.add_argument("--out", default="cad/speedrun_parts/bulkhead/bulkhead_lower_T410R",
                         help="output path without extension (STEP and STL)")
-    parser.add_argument("--testprint", default="cad/bulkhead/testprint_bulkhead_lower.stl",
+    parser.add_argument("--testprint", default="cad/speedrun_parts/bulkhead/testprint_bulkhead_lower.stl",
                         help="output path of the test print STL")
     args = parser.parse_args()
 

@@ -11,7 +11,7 @@ Usage (from the root directory of the repository):
 
 Outputs:
     photos/cad_bulkhead_upper_preview.png
-    cad/bulkhead/bulkhead_upper_measurement_sheet.pdf
+    cad/speedrun_parts/bulkhead/bulkhead_upper_measurement_sheet.pdf
 
 Requires the packages cadquery and matplotlib.
 """
@@ -296,10 +296,10 @@ def sheet(path, photos):
 
 def main():
     parser = argparse.ArgumentParser(description="Preview and measurement sheet of the upper bulkhead.")
-    parser.add_argument("--lower-params", default="cad/bulkhead/bulkhead_lower_parameters.json")
-    parser.add_argument("--params", default="cad/bulkhead/bulkhead_upper_parameters.json")
+    parser.add_argument("--lower-params", default="cad/speedrun_parts/bulkhead/bulkhead_lower_parameters.json")
+    parser.add_argument("--params", default="cad/speedrun_parts/bulkhead/bulkhead_upper_parameters.json")
     parser.add_argument("--preview", default="photos/cad_bulkhead_upper_preview.png")
-    parser.add_argument("--sheet", default="cad/bulkhead/bulkhead_upper_measurement_sheet.pdf")
+    parser.add_argument("--sheet", default="cad/speedrun_parts/bulkhead/bulkhead_upper_measurement_sheet.pdf")
     args = parser.parse_args()
 
     lp = load_params(args.lower_params)

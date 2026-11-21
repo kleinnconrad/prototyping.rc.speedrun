@@ -27,7 +27,7 @@ import cadquery as cq
 from OCP.BRepAdaptor import BRepAdaptor_Curve
 from OCP.GeomAbs import GeomAbs_Circle, GeomAbs_Line
 
-CAD = "cad/chassis"
+CAD = "cad/speedrun_parts/chassis"
 DEFAULT_STEP = f"{CAD}/chassis_plate_speedrun_wide/chassis_plate_T410R_speedrun_wide.step"
 DEFAULT_REFERENCE = f"{CAD}/chassis_plate/chassis_plate_geometry.json"
 DEFAULT_OUTPUT = f"{CAD}/chassis_plate_speedrun_wide/chassis_plate_speedrun_wide_geometry.json"

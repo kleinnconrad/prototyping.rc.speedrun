@@ -1,13 +1,13 @@
 """Generate the drawing and the 1:1 print templates of the chassis plate and the top brace.
 
-Outputs (from the geometry data in cad/chassis):
+Outputs (from the geometry data in cad/speedrun_parts/chassis):
 * photos/cad_chassis_drawing.png: top view of the chassis plate and the top brace with
   hole labels and main dimensions
-* cad/chassis/chassis_plate/chassis_plate_T410R_1to1_A3.pdf: 1:1 template of the chassis
+* cad/speedrun_parts/chassis/chassis_plate/chassis_plate_T410R_1to1_A3.pdf: 1:1 template of the chassis
   plate on one A3 page (portrait)
-* cad/chassis/chassis_plate/chassis_plate_T410R_1to1_A4x2.pdf: 1:1 template of the chassis
+* cad/speedrun_parts/chassis/chassis_plate/chassis_plate_T410R_1to1_A4x2.pdf: 1:1 template of the chassis
   plate on two A4 pages (portrait) with a 20 mm overlap zone
-* cad/chassis/top_brace/top_brace_T410R_1to1_A4.pdf: 1:1 template of the top brace on one
+* cad/speedrun_parts/chassis/top_brace/top_brace_T410R_1to1_A4.pdf: 1:1 template of the top brace on one
   A4 page (portrait)
 
 The templates are drawn for printing at 100 % ("actual size"). For a PDF viewer that prints
@@ -39,7 +39,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_drawing import contour_points, FILL, EDGE, CSK as CSK_PNG, LABEL  # noqa: E402
 from generate_print_template import contour_path, text, bar, RED, CSK, BLUE  # noqa: E402
 
-CAD = "cad/chassis"
+CAD = "cad/speedrun_parts/chassis"
 PLATE_JSON = f"{CAD}/chassis_plate/chassis_plate_geometry.json"
 BRACE_JSON = f"{CAD}/top_brace/top_brace_geometry.json"
 ZONE = (150.0, 170.0)            # overlap zone of the A4x2 template (plate y), no holes inside

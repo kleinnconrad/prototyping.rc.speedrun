@@ -12,7 +12,7 @@ for the measured value. The parts are the own design of the owner, partly based 
 Usage (from the root directory of the repository):
     python scripts/cad/generate_measurement_sheets.py
 
-Output: cad/parts/parts_measurement_sheet.pdf (A4). Requires cadquery and matplotlib.
+Output: cad/generic_parts/parts_measurement_sheet.pdf (A4). Requires cadquery and matplotlib.
 """
 import os
 import sys
@@ -30,8 +30,8 @@ from generate_bulkhead_lower import load_params  # noqa: E402
 from generate_wishbones import PARAMS as ARM_PARAMS, arm_solid, tess  # noqa: E402
 from mesh_views import draw_mesh, subdivide  # noqa: E402
 
-OUT = "cad/parts/parts_measurement_sheet.pdf"
-DRIVE = "cad/parts/driveshaft/driveshaft_parameters.json"
+OUT = "cad/generic_parts/parts_measurement_sheet.pdf"
+DRIVE = "cad/generic_parts/driveshaft/driveshaft_parameters.json"
 RED = "#b42318"
 A4 = (8.27, 11.69)
 

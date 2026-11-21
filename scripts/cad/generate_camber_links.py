@@ -34,10 +34,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_bulkhead_lower import box, cyl_x, cyl_y, cyl_z, load_params  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y  # noqa: E402
 
-PARAMS = "cad/parts/camber_link/camber_link_parameters.json"
-OUT = "cad/parts/camber_link"
-LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
-UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
+PARAMS = "cad/generic_parts/camber_link/camber_link_parameters.json"
+OUT = "cad/generic_parts/camber_link"
+LOWER = "cad/speedrun_parts/bulkhead/bulkhead_lower_parameters.json"
+UPPER = "cad/speedrun_parts/bulkhead/bulkhead_upper_parameters.json"
 PLATE_T = 2.0
 
 

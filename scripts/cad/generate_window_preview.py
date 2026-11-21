@@ -22,7 +22,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 
-CAD = "cad/chassis"
+CAD = "cad/speedrun_parts/chassis"
 
 
 def contour_points(prims, n=48):

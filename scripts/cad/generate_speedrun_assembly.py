@@ -63,9 +63,9 @@ from generate_front_splitter import car_parts_in_plate as front_splitter_in_plat
 from generate_battery_tray import car_parts_in_plate as battery_tray_in_plate  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
-PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
-LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
-UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
+PLATE_STEP = "cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
+LOWER = "cad/speedrun_parts/bulkhead/bulkhead_lower_parameters.json"
+UPPER = "cad/speedrun_parts/bulkhead/bulkhead_upper_parameters.json"
 OUT_STEP = "cad/assembly/speedrun_chassis_T410R.step"
 OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = dict(PARTS)                       # colour scheme of the CAD pictures: blue and grey (palette.py)
