@@ -40,10 +40,12 @@ import palette as P  # noqa: E402  (colour scheme of the CAD pictures)
 from generate_bulkhead_lower import box, cyl_y, cyl_z, load_params  # noqa: E402
 from generate_pivot_blocks import PARAMS as PIVOT, POSITIONS, PLATE_T, plate_holes  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y  # noqa: E402
+import edge_treatment as ET  # noqa: E402
 
 PARAMS = "cad/generic_parts/wishbone/wishbone_parameters.json"
 OUT = "cad/generic_parts/wishbone"
 DRAWING = "photos/cad_wishbones_drawing.png"
+EDGE_REPORT = {}                                    # edge chamfers of the arms (kind -> report of edge_treatment)
 PLATE_STEP = "cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
 KINDS = ("front", "rear")
 END_OF = {"front": "front", "rear": "rear"}       # front arms at End A (front), rear arms at End B (rear)
@@ -122,7 +124,14 @@ def arm_solid(p, kind):
     d_h, *xs_h = p[f"{kind}_web_holes"]                                                 # lightening holes in the web
     for x in xs_h:
         s = s.cut(cyl_z(d_h / 2, -h - 1, h + 1, x, 0))
-    return s.clean()
+    # edge chamfers (owner, 2026-11-21): chamfer on each sharp outer edge, no radii in the inner corners; the entries
+    # of the bore of the inner hinge pin are cut as countersinks (the kernel cannot chamfer them: seam of the bore)
+    ch = p["edge_chamfer"]
+    rp = p["pin_bore_d"] / 2
+    for sy in (1, -1):
+        s = s.cut(cq.Solid.makeCone(rp + ch + 0.01, rp, ch + 0.01, cq.Vector(0, sy * (half + 0.01), 0), cq.Vector(0, -sy, 0)))
+    s, EDGE_REPORT[kind] = ET.treat(s.clean(), ch, None)
+    return s
 
 
 def pin_solid(p):
@@ -366,6 +375,8 @@ def main():
     p, pp = load_params(PARAMS), load_params(PIVOT)
     solids = {k: arm_solid(p, k) for k in KINDS}
     files = [(f"wishbone_{k}_T410R", solids[k]) for k in KINDS] + [("hinge_pin_3x42", pin_solid(p))]
+    for k, rep in EDGE_REPORT.items():
+        print(f"edge chamfers {k} arm:", {key: rep[key] for key in rep if key != "deficit of the orders tried"})
     for stem, s in files:
         valid, bb, vol = s.isValid(), s.BoundingBox(), s.Volume()
         cq.exporters.export(cq.Workplane().add(s), f"{OUT}/{stem}.step")
