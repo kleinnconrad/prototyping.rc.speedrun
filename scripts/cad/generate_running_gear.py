@@ -334,7 +334,8 @@ def front_corner(p, d, c):
                 K(box(bx0 - J[0], r_sf + 1.0, -w_arm / 2, w_arm / 2, 0.0, zf)))      # wall 1.0 around the counterbore
     z_bot = zl0 + proud                                                                   # bottom face (local z)
     body = body.cut(K(box(-60.0, 60.0, -60.0, 60.0, -80.0, z_bot)))                       # bottom face: caster angle
-    hub = fuse(cyl_y(3.6, yc - 6.5, yc + 6.5, O[0], O[2]), body)
+    lug = p["front_c_hub_lug"] / 2                                                     # tube on the outer hinge pin
+    hub = fuse(cyl_y(3.6, yc - lug, yc + lug, O[0], O[2]), body)
     # space of the knuckle; it also trims the top of the tube on the hinge pin where the tube reaches above the face
     # toward the lower boss (up to approx. 0.2 at the inner end, the face is square to the kingpin axis): no sliver
     space = K(box(xb, 30, -30, 30, kz0 - gap, zu))
