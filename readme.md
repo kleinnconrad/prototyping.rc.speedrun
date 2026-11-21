@@ -89,7 +89,7 @@ Further own parts (own design, partly based on the T410R, not in the mass total)
 | Inner hinge pins of the wishbones (3x42) | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/wishbone` |
 | Camber links: turnbuckle M3x37 with rod ends and ball studs | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/camber_link` |
 | Front C-hubs with 10 degrees caster (right and left part) | 2 | $\color{red}\times$ Completely unqualified; kingpin bores 5 mm with guide sleeves (owner), 3D print verification planned | `cad/generic_parts/front_corner` |
-| Front steering knuckles | 2 | $\color{green}\checkmark$ Verified (3D print of the owner) | `cad/generic_parts/front_corner` |
+| Front steering knuckles | 2 | $\color{green}\checkmark$ Verified (3D print of the owner; edge treatment and small changes of the arm root and the gussets after the print) | `cad/generic_parts/front_corner` |
 | Rear hub carriers | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/rear_corner` |
 | Axles with joint cup, hex hubs 12 mm | 4 + 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/front_corner`, `cad/generic_parts/rear_corner` |
 | CVD drive shafts | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/cvd_drive_shafts` |

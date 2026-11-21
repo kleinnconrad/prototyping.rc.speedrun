@@ -99,6 +99,7 @@ def chassis_names(path="cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_m
 # ------------------------------------------------------------------ part definitions
 GENERAL_CNC = "ISO 2768-mK"
 EDGES_BREAK = "break 0.1 to 0.2"
+EDGES_TREATED = "chamfer 0.3, radius 0.5 (modelled)"     # edge treatment of the printed running gear parts
 
 
 def parts():
@@ -147,7 +148,7 @@ def parts():
                     step=f"c_hub_end_a_{name}.step", stem=f"c_hub_end_a_{name}",
                     title=f"Front C-hub, {name}", number="CH-R" if side > 0 else "CH-L", frame=(Rc, O_),
                     material="To be defined (3D print verification planned)", quantity="1", tol=GENERAL_CNC,
-                    edges=EDGES_BREAK, status="not verified",
+                    edges=EDGES_TREATED, status="not verified",
                     frame_note=f"Drawing frame: origin O on the axis of the outer hinge pin in the middle of the lug, axes as "
                                f"in the chassis plate coordinates (x across the car, y along the car, z up); the STEP file is "
                                f"in the assembly position: O = ({O_[0]:.2f}, {O_[1]:.3f}, {O_[2]:.2f}).",
@@ -255,7 +256,7 @@ def parts():
         dict(key="steering_knuckle", folder="cad/generic_parts/front_corner", step="steering_knuckle_end_a.step",
              stem="steering_knuckle_end_a", title="Front steering knuckle (same part on both sides)", number="SK",
              frame=(Rk, Jk), material="To be defined (original part: plastic)", quantity="2 (the left one turned upside down)",
-             tol=GENERAL_CNC, edges=EDGES_BREAK, status="verified (3D print)",
+             tol=GENERAL_CNC, edges=EDGES_TREATED, status="verified (3D print)",
              frame_note=f"Drawing frame: kingpin frame, origin O in the centre of the outer CVD joint (kingpin axis at the "
                         f"height of the axle), x along the axle (toward the wheel), z along the kingpin axis; the STEP file is "
                         f"in the assembly position (caster {rgp['caster']:g} deg): O = ({Jk[0]:.2f}, {Jk[1]:.3f}, {Jk[2]:.2f}).",
@@ -267,7 +268,9 @@ def parts():
                     "used on both sides (drawn: right side; on the left side it is turned upside down).",
                     "Bearing seats Ø10 for 2 bearings 5x10x4, pressed in from both ends against the lip: Ø10 K7 (proposal; "
                     "original part 9.98).", "Kingpin bores Ø2.7 in the bosses: thread formed by the set screws M3 (as the "
-                    "original part).", "Threads M3 in the steering arm for the ball stud of the steering link."]),
+                    "original part).", "Threads M3 in the steering arm for the ball stud of the steering link.",
+                    "Edges: chamfer 0.3 x 45 deg on the sharp outer edges, radius 0.5 in the sharp inner corners (in the "
+                    "STEP model); bearing seats and lip sharp."]),
         dict(key="front_splitter", folder="cad/speedrun_parts/front_splitter", step="front_splitter_one_piece_end_a.step",
              stem="front_splitter_one_piece_end_a", title="Speedrun front splitter (one part)", number="FS",
              frame=(np.eye(3), np.array([0.0, 317.982, 0.0])), material="Nylon PA12 (MJF 3D print)", density=1.01, density_txt="PA12",
