@@ -14,7 +14,7 @@ with a time limit (the kernel can crash or hang on some edge layouts); results w
 rejected (later operations on them fail), and the kept result must survive a STEP export and a tessellation. An edge
 that cannot be treated stays sharp and is reported. Results are cached in the temporary directory.
 
-Used by generate_running_gear.py (C-hub, steering knuckle, rear hub carrier). Requires cadquery (Linux: os.fork).
+Used by generate_running_gear.py (C-hub, rear hub carrier). Requires cadquery (Linux: os.fork).
 """
 import hashlib
 import io

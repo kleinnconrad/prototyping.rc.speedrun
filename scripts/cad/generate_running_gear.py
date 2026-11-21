@@ -373,18 +373,14 @@ def front_corner(p, d, c):
     bx_, by_ = kb_l[0], kb_l[1]
     h2 = np.array([bx_, by_ + d_hole2 * sg])                              # second hole, toward the ring
     ay0, yt = -1.0 * sg, h2[1] + 3.0 * sg                                 # root inside the ring, start of the tab
-    outline = [(xr0 + 1.0, ay0), (xr1 - 1.0, ay0), (bx_ + wt, yt), (bx_ + wt, by_), (bx_ - wt, by_), (bx_ - wt, yt),
-               (xr0 + 1.0, -8.5 * sg)]                # inner edge straight back near the kingpin: clear of the C-hub;
-    # 1.0 inside the ends of the ring (space for the edge treatment)
+    outline = [(xr0 + 0.3, ay0), (xr1 - 0.3, ay0), (bx_ + wt, yt), (bx_ + wt, by_), (bx_ - wt, by_), (bx_ - wt, yt),
+               (xr0 + 0.6, -8.5 * sg)]                # inner edge straight back near the kingpin: clear of the C-hub
     a0, a1 = z_arm - t_arm / 2, z_arm + t_arm / 2
     arm = fuse(prism_z(outline, a0, a1), cyl_z(wt, a0, a1, bx_, by_))
     zw = min(t_web / 2, math.sqrt(r_ring ** 2 - 1.0) - 0.1)
-    web = cq.Workplane("YZ").workplane(offset=xr0 + 1.0).polyline(                       # from the inner edge of the arm
-        [(ay0, z_arm - zw), (ay0, z_arm + zw), (-10.0 * sg, a1), (-10.0 * sg, a0)]).close().extrude(5.0).val()
+    web = cq.Workplane("YZ").workplane(offset=xr0).polyline(
+        [(ay0, z_arm - zw), (ay0, z_arm + zw), (-10.0 * sg, a1), (-10.0 * sg, a0)]).close().extrude(6.0).val()
     web = web.intersect(prism_z(outline, z_arm - t_web, z_arm + t_web))      # gussets at the bosses
-    wedge = cq.Workplane("XZ").polyline([(xr0 + 1.0, a0 - 6.0), (xr0 + 1.0, a1 + 6.0), (xr0 + 6.0, a1),
-                                         (xr0 + 6.0, a0)]).close().extrude(30.0, both=True).val()
-    web = web.intersect(wedge)                          # gussets end in a 45 deg slope onto the arm (no sliver face)
     knu = fuse(cyl_x(r_ring, xr0, xr1, 0, 0), cyl_z(r_boss, kz0, kz1, 0, 0), arm, web)
     knu = knu.cut(cyl_x(r_cup, -10.0, xs0, 0, 0))                                        # entry bore around the joint cup
     knu = knu.cut(cyl_x(d_seat / 2, xs0 - 0.1, xl0, 0, 0))                               # seat of the inner bearing
@@ -394,8 +390,6 @@ def front_corner(p, d, c):
     knu = knu.cut(cyl_z(d_kp / 2, kz0 - 1, -zb, 0, 0)).cut(cyl_z(d_kp / 2, zb, kz1 + 1, 0, 0))   # kingpin set screws
     for hx, hy in ((bx_, by_), tuple(h2)):
         knu = knu.cut(cyl_z(TAP / 2, a0 - 1, a1 + 1, hx, hy))                            # threads M3, ball stud
-    keep = [cyl_x(d_seat / 2 + 0.05, xs0 + 0.05, xr1 - 0.05, 0, 0)]                      # bearing seats and lip sharp
-    knu, EDGE_REPORT["steering knuckle"] = ET.treat(knu, e_ch, e_r, keep, e_ang)
     # kingpins, threaded into the bosses (bores 2.7, thread formed by the screw, as the original): top: the ball stud
     # 4.8x9 of the camber link (as the original, manual step 15) through the flanged guide sleeve, which it clamps to
     # the boss (the ball sits on the kingpin axis); bottom: socket head screw M3x8 from below through the second
@@ -434,7 +428,7 @@ def front_corner(p, d, c):
     kb = J + R @ kb_l
     c["kb"] = kb
     hinge = cyl_y(1.5, yc - 13, yc + 13, O[0], O[2])
-    parts = {"C-hub": ("upright", hub), "steering knuckle": ("upright", K(knu)), "kingpins": ("axle", pins),
+    parts = {"C-hub": ("upright", hub), "steering knuckle": ("upright", K(knu.clean())), "kingpins": ("axle", pins),
              "guide sleeves": ("axle", sleeves), "outer hinge pin 3x26": ("axle", hinge)}
     parts.update(axle_group(p, d, J, np.array([1.0, 0, 0]), (J[0] + xl0 - 4.0, J[0] + xl1), J[0] + xr1 + 0.5,
                             p["hex_hub"][1], shoulder=J[0] + xl0 - 4.1, cup_end=J[0] + xs0 - 0.2))    # bearings on the lip
