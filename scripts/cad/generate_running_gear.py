@@ -5,7 +5,7 @@ hub carriers), axles with hex hubs, CVD drive shafts, steering (posts, bellcrank
 rigid bridge, steering links, servo link), servo across the car with the horn facing forward in
 the floating servo mount, dampers and sway bars (trapezoid with ball ends and drop links as the T410R). The design
 follows the principle of the T410R and deviates from it where the function requires. All values
-with their source: cad/running_gear/running_gear_parameters.json.
+with their source: cad/generic_parts/running_gear_parameters.json.
 
 Placement (chassis plate coordinates): ride height 10 mm front (setup sheet 4); rear axle height from the hub carrier
 with the wishbones horizontal (ride height 10.3 mm in the model, setup sheet 4: 15 mm), rear
@@ -40,11 +40,11 @@ import generate_camber_links as CL  # noqa: E402
 import generate_wishbones as W  # noqa: E402
 import palette as P  # noqa: E402
 
-PARAMS = "cad/running_gear/running_gear_parameters.json"
-DRIVE = "cad/parts/driveshaft/driveshaft_parameters.json"
-LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
-UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
-OUT = "cad/running_gear"
+PARAMS = "cad/generic_parts/running_gear_parameters.json"
+DRIVE = "cad/generic_parts/driveshaft/driveshaft_parameters.json"
+LOWER = "cad/speedrun_parts/bulkhead/bulkhead_lower_parameters.json"
+UPPER = "cad/speedrun_parts/bulkhead/bulkhead_upper_parameters.json"
+OUT = "cad/generic_parts"
 DRAWING = "photos/cad_running_gear_drawing.png"
 PLATE_T = 2.0
 TAP = 2.5                                                    # tap drill M3

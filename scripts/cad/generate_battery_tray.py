@@ -11,13 +11,13 @@ Speedrun part, designed in this project. MJF 3D print in nylon PA12 (owner).
   slot beside the battery on each side and through a channel under the floor (wraps battery and floor). The slots
   and channels are wider than the strap, so it can be threaded easily.
 
-All values with their source: cad/battery_tray/battery_tray_parameters.json.
+All values with their source: cad/speedrun_parts/battery_tray/battery_tray_parameters.json.
 
 Usage (from the root directory of the repository):
     python scripts/cad/generate_battery_tray.py [--no-check]
 
 Outputs (chassis plate coordinates):
-* cad/battery_tray/battery_tray_speedrun.step and .stl (position in the car)
+* cad/speedrun_parts/battery_tray/battery_tray_speedrun.step and .stl (position in the car)
 * photos/cad_battery_tray_drawing.png: tray alone, tray with battery and straps in the car (top brace, steering,
   drive line), section across the car at a strap
 
@@ -40,10 +40,10 @@ import cadquery as cq
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_bulkhead_lower import box, cyl_z, load_params  # noqa: E402
 
-PARAMS = "cad/battery_tray/battery_tray_parameters.json"
-PLATE_GEOM = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
+PARAMS = "cad/speedrun_parts/battery_tray/battery_tray_parameters.json"
+PLATE_GEOM = "cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
 ASSEMBLY = "cad/assembly/speedrun_chassis_T410R.step"
-OUT = "cad/battery_tray/battery_tray_speedrun"
+OUT = "cad/speedrun_parts/battery_tray/battery_tray_speedrun"
 DRAWING = "photos/cad_battery_tray_drawing.png"
 PLATE_T = 2.0
 

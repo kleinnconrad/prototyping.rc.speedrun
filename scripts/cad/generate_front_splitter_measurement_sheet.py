@@ -12,7 +12,7 @@ values next to the measured value (an empty field is still open).
 Usage (from the root directory of the repository):
     python scripts/cad/generate_front_splitter_measurement_sheet.py
 
-Output: cad/front_splitter/front_splitter_measurement_sheet.pdf (A4).
+Output: cad/speedrun_parts/front_splitter/front_splitter_measurement_sheet.pdf (A4).
 Requires cadquery and matplotlib.
 """
 import math
@@ -33,7 +33,7 @@ import generate_front_splitter as F  # noqa: E402
 from generate_measurement_sheets import A4, RED, dimh, dimv, tag  # noqa: E402
 from mesh_views import draw_mesh, subdivide  # noqa: E402
 
-OUT = "cad/front_splitter/front_splitter_measurement_sheet.pdf"
+OUT = "cad/speedrun_parts/front_splitter/front_splitter_measurement_sheet.pdf"
 PLATE_END = F.PLATE_END                                      # front end of the chassis plate (y)
 SIDE = tuple(np.array(v) for v in ((-1.0, 0, 0), (0, 1.0, 0), (0, 0, 1.0)))     # view along -x: y right, z up
 COL = {"plate": (0.86, 0.87, 0.89), "part": (0.62, 0.65, 0.7), "post": (0.75, 0.3, 0.25)}

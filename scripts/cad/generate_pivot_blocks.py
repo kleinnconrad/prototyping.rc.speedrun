@@ -9,7 +9,7 @@ bulkheads can be checked.
 * short block: 3 pieces, inner block of the rear axle (H07/H08) and both blocks of the front
   axle (H26/H27, H32/H33)
 
-The dimensions are measurements of the owner (cad/parts/pivot_block/pivot_block_parameters.json).
+The dimensions are measurements of the owner (cad/generic_parts/pivot_block/pivot_block_parameters.json).
 The distances of the mounting holes are taken from the hole pattern of the speedrun chassis
 plate. Block coordinates: x along the block (across the car), y across the block (along the
 car), z = 0 bottom face.
@@ -36,11 +36,11 @@ from generate_bulkhead_lower import box, bulkhead_lower, cyl_y, cyl_z, load_para
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y  # noqa: E402
 
-PARAMS = "cad/parts/pivot_block/pivot_block_parameters.json"
-PLATE_GEOM = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
-LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
-UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
-OUT = "cad/parts/pivot_block"
+PARAMS = "cad/generic_parts/pivot_block/pivot_block_parameters.json"
+PLATE_GEOM = "cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
+LOWER = "cad/speedrun_parts/bulkhead/bulkhead_lower_parameters.json"
+UPPER = "cad/speedrun_parts/bulkhead/bulkhead_upper_parameters.json"
+OUT = "cad/generic_parts/pivot_block"
 DRAWING = "photos/cad_pivot_blocks_drawing.png"
 PLATE_T = 2.0
 # positions on the speedrun chassis plate: (name, kind, holes of the chassis plate, end of the car)

@@ -91,7 +91,7 @@ def csv_names(path, z=0.0):
         return [(r["id"], (float(r["x_mm"]), float(r["y_mm"]), z)) for r in csv.DictReader(f)]
 
 
-def chassis_names(path="cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"):
+def chassis_names(path="cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"):
     d = json.load(open(path))
     return [(h["id"], (h["x"], h["y"], 0.0)) for h in d["holes"]]
 
@@ -143,7 +143,7 @@ def parts():
 
         def off(dx, dy):                                    # paper offsets of the callouts (left: column right of the view)
             return (dx, dy)
-        return dict(key="c_hub" if side > 0 else "c_hub_left", folder="cad/running_gear/front_corner",
+        return dict(key="c_hub" if side > 0 else "c_hub_left", folder="cad/generic_parts/front_corner",
                     step=f"c_hub_end_a_{name}.step", stem=f"c_hub_end_a_{name}",
                     title=f"Front C-hub, {name}", number="CH-R" if side > 0 else "CH-L", frame=(Rc, O_),
                     material="To be defined (3D print verification planned)", quantity="1", tol=GENERAL_CNC,
@@ -179,7 +179,7 @@ def parts():
                            "Foot of the sleeves 1.0 as modelled (owner: approx. 0.6, to be measured); the counterbores and the "
                            "faces follow from the measured sleeve."])
     return [
-        dict(key="chassis_plate", folder="cad/chassis/chassis_plate_speedrun_wide_motor10",
+        dict(key="chassis_plate", folder="cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10",
              step="chassis_plate_T410R_speedrun_wide_motor10.step", stem="chassis_plate_T410R_speedrun_wide_motor10",
              title="Speedrun chassis plate (wide) with longer motor window", number="CP", flat=True, rotate=True,
              material="EN AW-6082-T6, plate 2.0 mm", density=2.70, density_txt="6082", quantity="1", tol=GENERAL_CNC,
@@ -188,34 +188,34 @@ def parts():
              notes=["Countersinks Ø6.2 x 90 deg on the bottom face for countersunk screws M3 (ISO 10642).",
                     "Outline, windows and holes as in the DXF file chassis_plate_T410R_speedrun_wide_motor10.dxf.",
                     "Hole names as in the geometry data of the plate (H01 to H36)."]),
-        dict(key="top_brace", folder="cad/chassis/top_brace_speedrun", step="top_brace_T410R_speedrun.step",
+        dict(key="top_brace", folder="cad/speedrun_parts/chassis/top_brace_speedrun", step="top_brace_T410R_speedrun.step",
              stem="top_brace_T410R_speedrun", title="Speedrun top brace", number="TB", flat=True, rotate=True,
              material="Carbon plate 2.0 mm", density=1.6, density_txt="carbon", quantity="1",
              tol=GENERAL_CNC, edges="chamfers 0.5 x 45 deg (outline), 0.3 (holes)", status="ordered as carbon plate (2D milling)",
-             names=csv_names("cad/chassis/top_brace_speedrun/top_brace_speedrun_hole_table.csv"), label_names=True,
+             names=csv_names("cad/speedrun_parts/chassis/top_brace_speedrun/top_brace_speedrun_hole_table.csv"), label_names=True,
              end_labels=("End with B01 to B04 (End A)", "End with B07 to B15 (End B)"),
              details=[dict(title="Detail X (end with B01 to B04)", box=(-18.5, 18.5, -1.5, 30.0), scale=2.0),
                       dict(title="Detail Y (end with B07 to B15)", box=(-18.5, 18.5, 198.0, 244.8), scale=2.0)],
              notes=["Ordered as carbon plate, 2D milling. Outline and holes from the DXF file top_brace_T410R_speedrun.dxf; edge chamfers 0.5 x 45 deg "
                     "on both faces of the outline and the obround, 0.3 x 45 deg on the holes (second machining step).",
                     "Hole names as in the hole table of the top brace (B01 to B15; B05 and B06 are closed)."]),
-        dict(key="shock_tower_front", folder="cad/shock_tower", step="shock_tower_front_T410R_speedrun.step",
+        dict(key="shock_tower_front", folder="cad/speedrun_parts/shock_tower", step="shock_tower_front_T410R_speedrun.step",
              stem="shock_tower_front_T410R_speedrun", title="Speedrun front shock tower", number="ST-F", flat=True,
              edge_view=True, material="Carbon plate 3.0 mm", density=1.6, density_txt="carbon",
              quantity="1", tol=GENERAL_CNC, edges="chamfers 0.5 x 45 deg (outline), 0.3 (holes)", status="ordered as carbon plate (2D milling)",
-             names=csv_names("cad/shock_tower/shock_tower_front_hole_table.csv"), label_names=True,
+             names=csv_names("cad/speedrun_parts/shock_tower/shock_tower_front_hole_table.csv"), label_names=True,
              notes=["Ordered as carbon plate, 2D milling. Outline and holes from the DXF file shock_tower_front_T410R_speedrun.dxf; edge chamfers and "
                     "the relief on the back face (clearance to the root radius of the wall of the upper bulkhead) as in "
                     "the STEP file (second machining step).", "Hole names as in the hole table of the shock tower."]),
-        dict(key="shock_tower_rear", folder="cad/shock_tower", step="shock_tower_rear_T410R_speedrun.step",
+        dict(key="shock_tower_rear", folder="cad/speedrun_parts/shock_tower", step="shock_tower_rear_T410R_speedrun.step",
              stem="shock_tower_rear_T410R_speedrun", title="Speedrun rear shock tower", number="ST-R", flat=True,
              edge_view=True, material="Carbon plate 3.0 mm", density=1.6, density_txt="carbon",
              quantity="1", tol=GENERAL_CNC, edges="chamfers 0.5 x 45 deg (outline), 0.3 (holes)", status="ordered as carbon plate (2D milling)",
-             names=csv_names("cad/shock_tower/shock_tower_rear_hole_table.csv"), label_names=True,
+             names=csv_names("cad/speedrun_parts/shock_tower/shock_tower_rear_hole_table.csv"), label_names=True,
              notes=["Ordered as carbon plate, 2D milling. Outline and holes from the DXF file shock_tower_rear_T410R_speedrun.dxf; edge chamfers and "
                     "the relief on the back face as in the STEP file (second machining step).",
                     "Hole names as in the hole table of the shock tower."]),
-        dict(key="pivot_block_long", folder="cad/parts/pivot_block", step="pivot_block_long_T410R.step",
+        dict(key="pivot_block_long", folder="cad/generic_parts/pivot_block", step="pivot_block_long_T410R.step",
              stem="pivot_block_long_T410R", title="Pivot block, long (End B, outer)", number="PB-L",
              dims=[("F", (-22.3, 0, 4.6), (22.3, 0, 4.6), "h", "below", None), ("T", (-15.91, 0, 0), (15.91, 0, 0), "h", "below", None)],
              material="To be defined (e.g. 7075-T6)", quantity="1", tol=GENERAL_CNC, edges=EDGES_BREAK,
@@ -224,7 +224,7 @@ def parts():
                                                   callouts=[((-22.3, 0, 4.6 + 2.5), "Ø5.0, depth 4.7 (2x)", (-14, 12))])],
              notes=["Bores Ø5.0 for the inserts of the hinge pin (verified with the 3D printed prototype); fit to be "
                     "confirmed with the inserts.", "Threads M3 for the countersunk screws from below through the chassis plate."]),
-        dict(key="pivot_block_short", folder="cad/parts/pivot_block", step="pivot_block_short_T410R.step",
+        dict(key="pivot_block_short", folder="cad/generic_parts/pivot_block", step="pivot_block_short_T410R.step",
              stem="pivot_block_short_T410R", title="Pivot block, short (End B inner, End A inner and outer)",
              dims=[("F", (-20.7, 0, 4.6), (20.7, 0, 4.6), "h", "below", None), ("T", (-14.56, 0, 0), (14.56, 0, 0), "h", "below", None)],
              number="PB-S", material="To be defined (e.g. 7075-T6)", quantity="3", tol=GENERAL_CNC,
@@ -233,7 +233,7 @@ def parts():
                             callouts=[((-20.7, 0, 4.6 + 2.5), "Ø5.0, depth 4.7 (2x)", (-14, 12))])],
              notes=["Bores Ø5.0 for the inserts of the hinge pin (verified with the 3D printed prototype); fit to be "
                     "confirmed with the inserts.", "Threads M3 for the countersunk screws from below through the chassis plate."]),
-        dict(key="motor_mount", folder="cad/parts/motor_mount", step="motor_mount_T410R.step", stem="motor_mount_T410R",
+        dict(key="motor_mount", folder="cad/generic_parts/motor_mount", step="motor_mount_T410R.step", stem="motor_mount_T410R",
              title="Motor mount", number="MM", material="EN AW-7075-T6", density=2.81, density_txt="7075", quantity="1", tol=GENERAL_CNC,
              edges=EDGES_BREAK, status="verified (test print)",
              view_callouts=[("F", (0.0, 0.0, 17.2 - 5.3), "U-notch 10.6 (bearing 5x10x4)", (2, 46.2)),
@@ -244,7 +244,7 @@ def parts():
                     "(part MM-C) presses on the outer ring of the bearing.",
                     "Threads M3 from below for the screws through the holes H09 and H10 of the chassis plate; threads M3 "
                     "from above for the 2 screws M3x18 through the top brace and the cap."]),
-        dict(key="motor_mount_cap", folder="cad/parts/motor_mount", step="motor_mount_cap_T410R.step",
+        dict(key="motor_mount_cap", folder="cad/generic_parts/motor_mount", step="motor_mount_cap_T410R.step",
              stem="motor_mount_cap_T410R", title="Cap of the motor mount", number="MM-C", material="EN AW-7075-T6",
              density=2.81, density_txt="7075", quantity="1", tol=GENERAL_CNC, edges=EDGES_BREAK, status="verified (test print)",
              notes=["Notch 7.0 wide and 4.3 deep across the top face; thread M3 in its bottom for the set screw M3x3 that "
@@ -252,7 +252,7 @@ def parts():
                     "Through holes Ø3.2 for the 2 screws M3x18 from the top brace into the motor mount."]),
         c_hub(1),
         c_hub(-1),
-        dict(key="steering_knuckle", folder="cad/running_gear/front_corner", step="steering_knuckle_end_a.step",
+        dict(key="steering_knuckle", folder="cad/generic_parts/front_corner", step="steering_knuckle_end_a.step",
              stem="steering_knuckle_end_a", title="Front steering knuckle (same part on both sides)", number="SK",
              frame=(Rk, Jk), material="To be defined (original part: plastic)", quantity="2 (the left one turned upside down)",
              tol=GENERAL_CNC, edges=EDGES_BREAK, status="verified (3D print)",
@@ -268,7 +268,7 @@ def parts():
                     "Bearing seats Ø10 for 2 bearings 5x10x4, pressed in from both ends against the lip: Ø10 K7 (proposal; "
                     "original part 9.98).", "Kingpin bores Ø2.7 in the bosses: thread formed by the set screws M3 (as the "
                     "original part).", "Threads M3 in the steering arm for the ball stud of the steering link."]),
-        dict(key="front_splitter", folder="cad/front_splitter", step="front_splitter_one_piece_end_a.step",
+        dict(key="front_splitter", folder="cad/speedrun_parts/front_splitter", step="front_splitter_one_piece_end_a.step",
              stem="front_splitter_one_piece_end_a", title="Speedrun front splitter (one part)", number="FS",
              frame=(np.eye(3), np.array([0.0, 317.982, 0.0])), material="Nylon PA12 (MJF 3D print)", density=1.01, density_txt="PA12",
              quantity="1", tol="process tolerance (MJF approx. ±0.3)", edges="as modelled",
@@ -312,7 +312,7 @@ def parts():
                     "H11 and H14 would open into it).",
                     "Countersinks Ø6.2 x 90 deg on the bottom face for countersunk screws M3 (ISO 10642). Hole names as "
                     "in the geometry data of the plate (study)."]),
-        dict(key="wishbone_front", folder="cad/parts/wishbone", step="wishbone_front_T410R.step", stem="wishbone_front_T410R",
+        dict(key="wishbone_front", folder="cad/generic_parts/wishbone", step="wishbone_front_T410R.step", stem="wishbone_front_T410R",
              title="Front wishbone (used on both sides)", number="WB-F",
              dims=[("T", (0, -16.5, 0), (51.7, -16.5, 0), "h", "below", "51.70 (axis to axis)")], material="Nylon PA12 (MJF 3D print)",
              density=1.01, density_txt="PA12", quantity="2", tol="process tolerance (MJF approx. ±0.3)", edges="as modelled",
@@ -325,7 +325,7 @@ def parts():
                     "lightening holes Ø3.5 of the same size (design, owner; the original part has an open notch and "
                     "X-shaped ribs there).", "Threads M3 for the ball studs of the damper (shock plate) and of the "
                     "sway bar drop link, threads M4 for the droop screws."]),
-        dict(key="wishbone_rear", folder="cad/parts/wishbone", step="wishbone_rear_T410R.step", stem="wishbone_rear_T410R",
+        dict(key="wishbone_rear", folder="cad/generic_parts/wishbone", step="wishbone_rear_T410R.step", stem="wishbone_rear_T410R",
              title="Rear wishbone (used on both sides)", number="WB-R",
              dims=[("T", (0, -16.5, 0), (54.3, -16.5, 0), "h", "below", "54.30 (axis to axis)")], material="Nylon PA12 (MJF 3D print)",
              density=1.01, density_txt="PA12", quantity="2", tol="process tolerance (MJF approx. ±0.3)", edges="as modelled",
@@ -338,7 +338,7 @@ def parts():
                     "lightening holes Ø5.0 of the same size (design, owner; the original part has an open notch and "
                     "X-shaped ribs there).", "Threads M3 for the ball studs of the damper (shock plate) and of the "
                     "sway bar drop link, threads M4 for the droop screws."]),
-        dict(key="bellcrank", folder="cad/running_gear/steering", step="bellcrank.step", stem="bellcrank",
+        dict(key="bellcrank", folder="cad/generic_parts/steering", step="bellcrank.step", stem="bellcrank",
              title="Bellcrank (same part on both sides)", number="BC", frame=(np.column_stack([(0, 1, 0), (-1, 0, 0), (0, 0, 1)]), sf["bellcrank"]),
              material="Nylon PA12 (MJF 3D print)", density=1.01, density_txt="PA12", quantity="2 (same part on both sides)",
              tol="process tolerance (MJF approx. ±0.3)", edges="as modelled", status="measures qualified, not printed",
@@ -364,7 +364,7 @@ def parts():
                     "through the bearings of the bridge, washer 3.2x7x0.5 and lock nut M3 (DIN 985) under the arm. Ball end: button "
                     "head screw M3x10 (ISO 7380) from below that holds the ball with internal thread.",
                     "Outline: hull of the hub and the 2 ends (tangent flanks), full height. Print flat on the bottom face."]),
-        dict(key="servo_mount_top_plate", folder="cad/running_gear/servo_mount", step="servo_mount_top_plate.step",
+        dict(key="servo_mount_top_plate", folder="cad/generic_parts/servo_mount", step="servo_mount_top_plate.step",
              stem="servo_mount_top_plate", title="Servo mount: top plate", number="SM-T", flat=True, edge_view=True,
              frame=(np.eye(3), sf["plate"]), material="To be defined (e.g. EN AW-7075-T6)", quantity="1", tol=GENERAL_CNC,
              dims=[("T", (xpe, sm[3] - sm[5], 0), (xpe, sm[3], 0), "v", "right", f"{sm[5]:.2f}"),
@@ -379,7 +379,7 @@ def parts():
                     "plate reaches back to the rear face of the post (owner, manual). Outer corners chamfered 2.0 x 45 deg, inner corner of the step 3.0 x 45 deg.",
                     "Holes Ø3.2 for the 2 screws M3x6 into the fixed post; slots 3.2 wide along x for the 2 screws M3x6 into the "
                     "floating post (other servo lengths)."]),
-        dict(key="servo_mount_fixed_post", folder="cad/running_gear/servo_mount", step="servo_mount_fixed_post.step",
+        dict(key="servo_mount_fixed_post", folder="cad/generic_parts/servo_mount", step="servo_mount_fixed_post.step",
              stem="servo_mount_fixed_post", title="Servo mount: fixed post", number="SM-F", frame=(np.eye(3), sf["post"]),
              material="To be defined (e.g. EN AW-7075-T6)", quantity="1", tol=GENERAL_CNC, edges=EDGES_BREAK,
              status="verified (owner)",
@@ -402,7 +402,7 @@ def parts():
                     "screws M3x6 of the top plate (depth 5), from the front for the screws M3x6 of the servo ear (depth 4).",
                     "Side view: front and rear pillar joined by a web with a U-notch from the top and an arch from below (as "
                     "the part in the manual; heights assumed)."]),
-        dict(key="servo_mount_floating_post", folder="cad/running_gear/servo_mount", step="servo_mount_floating_post.step",
+        dict(key="servo_mount_floating_post", folder="cad/generic_parts/servo_mount", step="servo_mount_floating_post.step",
              stem="servo_mount_floating_post", title="Servo mount: floating post", number="SM-L", frame=(np.eye(3), sf["post"]),
              material="To be defined (e.g. EN AW-7075-T6)", quantity="1", tol=GENERAL_CNC, edges=EDGES_BREAK,
              status="verified (owner)", section_gap=14,
@@ -421,7 +421,7 @@ def parts():
                     "flange hangs from the top plate. The lower end of the leg is 2.0 above the chassis plate (floating).",
                     "Threads M3 from above in the flange for the screws M3x6 of the top plate (through the slots), from the "
                     "front for the screws M3x6 of the servo ear (depth 4)."]),
-        dict(key="steering_bridge", folder="cad/running_gear/steering", step="steering_bridge.step", stem="steering_bridge",
+        dict(key="steering_bridge", folder="cad/generic_parts/steering", step="steering_bridge.step", stem="steering_bridge",
              title="Steering bridge", number="SB", frame=(np.eye(3), sf["bridge"]),
              material="Nylon PA12 (MJF 3D print)", density=1.01, density_txt="PA12", quantity="1",
              tol="process tolerance (MJF approx. ±0.3)", edges="as modelled", status="measures qualified, not printed",
@@ -455,7 +455,7 @@ def parts():
                     "Ball of the servo link in the middle of the rear face (toward End B): thread M3 for a grub screw M3x8, ball with "
                     "internal thread screwed onto it. The boss reaches back to the ball of the servo horn.",
                     "Print flat on the bottom face."]),
-        dict(key="steering_post", folder="cad/running_gear/steering", step="steering_post.step", stem="steering_post",
+        dict(key="steering_post", folder="cad/generic_parts/steering", step="steering_post.step", stem="steering_post",
              title="Steering post", number="SP", frame=(np.eye(3), sf["steering_post"]),
              material="To be defined (e.g. EN AW-7075-T6, turned)", quantity="2", tol=GENERAL_CNC, edges=EDGES_BREAK,
              status="measures qualified, not made",
@@ -485,7 +485,7 @@ def parts():
                     f"the stop: keep it within +0/-0.1. Check after assembly: the washer turns by hand.",
                     "Thread M3 from below (depth 5) for the screw through H24/H25 of the chassis plate. Both threads are tapped "
                     "(aluminium part; the model shows the tap drill)."]),
-        dict(key="battery_tray", folder="cad/battery_tray", step="battery_tray_speedrun.step", stem="battery_tray_speedrun",
+        dict(key="battery_tray", folder="cad/speedrun_parts/battery_tray", step="battery_tray_speedrun.step", stem="battery_tray_speedrun",
              title="Speedrun battery tray", number="BT", frame=(np.column_stack([(0, 1, 0), (-1, 0, 0), (0, 0, 1)]), sf["battery_tray"]),
              material="Nylon PA12 (MJF 3D print)", density=1.01, density_txt="PA12", quantity="1",
              tol="process tolerance (MJF approx. ±0.3)", edges="as modelled", status="verified", section_gap=10,
@@ -908,19 +908,19 @@ def draw_part(cfg, date):
 
 
 FOLDERS = {
-    "cad/chassis/chassis_plate_speedrun_wide_motor10": ("Speedrun chassis plate (wide) with longer motor window: technical drawing",
-                                                        "../../readme.md#speedrun-chassis-plate-wide-with-longer-motor-window"),
-    "cad/chassis/top_brace_speedrun": ("Speedrun top brace: technical drawing", "../../readme.md#speedrun-top-brace"),
-    "cad/shock_tower": ("Speedrun shock towers: technical drawings", "../readme.md#speedrun-shock-towers"),
-    "cad/parts/pivot_block": ("Pivot blocks: technical drawings", "../../readme.md#pivot-blocks"),
-    "cad/parts/motor_mount": ("Motor mount and cap: technical drawings", "../../readme.md#centre-driveshaft-and-drive-line"),
-    "cad/running_gear/front_corner": ("Front corner: technical drawings of the C-hubs and the steering knuckle",
+    "cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10": ("Speedrun chassis plate (wide) with longer motor window: technical drawing",
+                                                        "../../../readme.md#speedrun-chassis-plate-wide-with-longer-motor-window"),
+    "cad/speedrun_parts/chassis/top_brace_speedrun": ("Speedrun top brace: technical drawing", "../../../readme.md#speedrun-top-brace"),
+    "cad/speedrun_parts/shock_tower": ("Speedrun shock towers: technical drawings", "../../readme.md#speedrun-shock-towers"),
+    "cad/generic_parts/pivot_block": ("Pivot blocks: technical drawings", "../../readme.md#pivot-blocks"),
+    "cad/generic_parts/motor_mount": ("Motor mount and cap: technical drawings", "../../readme.md#centre-driveshaft-and-drive-line"),
+    "cad/generic_parts/front_corner": ("Front corner: technical drawings of the C-hubs and the steering knuckle",
                                       "../../readme.md#running-gear"),
-    "cad/front_splitter": ("Speedrun front splitter: technical drawing", "../readme.md#speedrun-front-splitter"),
-    "cad/parts/wishbone": ("Wishbones: technical drawings", "../../readme.md#wishbones"),
-    "cad/running_gear/steering": ("Steering: technical drawing of the bellcrank", "../../readme.md#running-gear"),
-    "cad/running_gear/servo_mount": ("Servo mount: technical drawings", "../../readme.md#running-gear"),
-    "cad/battery_tray": ("Speedrun battery tray: technical drawing", "../readme.md#speedrun-battery-tray"),
+    "cad/speedrun_parts/front_splitter": ("Speedrun front splitter: technical drawing", "../../readme.md#speedrun-front-splitter"),
+    "cad/generic_parts/wishbone": ("Wishbones: technical drawings", "../../readme.md#wishbones"),
+    "cad/generic_parts/steering": ("Steering: technical drawing of the bellcrank", "../../readme.md#running-gear"),
+    "cad/generic_parts/servo_mount": ("Servo mount: technical drawings", "../../readme.md#running-gear"),
+    "cad/speedrun_parts/battery_tray": ("Speedrun battery tray: technical drawing", "../../readme.md#speedrun-battery-tray"),
 }
 SHEET_TEXT = {1: "views, main dimensions, labels of the holes",
               2: "sections and detail views, hole table and notes",

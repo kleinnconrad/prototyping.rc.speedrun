@@ -16,7 +16,7 @@ import argparse
 import copy
 import json
 
-CAD = "cad/chassis"
+CAD = "cad/speedrun_parts/chassis"
 DEFAULT_INPUT = f"{CAD}/chassis_plate_speedrun_wide/chassis_plate_speedrun_wide_geometry.json"
 DEFAULT_OUTPUT = f"{CAD}/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
 

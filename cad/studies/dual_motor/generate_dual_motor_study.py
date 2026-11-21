@@ -52,7 +52,7 @@ ASSEMBLY = "cad/assembly/speedrun_chassis_T410R.step"
 # battery of the build with its tray and straps (added after the study): not part of the study, which places 2
 # batteries beside the ESCs (generate_dual_motor_electronics.py)
 BUILD_BATTERY = ("battery", "speedrun_battery_tray", "velcro")
-PLATE_GEOM = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
+PLATE_GEOM = "cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
 PINION_TEETH = 48                       # 72T/48T = 1.50: same ratio as 68T/45T (over 130 km/h, spec_gearing.yaml)
 PINION_FACE = 6.0                       # face width of the pinion (assumed)
 PINION_HUB = (14.0, 1.8)                # hub of the pinion with the set screw: diameter, length (assumed)

@@ -11,7 +11,7 @@ open).
 Usage (from the root directory of the repository):
     python scripts/cad/generate_knuckle_measurement_sheet.py
 
-Output: cad/running_gear/front_corner/steering_knuckle_measurement_sheet.pdf (A4).
+Output: cad/generic_parts/front_corner/steering_knuckle_measurement_sheet.pdf (A4).
 Requires cadquery and matplotlib.
 """
 import os
@@ -31,7 +31,7 @@ import generate_running_gear as G  # noqa: E402
 from generate_measurement_sheets import A4, RED, dimh, dimv, tag  # noqa: E402
 from mesh_views import draw_mesh, subdivide  # noqa: E402
 
-OUT = "cad/running_gear/front_corner/steering_knuckle_measurement_sheet.pdf"
+OUT = "cad/generic_parts/front_corner/steering_knuckle_measurement_sheet.pdf"
 
 
 def knuckle_local():

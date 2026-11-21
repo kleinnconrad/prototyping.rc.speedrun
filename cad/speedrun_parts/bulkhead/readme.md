@@ -11,11 +11,11 @@
 
 ## Overview
 * Technical drawings of the lower and the upper bulkhead (gear box) for a CNC version in EN AW-7075-T6, 2 pieces each (End A and End B use the same part).
-* The ordered bulkheads are MJF 3D prints from nylon PA12 (see the [parts list](../readme.md#parts-of-the-speedrun-chassis)). The fits, thread tolerances and surface values on the drawings refer to the CNC version in 7075.
+* The ordered bulkheads are MJF 3D prints from nylon PA12 (see the [parts list](../../readme.md#parts-of-the-speedrun-chassis)). The fits, thread tolerances and surface values on the drawings refer to the CNC version in 7075.
 * The drawings are projected from the STEP files of the parts (hidden line removal). The hole table is read from the STEP files, the dimensions refer to the parameter files.
 * The STEP file is the master geometry. Dimensions that are not shown on the drawing are taken from the model.
 * Format: A3 landscape, scale 2:1, first angle projection, 2 sheets per part. The PDF files are for printing and for the order, the PNG files show the sheets on this page.
-* Design, interfaces, measurement basis and test prints of the parts: [CAD readme](../readme.md#lower-bulkhead) (lower bulkhead) and [upper bulkhead](../readme.md#upper-bulkhead-new-design).
+* Design, interfaces, measurement basis and test prints of the parts: [CAD readme](../../readme.md#lower-bulkhead) (lower bulkhead) and [upper bulkhead](../../readme.md#upper-bulkhead-new-design).
 
 ## Lower bulkhead
 **Sheet 1:** front view, top view, side view, isometric view
@@ -57,7 +57,7 @@ The following values are on the drawings as a proposal (note 7 of sheet 2). They
 | Flatness of the parting face | 0.02 mm | Contact of the two halves without a gap |
 | Threads | ISO M3 x 0.5, 6H, depths as in the hole table | Standard thread tolerance |
 | Surface | Ra 3.2 µm, bearing seats Ra 1.6 µm | Standard milling quality, finer at the bearings |
-| Edges | Radii and chamfers as modelled, other edges broken 0.1 to 0.2 mm, bearing seats and lips free of burrs | See [edges of the outer shape](../readme.md#design-of-the-lower-bulkhead) |
+| Edges | Radii and chamfers as modelled, other edges broken 0.1 to 0.2 mm, bearing seats and lips free of burrs | See [edges of the outer shape](../../readme.md#design-of-the-lower-bulkhead) |
 
 * The halves are located by the 4 bosses of the lower part (Ø4.86 mm) in the recesses of the upper part (Ø5.06 mm). This clearance allows an offset of the half bores of up to 0.1 mm. If the bearings do not run freely in the assembled bulkhead, the shop can bore the seats with both halves screwed together.
 
@@ -68,7 +68,7 @@ The following values are on the drawings as a proposal (note 7 of sheet 2). They
 | `bulkhead_lower_technical_drawing_sheet_1.png`, `..._sheet_2.png` | The sheets of the lower bulkhead as images (150 dpi) |
 | `bulkhead_upper_technical_drawing.pdf` | Technical drawing of the upper bulkhead, 2 sheets A3 |
 | `bulkhead_upper_technical_drawing_sheet_1.png`, `..._sheet_2.png` | The sheets of the upper bulkhead as images (150 dpi) |
-| `bulkhead_lower_T410R.step`, `bulkhead_upper_T410R.step` | Master geometry of the parts (see [CAD readme](../readme.md#lower-bulkhead)) |
+| `bulkhead_lower_T410R.step`, `bulkhead_upper_T410R.step` | Master geometry of the parts (see [CAD readme](../../readme.md#lower-bulkhead)) |
 
 ## Generating the drawings
 The drawings are generated from the STEP files and the parameter files of the parts. After a change of a bulkhead, the generators of the parts run first, then the script of the drawings (from the root directory of the repository; packages cadquery and matplotlib):

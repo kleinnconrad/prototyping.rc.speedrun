@@ -13,8 +13,8 @@ Usage (from the root directory of the repository):
     python scripts/cad/generate_bulkhead_technical_drawings.py
 
 Outputs:
-    cad/bulkhead/bulkhead_lower_technical_drawing.pdf (2 pages), ..._sheet_1.png, ..._sheet_2.png
-    cad/bulkhead/bulkhead_upper_technical_drawing.pdf (2 pages), ..._sheet_1.png, ..._sheet_2.png
+    cad/speedrun_parts/bulkhead/bulkhead_lower_technical_drawing.pdf (2 pages), ..._sheet_1.png, ..._sheet_2.png
+    cad/speedrun_parts/bulkhead/bulkhead_upper_technical_drawing.pdf (2 pages), ..._sheet_1.png, ..._sheet_2.png
 
 Requires the packages cadquery and matplotlib.
 """
@@ -33,7 +33,7 @@ from technical_drawing import (A3, SCALE, LABEL_FS, DENSITY_7075, AUTHOR, View, 
                                linear, leader, centre_line, centre_mark, balloon, view_label, section_marker,
                                hole_table, sheet, iso_inset, origin_mark, view_arrow, save, text)
 
-OUT = "cad/bulkhead"
+OUT = "cad/speedrun_parts/bulkhead"
 
 
 def load(path):

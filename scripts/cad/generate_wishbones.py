@@ -11,7 +11,7 @@ them, so that the space beside the bulkheads can be checked.
 The manual has no dimensions. The values come from the manual (screws and pins), from the
 other parts of the model (pivot blocks, bulkheads), from photos of the owner or are assumptions;
 each value has its source
-in cad/parts/wishbone/wishbone_parameters.json. The drawing names the measurements that
+in cad/generic_parts/wishbone/wishbone_parameters.json. The drawing names the measurements that
 replace the assumptions with letters.
 
 Arm coordinates: x from the axis of the inner hinge pin toward the wheel, y along the inner
@@ -41,10 +41,10 @@ from generate_bulkhead_lower import box, cyl_y, cyl_z, load_params  # noqa: E402
 from generate_pivot_blocks import PARAMS as PIVOT, POSITIONS, PLATE_T, plate_holes  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y  # noqa: E402
 
-PARAMS = "cad/parts/wishbone/wishbone_parameters.json"
-OUT = "cad/parts/wishbone"
+PARAMS = "cad/generic_parts/wishbone/wishbone_parameters.json"
+OUT = "cad/generic_parts/wishbone"
 DRAWING = "photos/cad_wishbones_drawing.png"
-PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
+PLATE_STEP = "cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
 KINDS = ("front", "rear")
 END_OF = {"front": "front", "rear": "rear"}       # front arms at End A (front), rear arms at End B (rear)
 
@@ -378,7 +378,7 @@ def main():
     # checks on the speedrun chassis plate
     from generate_pivot_blocks import blocks_in_plate, bulkheads_at
     from generate_driveshaft import parts_in_plate as drive_parts
-    lp, up = load_params("cad/bulkhead/bulkhead_lower_parameters.json"), load_params("cad/bulkhead/bulkhead_upper_parameters.json")
+    lp, up = load_params("cad/speedrun_parts/bulkhead/bulkhead_lower_parameters.json"), load_params("cad/speedrun_parts/bulkhead/bulkhead_upper_parameters.json")
     plate = cq.importers.importStep(PLATE_STEP).val()
     others = {"rear": [], "front": []}
     for name, _, s, _ in blocks_in_plate(pp):

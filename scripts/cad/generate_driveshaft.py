@@ -14,7 +14,7 @@ to the closed end of its slot, so the shaft can move a little back and forth.
 Derived from the models of this project: the pinion axis, the end faces of the pinion housings,
 the motor mount (holes H09/H10 of the chassis plate) and the spur gear (slot of the chassis plate
 below the pinion axis). Cup joints: measurements of the owner. The other dimensions are typical
-values (cad/parts/driveshaft/driveshaft_parameters.json). The shaft, the cup
+values (cad/generic_parts/driveshaft/driveshaft_parameters.json). The shaft, the cup
 joints, the drive lines, the motor mount with its cap, the differential, the spool and the diff
 outdrives are the owner's own design, partly based on the T410R; the script writes the STEP and
 STL files of all these parts.
@@ -22,7 +22,7 @@ STL files of all these parts.
 Usage (from the root directory of the repository):
     python scripts/cad/generate_driveshaft.py
 
-The script writes the STEP and STL files of all parts (cad/parts/driveshaft, rear_drive,
+The script writes the STEP and STL files of all parts (cad/generic_parts/driveshaft, rear_drive,
 motor_mount and diff_outdrive) and the drawing photos/cad_driveshaft_drawing.png, and checks the
 play and the fit.
 
@@ -43,11 +43,11 @@ import palette as P  # noqa: E402
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
-PARAMS = "cad/parts/driveshaft/driveshaft_parameters.json"
-LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
-UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
-PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
-PARTS = "cad/parts"
+PARAMS = "cad/generic_parts/driveshaft/driveshaft_parameters.json"
+LOWER = "cad/speedrun_parts/bulkhead/bulkhead_lower_parameters.json"
+UPPER = "cad/speedrun_parts/bulkhead/bulkhead_upper_parameters.json"
+PLATE_STEP = "cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
+PARTS = "cad/generic_parts"
 DRAWING = "photos/cad_driveshaft_drawing.png"
 ASSEMBLY_DRAWING = "photos/cad_drive_line_assembly.png"
 PLATE_T = 2.0
@@ -722,7 +722,7 @@ def drawing(path, p, lay, items):
              f"in the slot of the chassis plate, motor mount {p['mount_t']:g} mm (owner) for 540 motors on the holes "
              "H09/H10. Thicknesses of the spur gear and the flange, outline of the motor mount and the gaps: typical "
              "values; teeth of the spur gear simplified.\nDashed: slots of the cup joints (across the section). CAD files of all "
-             "parts: cad/parts (driveshaft, rear_drive, motor_mount, diff_outdrive).",
+             "parts: cad/generic_parts (driveshaft, rear_drive, motor_mount, diff_outdrive).",
              fontsize=8, va="bottom")
     fig.savefig(path, dpi=110)
     plt.close(fig)
@@ -895,7 +895,7 @@ def drive_assembly_drawing(p, lp, path=ASSEMBLY_DRAWING):
                      "bulkhead\nto the centre driveshaft", fontsize=9.5, loc="left")
     fig.text(0.01, 0.008, "Status: motor mount with cap: verified (test print, cosmetic changes after the print); pinion shafts, "
              "pinions, spur gear, bearings and retaining pins: measures qualified, no 3D print verification;\ncup joints: "
-             "completely unqualified. CAD files: cad/parts (rear_drive, "
+             "completely unqualified. CAD files: cad/generic_parts (rear_drive, "
              "front_drive, motor_mount, driveshaft).", fontsize=8.5)
     fig.savefig(path, dpi=100)
     plt.close(fig)

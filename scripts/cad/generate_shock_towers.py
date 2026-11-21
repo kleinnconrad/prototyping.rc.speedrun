@@ -19,7 +19,7 @@ Usage (from the root directory of the repository):
     python scripts/cad/generate_shock_towers.py              (both towers)
     python scripts/cad/generate_shock_towers.py --tower rear
 
-Output per tower (directory cad/shock_tower): geometry data, STEP and STL file (plate coordinates),
+Output per tower (directory cad/speedrun_parts/shock_tower): geometry data, STEP and STL file (plate coordinates),
 DXF file, hole table, 1:1 templates (A4, 100 % and 97 %) and a drawing in photos/. Checks: holes
 against the tapped holes of the bulkhead, interference with both bulkheads, space for the rod ends,
 gap above the block, contact face on the wall, edge distances, thin slits.
@@ -48,9 +48,9 @@ import palette as P  # noqa: E402
 # colour scheme of the CAD pictures (palette.py): upper bulkhead in light blue
 UPPER_FILL, UPPER_FILL2, UPPER_EDGE, UPPER_TEXT = "#d6e3f2", "#e6eef8", P.hexcolor("upper"), "#2f4f78"
 
-LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
-UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
-OUT = "cad/shock_tower"
+LOWER = "cad/speedrun_parts/bulkhead/bulkhead_lower_parameters.json"
+UPPER = "cad/speedrun_parts/bulkhead/bulkhead_upper_parameters.json"
+OUT = "cad/speedrun_parts/shock_tower"
 TOWERS = {
     "front": {"params": f"{OUT}/shock_tower_front_parameters.json", "stem": f"{OUT}/shock_tower_front_T410R_speedrun",
               "geom": f"{OUT}/shock_tower_front_geometry.json", "table": f"{OUT}/shock_tower_front_hole_table.csv",

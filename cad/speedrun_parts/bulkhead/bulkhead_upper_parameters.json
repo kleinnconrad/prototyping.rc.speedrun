@@ -2,14 +2,14 @@
   "part": "Upper bulkhead (gear box upper half) of the Carten T410R, new design",
   "units": "mm",
   "coordinate_system": "Same as the lower bulkhead: origin at the centre of the 4 bottom holes of the lower part on its bottom face, x along the diff axis, +y toward the pinion and the centre shaft, +z up. The upper part sits on the parting face (z = axis_z of the lower part). Heights named h_... are measured from the parting face.",
-  "shared_parameters": "cad/bulkhead/bulkhead_lower_parameters.json: parting face height, diff axis, bearing seats and lips, gear cavities, pinion seat, radii and edge chamfers of the outer shape, positions and sizes of the 4 screw bosses of the lower part.",
+  "shared_parameters": "cad/speedrun_parts/bulkhead/bulkhead_lower_parameters.json: parting face height, diff axis, bearing seats and lips, gear cavities, pinion seat, radii and edge chamfers of the outer shape, positions and sizes of the 4 screw bosses of the lower part.",
   "design": "Prismatic part: the footprint of the lower part, extruded to 4 flat levels along y (flange, gear block, shock tower wall, top brace face). The shock tower wall and the gear block are narrowed to the width 2 x wall_half_width; side steps beside them give space for the rod ends of the camber links and for the camber link lobes of the shock towers. All outer faces are flat. The edges have radii and edge chamfers as the lower part, the root of the shock tower wall a radius (wall_root_r); the only other curved faces are the bores and the cavities, which follow the lower part.",
   "source_codes": {
     "caliper": "Caliper measurement of the original upper part by the owner of the car (measurement sheet of the upper part, number in the note)",
     "manual": "T410R instruction manual (screw sizes, steps 11, 12, 19, 20, 25)",
     "user": "Information from the owner of the car",
     "spec": "Specification files of the repository",
-    "brace": "Geometry data of the top brace (cad/chassis/top_brace/top_brace_geometry.json)",
+    "brace": "Geometry data of the top brace (cad/speedrun_parts/chassis/top_brace/top_brace_geometry.json)",
     "photo": "Estimate from photos of the original upper part (second set, rulers in the views), accuracy approx. +-1.5 mm. To be replaced by caliper values (measurement sheet of the upper part).",
     "derived": "Calculated from other parameters",
     "design": "Design choice of the new part, free"

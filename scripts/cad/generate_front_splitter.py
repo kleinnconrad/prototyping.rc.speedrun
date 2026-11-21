@@ -18,15 +18,15 @@ part follows the original mount of the T410R (photos and measurements of the own
 * Fixing: countersunk screws M3x6 from below through H34, H35 and H36 into bosses with blind tapped holes (not
   visible from above). The bosses are 3.0 mm higher after the 3D print of the owner (one_piece).
 
-All values with their source: cad/front_splitter/front_splitter_parameters.json. The measurement sheet lists the
+All values with their source: cad/speedrun_parts/front_splitter/front_splitter_parameters.json. The measurement sheet lists the
 measured values of the owner and the open points (scripts/cad/generate_front_splitter_measurement_sheet.py).
 
 Usage (from the root directory of the repository):
     python scripts/cad/generate_front_splitter.py [--no-check]
 
 Outputs (chassis plate coordinates):
-* cad/front_splitter/front_splitter_one_piece_end_a.step and .stl (position in the car)
-* cad/front_splitter/front_splitter_one_piece_end_a_test_print.stl: middle part, bottom face on the print bed
+* cad/speedrun_parts/front_splitter/front_splitter_one_piece_end_a.step and .stl (position in the car)
+* cad/speedrun_parts/front_splitter/front_splitter_one_piece_end_a_test_print.stl: middle part, bottom face on the print bed
 * photos/cad_front_splitter_one_piece_drawing.png
 
 Checks: overlap with the chassis plate and the body posts, clearance to the front tyres over the steering angle
@@ -49,11 +49,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_bulkhead_lower import cyl_z, load_params  # noqa: E402
 from generate_solid import wire_from_prims  # noqa: E402
 
-PARAMS = "cad/front_splitter/front_splitter_parameters.json"
-PLATE_GEOM = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
-PLATE_STEP = "cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
+PARAMS = "cad/speedrun_parts/front_splitter/front_splitter_parameters.json"
+PLATE_GEOM = "cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
+PLATE_STEP = "cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.step"
 ASSEMBLY = "cad/assembly/speedrun_chassis_T410R.step"
-OUT = "cad/front_splitter"
+OUT = "cad/speedrun_parts/front_splitter"
 ONE_PIECE_STEM = f"{OUT}/front_splitter_one_piece_end_a"
 ONE_PIECE_DRAWING = "photos/cad_front_splitter_one_piece_drawing.png"
 PLATE_T = 2.0

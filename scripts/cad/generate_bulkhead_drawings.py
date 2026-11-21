@@ -9,7 +9,7 @@ Usage (from the root directory of the repository):
 
 Outputs:
     photos/cad_bulkhead_lower_preview.png
-    cad/bulkhead/bulkhead_lower_measurement_sheet.pdf
+    cad/speedrun_parts/bulkhead/bulkhead_lower_measurement_sheet.pdf
 
 Requires the packages cadquery and matplotlib.
 """
@@ -393,9 +393,9 @@ def preview(path, tris):
 
 def main():
     parser = argparse.ArgumentParser(description="Preview and measurement sheet of the lower bulkhead.")
-    parser.add_argument("--params", default="cad/bulkhead/bulkhead_lower_parameters.json")
-    parser.add_argument("--stem", default="cad/bulkhead/bulkhead_lower_T410R")
-    parser.add_argument("--sheet", default="cad/bulkhead/bulkhead_lower_measurement_sheet.pdf")
+    parser.add_argument("--params", default="cad/speedrun_parts/bulkhead/bulkhead_lower_parameters.json")
+    parser.add_argument("--stem", default="cad/speedrun_parts/bulkhead/bulkhead_lower_T410R")
+    parser.add_argument("--sheet", default="cad/speedrun_parts/bulkhead/bulkhead_lower_measurement_sheet.pdf")
     parser.add_argument("--preview", default="photos/cad_bulkhead_lower_preview.png")
     args = parser.parse_args()
 

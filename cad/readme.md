@@ -46,15 +46,16 @@
 
 ## Overview
 This directory contains CAD data and 3D print files for the RC car **Carten T410R**:
-* **`/chassis`**: CAD data of the speedrun chassis plate and the speedrun top brace:
-  * **`/chassis_plate_speedrun_wide_motor10`**: Speedrun chassis plate (wide) with the longer motor window for a 3660 motor (STEP, STL, DXF, PDF template, geometry data, technical drawing)
-  * **`/top_brace_speedrun`**: Speedrun top brace that matches the bulkheads of this project (STEP, STL, DXF, PDF templates, geometry data, hole table, test print STL files, technical drawing)
-  * The other subdirectories contain source data of these two parts (see [scripts](#scripts)).
-* **`/bulkhead`**: CAD data of the bulkheads (gear boxes): lower bulkhead, upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets, technical drawings; the drawings are shown in [`bulkhead/readme.md`](bulkhead/readme.md)).
-* **`/shock_tower`**: New design of the front and the rear shock tower that match the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
-* **`/front_splitter`**: Speedrun front splitter at End A, one part: the body post mount enlarged to the splitter (STEP, STL, test print STL, parameter file, measurement sheet).
-* **`/battery_tray`**: Speedrun battery tray for the 3S hardcase LiPo on the left side of the car (STEP, STL, parameter file, technical drawing).
-* **`/parts`**: Drive line, pivot blocks and wishbones: own design of the owner, partly based on the T410R. Camber links: purchased parts, simplified model for the assembly.
+* **`/speedrun_parts`**: Parts of the speedrun chassis, designed in this project (see [speedrun chassis](#speedrun-chassis)):
+  * **`/chassis`**: CAD data of the speedrun chassis plate and the speedrun top brace:
+    * **`/chassis_plate_speedrun_wide_motor10`**: Speedrun chassis plate (wide) with the longer motor window for a 3660 motor (STEP, STL, DXF, PDF template, geometry data, technical drawing)
+    * **`/top_brace_speedrun`**: Speedrun top brace that matches the bulkheads of this project (STEP, STL, DXF, PDF templates, geometry data, hole table, test print STL files, technical drawing)
+    * The other subdirectories contain source data of these two parts (see [scripts](#scripts)).
+  * **`/bulkhead`**: CAD data of the bulkheads (gear boxes): lower bulkhead, upper bulkhead (new design) and the assembly of both parts (STEP, STL, test print STL, parameter files, measurement sheets, technical drawings; the drawings are shown in [`speedrun_parts/bulkhead/readme.md`](speedrun_parts/bulkhead/readme.md)).
+  * **`/shock_tower`**: New design of the front and the rear shock tower that match the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
+  * **`/front_splitter`**: Speedrun front splitter at End A, one part: the body post mount enlarged to the splitter (STEP, STL, test print STL, parameter file, measurement sheet).
+  * **`/battery_tray`**: Speedrun battery tray for the 3S hardcase LiPo on the left side of the car (STEP, STL, parameter file, technical drawing).
+* **`/generic_parts`**: Drive line, pivot blocks, wishbones and running gear: own design of the owner, partly based on the T410R (see [further own parts](#further-own-parts)). Camber links: purchased parts, simplified model for the assembly. The directory contains the parameter file of the running gear, the measurement sheet of the parts and one subdirectory per group (overview in [`generic_parts/readme.md`](generic_parts/readme.md)):
   * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file).
   * **`/driveshaft`**: Centre driveshaft with the fixed metal pins and the cup joints (STEP, STL, parameter file of all drive line parts).
   * **`/rear_drive`**: Rear pinion shaft with flange, pinion 17T, spur gear 72T, bearing 5x10x4 and retaining pin (STEP, STL).
@@ -64,13 +65,18 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/diff_outdrive`**: Diff outdrive (STEP, STL).
   * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file).
   * **`/camber_link`**: Camber links (purchased parts), simplified model for the assembly: turnbuckle, rod end, ball stud, assembled front and rear link (STEP, STL, parameter file).
-* **`/running_gear`**: parameter file of the running gear and one folder per group (STEP, STL): `/front_corner` (C-hubs with caster, steering knuckles, axles and hex hubs at End A), `/rear_corner` (hub carriers, axles and hex hubs at End B), `/cvd_drive_shafts`, `/steering` (posts, bellcranks, bridge, spacers, servo horn), `/servo_mount` and `/sway_bars`.
+  * **`/front_corner`**: C-hubs with caster, steering knuckles, axles and hex hubs at End A (STEP, STL).
+  * **`/rear_corner`**: Hub carriers, axles and hex hubs at End B (STEP, STL).
+  * **`/cvd_drive_shafts`**: CVD drive shafts (STEP, STL).
+  * **`/steering`**: Steering posts, bellcranks, steering bridge, spacers and servo horn (STEP, STL).
+  * **`/servo_mount`**: Floating servo mount (STEP, STL).
+  * **`/sway_bars`**: Sway bars with drop links (STEP, STL).
 * **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the further own parts (pivot blocks, drive line, wishbones and running gear) and the purchased camber links (STEP), and the assembly drawing with the views and the main dimensions (PDF, PNG, shown in [`assembly/readme.md`](assembly/readme.md)).
 * **`/studies`**: Design studies that are not part of the build, one subdirectory per study with its own readme:
   * **`/dual_motor`**: Dual motor mount for 2 motors on the spur gear and a chassis plate with a second motor window on the left side (STEP, STL, geometry data, pictures, script).
   * **`/rear_fork_carrier`**: Rear hub carrier with a fork on a tongue of the rear wishbone (design concept E of the owner): grub screw from below in the middle of the tongue, shims set the wheelbase from 256.0 to 259.0 mm, the rear wishbone as a light A-frame with a right and a left part (5.1 g instead of 7.9 g in PA12) (STEP, STL, pictures, script).
 * **`/3d_print_fdm`**: STL files of 3D printed parts (FDM) for the car and a maintenance stand (see [3D printed parts](#3d-printed-parts))
-* **Technical drawings** (PDF, one PNG per sheet) of the verified parts, the wishbones and the C-hubs (right and left) are stored in the directory of each part. A readme in each directory shows the sheets: [bulkheads](bulkhead/readme.md), [speedrun chassis plate](chassis/chassis_plate_speedrun_wide_motor10/readme.md), [speedrun top brace](chassis/top_brace_speedrun/readme.md), [shock towers](shock_tower/readme.md), [pivot blocks](parts/pivot_block/readme.md), [motor mount and cap](parts/motor_mount/readme.md), [wishbones](parts/wishbone/readme.md), [C-hub and steering knuckle](running_gear/front_corner/readme.md), [front splitter](front_splitter/readme.md), [battery tray](battery_tray/readme.md), [steering](running_gear/steering/readme.md), [servo mount](running_gear/servo_mount/readme.md). The assembly drawing (views and main dimensions of the speedrun chassis) is shown in [`assembly/readme.md`](assembly/readme.md).
+* **Technical drawings** (PDF, one PNG per sheet) of the verified parts, the wishbones and the C-hubs (right and left) are stored in the directory of each part. A readme in each directory shows the sheets: [bulkheads](speedrun_parts/bulkhead/readme.md), [speedrun chassis plate](speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/readme.md), [speedrun top brace](speedrun_parts/chassis/top_brace_speedrun/readme.md), [shock towers](speedrun_parts/shock_tower/readme.md), [pivot blocks](generic_parts/pivot_block/readme.md), [motor mount and cap](generic_parts/motor_mount/readme.md), [wishbones](generic_parts/wishbone/readme.md), [C-hub and steering knuckle](generic_parts/front_corner/readme.md), [front splitter](speedrun_parts/front_splitter/readme.md), [battery tray](speedrun_parts/battery_tray/readme.md), [steering](generic_parts/steering/readme.md), [servo mount](generic_parts/servo_mount/readme.md). The assembly drawing (views and main dimensions of the speedrun chassis) is shown in [`assembly/readme.md`](assembly/readme.md).
 * **Colour scheme of the CAD pictures** (owner, 2026-11-20): blue and grey shades only, one colour per group of parts and the same in all pictures (assembly, running gear, drive line, bulkheads, shock towers, battery tray, front splitter, wishbones, studies), defined in `scripts/cad/palette.py`. Annotations (dimensions, labels, markers of new or closed holes) and the red and black battery wires (plus and minus) keep their own colours. The assembly picture has no legend.
 
 Own files are not licensed for use by others, all rights are reserved (see the root readme). Third-party files are subject to the licenses of their authors (see [sources](#sources)). The preview images of all parts are stored in the `/photos` directory of the repository.
@@ -83,43 +89,43 @@ The speedrun chassis combines the parts that are designed in this project for sp
 ### Parts of the speedrun chassis
 | Part | Quantity | Directory | Status | Order | Material | Mass |
 |:---|---:|:---|:---|:---|:---|---:|
-| [Speedrun chassis plate (wide) with longer motor window](#speedrun-chassis-plate-wide-with-longer-motor-window) | 1 | `/chassis/chassis_plate_speedrun_wide_motor10` | $\color{green}\checkmark$ Verified | CNC part (aluminium 6082) | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
-| [Lower bulkhead](#lower-bulkhead) | 2 | `/bulkhead` | $\color{green}\checkmark$ Verified | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 2 x 12 g |
-| [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/bulkhead` | $\color{green}\checkmark$ Verified | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 2 x 19 g |
-| [Speedrun top brace](#speedrun-top-brace) | 1 | `/chassis/top_brace_speedrun` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 14 g (carbon), 25 g (7075) |
-| [Speedrun front shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 4.4 g (carbon), 7.7 g (7075) |
-| [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/shock_tower` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
-| [Speedrun front splitter (one part: body post mount enlarged to the splitter)](#speedrun-front-splitter) | 1 | `/front_splitter` | $\color{green}\checkmark$ Verified (3D print of the owner; bosses of the screws 3 mm higher after the print) | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 38 g |
-| [Speedrun battery tray (LiPo Absima GreenHorn 3S 5000 hardcase)](#speedrun-battery-tray) | 1 | `/battery_tray` | $\color{green}\checkmark$ Verified (owner) | – | Nylon PA12 (MJF 3D print) | 24 g |
+| [Speedrun chassis plate (wide) with longer motor window](#speedrun-chassis-plate-wide-with-longer-motor-window) | 1 | `/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10` | $\color{green}\checkmark$ Verified | CNC part (aluminium 6082) | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
+| [Lower bulkhead](#lower-bulkhead) | 2 | `/speedrun_parts/bulkhead` | $\color{green}\checkmark$ Verified | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 2 x 12 g |
+| [Upper bulkhead](#upper-bulkhead-new-design) | 2 | `/speedrun_parts/bulkhead` | $\color{green}\checkmark$ Verified | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 2 x 19 g |
+| [Speedrun top brace](#speedrun-top-brace) | 1 | `/speedrun_parts/chassis/top_brace_speedrun` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 14 g (carbon), 25 g (7075) |
+| [Speedrun front shock tower](#speedrun-shock-towers) | 1 | `/speedrun_parts/shock_tower` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 4.4 g (carbon), 7.7 g (7075) |
+| [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/speedrun_parts/shock_tower` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
+| [Speedrun front splitter (one part: body post mount enlarged to the splitter)](#speedrun-front-splitter) | 1 | `/speedrun_parts/front_splitter` | $\color{green}\checkmark$ Verified (3D print of the owner; bosses of the screws 3 mm higher after the print) | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 38 g |
+| [Speedrun battery tray (LiPo Absima GreenHorn 3S 5000 hardcase)](#speedrun-battery-tray) | 1 | `/speedrun_parts/battery_tray` | $\color{green}\checkmark$ Verified (owner) | – | Nylon PA12 (MJF 3D print) | 24 g |
 | **Total** | | | | | Chassis plate 6082, bulkheads, front splitter and battery tray PA12, top brace and shock towers carbon | **368 g** |
 
 Further own parts (own design of the owner, partly based on the T410R, not in the mass total):
 
 | Part | Quantity | Directory | Status |
 |:---|---:|:---|:---|
-| [Pivot blocks of the wishbones](#pivot-blocks) (long and short block) | 4 | `/parts/pivot_block` | $\color{green}\checkmark$ Verified |
-| [Centre driveshaft with fixed metal pins](#centre-driveshaft-and-drive-line) | 1 | `/parts/driveshaft` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Cup joints of the centre driveshaft](#centre-driveshaft-and-drive-line) | 2 | `/parts/driveshaft` | $\color{red}\times$ Completely unqualified |
-| [Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin](#centre-driveshaft-and-drive-line) | 1 | `/parts/rear_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Front pinion shaft with pinion 17T, bearings and retaining pin](#centre-driveshaft-and-drive-line) | 1 | `/parts/front_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Motor mount with cap](#centre-driveshaft-and-drive-line) | 1 | `/parts/motor_mount` | $\color{green}\checkmark$ Verified (test print; technically good; cosmetic changes after the print: smooth faces, round upper inner corner (R9)) |
-| [Differential (End B) with ring gear 42T, inner gears and bearings](#differentials) | 1 | `/parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Spool (End A) with ring gear 42T and bearings](#differentials) | 1 | `/parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Diff outdrives](#centre-driveshaft-and-drive-line) | 4 | `/parts/diff_outdrive` | $\color{red}\times$ Completely unqualified |
-| [Front wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{green}\checkmark$ Verified |
-| [Rear wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{green}\checkmark$ Verified |
-| [Inner hinge pins of the wishbones (3x42)](#wishbones) | 4 | `/parts/wishbone` | $\color{red}\times$ Completely unqualified |
-| [Front C-hubs with 10 degrees caster (right and left part)](#running-gear) | 2 | `/running_gear/front_corner` | $\color{red}\times$ Completely unqualified; kingpin bores 5 mm with guide sleeves (owner), 3D print verification planned |
-| [Front steering knuckles](#running-gear) | 2 | `/running_gear/front_corner` | $\color{green}\checkmark$ Verified (3D print of the owner) |
-| [Rear hub carriers](#running-gear) | 2 | `/running_gear/rear_corner` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Axles with joint cup, hex hubs 12 mm](#running-gear) | 4 + 4 | `/running_gear/front_corner`, `/running_gear/rear_corner` | $\color{red}\times$ Completely unqualified |
-| [CVD drive shafts](#running-gear) | 4 | `/running_gear/cvd_drive_shafts` | $\color{red}\times$ Completely unqualified |
-| [Bellcranks (symmetric, the same part on both sides)](#running-gear) | 2 | `/running_gear/steering` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification; technical drawing |
-| [Servo mount: top plate, fixed post, floating post; position of the servo and the horn](#running-gear) | 1 set | `/running_gear/servo_mount` | $\color{green}\checkmark$ Verified (owner); the holes for the servo ears (positions assumed) are to be checked against the servo before printing; technical drawings |
-| [Steering bridge (beam with 2 towers on flanged bearings MF63ZZ)](#running-gear) | 1 | `/running_gear/steering` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification; technical drawing |
-| [Steering posts (height 20.3 mm, shoulder for the bellcrank bearings)](#running-gear) | 2 | `/running_gear/steering` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification; technical drawing |
-| [Steering: steering links, servo link, servo horn](#running-gear) | 1 set | `/running_gear/steering` | $\color{red}\times$ Completely unqualified |
-| [Sway bars with holders, ball ends and drop links](#running-gear) | 2 | `/running_gear/sway_bars` | $\color{red}\times$ Completely unqualified |
+| [Pivot blocks of the wishbones](#pivot-blocks) (long and short block) | 4 | `/generic_parts/pivot_block` | $\color{green}\checkmark$ Verified |
+| [Centre driveshaft with fixed metal pins](#centre-driveshaft-and-drive-line) | 1 | `/generic_parts/driveshaft` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Cup joints of the centre driveshaft](#centre-driveshaft-and-drive-line) | 2 | `/generic_parts/driveshaft` | $\color{red}\times$ Completely unqualified |
+| [Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin](#centre-driveshaft-and-drive-line) | 1 | `/generic_parts/rear_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Front pinion shaft with pinion 17T, bearings and retaining pin](#centre-driveshaft-and-drive-line) | 1 | `/generic_parts/front_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Motor mount with cap](#centre-driveshaft-and-drive-line) | 1 | `/generic_parts/motor_mount` | $\color{green}\checkmark$ Verified (test print; technically good; cosmetic changes after the print: smooth faces, round upper inner corner (R9)) |
+| [Differential (End B) with ring gear 42T, inner gears and bearings](#differentials) | 1 | `/generic_parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Spool (End A) with ring gear 42T and bearings](#differentials) | 1 | `/generic_parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Diff outdrives](#centre-driveshaft-and-drive-line) | 4 | `/generic_parts/diff_outdrive` | $\color{red}\times$ Completely unqualified |
+| [Front wishbones](#wishbones) | 2 | `/generic_parts/wishbone` | $\color{green}\checkmark$ Verified |
+| [Rear wishbones](#wishbones) | 2 | `/generic_parts/wishbone` | $\color{green}\checkmark$ Verified |
+| [Inner hinge pins of the wishbones (3x42)](#wishbones) | 4 | `/generic_parts/wishbone` | $\color{red}\times$ Completely unqualified |
+| [Front C-hubs with 10 degrees caster (right and left part)](#running-gear) | 2 | `/generic_parts/front_corner` | $\color{red}\times$ Completely unqualified; kingpin bores 5 mm with guide sleeves (owner), 3D print verification planned |
+| [Front steering knuckles](#running-gear) | 2 | `/generic_parts/front_corner` | $\color{green}\checkmark$ Verified (3D print of the owner) |
+| [Rear hub carriers](#running-gear) | 2 | `/generic_parts/rear_corner` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Axles with joint cup, hex hubs 12 mm](#running-gear) | 4 + 4 | `/generic_parts/front_corner`, `/generic_parts/rear_corner` | $\color{red}\times$ Completely unqualified |
+| [CVD drive shafts](#running-gear) | 4 | `/generic_parts/cvd_drive_shafts` | $\color{red}\times$ Completely unqualified |
+| [Bellcranks (symmetric, the same part on both sides)](#running-gear) | 2 | `/generic_parts/steering` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification; technical drawing |
+| [Servo mount: top plate, fixed post, floating post; position of the servo and the horn](#running-gear) | 1 set | `/generic_parts/servo_mount` | $\color{green}\checkmark$ Verified (owner); the holes for the servo ears (positions assumed) are to be checked against the servo before printing; technical drawings |
+| [Steering bridge (beam with 2 towers on flanged bearings MF63ZZ)](#running-gear) | 1 | `/generic_parts/steering` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification; technical drawing |
+| [Steering posts (height 20.3 mm, shoulder for the bellcrank bearings)](#running-gear) | 2 | `/generic_parts/steering` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification; technical drawing |
+| [Steering: steering links, servo link, servo horn](#running-gear) | 1 set | `/generic_parts/steering` | $\color{red}\times$ Completely unqualified |
+| [Sway bars with holders, ball ends and drop links](#running-gear) | 2 | `/generic_parts/sway_bars` | $\color{red}\times$ Completely unqualified |
 | [Dampers (standard 1:10 on-road, purchased)](#running-gear) | 4 | Assembly only | $\color{red}\times$ Completely unqualified |
 
 Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. The parts marked red are first designs: they still need a lot of refinement (dimensions, strength, fit and function on the car) and are not ready for manufacturing.
@@ -141,7 +147,7 @@ Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{g
 ## Speedrun chassis plate (wide) with longer motor window
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Chassis plate of the speedrun chassis: wide middle section and a motor window for a 3660 motor. The hole pattern, the countersinks, the slot and both narrow ends are taken from the chassis plate of the T410R (see [measurement basis](#measurement-basis-and-test-print)).
-* **Status:** $\color{green}\checkmark$ Verified. Order: CNC part (aluminium 6082). Technical drawing: [`chassis/chassis_plate_speedrun_wide_motor10/readme.md`](chassis/chassis_plate_speedrun_wide_motor10/readme.md).
+* **Status:** $\color{green}\checkmark$ Verified. Order: CNC part (aluminium 6082). Technical drawing: [`speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/readme.md`](speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/readme.md).
 
 ![Top view of the speedrun chassis plate (wide) with the longer motor window and hole labels](../photos/cad_chassis_speedrun_wide_motor10_preview.png)
 
@@ -199,7 +205,7 @@ The 1:1 template `chassis_plate_T410R_speedrun_wide_motor10_1to1_A4x2_print97.pd
 * The template is generated with `scripts/cad/generate_print_template.py --plate motor10`. For a PDF viewer with another print scale, the option `--print-scale` generates a matching template (see [scripts](#scripts)).
 
 ### Files and coordinate system of the speedrun chassis plate
-All files are stored in the directory `/chassis/chassis_plate_speedrun_wide_motor10`. The STEP, STL and DXF files are generated from the geometry data (see [scripts](#scripts)).
+All files are stored in the directory `/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10`. The STEP, STL and DXF files are generated from the geometry data (see [scripts](#scripts)).
 
 | File | Format | Use |
 |:---|:---|:---|
@@ -208,7 +214,7 @@ All files are stored in the directory `/chassis/chassis_plate_speedrun_wide_moto
 | `chassis_plate_T410R_speedrun_wide_motor10.dxf` | DXF | 2D drawing for CNC manufacturing with the layers `OUTLINE`, `CUTOUT`, `HOLE_THROUGH` and `CSK_BOTTOM_INFO` (see [DXF generation](#dxf-generation)) |
 | `chassis_plate_speedrun_wide_motor10_geometry.json` | JSON | Geometry data: outline, cutouts, holes, thickness and countersink parameters |
 | `chassis_plate_T410R_speedrun_wide_motor10_1to1_A4x2_print97.pdf` | PDF (A4, 2 pages) | 1:1 template for a PDF viewer that prints at 97 % (see [print template](#print-template)) |
-| `chassis_plate_T410R_speedrun_wide_motor10_technical_drawing.pdf` | PDF (A3, 2 sheets) | Technical drawing, shown with its PNG sheets in [`readme.md`](chassis/chassis_plate_speedrun_wide_motor10/readme.md) of the directory |
+| `chassis_plate_T410R_speedrun_wide_motor10_technical_drawing.pdf` | PDF (A3, 2 sheets) | Technical drawing, shown with its PNG sheets in [`readme.md`](speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/readme.md) of the directory |
 
 * Units are millimetres. All coordinates refer to the top view.
 * x = 0 is the centre line of the part.
@@ -258,7 +264,7 @@ The script `generate_top_brace_speedrun.py` places the top brace on the upper bu
 * The end with B07 to B15 (obround) is placed at End B of the chassis plate (motor window, spur gear), the end with B01 to B04 at End A.
 
 ### Files and open points of the speedrun top brace
-All files are stored in the directory `/chassis/top_brace_speedrun`. They are generated with the script `generate_top_brace_speedrun.py` (see [scripts](#scripts)).
+All files are stored in the directory `/speedrun_parts/chassis/top_brace_speedrun`. They are generated with the script `generate_top_brace_speedrun.py` (see [scripts](#scripts)).
 
 | File | Format | Use |
 |:---|:---|:---|
@@ -304,7 +310,7 @@ All files are stored in the directory `/chassis/top_brace_speedrun`. They are ge
 
 **Files of the lower bulkhead**
 
-All files are stored in the directory `/bulkhead`. The STEP and STL files and the measurement sheet are generated from the parameter file (see [scripts](#scripts)).
+All files are stored in the directory `/speedrun_parts/bulkhead`. The STEP and STL files and the measurement sheet are generated from the parameter file (see [scripts](#scripts)).
 
 | File | Format | Use |
 |:---|:---|:---|
@@ -313,7 +319,7 @@ All files are stored in the directory `/bulkhead`. The STEP and STL files and th
 | `testprint_bulkhead_lower.stl` | STL (binary) | Test print variant (see [test print of the lower bulkhead](#measurement-basis-and-test-print-of-the-lower-bulkhead)) |
 | `bulkhead_lower_parameters.json` | JSON | All dimensions of the model, each with its source and a note |
 | `bulkhead_lower_measurement_sheet.pdf` | PDF (A4, 4 pages) | Caliper measurement sheet with the caliper values and the open values (see [caliper measurement sheet](#measurement-basis-and-test-print-of-the-lower-bulkhead)) |
-| `bulkhead_lower_technical_drawing.pdf` | PDF (A3, 2 sheets), PNG per sheet | Technical drawing for the CNC order: views, sections, hole table, notes (see [`bulkhead/readme.md`](bulkhead/readme.md)) |
+| `bulkhead_lower_technical_drawing.pdf` | PDF (A3, 2 sheets), PNG per sheet | Technical drawing for the CNC order: views, sections, hole table, notes (see [`speedrun_parts/bulkhead/readme.md`](speedrun_parts/bulkhead/readme.md)) |
 
 | Property | Value |
 |:---|:---|
@@ -515,7 +521,7 @@ The upper part is a prismatic block: the footprint of the lower part (34.48 mm w
 * Manufacturing: 3 setups on a 3-axis machine (underside with the bores and cavities, top with the levels and the vertical holes, outer side with the 4 shock tower holes). The STEP file contains no threads: the tapped holes are modelled with the tap drill diameter of 2.5 mm. Radii and edge chamfers: see [edges of the outer shape](#design-of-the-lower-bulkhead).
 
 ### Files and measurement sheet of the upper bulkhead
-All files are stored in the directory `/bulkhead`. The files are generated from the parameter files of the upper and the lower part (see [scripts](#scripts)).
+All files are stored in the directory `/speedrun_parts/bulkhead`. The files are generated from the parameter files of the upper and the lower part (see [scripts](#scripts)).
 
 | File | Format | Use |
 |:---|:---|:---|
@@ -525,7 +531,7 @@ All files are stored in the directory `/bulkhead`. The files are generated from 
 | `bulkhead_assembly_T410R.step` | STEP (AP214) | Assembly of the lower and the upper part |
 | `bulkhead_upper_parameters.json` | JSON | Dimensions of the upper part, each with its source and a note. The shared dimensions are read from `bulkhead_lower_parameters.json`. |
 | `bulkhead_upper_measurement_sheet.pdf` | PDF (A4, 2 pages) | Measurement sheet of the original upper part (see below) |
-| `bulkhead_upper_technical_drawing.pdf` | PDF (A3, 2 sheets), PNG per sheet | Technical drawing for the CNC order: views, sections, hole table, notes (see [`bulkhead/readme.md`](bulkhead/readme.md)) |
+| `bulkhead_upper_technical_drawing.pdf` | PDF (A3, 2 sheets), PNG per sheet | Technical drawing for the CNC order: views, sections, hole table, notes (see [`speedrun_parts/bulkhead/readme.md`](speedrun_parts/bulkhead/readme.md)) |
 
 **Measurement sheet of the original upper bulkhead**
 
@@ -588,7 +594,7 @@ Results of the checks of `generate_shock_towers.py` (same for both towers):
 * Both towers are part of the assembly of the speedrun chassis: the front tower at End A (assumed front), the rear tower at End B. The interference check gives 0 mm³ for both towers.
 
 ### Files and open points of the speedrun shock towers
-All files are stored in the directory `/shock_tower`. They are generated with `generate_shock_towers.py` (see [scripts](#scripts)). The file names start with `shock_tower_front` or `shock_tower_rear`.
+All files are stored in the directory `/speedrun_parts/shock_tower`. They are generated with `generate_shock_towers.py` (see [scripts](#scripts)). The file names start with `shock_tower_front` or `shock_tower_rear`.
 
 | File | Format | Use |
 |:---|:---|:---|
@@ -631,7 +637,7 @@ Both shock towers are verified by the owner. The following points are not requir
 * **Parameters:** the outer form of the splitter follows the parameter `front_form` (offset `front_form_offset`), its front end is set by `splitter_front_distance`, the rear edge by `splitter_rear_outline`; the lower front edge of the body follows from `body_overhang`. With the measured form of the body (B1 to B3) the splitter follows the real body.
 
 ### Files and open points of the speedrun front splitter
-All files are stored in the directory `/front_splitter` and are generated with `generate_front_splitter.py` from `front_splitter_parameters.json` (see [scripts](#scripts)), in the coordinates of the chassis plate.
+All files are stored in the directory `/speedrun_parts/front_splitter` and are generated with `generate_front_splitter.py` from `front_splitter_parameters.json` (see [scripts](#scripts)), in the coordinates of the chassis plate.
 
 | File | Content |
 |:---|:---|
@@ -665,10 +671,10 @@ Open points:
 | Mass | 24.2 cm³, approx. 24 g in nylon PA12 | Model |
 
 * **Checks** of `generate_battery_tray.py`: no overlap of the tray, the battery and the straps with the parts of the assembly; left steering (bellcrank with ball and screw, bridge with its bearings, shims, screws and lock nuts, rod end of the servo link) turned over the full angle of the bellcranks (±41.2 degrees): no contact, smallest distance 2.4 mm. Distances: top brace 3.1 mm (battery), 3.0 mm (straps); servo mount top plate 16 mm and more; centre driveshaft 7.5 mm; cup joint at End B 6.0 mm; motor mount 3.7 mm; lock nut under the left bellcrank 2.8 mm.
-* **Manufacturing:** MJF 3D print, bottom face down. [Technical drawing](battery_tray/readme.md).
+* **Manufacturing:** MJF 3D print, bottom face down. [Technical drawing](speedrun_parts/battery_tray/readme.md).
 
 ### Files and open points of the speedrun battery tray
-All files are stored in the directory `/battery_tray` and are generated with `generate_battery_tray.py` from `battery_tray_parameters.json` (see [scripts](#scripts)), in the coordinates of the chassis plate (position in the car).
+All files are stored in the directory `/speedrun_parts/battery_tray` and are generated with `generate_battery_tray.py` from `battery_tray_parameters.json` (see [scripts](#scripts)), in the coordinates of the chassis plate (position in the car).
 
 | File | Content |
 |:---|:---|
@@ -682,7 +688,7 @@ Open points:
 * The battery (370 g) is not in the mass total of the speedrun parts.
 
 ## Further own parts
-The drive line, the pivot blocks, the wishbones and the running gear are the owner's own design. Some of them are based on parts of the Carten T410R (for example the interfaces: bearings, gears, screws), others deviate strongly from them (for example the C-hubs and the steering knuckles). The assembly of the speedrun chassis contains them, so that the space around the speedrun parts and the function of the build can be checked. The camber links are purchased parts; the assembly contains a simplified model of them (`/parts/camber_link`, generated with `generate_camber_links.py`). Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
+The drive line, the pivot blocks, the wishbones and the running gear are the owner's own design. Some of them are based on parts of the Carten T410R (for example the interfaces: bearings, gears, screws), others deviate strongly from them (for example the C-hubs and the steering knuckles). The assembly of the speedrun chassis contains them, so that the space around the speedrun parts and the function of the build can be checked. The camber links are purchased parts; the assembly contains a simplified model of them (`/generic_parts/camber_link`, generated with `generate_camber_links.py`). Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
 
 ### Pivot blocks
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -725,7 +731,7 @@ Results of the checks of `generate_pivot_blocks.py`:
 
 **Files of the pivot blocks**
 
-All files are stored in the directory `/parts/pivot_block`. They are generated with `generate_pivot_blocks.py` (see [scripts](#scripts)).
+All files are stored in the directory `/generic_parts/pivot_block`. They are generated with `generate_pivot_blocks.py` (see [scripts](#scripts)).
 
 | File | Format | Use |
 |:---|:---|:---|
@@ -796,7 +802,7 @@ Results of `generate_driveshaft.py`:
 
 **Files of the centre driveshaft and the drive line**
 
-All files are stored in the directory `/parts` and are generated with `generate_driveshaft.py` from `driveshaft/driveshaft_parameters.json` (see [scripts](#scripts)). Each file has STEP (AP214) and STL (binary) format and its own part coordinates.
+All files are stored in the directory `/generic_parts` and are generated with `generate_driveshaft.py` from `driveshaft/driveshaft_parameters.json` (see [scripts](#scripts)). Each file has STEP (AP214) and STL (binary) format and its own part coordinates.
 
 | File | Part coordinates and use |
 |:---|:---|
@@ -837,7 +843,7 @@ All files are stored in the directory `/parts` and are generated with `generate_
 
 **Files of the differentials**
 
-All files are stored in the directory `/parts/diff` and are generated with `generate_driveshaft.py` (see [scripts](#scripts)). Diff coordinates: x along the diff axis, x = 0 centre of the inner gears (plane of the pinion axis), ring gear side toward +x; each file has STEP (AP214) and STL (binary) format.
+All files are stored in the directory `/generic_parts/diff` and are generated with `generate_driveshaft.py` (see [scripts](#scripts)). Diff coordinates: x along the diff axis, x = 0 centre of the inner gears (plane of the pinion axis), ring gear side toward +x; each file has STEP (AP214) and STL (binary) format.
 
 | File | Part coordinates and use |
 |:---|:---|
@@ -919,7 +925,7 @@ The letters are shown in the drawing and in the measurement sheet `parts/parts_m
 
 **Files of the wishbones**
 
-All files are stored in the directory `/parts/wishbone`. They are generated with `generate_wishbones.py` from `wishbone_parameters.json` (see [scripts](#scripts)). Part coordinates: x from the axis of the inner hinge pin toward the wheel, y along the hinge pin (y = 0 middle of the arm), z = 0 axis of the inner hinge pin.
+All files are stored in the directory `/generic_parts/wishbone`. They are generated with `generate_wishbones.py` from `wishbone_parameters.json` (see [scripts](#scripts)). Part coordinates: x from the axis of the inner hinge pin toward the wheel, y along the hinge pin (y = 0 middle of the arm), z = 0 axis of the inner hinge pin.
 
 | File | Format | Content |
 |:---|:---|:---|
@@ -980,16 +986,16 @@ All files are stored in the directory `/parts/wishbone`. They are generated with
 
 The steering follows the T410R (manual steps 10, 13, 14 and 21, photos of the owner). The bellcranks and the servo mount are refined with the owner (photos of the original bellcrank, caliper values of the servo position and the mount):
 
-* Steering posts on H24/H25, 20.3 mm high above the chassis plate (owner, as the original part): hexagon 5.5 mm (8 mm high), shank Ø5.8 mm up to the shoulder (collar) that holds the inner ring of the lower bearing of the bellcrank, journal Ø5 mm, threads M3 at both ends (screw from below through the chassis plate, screw M3x6 on top). The posts can be made from aluminium (threads tapped). [Technical drawing](running_gear/steering/readme.md).
-* Two symmetric bellcranks on the posts. The bellcrank has no front and rear (owner: the same part on both sides and at both ends): a straight lever with 2 arms of 15 mm, the 3 holes in line (ball at x = ±21.7 mm), the outline is the hull of the hub (Ø12 mm) and the 2 ends (Ø7 mm), full height 5.5 mm. MJF 3D print in nylon PA12, approx. 1.7 g. [Technical drawing](running_gear/steering/readme.md).
+* Steering posts on H24/H25, 20.3 mm high above the chassis plate (owner, as the original part): hexagon 5.5 mm (8 mm high), shank Ø5.8 mm up to the shoulder (collar) that holds the inner ring of the lower bearing of the bellcrank, journal Ø5 mm, threads M3 at both ends (screw from below through the chassis plate, screw M3x6 on top). The posts can be made from aluminium (threads tapped). [Technical drawing](generic_parts/steering/readme.md).
+* Two symmetric bellcranks on the posts. The bellcrank has no front and rear (owner: the same part on both sides and at both ends): a straight lever with 2 arms of 15 mm, the 3 holes in line (ball at x = ±21.7 mm), the outline is the hull of the hub (Ø12 mm) and the 2 ends (Ø7 mm), full height 5.5 mm. MJF 3D print in nylon PA12, approx. 1.7 g. [Technical drawing](generic_parts/steering/readme.md).
 * Hub: 2 bearings 5x8x2.5, pressed in from both faces against a lip of 0.5 mm (owner; opening Ø6.6 mm, contact on the outer rings only). The lower bearing sits on the shoulder of the post (bellcrank 16.8 to 22.3 mm above the bottom face of the chassis plate); the journal ends flush with the bearing stack. The thread M3 on top is a blind thread with a full thread depth of 5.2 mm: the screw M3x6 with washer 3.2x6x0.5 bottoms at the end of the thread and cannot be screwed in fully, so the washer stays 0.3 mm above the journal and the bearing (axial play, the bellcrank turns freely; owner: on the original post the screw is left a bit proud).
 * Ends: plain through holes Ø3.2 mm (owner: no hex pockets). Front arm: ball of the steering link with internal thread on a button head screw M3x10 from below. Rear arm: the bridge turns on 2 flanged bearings; screw M3x18 from above, washer 3.2x7x0.5 and lock nut M3 under the arm (a screw from below with the nut on top would touch the top brace).
 * Changes from the original part (photos and manual): arms of approx. 17 mm at different heights (front arm raised), hub approx. 7 mm, windows in the arms, holes for self-tapping screws. The full height of the arms makes the torsion stiffness of the arm 3 to 4 times higher (important in PA12, the ball sits 4 mm above the arm).
-* The rear arms are joined by the steering bridge: parallelogram, both bellcranks turn by the same angle, the bridge moves across the car (up to ±9.9 mm). Refined with the owner (photos of the original part: an arch whose ends sit on the bellcrank arms; MJF 3D print in nylon PA12, approx. 2.3 g): a flat bar 6 x 6.3 mm across the car with round ends (towers Ø12 mm) on the bellcrank arms, 1.0 mm above the centre driveshaft (the posts of 20.3 mm lift the bellcranks above the driveshaft, so the bridge needs no arch). Each tower turns on 2 flanged bearings MF63ZZ (3x6x2.5, pressed in from both faces, flanges outside); the inner rings are clamped on the bellcrank arm between 2 shims 3x5x0.3 by the screw M3x18 from above (access bore Ø8 mm in the tower), washer and lock nut M3 under the bellcrank arm. Ball of the servo link in the middle of the rear face on a grub screw M3x8 in a thread M3 (owner); its boss reaches back 3.5 mm to the y of the horn ball. [Technical drawing](running_gear/steering/readme.md).
+* The rear arms are joined by the steering bridge: parallelogram, both bellcranks turn by the same angle, the bridge moves across the car (up to ±9.9 mm). Refined with the owner (photos of the original part: an arch whose ends sit on the bellcrank arms; MJF 3D print in nylon PA12, approx. 2.3 g): a flat bar 6 x 6.3 mm across the car with round ends (towers Ø12 mm) on the bellcrank arms, 1.0 mm above the centre driveshaft (the posts of 20.3 mm lift the bellcranks above the driveshaft, so the bridge needs no arch). Each tower turns on 2 flanged bearings MF63ZZ (3x6x2.5, pressed in from both faces, flanges outside); the inner rings are clamped on the bellcrank arm between 2 shims 3x5x0.3 by the screw M3x18 from above (access bore Ø8 mm in the tower), washer and lock nut M3 under the bellcrank arm. Ball of the servo link in the middle of the rear face on a grub screw M3x8 in a thread M3 (owner); its boss reaches back 3.5 mm to the y of the horn ball. [Technical drawing](generic_parts/steering/readme.md).
 * The steering links run from the balls of the bellcranks to the steering arms of the knuckles (ball on top of the arm, 5.0 mm inward of the kingpin and 25.0 mm behind the axle as the original part; the link runs 2.3 mm down from the bellcrank ball, 26.3 mm above the bottom face of the chassis plate, to the knuckle ball, 24.0 mm).
 * Servo (Savox SC-1252MG+, low profile) across the car in the floating servo mount, output shaft and horn facing forward (End A), aluminium clamp horn pointing up in the centre position (manual step 10). Position from the caliper values of the owner (measurement sketch S1 to S9): front face of the case 8.0 mm ahead of H21, output shaft 37.0 mm from H21 across the car and 15.0 mm above the chassis plate, case 2.0 mm above the chassis plate; horn 4.3 mm thick, its front face 6.0 mm ahead of the case, ball 28.4 mm from the output shaft and 4.0 mm ahead of the horn.
 * The servo link runs across the car from the horn ball (45.4 mm above the bottom face of the chassis plate) to the ball in the middle of the bridge (26.35 mm) and is inclined by 22.9 degrees; gap between the rod ends 30.9 mm (manual: 21 mm with the original servo saver and bridge). The rod ends sit on balls along the car, so the inclination does not limit the movement.
-* Floating servo mount as the T410R (manual step 10; caliper values M1 to M5 of the owner, drawing of the parts in the manual): top plate 2.3 mm, its top face 23.4 mm above the chassis plate; front edge straight (flush with the front faces of the posts), 19.6 mm deep over the servo and the floating post, at the fixed post the plate reaches back to the rear face of the post. Fixed post (7 mm wide, 34 mm long; measured part 32 mm, lengthened to the rear so that the thread of H17 has 2.25 mm of material behind it) at the inner end of the servo, screwed onto the chassis plate (H17 and H21, threads M3 from below); its front face lies 5.5 mm ahead of H21 and carries the servo ear. Seen from the side the post is an H: front and rear pillar with a web, U-notch from the top, arch from below. Floating post: L bracket at the output end, flange 19.1 mm long under the top plate (slots for other servo lengths), leg down to 2.0 mm above the chassis plate. Servo ears with M3x6 and washers from the front, top plate with M3x6 from above. [Technical drawings](running_gear/servo_mount/readme.md).
+* Floating servo mount as the T410R (manual step 10; caliper values M1 to M5 of the owner, drawing of the parts in the manual): top plate 2.3 mm, its top face 23.4 mm above the chassis plate; front edge straight (flush with the front faces of the posts), 19.6 mm deep over the servo and the floating post, at the fixed post the plate reaches back to the rear face of the post. Fixed post (7 mm wide, 34 mm long; measured part 32 mm, lengthened to the rear so that the thread of H17 has 2.25 mm of material behind it) at the inner end of the servo, screwed onto the chassis plate (H17 and H21, threads M3 from below); its front face lies 5.5 mm ahead of H21 and carries the servo ear. Seen from the side the post is an H: front and rear pillar with a web, U-notch from the top, arch from below. Floating post: L bracket at the output end, flange 19.1 mm long under the top plate (slots for other servo lengths), leg down to 2.0 mm above the chassis plate. Servo ears with M3x6 and washers from the front, top plate with M3x6 from above. [Technical drawings](generic_parts/servo_mount/readme.md).
 
 | Value | Model | Note |
 |:---|:---|:---|
@@ -1027,7 +1033,7 @@ The steering follows the T410R (manual steps 10, 13, 14 and 21, photos of the ow
 
 **Files of the running gear**
 
-All files are stored in the directory `/running_gear` and are generated with `generate_running_gear.py` from `running_gear_parameters.json` (see [scripts](#scripts)). One STEP and one STL file per own part of the right side in the assembly position (chassis plate coordinates), one folder per group. The parts of the left side are mirror images of the right ones. Most parts are the same on both sides (symmetric; the steering knuckle is turned upside down on the left side). The C-hub has no plane of symmetry (caster, kingpin axis toward the middle of the car): it has a right and a left part (mirror images, own files).
+All files are stored in the directory `/generic_parts` and are generated with `generate_running_gear.py` from `running_gear_parameters.json` (see [scripts](#scripts)). One STEP and one STL file per own part of the right side in the assembly position (chassis plate coordinates), one folder per group. The parts of the left side are mirror images of the right ones. Most parts are the same on both sides (symmetric; the steering knuckle is turned upside down on the left side). The C-hub has no plane of symmetry (caster, kingpin axis toward the middle of the car): it has a right and a left part (mirror images, own files).
 
 | Folder | Files | Content |
 |:---|:---|:---|
@@ -1037,7 +1043,7 @@ All files are stored in the directory `/running_gear` and are generated with `ge
 | `/steering` | `steering_post`, `bellcrank`, `steering_bridge`, `servo_horn_aluminium_clamp`, technical drawings of the steering post, the bellcrank and the steering bridge (PDF, PNG, readme) | Steering and servo horn; the bellcrank is the same part on both sides |
 | `/servo_mount` | `servo_mount_top_plate`, `servo_mount_fixed_post`, `servo_mount_floating_post`, technical drawings (PDF, PNG, readme) | Floating servo mount (top plate and 2 posts) |
 | `/sway_bars` | `sway_bar_end_a`, `sway_bar_end_b`, `sway_bar_holder_end_a`, `sway_bar_holder_end_b`, `sway_bar_ball_end_end_a`, `sway_bar_ball_end_end_b` | Sway bars, holders and ball ends |
-| `/running_gear` | `running_gear_parameters.json` | All dimensions, each with its source and a note |
+| `/generic_parts` | `running_gear_parameters.json` | All dimensions, each with its source and a note |
 
 * Purchased parts (bearings, flanged bearings MF63ZZ of the bridge, shims, pins, screws, lock nuts, rod ends, turnbuckles, set screws of the drop links, ball studs, dampers, servo) are in the assembly only.
 * Technical drawings of the steering post, the bellcrank, the steering bridge and the 3 parts of the servo mount: `scripts/cad/generate_technical_drawings.py --part steering_post,bellcrank,steering_bridge,servo_mount_top_plate,servo_mount_fixed_post,servo_mount_floating_post` (frames: axis of the post on the chassis plate; hub axis of the bellcrank; middle between the towers of the bridge; hole H21 of the chassis plate for the servo mount).
@@ -1063,7 +1069,7 @@ The directory `scripts/cad` contains the Python scripts that generate the CAD fi
 
 | Script | Input | Output | Package |
 |:---|:---|:---|:---|
-| `geometry_from_step.py` | Source data: STEP file of the first wide plate without the longer window (`/chassis/chassis_plate_speedrun_wide`), geometry data of the T410R plate (`/chassis/chassis_plate`) | Geometry data of the first wide plate: its outline with the holes, cutouts and countersinks of the T410R plate. The option `--check` compares the rebuilt solid with the STEP file. | cadquery |
+| `geometry_from_step.py` | Source data: STEP file of the first wide plate without the longer window (`/speedrun_parts/chassis/chassis_plate_speedrun_wide`), geometry data of the T410R plate (`/speedrun_parts/chassis/chassis_plate`) | Geometry data of the first wide plate: its outline with the holes, cutouts and countersinks of the T410R plate. The option `--check` compares the rebuilt solid with the STEP file. | cadquery |
 | `lengthen_motor_window.py` | Geometry data of the first wide plate | Geometry data of the speedrun chassis plate: motor window 10 mm longer toward End A (option `--length`) | None |
 | `generate_solid.py` | Geometry data | STEP and STL file. Helper module: plates with edge chamfers and hole chamfers (speedrun top brace, speedrun shock towers) | cadquery |
 | `generate_dxf.py` | Geometry data | DXF file (see [DXF generation](#dxf-generation)) | ezdxf |
@@ -1088,7 +1094,7 @@ The directory `scripts/cad` contains the Python scripts that generate the CAD fi
 | `generate_bulkhead_drawings.py` | STEP, STL and parameter file of the lower bulkhead | Preview image `photos/cad_bulkhead_lower_preview.png` and measurement sheet (PDF) | cadquery, matplotlib |
 | `generate_bulkhead_upper.py` | Parameter files of the upper and the lower bulkhead | STEP and STL file of the upper part, test print STL file, assembly STEP file, interference check, geometry checks | cadquery |
 | `generate_bulkhead_upper_drawings.py` | Parameter files, photos of the original upper part | Preview image `photos/cad_bulkhead_upper_preview.png` and measurement sheet of the original upper part (PDF) | cadquery, matplotlib |
-| `generate_bulkhead_technical_drawings.py` | STEP, STL and parameter files of the lower and the upper bulkhead | Technical drawings of both parts (PDF, A3, 2 sheets each, and one PNG per sheet) in `/bulkhead` | cadquery, matplotlib |
+| `generate_bulkhead_technical_drawings.py` | STEP, STL and parameter files of the lower and the upper bulkhead | Technical drawings of both parts (PDF, A3, 2 sheets each, and one PNG per sheet) in `/speedrun_parts/bulkhead` | cadquery, matplotlib |
 | `generate_technical_drawings.py` | STEP files of the speedrun chassis plate, top brace, shock towers, pivot blocks, motor mount and cap, C-hubs (right and left), steering knuckle, front splitter and wishbones; hole tables of the plates; parameter file of the running gear (frames of the C-hub and the knuckle) | Technical drawings (PDF, A3, 2 or 3 sheets, one PNG per sheet) and a readme with the sheets in the directory of each part. Scale and layout follow from the size of the part; the holes are read from the STEP files | cadquery, matplotlib |
 | `technical_drawing.py` | – (module) | Helpers of the technical drawings: projection with hidden line removal, sections, dimensions, hole finder (cylinders and countersinks along any axis), hole table, title block | cadquery, matplotlib |
 | `mesh_views.py` | None | Helper module: shaded views of STL files and assemblies, used by the drawing scripts of the bulkheads | matplotlib |
@@ -1100,15 +1106,15 @@ The following commands regenerate the files of the speedrun chassis plate in thi
 ```bash
 python scripts/cad/geometry_from_step.py --check
 python scripts/cad/lengthen_motor_window.py
-python scripts/cad/generate_solid.py cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10
-python scripts/cad/generate_dxf.py cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.dxf
+python scripts/cad/generate_solid.py cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10
+python scripts/cad/generate_dxf.py cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.dxf
 python scripts/cad/check_motor_window.py
 python scripts/cad/generate_window_preview.py
 python scripts/cad/generate_print_template.py --plate motor10
 ```
 
 * The regenerated geometry data, STL files and images are identical to the files in the repository. The STEP, DXF and PDF files differ only in header data such as the creation date and internal IDs.
-* The STEP and STL files of the first wide plate (`/chassis/chassis_plate_speedrun_wide`) are source data and are not regenerated.
+* The STEP and STL files of the first wide plate (`/speedrun_parts/chassis/chassis_plate_speedrun_wide`) are source data and are not regenerated.
 
 Both generators of the bulkheads check the solid after each run:
 * **Enclosure check:** the intended openings (parting face, lip openings, end of the pinion seat, floor opening below the ring gear) are closed with plugs. The gear cavity must then be a closed void. If it is not, the part has an unwanted opening to the outside.
@@ -1145,7 +1151,7 @@ python scripts/cad/generate_technical_drawings.py
 The script `scripts/cad/generate_dxf.py` generates the DXF file of the speedrun chassis plate for CNC manufacturing from its geometry data (`*_geometry.json`, same directory):
 
 ```bash
-python scripts/cad/generate_dxf.py cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json cad/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.dxf
+python scripts/cad/generate_dxf.py cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_T410R_speedrun_wide_motor10.dxf
 ```
 
 * The DXF file contains the layers `OUTLINE` (outer contour), `CUTOUT` (motor window and slot), `HOLE_THROUGH` (through holes Ø3.2 mm), `CSK_BOTTOM_INFO` (countersink diameter Ø6.2 mm on the bottom face, for information only) and `NOTES` (empty).

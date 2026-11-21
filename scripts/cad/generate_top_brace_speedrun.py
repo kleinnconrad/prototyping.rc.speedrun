@@ -1,7 +1,7 @@
 """Generate the speedrun top brace: new design that matches the new bulkheads.
 
 The holes are taken unchanged from the geometry data of the top brace
-(cad/chassis/top_brace/top_brace_geometry.json), except the holes in the middle part that are
+(cad/speedrun_parts/chassis/top_brace/top_brace_geometry.json), except the holes in the middle part that are
 not screwed to the bulkheads (B05, B06): they are closed. The two slots in the middle part are
 closed as well. The obround cutout at the end with B07 to B15 is kept unchanged.
 
@@ -14,7 +14,7 @@ Design (in the style of the bulkheads): straight lines and radii only.
 * Transitions at 30 degrees to the y axis on both ends, fillets 3 mm.
 * End with B01 to B04 solid: the hexagon cutout of the original top brace is obsolete and closed.
 
-Outputs in cad/chassis/top_brace_speedrun: geometry data, STEP, STL, DXF, hole table, 1:1
+Outputs in cad/speedrun_parts/chassis/top_brace_speedrun: geometry data, STEP, STL, DXF, hole table, 1:1
 templates (100 % and 97 %) and two test print halves with a dovetail. Image: top view with the
 dimensions. The assembly with the chassis plate and the bulkheads is
 generated with generate_speedrun_assembly.py.
@@ -44,13 +44,13 @@ from generate_drawing import contour_points  # noqa: E402
 from generate_bulkhead_lower import load_params, thin_gaps  # noqa: E402
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 
-CAD = "cad/chassis"
+CAD = "cad/speedrun_parts/chassis"
 ORIG = f"{CAD}/top_brace/top_brace_geometry.json"
 OUT = f"{CAD}/top_brace_speedrun"
 STEM = f"{OUT}/top_brace_T410R_speedrun"
 GEOM = f"{OUT}/top_brace_speedrun_geometry.json"
-LOWER = "cad/bulkhead/bulkhead_lower_parameters.json"
-UPPER = "cad/bulkhead/bulkhead_upper_parameters.json"
+LOWER = "cad/speedrun_parts/bulkhead/bulkhead_lower_parameters.json"
+UPPER = "cad/speedrun_parts/bulkhead/bulkhead_upper_parameters.json"
 BULKHEAD_Y = {"front": 287.36, "rear": 21.53}     # centres of H28 to H31 and H03 to H06 (chassis plate)
 
 DESIGN = {
