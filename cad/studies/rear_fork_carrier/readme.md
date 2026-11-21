@@ -16,18 +16,18 @@ Study of the design concept E of the owner for the rear corner (End B): the rear
 
 ![Sections at the axis of the outer hinge pin, from above: build and study with the widths along the pin](rear_fork_carrier_study_section.png)
 
-Frame of the outer hinge pin of the rear right arm: origin on the axis of the pin in the middle of the arm, x along the arm (outward), y along the pin (+y toward End A, the front of the car), z up. The hub carrier of the left side is the mirror image; the left wishbone is the same part turned upside down, as in the build.
+Frame of the outer hinge pin of the rear right arm: origin on the axis of the pin in the middle of the arm, x along the arm (outward), y along the pin (+y toward End A, the front of the car), z up. The left hub carrier and the left wishbone are the mirror images of the right ones (own parts). The build uses one wishbone and turns it upside down on the left side; the study does not, so the grub screw goes in from below on both sides.
 
 | Feature | Build | Study |
 |:---|:---|:---|
 | Wishbone, outer end | 2 lugs Ø7.2 mm, 5.5 mm long, gap 15.6 mm (26.6 mm over the outer faces) | One tube (tongue) Ø7.2 mm, 7.0 mm long, bore Ø3.2 mm, at the end of 2 struts (see [rear wishbone as an A-frame](#rear-wishbone-as-an-a-frame)); the struts end 4.2 mm from the axis of the pin (0.6 mm clear of the lugs of the fork) |
-| Fixing of the outer hinge pin | Grub screw M3x4 from below in the tube of the hub carrier (boss Ø6.0 mm); the pin turns in the lugs of the wishbone | Grub screw M3x4 from below in the middle of the tongue (owner). Bosses Ø6.0 mm above and below the tongue (5.7 mm from the axis of the pin, as the bosses of the build) with a through thread M3: on the left side the wishbone is turned upside down, and the screw goes in from below on both sides. The hub carrier turns on the pin |
-| Hub carrier on the pin | One tube Ø7.2 mm, 9.2 mm long, bore Ø3.1 mm, between 2 spacers 3x7x3 | Fork: 2 lugs Ø7.2 mm, 6.0 mm long, bore Ø3.1 mm, inner faces 5.0 mm and outer faces 11.0 mm from the middle of the tongue (22.0 mm over the lugs), no grub screw. A bridge 1.5 mm above the upper boss of the tongue (7.2 mm above the axis of the pin) joins the lugs to the column under the bearing tube |
+| Fixing of the outer hinge pin | Grub screw M3x4 from below in the tube of the hub carrier (boss Ø6.0 mm); the pin turns in the lugs of the wishbone | Grub screw M3x4 from below in the middle of the tongue (owner). One boss Ø6.0 mm below the tongue (5.7 mm below the axis of the pin, as the bosses of the build), thread M3 up to the bore, no boss on top (owner). Right and left wishbone are mirror images, so the screw goes in from below on both sides. The hub carrier turns on the pin |
+| Hub carrier on the pin | One tube Ø7.2 mm, 9.2 mm long, bore Ø3.1 mm, between 2 spacers 3x7x3 | Fork: 2 lugs Ø7.2 mm, 6.0 mm long, bore Ø3.1 mm, inner faces 5.0 mm and outer faces 11.0 mm from the middle of the tongue (22.0 mm over the lugs), no grub screw. A bridge 1.5 mm above the tongue (5.1 mm above the axis of the pin) joins the lugs to the column under the bearing tube |
 | Hub carrier, rest | – | Unchanged above the column: bearing tube 10 mm with 2 bearings 5x10x4 and the lip, web, top tab, camber stud bore 13.7 mm from the outer face of the bearing tube. In the middle position of the shims the axle has the position of the build |
 | Spacers and shims | 2 spacers 3x7x3 | 6 shims 3x6x0.5, 3 on each side of the tongue in the middle position |
 | Outer hinge pin | 3x26, fixed in the hub carrier | 3x26, fixed in the tongue: 2.0 mm beyond the outer faces of the lugs in the middle position, 0.5 mm at the end positions of the shims |
 | Support of the hub carrier on the pin | 9.2 mm (length of the tube) | 22.0 mm (outer faces of the lugs) |
-| Volume (mass in nylon PA12, 1.01 g/cm³) of the hub carrier | 1.94 cm³ (2.0 g) | 2.24 cm³ (2.3 g) |
+| Volume (mass in nylon PA12, 1.01 g/cm³) of the hub carrier | 1.94 cm³ (2.0 g) | 2.28 cm³ (2.3 g) |
 
 * The hub carrier rests on the pin over 22.0 mm instead of 9.2 mm: forces that turn the hub carrier about a vertical axis (toe) are taken over a longer base.
 * The mass of the hub carrier is given in PA12 for comparison only: the material of the hub carrier is open in the build.
@@ -44,13 +44,14 @@ In the build, the wheel forces enter the wishbone at 2 lugs at the sides of the 
 | Cross bar | 5.0 mm wide at the sway ball stud (24.9 mm from the inner hinge pin), from strut A to strut B; a pad 6.0 mm long carries the stud at the position of the build (outer face of the rail of the build) |
 | Neck | 7.0 mm wide, from 44.0 mm to the tongue; both struts end in it |
 | Unchanged from the build | Tube Ø7.2 mm on the inner hinge pin (33.0 mm, bore Ø3.2 mm), shoulders, droop bosses with the threads, shock plate with its 3 holes, hole of the sway ball stud, height 6.0 mm, length 54.3 mm |
+| Right and left part | Mirror images (the boss of the grub screw is below on both sides); the left wishbone is not turned upside down as in the build |
 | Window | Open between the struts, the cross bar and the tube on the inner hinge pin |
 
 | Wishbone | Volume | Mass in nylon PA12 |
 |:---|:---|:---|
 | Build: 2 outer lugs, closed plate | 7.87 cm³ | 7.9 g |
-| First draft of the study: tongue, closed plate of the build and a solid taper to the tongue | 7.84 cm³ | 7.9 g |
-| Study: A-frame | 5.09 cm³ | 5.1 g (35 % less than the build) |
+| First draft of the study: tongue, closed plate of the build and a solid taper to the tongue | 7.79 cm³ | 7.9 g |
+| Study: A-frame | 5.04 cm³ | 5.1 g (36 % less than the build) |
 
 * The struts keep the height of the rails (6.0 mm): the droop screws, the shock ball stud and the sway ball stud need it for their threads, and the bending moment from the damper is largest at the shock plate (strut A, unchanged).
 * The damper force acts on strut A at the side; strut A, the neck and the cross bar carry the torsion to the tongue and to strut B.
@@ -77,16 +78,17 @@ Results of `generate_rear_fork_carrier_study.py`:
 
 | Check | Result |
 |:---|:---|
-| Interference of the study parts (2 wishbones, 2 hub carriers, shims, pins) with the other parts of the assembly and with each other, middle position of the shims | 0 mm³ |
+| Interference of the study parts (right and left wishbone, 2 hub carriers, shims, pins) with the other parts of the assembly and with each other, middle position of the shims | 0 mm³ |
 | Hub carrier above the column against the hub carrier of the build | Identical (difference 0 mm³) |
 | Distance of the wishbone to the CVD drive shaft (static) | 3.56 mm (build: 3.56 mm) |
-| Swing of the hub carrier on the pin relative to the wishbone, -25 to +25 degrees in steps of 2.5 degrees (positive: top of the hub carrier toward the outside of the car) | Free over the whole range. Smallest distance 1.31 mm at 0 degrees, 1.07 mm at ±10 degrees, 0.92 mm at ±15 degrees, 0.77 mm at +25 degrees and 0.35 mm at -25 degrees (bridge to the upper boss and to the neck of the tongue) |
+| Swing of the hub carrier on the pin relative to the wishbone, -25 to +25 degrees in steps of 2.5 degrees (positive: top of the hub carrier toward the outside of the car) | Free over the whole range. Smallest distance 1.31 mm from -10 to +25 degrees, 1.02 mm at -15 degrees, 0.70 mm at -20 degrees and 0.35 mm at -25 degrees (fork to the neck of the wishbone) |
 | End positions of the shims (-1.5 and +1.5 mm): hub carrier and axle group moved along the pin, against all other parts and the fixed pin (the CVD drive shaft and the camber link of this corner follow the hub carrier and are left out) | 0 mm³ in both positions |
 
 ## Open points
 * **Strength of the A-frame:** the struts (5.0 x 6.0 mm), the neck and the tongue (7.0 mm long, wall 2.0 mm around the bore) take all forces of the wheel. In nylon PA12 (MJF) a test print and a load test on the car are needed. Radii at the joints of the struts, at the neck and at the pad are not modelled.
-* **Grub screw in the tongue:** the thread M3 is cut into the printed tongue (as in the hub carrier of the build); the pin turns in the bores Ø3.1 mm of the lugs of the hub carrier.
-* **Bridge of the fork:** 2.9 mm of material remain between the lower face of the bridge and the bearing seats.
+* **Grub screw in the tongue:** the thread M3 is cut into the boss under the printed tongue (as in the hub carrier of the build); the pin turns in the bores Ø3.1 mm of the lugs of the hub carrier.
+* **Right and left wishbone:** 2 parts to print instead of one part for both sides.
+* **Bridge of the fork:** 5.0 mm of material remain between the lower face of the bridge and the bearing seats.
 * **Swing range:** the free range of ±25 degrees is to be compared with the suspension travel (not checked).
 * **Shims:** shims 3x6x0.5 are to be bought.
 * **Camber link:** the wheelbase adjustment moves the camber stud by up to 1.5 mm along the car; the angle of the rod ends is not checked.
@@ -97,7 +99,7 @@ Results of `generate_rear_fork_carrier_study.py`:
 | File | Content |
 |:---|:---|
 | `generate_rear_fork_carrier_study.py` | Script of the study: parts, checks, pictures, STEP and STL files |
-| `rear_wishbone_tongue_study.step`, `rear_wishbone_tongue_study.stl` | Rear wishbone of the study (A-frame) in arm coordinates (as the wishbones in `cad/parts/wishbone`); the same part on both sides |
+| `rear_wishbone_tongue_study_right.step`, `rear_wishbone_tongue_study_right.stl`, `rear_wishbone_tongue_study_left.step`, `rear_wishbone_tongue_study_left.stl` | Right and left rear wishbone of the study (A-frame, mirror images) in arm coordinates (as the wishbones in `cad/parts/wishbone`) |
 | `rear_hub_carrier_fork_study.step`, `rear_hub_carrier_fork_study.stl` | Rear hub carrier of the study, right side, in chassis plate coordinates (as the files in `cad/running_gear/rear_corner`); the left one is its mirror image |
 | `rear_fork_carrier_study_parts.step` | All study parts of both sides in chassis plate coordinates (wishbones, hub carriers, shims, pins) with the colours of the scheme |
 | `rear_fork_carrier_study.png` | Rear right corner of the build and of the study |

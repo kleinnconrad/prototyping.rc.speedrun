@@ -4,8 +4,8 @@ The rear wishbone ends in one tube (tongue) on the outer hinge pin instead of 2 
 2 lugs (fork) that straddle the tongue instead of one tube between 2 spacers 3x7x3. Shims 3x6x0.5 between the tongue
 and the lugs set the position of the hub carrier along the outer hinge pin and with it the wheelbase. The pin is fixed
 in the middle of the tongue with the grub screw M3x4 from below (owner); the hub carrier turns on the pin (bore 3.1)
-and slides along it when the shims are moved. The tongue has a boss above and below with a through thread: the left
-wishbone is the same part turned upside down, so the screw always goes in from below.
+and slides along it when the shims are moved. The tongue has a boss below only (owner): the left wishbone is the
+mirror image of the right one (own part), so the screw goes in from below on both sides.
 
 Wishbone: all forces of the wheel now enter the wishbone at one point (the tongue), so the wishbone is a light A-frame
 (owner: the wishbone need not be as massive as the build part): strut A follows the rail of the build with the shock
@@ -24,8 +24,8 @@ the hub carrier on the pin relative to the wishbone, both end positions of the s
 Usage (from the root directory of the repository, after generate_speedrun_assembly.py):
     python cad/studies/rear_fork_carrier/generate_rear_fork_carrier_study.py
 
-Outputs in the directory of this script: STEP and STL files of the wishbone (arm coordinates, as the build wishbones)
-and of the hub carrier (right side, chassis plate coordinates, as the running gear), STEP file of all study parts of
+Outputs in the directory of this script: STEP and STL files of the right and the left wishbone (arm coordinates, as
+the build wishbones) and of the hub carrier (right side, chassis plate coordinates, as the running gear), STEP file of all study parts of
 both sides, pictures.
 
 Requires the packages cadquery and matplotlib.
@@ -60,7 +60,7 @@ TONGUE = 7.0             # length of the tongue along the outer hinge pin (tube 
 SHIM = (3.1, 6.0, 0.5)   # shim 3x6x0.5: bore (model with clearance), outer diameter, thickness
 N_SHIMS = 6              # 3 on each side in the middle position
 LUG = 6.0                # length of one lug of the fork
-BRIDGE = 1.5             # clearance of the bridge of the fork above the boss on the tongue
+BRIDGE = 1.5             # radial clearance of the bridge of the fork above the tongue
 TAPER_X0 = 44.5          # wishbone: start of the taper toward the tongue (end of the shock plate)
 NECK = 0.6               # wishbone: radial clearance of the taper to the lugs of the fork
 STRUT = 5.0              # light wishbone: width of the struts and of the cross bar (as the rails of the build)
@@ -83,15 +83,15 @@ def gap_half():
 
 # ------------------------------------------------------------------ parts (local frames)
 def tongue(ap, p, s):
-    """Tongue on the outer hinge pin with the bosses above and below, bore 3.2 and the through thread M3 of the grub
-    screw (diameter and depth of the bosses as in the build): the same part fits both sides (the left wishbone is
-    turned upside down) and the screw goes in from below."""
+    """Tongue on the outer hinge pin with the boss of the grub screw M3x4 below (diameter and depth as in the build),
+    bore 3.2 and the thread M3 from below up to the bore (owner: no boss on top). The left wishbone is the mirror
+    image, so the screw goes in from below on both sides."""
     length, half = ap["rear_arm_length"], ap["inner_width"] / 2
     zp, zg = ap["outer_pin_z"], G.grub_boss_depth(p)
     s = s.fuse(cyl_y(ap["outer_lug_d"] / 2, -TONGUE / 2, TONGUE / 2, length, zp))
-    s = s.fuse(cyl_z(p["grub_screw_boss"][2] / 2, zp - zg, zp + zg, length, 0))             # bosses above and below
+    s = s.fuse(cyl_z(p["grub_screw_boss"][2] / 2, zp - zg, zp - 1.0, length, 0))            # boss below the tongue
     s = s.cut(cyl_y(ap["pin_bore_d"] / 2, -half - 1, half + 1, length, zp))
-    return s.cut(cyl_z(G.TAP / 2, zp - zg - 1, zp + zg + 1, length, 0))                  # thread M3, grub screw
+    return s.cut(cyl_z(G.TAP / 2, zp - zg - 1, zp, length, 0))                           # thread M3, grub screw
 
 
 def strut(p0, p1, side, w, h):
@@ -158,7 +158,7 @@ def tongue_arm_plate(ap, p):
 
 def fork_carrier(p):
     """Rear hub carrier with the fork in the frame of the outer hinge pin (x along the arm, y along the pin, z up):
-    2 lugs straddle the tongue, a bridge above the boss of the tongue joins them to the column under the bearing tube;
+    2 lugs straddle the tongue, a bridge above the tongue joins them to the column under the bearing tube;
     above the column the part is the hub carrier of the build. The lugs turn on the pin (bore 3.1), no grub screw."""
     t_len, t_d, w_web = p["rear_carrier"][:3]
     pin_bore, lip_h, _ = p["rear_carrier_bores"]
@@ -167,7 +167,7 @@ def fork_carrier(p):
     rt, rb, wb = t_d / 2, 5.0, 4.0
     g = gap_half()
     yl = g + LUG                                               # outer faces of the lugs
-    zb = G.grub_boss_depth(p) + BRIDGE                         # lower face of the bridge above the boss of the tongue
+    zb = r + BRIDGE                                            # lower face of the bridge above the tongue
     zc = za - 5.0                                              # top of the column (in the bearing tube), as the build
     yoke = (cq.Workplane("YZ").polyline([(-yl, 0), (-g, 0), (-g, zb), (g, zb), (g, 0), (yl, 0), (yl, zb + 1.0),
                                          (4.0, zc), (-4.0, zc), (-yl, zb + 1.0)]).close().extrude(6.0).val()
@@ -227,7 +227,8 @@ def study_parts(p, ap, k, s=0.0):
     sh = shims(s)[0]
     out = []
     for side, sname in ((1, "right"), (-1, "left")):
-        out += [(f"rear wishbone tongue study End B {sname}", "arm", W.place_arm(arm, "rear", side)),
+        arm_w = W.place_arm(arm, "rear", 1)                    # left: mirror image of the right wishbone (own part)
+        out += [(f"rear wishbone tongue study End B {sname}", "arm", arm_w if side > 0 else G.mirror_x(arm_w)),
                 (f"rear hub carrier fork study End B {sname}", "upright", k.world(car, side)),
                 (f"shims 3x6x0.5 End B {sname}", "spring", k.world(sh, side)),
                 (f"outer hinge pin 3x26 End B {sname}", "cup", k.world(pin(), side))]
@@ -387,7 +388,7 @@ def picture(assy, study):
              (st, iso_basis(-40, 28), "Study: fork on the hub carrier, tongue on the A-frame wishbone,\n"
               "shims 3x6x0.5 (light blue) set the wheelbase (view from outside and above)"),
              (st, iso_basis(-15, -30), "Study from outside and below: shims on both sides of the tongue,\n"
-              "grub screw in the middle of the tongue (bosses above and below)")]
+              "grub screw from below in the middle of the tongue")]
     for i, (parts, basis_, title) in enumerate(views):
         tris, cols = corner_mesh(parts)
         ax = fig.add_axes([i / 3, 0.0, 1 / 3, 0.86])
@@ -515,7 +516,9 @@ def main():
         print(f"shift {r['shift']:+.1f} mm (shims {r['front']} in front, {r['rear']} behind): face of the hex hub y = "
               f"{r['axle y']:.2f}, CVD {r['cvd length']:.2f} mm at {r['cvd plan angle']:.2f} deg in the top view, "
               f"pin {r['pin beyond the lug']:.1f} mm beyond the outer lug, interference: {r['hits'] or 'none'}")
-    for path, solid in ((OUT_ARM, tongue_arm(ap, p)), (OUT_CARRIER, k.world(fork_carrier(p)))):
+    arm = tongue_arm(ap, p)
+    for path, solid in ((OUT_ARM + "_right", arm), (OUT_ARM + "_left", arm.mirror("XZ")),
+                        (OUT_CARRIER, k.world(fork_carrier(p)))):
         cq.exporters.export(solid, path + ".step")
         cq.exporters.export(solid, path + ".stl", tolerance=0.01, angularTolerance=0.1)
     export(study, OUT_PARTS)
