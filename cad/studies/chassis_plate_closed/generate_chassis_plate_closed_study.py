@@ -420,11 +420,12 @@ def top_view(geo, face, zones, path, outline=None):
     ax.plot(new[:, 0], new[:, 1], color=P.rgb("plate"), lw=1.6, label="new outline (study)")
     o = prim_points(geo["outline"])
     ax.plot(o[:, 0], o[:, 1], "k--", lw=0.9, label="current outline")
-    for c in geo["cutouts"].values():
+    for c in geo["cutouts"].values():                 # windows open (motor window, slot of the spur gear)
         q = prim_points(c)
-        ax.plot(q[:, 0], q[:, 1], "k", lw=0.6)
+        ax.fill(q[:, 0], q[:, 1], color="white", lw=0, zorder=3)
+        ax.plot(q[:, 0], q[:, 1], "k", lw=0.6, zorder=4)
     for h in geo["holes"]:
-        ax.add_patch(plt.Circle((h["x"], h["y"]), geo["hole_d"] / 2, fill=False, lw=0.5))
+        ax.add_patch(plt.Circle((h["x"], h["y"]), geo["hole_d"] / 2, fc="white", ec="k", lw=0.5, zorder=4))
     ax.plot([], [], "s", color=(0.55, 0.6, 0.66), label=f"tyres at the height of the plate (steering, droop 0 to {DROOP:g})")
     ax.plot([], [], "s", color=(0.80, 0.84, 0.90), label=f"moving parts lower than {Z_CLEAR:g} above the plate (droop 0 to {DROOP:g})")
     ax.plot([], [], "s", color=(0.93, 0.80, 0.62), label=f"static parts at the height of the plate (front splitter), enlarged by {STATIC_CLEAR:g}")

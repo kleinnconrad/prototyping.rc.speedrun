@@ -13,7 +13,7 @@
 Owner (2026-11-21): the open space between the tyres is closed with the speedrun chassis plate, without touching the tyres or getting too close to them; no new material in front of the front tyres and behind the rear tyres, no spike beside the droop bosses of the front wishbones. The study is not part of the build: the speedrun chassis plate (wide, longer motor window) and the assembly are not changed.
 
 ## Design
-The study keeps the speedrun chassis plate (holes, windows, countersinks, thickness 2.0 mm, aluminium 6082) and only adds material to its outline.
+The study keeps the speedrun chassis plate (holes, windows, countersinks, thickness 2.0 mm, aluminium 6082) and only adds material to its outline. The motor window (23.5 x 63.3 mm, longer window for the 3660 motor) and the slot of the spur gear stay open (owner), as all holes; checked in the STEP and the STL file.
 
 * New material only between the rear axle and the front end of the diagonal edges of the current plate (y = 258.24 mm, where the current outline turns into the narrow front end) (owner); there the full width of the current plate (x = ±99.99 mm). In front of it and behind the rear axle the outline is the current one.
 * Keep-out zones, each enlarged by the clearance:
