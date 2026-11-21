@@ -1,6 +1,6 @@
 # Session summary (handover)
 
-Handover of the CAD session that ended on 2026-11-20, for the next session. Work of the session: rear hub carrier reworked with the values of the owner, C-hub as right and left part, track measured by the owner, wishbones with bores Ø3.2 and a new optical design, grub screw bosses, battery tray and servo mount verified, colour scheme of all CAD pictures in blue and grey. Read this file, `CLAUDE.md` and the [CAD readme](../cad/readme.md) first.
+Handover of the CAD session that ended on 2026-11-20, for the next session. Work of the session: rear hub carrier reworked with the values of the owner, C-hub as right and left part, track measured by the owner, wishbones with bores Ø3.2 and a new optical design, grub screw bosses, battery tray and servo mount verified, colour scheme of all CAD pictures in blue and grey; in a follow-up session the assembly drawing (views and main dimensions). Read this file, `CLAUDE.md` and the [CAD readme](../cad/readme.md) first.
 
 ## Table of contents
 * [State of the repository](#state-of-the-repository)
@@ -13,18 +13,8 @@ Handover of the CAD session that ended on 2026-11-20, for the next session. Work
 * [Open points](#open-points)
 
 ## State of the repository
-* Work branch: `claude/confident-brahmagupta-htvja9`. Everything up to pull request #101 (`60de18b`) is merged into `main`. The commits of this session are pushed to the branch and not merged; no pull request is open:
-  * `85d621f` rear hub carrier reworked with the values of the owner
-  * `c8e37bf` C-hub as right and left part
-  * `7424851` rear hub carrier: bearing tube height and camber stud from the owner
-  * `527972c` rear hub carriers measures qualified; track measured by the owner
-  * `08bbe7f` wishbones: hinge pin bores 3.2 mm for MJF prints
-  * `0ab40de` wishbones: closed plate with lightening holes, one tube on the inner pin
-  * `64f04b0` grub screw bosses on the C-hubs and the rear hub carriers
-  * `2315d1b` speedrun battery tray verified
-  * `b6e87e3` servo mount verified; check the servo holes before printing
-  * `f9fd0e9` blue and grey colour scheme for all CAD pictures
-  * the last commit: headline of the assembly picture "Speedrun Chassis" and this handover
+* The work of the session (rear hub carrier, C-hub right and left, wishbones, grub screw bosses, battery tray and servo mount verified, colour scheme, this handover) is merged into `main` with pull request #105 (`a4e2a6d`).
+* Follow-up session (2026-11-20, branch `ccr-1e4a1ee8-mogryr`, pushed, no pull request): assembly drawing with the views and the main dimensions (see [work of this session](#work-of-this-session)).
 * Generated files are up to date: running gear, camber links, wishbones, assembly (STEP with the colours of the scheme, picture), front splitter, battery tray, drive line pictures, bulkhead previews, shock tower pictures, dual motor study and electronics layout; technical drawings of the C-hubs (CH-R, CH-L), the steering knuckle, the wishbones, the battery tray and the servo mount. The other technical drawings keep their date. `architecture/README.md` and `specs/full_spec.yaml` were not changed.
 * The dual motor study was regenerated on 2026-11-20 with the current build (without the battery of the build, see below).
 
@@ -49,12 +39,12 @@ The model is not yet changed to these values. Per side (centre line to the outer
   2. Front C-hub, pin Ø3 in the hinge pin bore and drill Ø5 in a kingpin bore: across both along the axle: model 10.75 (6.75 + 1.5 + 2.5); 11.85 if the 1.1 lies in the C-hub.
   3. Front knuckle, drill Ø2.7 in a kingpin bore: outer face of the ring to the far side of the drill along the axle: model 18.05 (16.7 + 1.35); 16.95 if the 1.1 lies in the knuckle.
 * **Option offered (not decided):** change the model now with derived values: hex hubs 5.6 / 6.6 from the face, the rear bearing tube 0.9 further out, the front kingpin 1.1 further in (front CVD approx. 1.1 shorter).
-* **Where to change:** `hex_hub` (or the gap 0.5 in `axle_group` calls) and `kingpin_x` or `knuckle` in `cad/running_gear/running_gear_parameters.json`; `rear_carrier`, `rear_carrier_bores` (radius of the tube on the hinge pin), `rear_carrier_layout()` and `rear_corner()` in `scripts/cad/generate_running_gear.py`. Consequences: CVD lengths, camber link gaps (the rear camber ball follows the stud of the hub carrier: `rear_camber_ball()`), `wheel_centre_x` and its note (wheel offset 6.35 from the face of the hex hub), the front splitter tyre check, the track rows of the CAD readme and of this file. Generators: running gear, camber links, assembly, then front splitter and battery tray; expected: running gear "overlaps: 0", assembly only the 3 known interferences.
+* **Where to change:** `hex_hub` (or the gap 0.5 in `axle_group` calls) and `kingpin_x` or `knuckle` in `cad/running_gear/running_gear_parameters.json`; `rear_carrier`, `rear_carrier_bores` (radius of the tube on the hinge pin), `rear_carrier_layout()` and `rear_corner()` in `scripts/cad/generate_running_gear.py`. Consequences: CVD lengths, camber link gaps (the rear camber ball follows the stud of the hub carrier: `rear_camber_ball()`), `wheel_centre_x` and its note (wheel offset 6.35 from the face of the hex hub), the front splitter tyre check, the track rows of the CAD readme and of this file, the main dimensions of the assembly drawing (the CAD readme lists them). Generators: running gear, camber links, assembly, then front splitter, battery tray and the assembly drawing; expected: running gear "overlaps: 0", assembly only the 3 known interferences.
 * A picture of what to measure for the track was made for the owner (scratch, not in the repository).
 
 ## Rules of the owner
 * `CLAUDE.md`: English, sentence case also in headings, list items and table entries, table of contents as soon as a Markdown file has more than one heading, no emojis, objective style without filler words.
-* Commits: `CLAUDE.md` requires the approval of the owner for each commit. In this session the owner approved commit and push for the whole session; ask again in a new session.
+* Commits: `CLAUDE.md` requires the approval of the owner for each commit. In both sessions of 2026-11-20 the owner approved commit and push for the whole session; ask again in a new session.
 * Commit messages end with the 2 attribution lines given by the environment (`Co-Authored-By: ...` and `Claude-Session: ...`).
 * The inside of the lower and upper bulkhead (verified with test prints) must not be changed; the generators of the bulkheads run a functional check.
 * Do not change `scripts/generate_setup_drawing.py`, `photos/latest_setup_drawing.svg`, `docs/latest_setup_drawing.svg` or `.github/workflows/*`.
@@ -78,6 +68,7 @@ The model is not yet changed to these values. Per side (centre line to the outer
   * `scripts/cad/generate_wishbones.py`: wishbones, hinge pins, drawing, checks (approx. 1 min).
   * `scripts/cad/generate_front_splitter.py` and `scripts/cad/generate_battery_tray.py`: approx. 1 min each; both read the assembly STEP, so run the assembly first.
   * `cad/studies/dual_motor/generate_dual_motor_study.py` (approx. 1.5 min, reads the assembly STEP of the build without its battery, tray and straps: `BUILD_BATTERY`) and `generate_dual_motor_electronics.py` (approx. 1 min, reads the assembly STEP of the study).
+  * `scripts/cad/generate_assembly_drawing.py`: assembly drawing `cad/assembly/speedrun_chassis_T410R_technical_drawing.pdf` (one sheet A3, 1:2: side view from -x, top view, view from End A; main dimensions read from the assembly STEP: hex hub faces, axle axes, extremes), PNG and `cad/assembly/readme.md` (approx. 1.5 min; run after the assembly; `--date`).
   * `scripts/cad/generate_technical_drawings.py`: technical drawings, PDF and one PNG per sheet plus a generated readme per directory (`--part KEY1,KEY2`; the readme of a directory is written when all of its parts are drawn; the date in the title block is today, so redraw only the changed parts). Keys of the front corner: `c_hub`, `c_hub_left`, `steering_knuckle`. Option `labels_right` of a section puts the callouts in a column right of the view (mirrored parts).
   * `scripts/cad/generate_bulkhead_drawings.py` (`--sheet` to a scratch path writes only the preview), `generate_bulkhead_upper_drawings.py`, `generate_shock_towers.py`, `generate_driveshaft.py`, `generate_drawing.py`: pictures of the bulkheads, shock towers, drive line and chassis plate.
   * Further: `generate_measurement_sheets.py`, `generate_knuckle_measurement_sheet.py`, `generate_front_splitter_measurement_sheet.py`, `generate_pivot_blocks.py`, `generate_bulkhead_technical_drawings.py`, `scripts/generate_adr_readme.py`, `scripts/merge_specs.py`.
@@ -125,6 +116,7 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
 * **Status:** battery tray verified (owner); servo mount (top plate, fixed post, floating post) verified (owner) with the note that the holes for the servo ears are to be checked against the servo before printing (parts lists, open points, drawings of the posts).
 * **Colour scheme** (owner): all CAD pictures in blue and grey shades (`scripts/cad/palette.py`, used by all picture scripts), assembly picture without legend and with the headline "Speedrun Chassis". The test print picture (no generator) was recoloured from the old picture. Annotations (red dimensions and labels, orange hole labels of the chassis drawing, markers of new or closed holes) and the red and black battery wires keep their colours.
 * **Dual motor study:** regenerated with the current build; the battery, tray and straps of the build are left out (`BUILD_BATTERY`, the study has its own batteries), the servo cable runs behind the servo horn (the horn moved with the refined servo mount); checks 0 mm³.
+* **Assembly drawing** (follow-up session, owner: views and main dimensions only, now, before the track change): drawing number RC-SR-AS, one sheet A3, scale 1:2, first angle projection; side view from the left side of the car (End A left), top view below it, view from End A right of it. Main dimensions from the model: overall length 419.4 (sway bar holder at End B to the tip of the front splitter), width 200.0 (chassis plate), height 61.6 (rear shock tower; the spur gear reaches 0.4 below the plate), wheelbase 257.5 (axle axes at the outer faces of the hex hubs), track 177.7 front and 173.7 rear, axle heights 22.0 front and 21.7 rear, front shock tower 53.3. Added on request (2026-11-21): caster 10.0 degrees at the front kingpin axis (axis of the kingpin screws, angle arc in the side view), width of the chassis plate labelled in the top view, overhangs 123.0 front and 38.8 rear in a chain with the wheelbase, ride height 10.0 front and 10.3 rear from a ground line with the tyres Ø64 as phantom lines (wheel centre plane 6.35 inside the face of the hex hub, `wheel_centre_x`), front kingpin axes 131.3 apart, front splitter 187.0 wide, rear toe-in 2.3 degrees on each side (axle axes); toe front and camber 0.0 in the notes. A note compares the track with the measured 173.7 (now: front +4.0, rear 0.0); it updates itself when the drawing is regenerated after the track change. Item numbers and a parts list were offered and not chosen.
 
 ## Current geometry (key values)
 | Value | Model |
