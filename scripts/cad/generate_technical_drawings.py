@@ -316,7 +316,7 @@ def parts():
         dict(key="wishbone_front", folder="cad/generic_parts/wishbone", step="wishbone_front_T410R.step", stem="wishbone_front_T410R",
              title="Front wishbone (used on both sides)", number="WB-F",
              dims=[("T", (0, -16.5, 0), (51.7, -16.5, 0), "h", "below", "51.70 (axis to axis)")], material="Nylon PA12 (MJF 3D print)",
-             density=1.01, density_txt="PA12", quantity="2", tol="process tolerance (MJF approx. ±0.3)", edges="as modelled",
+             density=1.01, density_txt="PA12", quantity="2", tol="process tolerance (MJF approx. ±0.3)", edges="chamfer 0.3 (modelled)",
              status="verified",
              notes=["Bores Ø3.2 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
                     "pins are exactly Ø3.0 (owner), 0.2 clearance so that the pins slide in without force and the arm turns "
@@ -329,7 +329,7 @@ def parts():
         dict(key="wishbone_rear", folder="cad/generic_parts/wishbone", step="wishbone_rear_T410R.step", stem="wishbone_rear_T410R",
              title="Rear wishbone (used on both sides)", number="WB-R",
              dims=[("T", (0, -16.5, 0), (54.3, -16.5, 0), "h", "below", "54.30 (axis to axis)")], material="Nylon PA12 (MJF 3D print)",
-             density=1.01, density_txt="PA12", quantity="2", tol="process tolerance (MJF approx. ±0.3)", edges="as modelled",
+             density=1.01, density_txt="PA12", quantity="2", tol="process tolerance (MJF approx. ±0.3)", edges="chamfer 0.3 (modelled)",
              status="verified",
              notes=["Bores Ø3.2 of the inner lugs (inner hinge pin 3x42) and of the outer lugs (outer hinge pin 3x26): the metal "
                     "pins are exactly Ø3.0 (owner), 0.2 clearance so that the pins slide in without force and the arm turns "

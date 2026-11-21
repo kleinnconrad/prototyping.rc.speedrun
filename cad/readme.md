@@ -113,8 +113,8 @@ Further own parts (own design of the owner, partly based on the T410R, not in th
 | [Differential (End B) with ring gear 42T, inner gears and bearings](#differentials) | 1 | `/generic_parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Spool (End A) with ring gear 42T and bearings](#differentials) | 1 | `/generic_parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Diff outdrives](#centre-driveshaft-and-drive-line) | 4 | `/generic_parts/diff_outdrive` | $\color{red}\times$ Completely unqualified |
-| [Front wishbones](#wishbones) | 2 | `/generic_parts/wishbone` | $\color{green}\checkmark$ Verified |
-| [Rear wishbones](#wishbones) | 2 | `/generic_parts/wishbone` | $\color{green}\checkmark$ Verified |
+| [Front wishbones](#wishbones) | 2 | `/generic_parts/wishbone` | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm added after the print) |
+| [Rear wishbones](#wishbones) | 2 | `/generic_parts/wishbone` | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm added after the print) |
 | [Inner hinge pins of the wishbones (3x42)](#wishbones) | 4 | `/generic_parts/wishbone` | $\color{red}\times$ Completely unqualified |
 | [Front C-hubs with 10 degrees caster (right and left part)](#running-gear) | 2 | `/generic_parts/front_corner` | $\color{red}\times$ Completely unqualified; kingpin bores 5 mm with guide sleeves (owner), 3D print verification planned |
 | [Front steering knuckles](#running-gear) | 2 | `/generic_parts/front_corner` | $\color{green}\checkmark$ Verified (3D print of the owner) |
@@ -867,6 +867,7 @@ All files are stored in the directory `/generic_parts/diff` and are generated wi
 
 * Two inner lugs on the inner hinge pin between the pivot blocks, joined to one tube Ø7.2 mm of constant diameter over the whole length of 33.0 mm (owner, 2026-11-20; the original part has an open notch between the lugs up to the inner cross bar); a shoulder from each end of the tube to its side rail; two parallel side rails; a closed plate as high as the rails from the tube to the outer cross bar; two outer lugs at the ends of the side rails for the outer hinge pin.
 * Optical design (owner, 2026-11-20, concept E of 5 concepts; the original part has X-shaped ribs in an open window): the plate from the tube to the outer cross bar is closed and as high as the rails (no step, the same look on both sides of the car: one arm per axle is mounted upside down), with lightening holes of the same size: front 3 holes Ø3.5 mm (pitch 4.75 mm, x = 12.15 to 21.65 mm), rear 4 holes Ø5.0 mm spread evenly between the tube and the outer cross bar (pitch 8.88 mm, x = 9.98 to 36.62 mm). No engraving. The lugs, bores, bosses, plates and the holes for the ball studs are unchanged; no ball stud reaches into the plate. Mass in PA12: front 6.3 g, rear 8.0 g (before 5.2 g and 5.5 g).
+* Edge chamfers (owner, 2026-11-21): chamfer 0.3 x 45 degrees on each sharp outer edge of both arms, no radii in the inner corners (parameter `edge_chamfer`, script `edge_treatment.py`, see [edge treatment](#running-gear)). The entries of the bore of the inner hinge pin are cut as countersinks of the same size (the kernel cannot chamfer them). Front arm: 95 chamfers (12 with 0.2 mm at narrow faces), no sharp edge left; rear arm: 88 chamfers (3 with 0.2 mm, 1 with 0.1 mm), 3 short edges of 0.72 mm left sharp where the droop bosses meet the rails. The interfaces (bores, lugs, plates, holes) are unchanged. Mass in PA12 with the chamfers: front 6.3 g, rear 7.9 g.
 * Front arm: side rails 22.8 mm wide over the outer faces, open loop between the outer cross bar and the outer lugs (C-hub), a thin closed loop beyond the outer lugs.
 * Rear arm: side rails 24.7 mm wide over the outer faces, 2 mm longer than the front arm, open U between the outer cross bar and the outer lugs (hub carrier).
 * Above each shoulder a boss with a thread M4 for the droop screw M4 x 10 mm (one of the two is used, depending on the side of the car).
@@ -977,9 +978,9 @@ All files are stored in the directory `/generic_parts/wishbone`. They are genera
   * Gusset (owner, 2026-11-21: stabilizing triangle without a step): on the outer face of the web, as wide as the web (9.2 mm), from the top face at 60 degrees down onto the bearing tube (4.4 mm high above the top of the tube); it braces the web against the pull of the camber link on the top tab (parameter `rear_carrier_gusset`).
   * Movement on the wishbone (check of the generator, owner: the wider bridge must not limit the suspension travel): the camber link holds the top of the hub carrier, so the carrier turns on the outer hinge pin relative to the wishbone when the suspension moves. Turned by -25 to +25 degrees (covers the compression to the chassis at the ride height of 15 mm): no overlap with the rear wishbone; smallest distance 2.82 mm up to 15 degrees (end face of the tube on the pin to the lug of the wishbone, the same before the widening) and 1.49 mm at -25 degrees (inner end of the bearing tube to the wishbone). The bridge and the upper part are not the closest features.
 
-**Edge treatment of the C-hubs and the rear hub carriers**
+**Edge treatment of the C-hubs, the rear hub carriers and the wishbones**
 
-Owner (2026-11-21): these parts (MJF print, nylon PA12) have a chamfer on each sharp outer edge and a radius in each sharp inner corner. The steering knuckle is verified and stays as it is (owner): no edge treatment. Parameter `edge_treatment` in `running_gear_parameters.json`, script `edge_treatment.py` (called by `generate_running_gear.py`).
+Owner (2026-11-21): the C-hubs and the rear hub carriers (MJF print, nylon PA12) have a chamfer on each sharp outer edge and a radius in each sharp inner corner; the wishbones have chamfers only (owner; see [wishbones](#wishbones)). The steering knuckle is verified and stays as it is (owner): no edge treatment. Parameter `edge_treatment` in `running_gear_parameters.json`, script `edge_treatment.py` (called by `generate_running_gear.py`).
 
 * Sizes: chamfer 0.3 x 45 degrees, radius 0.5 mm. Sharp: the faces meet at an angle of up to 120 degrees (as the edge chamfers of the bulkheads).
 * Kept sharp (owner): the bearing seats and the lip between the bearings (hub carrier; the bearing ring needs a sharp corner to sit flat) and the counterbores of the guide sleeve feet (C-hub, thrust faces). The open edge of each bore gets the entry chamfer.
@@ -989,6 +990,8 @@ Owner (2026-11-21): these parts (MJF print, nylon PA12) have a chamfer on each s
 |:---|:---|:---|:---|
 | C-hub (right and left) | 12 (one with 0.3 mm) | 40 (two with 0.2 mm, one with 0.1 mm) | None of 0.6 mm or more; 12 shorter edges at the corners where chamfers meet the faces tilted by the caster |
 | Rear hub carrier (with the gusset) | 9 | 30 | None |
+| Front wishbone | None (chamfers only) | 95 (12 with 0.2 mm) | None |
+| Rear wishbone | None (chamfers only) | 88 (3 with 0.2 mm, 1 with 0.1 mm) | 3 edges of 0.72 mm where the droop bosses meet the rails |
 
 * Changes of the shapes for the edge treatment (where two features were less than 0.8 mm apart, the radius and the chamfer do not fit side by side): C-hub lower arm 11.0 mm wide instead of 11.6 mm and 3.0 mm beyond the axis of the hinge pin, top of the tube on the hinge pin trimmed by the face toward the lower boss, upper arm 4.5 mm instead of 3.5 mm beyond the kingpin axis; hub carrier column 1.0 mm inside the outer end of the bearing tube (5.2 mm across), camber stud thread through the top tab. Details: see the front and the rear corner above.
 

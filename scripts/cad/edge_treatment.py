@@ -11,7 +11,8 @@ Three variants are made (radii first; chamfers first; radii first with the outer
 before) and the one with the smallest deficit is kept (1 per sharp edge left, 0.05 per sharp edge shorter than twice
 the chamfer, plus the missing fraction of each reduced size). Every kernel operation runs in a forked child process
 with a time limit (the kernel can crash or hang on some edge layouts); results with a tolerance above TOL_LIMIT are
-rejected (later operations on them fail), and the kept result must survive a STEP export and a tessellation. An edge
+rejected (later operations on them fail), as are results with a face of zero area or that are invalid after a
+rotation; the kept result must survive a STEP export and a tessellation. An edge
 that cannot be treated stays sharp and is reported. Results are cached in the temporary directory.
 
 Used by generate_running_gear.py (C-hub, rear hub carrier). Requires cadquery (Linux: os.fork).
@@ -21,13 +22,14 @@ import io
 import math
 import os
 import pickle
-import select
 import signal
 import tempfile
 import time
 
 import cadquery as cq
+from OCP.BinTools import BinTools
 from OCP.BRepClass3d import BRepClass3d_SolidClassifier
+from OCP.TopoDS import TopoDS_Shape
 from OCP.ShapeAnalysis import ShapeAnalysis_ShapeTolerance
 from OCP.TopAbs import TopAbs_IN, TopAbs_EDGE, TopAbs_FACE
 from OCP.TopExp import TopExp
@@ -79,6 +81,14 @@ def _tolerance(solid):
     return ShapeAnalysis_ShapeTolerance().Tolerance(solid.wrapped, 1)
 
 
+def _sound(solid):
+    """No face of zero area and still valid after a rotation (a zero-area face passes the check of the kernel in its own
+    position, but the moved part is invalid and crashes the STEP writer: rear wishbones with the toe angle)."""
+    if any(f.Area() < 1e-5 for f in solid.Faces()):
+        return False
+    return solid.rotate(cq.Vector(0, 0, 0), cq.Vector(0.3, 0.5, 0.8), 7.0).isValid()
+
+
 def _op_direct(solid, kind, size, edges):
     try:
         r = solid.fillet(size, edges) if kind == "inner" else solid.chamfer(size, None, edges)
@@ -88,6 +98,8 @@ def _op_direct(solid, kind, size, edges):
         return None
     if _tolerance(r) > max(TOL_LIMIT, _tolerance(solid)):     # inexact result: later operations would fail
         return None
+    if not _sound(r):
+        return None
     dv = r.Volume() - solid.Volume()
     if (kind == "inner" and dv < -1e-6) or (kind == "outer" and dv > 1e-6):
         return None
@@ -96,41 +108,42 @@ def _op_direct(solid, kind, size, edges):
 
 def _in_child(fn):
     """Run fn() (returns a solid or None) in a forked child process: the kernel can crash or hang on some edge
-    layouts. The solid comes back as BRep data; None on failure, crash or after TIME_LIMIT seconds."""
-    rd, wr = os.pipe()
+    layouts. The solid comes back as binary BRep data (exact); None on failure, crash, after TIME_LIMIT seconds or if
+    the solid is not valid after the transfer."""
+    path = os.path.join(tempfile.gettempdir(), f"edge_treatment_{os.getpid()}_{time.time_ns()}.brep")
     pid = os.fork()
     if pid == 0:                                                       # child
-        os.close(rd)
-        data = b""
+        code = 1
         try:
             r = fn()
             if r is not None:
-                buf = io.BytesIO()
-                r.exportBrep(buf)
-                data = buf.getvalue()
+                BinTools.Write_s(r.wrapped, path)
+                code = 0
         except Exception:
-            data = b""
-        with os.fdopen(wr, "wb") as f:
-            f.write(data)
-        os._exit(0)
-    os.close(wr)
-    data, t_end = b"", time.time() + TIME_LIMIT
-    with os.fdopen(rd, "rb") as f:
-        while True:
-            ready, _, _ = select.select([f], [], [], max(0.0, t_end - time.time()))
-            if not ready:                                              # no answer within the time limit
-                os.kill(pid, signal.SIGKILL)
-                os.waitpid(pid, 0)
-                return None
-            chunk = os.read(f.fileno(), 1 << 20)
-            if not chunk:
-                break
-            data += chunk
-    _, status = os.waitpid(pid, 0)
-    if status != 0 or not data:
-        return None
-    r = cq.Shape.importBrep(io.BytesIO(data))
-    return cq.Solid(r.Solids()[0].wrapped) if r.Solids() else None
+            code = 1
+        os._exit(code)
+    t_end = time.time() + TIME_LIMIT
+    while True:
+        done, status = os.waitpid(pid, os.WNOHANG)
+        if done:
+            break
+        if time.time() > t_end:                                        # no answer within the time limit
+            os.kill(pid, signal.SIGKILL)
+            os.waitpid(pid, 0)
+            status = -1
+            break
+        time.sleep(0.005)
+    try:
+        if status != 0 or not os.path.exists(path):
+            return None
+        shape = TopoDS_Shape()
+        BinTools.Read_s(shape, path)
+        solids = cq.Shape.cast(shape).Solids()
+        r = cq.Solid(solids[0].wrapped) if solids else None
+        return r if r is not None and r.isValid() else None
+    finally:
+        if os.path.exists(path):
+            os.remove(path)
 
 
 def _op(solid, kind, size, edges):
@@ -145,7 +158,7 @@ def _healthy(solid):
         try:
             cq.exporters.export(solid, path)
             solid.tessellate(0.01, 0.1)
-            return solid if solid.isValid() else None
+            return solid if solid.isValid() and _sound(solid) else None
         finally:
             if os.path.exists(path):
                 os.remove(path)
@@ -245,22 +258,25 @@ def _score(rest, done, sizes, short):
 
 
 def _treat(solid, chamfer, radius, keep=(), max_angle=120.0):
-    """Radii in the sharp inner corners and chamfers on the sharp outer edges, in both orders (radii first, chamfers
+    """Radii in the sharp inner corners (none if radius is None or 0: chamfers only) and chamfers on the sharp outer
+    edges, in both orders (radii first, chamfers
     first, and radii first with the edges that fail in it chamfered before); kept: the variant with the smallest
     deficit (_score). Where the full size fails (faces too narrow), an edge gets a smaller size (radius 0.6 / 0.4 of the full size, chamfer 0.67 / 0.33); where no size works, it stays sharp.
     Returns (solid, report)."""
     v0 = solid.Volume()
-    sizes = {"inner": [radius, round(radius * 0.6, 2), round(radius * 0.4, 2)],
-             "outer": [chamfer, round(chamfer * 2 / 3, 2), round(chamfer / 3, 2)]}
+    sizes = {"outer": [chamfer, round(chamfer * 2 / 3, 2), round(chamfer / 3, 2)]}
+    if radius:
+        sizes["inner"] = [radius, round(radius * 0.6, 2), round(radius * 0.4, 2)]
+    kinds = ("outer", "inner") if radius else ("outer",)                 # no radius: chamfers only
     results = []
     short = 2 * chamfer                                    # shorter edges: facets of the chamfers at corners, slivers
-    for order in (("inner", "outer"), ("outer", "inner")):
+    for order in ((("inner", "outer"), ("outer", "inner")) if radius else (("outer",),)):
         s, done = solid, {}
         for kind in order:
             s, done[kind], _ = _apply(s, kind, sizes[kind], keep, max_angle)
-        rest = sharp_edges(s, keep, max_angle)
+        rest = [r for r in sharp_edges(s, keep, max_angle) if r[1] in kinds]
         results.append((_score(rest, done, sizes, short), s, done, rest, order))
-    first = [m for e, k, m in results[0][3] if k == "outer" and e.Length() >= short]
+    first = [m for e, k, m in results[0][3] if k == "outer" and e.Length() >= short] if radius else []
     if first:                       # third variant: the outer edges left by "radii first" get their chamfers first
         s, done = solid, {"outer": {sz: 0 for sz in sizes["outer"]}}
         for m in first:
@@ -285,9 +301,9 @@ def _treat(solid, chamfer, radius, keep=(), max_angle=120.0):
     cl = _clean(s)
     s = cl if _healthy(cl) else s
     rest_l = [(e, k, m) for e, k, m in rest if e.Length() >= short]
-    rep = {"order": ", then ".join(order), "radii": done["inner"], "chamfers": done["outer"],
+    rep = {"order": ", then ".join(order), "radii": done.get("inner", {}), "chamfers": done["outer"],
            "deficit of the orders tried": [r[0] for r in results],
-           "sharp edges remaining": {k: sum(1 for _, kk, _ in rest_l if kk == k) for k in ("inner", "outer")},
+           "sharp edges remaining": {k: sum(1 for _, kk, _ in rest_l if kk == k) for k in kinds},
            f"short sharp edges (< {short:g})": len(rest) - len(rest_l),
            "volume change mm3": round(s.Volume() - v0, 2),
            "remaining": [(k, round(e.Length(), 2), tuple(round(c, 2) for c in m.toTuple())) for e, k, m in rest_l]}
@@ -298,6 +314,30 @@ def _brep(shape):
     buf = io.BytesIO()
     shape.exportBrep(buf)
     return buf.getvalue()
+
+
+def _to_bin(shape):
+    path = os.path.join(tempfile.gettempdir(), f"edge_treatment_{os.getpid()}_{time.time_ns()}.brep")
+    try:
+        BinTools.Write_s(shape.wrapped, path)
+        with open(path, "rb") as f:
+            return f.read()
+    finally:
+        if os.path.exists(path):
+            os.remove(path)
+
+
+def _from_bin(data):
+    path = os.path.join(tempfile.gettempdir(), f"edge_treatment_{os.getpid()}_{time.time_ns()}.brep")
+    try:
+        with open(path, "wb") as f:
+            f.write(data)
+        shape = TopoDS_Shape()
+        BinTools.Read_s(shape, path)
+        return cq.Solid(cq.Shape.cast(shape).Solids()[0].wrapped)
+    finally:
+        if os.path.exists(path):
+            os.remove(path)
 
 
 def treat(solid, chamfer, radius, keep=(), max_angle=120.0):
@@ -313,14 +353,16 @@ def treat(solid, chamfer, radius, keep=(), max_angle=120.0):
     try:
         with open(path, "rb") as f:
             data, rep = pickle.load(f)
-        return cq.Solid(cq.Shape.importBrep(io.BytesIO(data)).Solids()[0].wrapped), rep
+        r = _from_bin(data)
+        if r.isValid():
+            return r, rep
     except Exception:
         pass
     r, rep = _treat(solid, chamfer, radius, keep, max_angle)
     try:
         os.makedirs(CACHE, exist_ok=True)
         with open(path, "wb") as f:
-            pickle.dump((_brep(r), rep), f)
+            pickle.dump((_to_bin(r), rep), f)
     except OSError:
         pass
     return r, rep

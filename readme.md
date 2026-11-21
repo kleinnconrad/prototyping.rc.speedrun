@@ -84,8 +84,8 @@ Further own parts (own design, partly based on the T410R, not in the mass total)
 | Differential (End B) with ring gear 42T, inner gears and bearings | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/diff` |
 | Spool (End A) with ring gear 42T and bearings | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/diff` |
 | Diff outdrives | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/diff_outdrive` |
-| Front wishbones | 2 | $\color{green}\checkmark$ Verified | `cad/generic_parts/wishbone` |
-| Rear wishbones | 2 | $\color{green}\checkmark$ Verified | `cad/generic_parts/wishbone` |
+| Front wishbones | 2 | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm added after the print) | `cad/generic_parts/wishbone` |
+| Rear wishbones | 2 | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm added after the print) | `cad/generic_parts/wishbone` |
 | Inner hinge pins of the wishbones (3x42) | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/wishbone` |
 | Camber links: turnbuckle M3x37 with rod ends and ball studs | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/camber_link` |
 | Front C-hubs with 10 degrees caster (right and left part) | 2 | $\color{red}\times$ Completely unqualified; kingpin bores 5 mm with guide sleeves (owner), 3D print verification planned | `cad/generic_parts/front_corner` |
