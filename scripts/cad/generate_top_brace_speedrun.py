@@ -15,8 +15,8 @@ Design (in the style of the bulkheads): straight lines and radii only.
 * End with B01 to B04 solid: the hexagon cutout of the original top brace is obsolete and closed.
 
 Outputs in cad/chassis/top_brace_speedrun: geometry data, STEP, STL, DXF, hole table, 1:1
-templates (100 % and 97 %) and two test print halves with a dovetail. Image: drawing with the
-outline of the original top brace. The assembly with the chassis plate and the bulkheads is
+templates (100 % and 97 %) and two test print halves with a dovetail. Image: top view with the
+dimensions. The assembly with the chassis plate and the bulkheads is
 generated with generate_speedrun_assembly.py.
 
 Checks: the new outline lies within the outline of the original top brace; position of the
@@ -228,17 +228,13 @@ def test_print_halves(solid, t, ys, stem):
     return out
 
 
-def drawing(g, orig, path):
+def drawing(g, path):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from generate_chassis_templates import draw_png_part, dim_arrows, extent, width_at
     fig, ax = plt.subplots(figsize=(6.4, 14.93))
     draw_png_part(ax, g)
-    ref = contour_points(orig["outline"])
-    ref = np.vstack([ref, ref[:1]])
-    ax.plot(ref[:, 0], ref[:, 1], color="#9a9a9a", lw=0.9, ls=(0, (5, 4)), zorder=4,
-            label="Outline of the original top brace")
     x0, x1, y0, y1 = extent(g)
     wb = width_at(g, 120.0)
     dim_arrows(ax, -wb / 2, wb / 2, -10, f"{wb:.2f} bar, {x1 - x0:.2f} ends", x1 + 6, y0, y1)
@@ -248,7 +244,6 @@ def drawing(g, orig, path):
     ax.set_xlim(-24, 32)
     ax.set_ylim(-34, 262)
     ax.set_title("Speedrun top brace - top view")
-    ax.legend(loc="upper right", fontsize=7.5, framealpha=0.95)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)
@@ -275,7 +270,7 @@ def main():
     for scale, suffix in ((1.0, ""), (0.97, "_print97")):
         brace_a4(f"{STEM}_1to1_A4{suffix}.pdf", g, scale, name="speedrun top brace", info=info)
     halves = test_print_halves(solid, g["thickness"], DESIGN["split_y"], f"{OUT}/testprint_top_brace_speedrun")
-    drawing(g, orig, "photos/cad_top_brace_speedrun_drawing.png")
+    drawing(g, "photos/cad_top_brace_speedrun_drawing.png")
 
     vol, vol0 = solid.Volume(), plate_solid(orig).val().Volume()
     print(f"Wrote {GEOM}, {STEM}.step/.stl/.dxf, hole table, templates, test print halves, drawing")

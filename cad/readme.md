@@ -37,7 +37,6 @@
   * [Centre driveshaft and drive line](#centre-driveshaft-and-drive-line)
   * [Differentials](#differentials)
   * [Wishbones](#wishbones)
-  * [Camber links](#camber-links)
   * [Running gear](#running-gear)
 * [Scripts](#scripts)
   * [Regenerating the files](#regenerating-the-files)
@@ -55,7 +54,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
 * **`/shock_tower`**: New design of the front and the rear shock tower that match the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
 * **`/front_splitter`**: Speedrun front splitter at End A, one part: the body post mount enlarged to the splitter (STEP, STL, test print STL, parameter file, measurement sheet).
 * **`/battery_tray`**: Speedrun battery tray for the 3S hardcase LiPo on the left side of the car (STEP, STL, parameter file, technical drawing).
-* **`/parts`**: Drive line, pivot blocks, wishbones and camber links: own design of the owner, partly based on the T410R.
+* **`/parts`**: Drive line, pivot blocks and wishbones: own design of the owner, partly based on the T410R. Camber links: purchased parts, simplified model for the assembly.
   * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file).
   * **`/driveshaft`**: Centre driveshaft with the fixed metal pins and the cup joints (STEP, STL, parameter file of all drive line parts).
   * **`/rear_drive`**: Rear pinion shaft with flange, pinion 17T, spur gear 72T, bearing 5x10x4 and retaining pin (STEP, STL).
@@ -64,9 +63,9 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/diff`**: Differential case, ring gear 42T and bearing (STEP, STL).
   * **`/diff_outdrive`**: Diff outdrive (STEP, STL).
   * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file).
-  * **`/camber_link`**: Camber links: turnbuckle, rod end, ball stud, assembled front and rear link (STEP, STL, parameter file).
+  * **`/camber_link`**: Camber links (purchased parts), simplified model for the assembly: turnbuckle, rod end, ball stud, assembled front and rear link (STEP, STL, parameter file).
 * **`/running_gear`**: parameter file of the running gear and one folder per group (STEP, STL): `/front_corner` (C-hubs with caster, steering knuckles, axles and hex hubs at End A), `/rear_corner` (hub carriers, axles and hex hubs at End B), `/cvd_drive_shafts`, `/steering` (posts, bellcranks, bridge, spacers, servo horn), `/servo_mount` and `/sway_bars`.
-* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the further own parts: pivot blocks, drive line, wishbones, camber links and running gear (STEP), and the assembly drawing with the views and the main dimensions (PDF, PNG, shown in [`assembly/readme.md`](assembly/readme.md)).
+* **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the further own parts (pivot blocks, drive line, wishbones and running gear) and the purchased camber links (STEP), and the assembly drawing with the views and the main dimensions (PDF, PNG, shown in [`assembly/readme.md`](assembly/readme.md)).
 * **`/studies`**: Design studies that are not part of the build, one subdirectory per study with its own readme:
   * **`/dual_motor`**: Dual motor mount for 2 motors on the spur gear and a chassis plate with a second motor window on the left side (STEP, STL, geometry data, pictures, script).
   * **`/rear_fork_carrier`**: Rear hub carrier with a fork on a tongue of the rear wishbone (design concept E of the owner): grub screw from below in the middle of the tongue, shims set the wheelbase from 256.0 to 259.0 mm, the rear wishbone as a light A-frame with a right and a left part (5.1 g instead of 7.9 g in PA12) (STEP, STL, pictures, script).
@@ -110,7 +109,6 @@ Further own parts (own design of the owner, partly based on the T410R, not in th
 | [Front wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{green}\checkmark$ Verified |
 | [Rear wishbones](#wishbones) | 2 | `/parts/wishbone` | $\color{green}\checkmark$ Verified |
 | [Inner hinge pins of the wishbones (3x42)](#wishbones) | 4 | `/parts/wishbone` | $\color{red}\times$ Completely unqualified |
-| [Camber links: turnbuckle M3x37 with rod ends and ball studs](#camber-links) | 4 | `/parts/camber_link` | $\color{red}\times$ Completely unqualified |
 | [Front C-hubs with 10 degrees caster (right and left part)](#running-gear) | 2 | `/running_gear/front_corner` | $\color{red}\times$ Completely unqualified; kingpin bores 5 mm with guide sleeves (owner), 3D print verification planned |
 | [Front steering knuckles](#running-gear) | 2 | `/running_gear/front_corner` | $\color{green}\checkmark$ Verified (3D print of the owner) |
 | [Rear hub carriers](#running-gear) | 2 | `/running_gear/rear_corner` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
@@ -131,7 +129,7 @@ Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{g
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
 
 ### Assembly file
-* `assembly/speedrun_chassis_T410R.step`: assembly of the 10 parts of the speedrun chassis (with the front splitter and the battery tray), the battery with its 2 straps and 180 further own parts (pivot blocks, wishbones with hinge pins, camber links, centre driveshaft with cup joints, front and rear drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool, 4 diff outdrives, and the running gear: C-hubs, knuckles with guide sleeves and kingpin screws, hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the floating servo mount, dampers, sway bars with drop links; the 2 front body posts) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
+* `assembly/speedrun_chassis_T410R.step`: assembly of the 10 parts of the speedrun chassis (with the front splitter and the battery tray), the battery with its 2 straps and 180 further parts (pivot blocks, wishbones with hinge pins, camber links, centre driveshaft with cup joints, front and rear drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool, 4 diff outdrives, and the running gear: C-hubs, knuckles with guide sleeves and kingpin screws, hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the floating servo mount, dampers, sway bars with drop links; the 2 front body posts) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
 * The further own parts are not in the mass total (see [further own parts](#further-own-parts)).
 * The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [pivot blocks](#pivot-blocks)) and 4.47 mm³ between the lower bulkhead at End A and each front wishbone (the tube on the inner hinge pin reaches 0.14 mm into the side face, see [wishbones](#wishbones)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
@@ -222,7 +220,7 @@ All files are stored in the directory `/chassis/chassis_plate_speedrun_wide_moto
 * **Description:** Top brace for the bulkheads of this project, in the same style as the bulkheads: straight lines and radii only.
 * **Status:** $\color{green}\checkmark$ Verified. The holes are taken from the top brace of the T410R, whose hole positions and length (243.3 mm) are confirmed by a test print. The fit to the new bulkheads is also checked in the CAD model (see [fit to the bulkheads](#design-and-fit-of-the-speedrun-top-brace)). After the verification, the obsolete window at the end with B01 to B04 was closed. The holes, the outline and the fit to the bulkheads are not changed by this.
 
-![Top view of the speedrun top brace (dashed: outline of the T410R top brace)](../photos/cad_top_brace_speedrun_drawing.png)
+![Top view of the speedrun top brace](../photos/cad_top_brace_speedrun_drawing.png)
 
 The assembly with the chassis plate and the bulkheads is shown in the section [speedrun chassis](#speedrun-chassis).
 
@@ -684,7 +682,7 @@ Open points:
 * The battery (370 g) is not in the mass total of the speedrun parts.
 
 ## Further own parts
-The drive line, the pivot blocks, the wishbones, the camber links and the running gear are the owner's own design. Some of them are based on parts of the Carten T410R (for example the interfaces: bearings, gears, screws), others deviate strongly from them (for example the C-hubs and the steering knuckles). The assembly of the speedrun chassis contains them, so that the space around the speedrun parts and the function of the build can be checked. Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
+The drive line, the pivot blocks, the wishbones and the running gear are the owner's own design. Some of them are based on parts of the Carten T410R (for example the interfaces: bearings, gears, screws), others deviate strongly from them (for example the C-hubs and the steering knuckles). The assembly of the speedrun chassis contains them, so that the space around the speedrun parts and the function of the build can be checked. The camber links are purchased parts; the assembly contains a simplified model of them (`/parts/camber_link`, generated with `generate_camber_links.py`). Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
 
 ### Pivot blocks
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -929,36 +927,6 @@ All files are stored in the directory `/parts/wishbone`. They are generated with
 | `wishbone_front_T410R.stl`, `wishbone_rear_T410R.stl` | STL (binary) | Triangle meshes |
 | `hinge_pin_3x42.step`, `hinge_pin_3x42.stl` | STEP, STL | Inner hinge pin, along y, centred at y = 0 |
 | `wishbone_parameters.json` | JSON | All dimensions, each with its source, the letter of the measurement and a note |
-
-### Camber links
-* **Description:** Models of the 4 camber links (upper links) of the speedrun chassis (own design, partly based on the T410R): turnbuckle M3x37 with a rod end on each end, on ball studs (manual page 05 step 4, "C front upper" and "D rear upper", mounted in step 21).
-* **Status:** $\color{red}\times$ Completely unqualified. The gaps between the rod ends follow from the positions of the outer balls on the knuckles and the hub carriers of the [running gear](#running-gear) (manual: 24.0 mm front, 25.8 mm rear); the dimensions of the rod ends and the ball studs are assumptions.
-
-![Camber links: front and rear link with the gap between the rod ends, section through the rod end on the ball](../photos/cad_camber_links_drawing.png)
-
-| Item | Model | Source |
-|:---|:---|:---|
-| Turnbuckle | M3 x 37 mm (cylinder 3.0 mm, threads not modelled), hexagon 4.0 mm across the flats in the middle | Manual (M3x37), assumption (hexagon) |
-| Gap between the rod ends | Front link (End A) 30.3 mm, rear link (End B) 30.1 mm; ball centres 48.3 and 48.1 mm apart; thread engagement 3.4 and 3.45 mm in each rod end | From the positions of the outer balls: front on the top kingpin (manual set up C: 24.0 mm), rear on the camber stud of the hub carrier (manual set up D: 25.8 mm); both screwed out |
-| Rod end | Ball cup for RC standard ball studs, open on one side only (toward the ball stud), closed by a cap of 1.0 mm on the other side; spherical socket with 0.03 mm clearance (the rod end turns on the ball), opening 4.4 mm, 0.2 mm per side smaller than the ball: the lip wraps the ball beyond its equator, the rod end clicks onto the ball and holds; the opening is larger than the neck of the ball stud (3.0 mm), so the rod end can tilt; ball centre 9.0 mm from the face toward the turnbuckle, socket ring 7.0 mm outer diameter and 6.0 mm wide, body 5.5 mm across the flats, bore 3.0 x 7.0 mm for the turnbuckle; the two rod ends are turned by 90 degrees about the link axis: inner socket open toward the shock tower, outer socket open toward the bottom | Owner (open on one side, standard ball studs), manual (shape), assumptions (dimensions; ring as in the design of the shock towers) |
-| Inner ball stud | In the camber link hole of the shock tower (x = +-18.05 mm, 19.1 mm above the parting face), RC standard ball 4.8 mm (assumed), 3.5 mm behind the back face of the tower (wall side), set screw M3 through the tower | Shock towers, assumptions (ball) |
-| Outer ball stud | Rear: vertical, screwed into the camber stud bore (thread M3) on top of the hub carrier, 13.7 mm from the outer face of the bearing tube (owner), top face z = 33.4 mm: neck 3.8 mm, thread 3.5 mm; ball at z = 37.2 mm, 1.1 mm below the inner ball. Front: the ball stud 4.8x9 is the top kingpin of the knuckle (as the original), on the kingpin axis 2.6 mm above the inner ball | Owner (rear stud bore), running gear |
-
-* Checks of `generate_camber_links.py`: no overlap with the shock towers, the bulkheads, the wishbones and the running gear; rod ends 0.24 mm (End B) and 0.19 mm (End A) beside the narrowed wall of the upper bulkhead (static position), ball studs 0.10 mm from the shock tower holes.
-* Thread engagement: with the gaps of 30.3 mm (front) and 30.1 mm (rear) the turnbuckle M3x37 engages only 3.4 and 3.45 mm in each rod end. A longer turnbuckle (M3x40: 4.9 and 4.95 mm, M3x42: 5.9 and 5.95 mm) is to be decided by the owner.
-* To be measured for a qualified model: centre of the ball to the face of the rod end, outer diameter and width of the socket ring, diameter of the opening of the socket, ball diameter of the ball studs and their distance from the tower.
-
-**Files of the camber links**
-
-All files are stored in the directory `/parts/camber_link` and are generated with `generate_camber_links.py` from `camber_link_parameters.json` (see [scripts](#scripts)). Link coordinates: x along the link from the centre of the inner ball (x = 0), inner socket axis along y, outer socket axis along z.
-
-| File | Content |
-|:---|:---|
-| `camber_link_front_T410R`, `camber_link_rear_T410R` | Assembled links: 2 rod ends and the turnbuckle (STEP, STL) |
-| `rod_end` | Rod end: ball centre at the origin, body toward +x |
-| `turnbuckle_M3x37` | Turnbuckle along x, centred at the origin |
-| `ball_stud` | Ball stud: ball at the origin, neck along -y |
-| `camber_link_parameters.json` | All dimensions, each with its source and a note |
 
 ### Running gear
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
