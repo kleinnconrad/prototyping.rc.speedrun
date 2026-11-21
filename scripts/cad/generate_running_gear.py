@@ -517,13 +517,22 @@ def rear_corner(p, d, c):
     rt = t_d / 2
     rb, wb = 5.0, 4.0                                                                   # bearings 5x10x4
     xs = min(xc - 3.5, x0)                                                              # inner end of the seat
-    # column from the tube on the pin to the bearing tube: 1.0 inside the ends of both tubes (space for the edge
-    # treatment: radius 0.5 and chamfer 0.3 side by side)
-    car = fuse(cyl_y(r_lug, -4.6, 4.6, 0, 0), box(-2.6, 2.6, -3.6, 3.6, 0, za - 5.0), cyl_x(rt, x0, x1, 0, za),
-               box(x0, x0 + w_web, -4.0, 4.0, za, zt), box(xs, x0 + w_web, -4.0, 4.0, zt - 3.5, zt))
+    # along the pin, the column and the upper part (web, arm, top tab, gusset) are as wide as the tube on the pin
+    # (owner: 9.2, flush with its ends); across, the column ends 1.0 inside the outer end of the bearing tube and
+    # inside the tube on the pin (space for the edge treatment: radius 0.5 and chamfer 0.3 side by side)
+    hw = 4.6
+    car = fuse(cyl_y(r_lug, -hw, hw, 0, 0), box(-2.6, 2.6, -hw, hw, 0, za - 5.0), cyl_x(rt, x0, x1, 0, za),
+               box(x0, x0 + w_web, -hw, hw, za, zt), box(xs, x0 + w_web, -hw, hw, zt - 3.5, zt))
     if xs < x0:                                                  # sloped arm from the inner end of the tube to the seat
         arm = [(x0 + 1.0, za + rt - 1.0), (x0 + w_web, za + rt - 1.0), (x0 + w_web, zt - 3.4), (xs, zt - 3.4)]
-        car = fuse(car, cq.Workplane("XZ").polyline(arm).close().extrude(4.0, both=True).val())
+        car = fuse(car, cq.Workplane("XZ").polyline(arm).close().extrude(hw, both=True).val())
+    # gusset (owner): triangle on the outer face of the web, as wide as the web, from the top face (no step) at 60 deg
+    # down onto the bearing tube; it braces the web against the pull of the camber link on the top tab
+    g_top, g_ang = p["rear_carrier_gusset"]
+    xg, zg = x0 + w_web, zt - g_top
+    xe = x1 - 1.0                                                # end inside the tube wall (below the tube surface)
+    gus = [(xg - 0.5, za), (xg - 0.5, zg), (xg, zg), (xe, zg - (xe - xg) * math.tan(math.radians(g_ang))), (xe, za)]
+    car = fuse(car, cq.Workplane("XZ").polyline(gus).close().extrude(hw, both=True).val())
     zg = grub_boss_depth(p)                                                               # boss of the grub screw M3x4
     car = fuse(car, cyl_z(p["grub_screw_boss"][2] / 2, -zg, -1.0, 0, 0))
     car = car.cut(cyl_y(pin_bore / 2, -6, 6, 0, 0))                                       # bore of the hinge pin
@@ -971,6 +980,21 @@ def steering_sweep(parts, others, angle):
     return res
 
 
+def carrier_swing(c, car, arm, angles=np.arange(-25.0, 25.1, 2.5)):
+    """Rear hub carrier turned on the outer hinge pin relative to the rear wishbone (the camber link holds the top of
+    the carrier, so it turns on the pin when the suspension moves; +-25 deg covers the compression to the chassis at the
+    ride height of 15): largest overlap and smallest distance with their angles."""
+    O, ey = np.array(c["rear"]["O"]), np.array(c["rear"]["ey"])
+    a0, a1 = cq.Vector(*O), cq.Vector(*(O + ey))
+    rows = []
+    for th in angles:
+        r = car.rotate(a0, a1, float(th))
+        rows.append((float(th), r.intersect(arm).Volume(), r.distance(arm)))
+    v = max(rows, key=lambda q: q[1])
+    d = min(rows, key=lambda q: q[2])
+    return {"largest overlap": (round(v[1], 4), v[0]), "smallest distance": (round(d[2], 2), d[0])}
+
+
 def check(parts, others):
     """Overlap of all pairs of the new parts and with the other parts of the assembly."""
     items = parts + others
@@ -1218,6 +1242,8 @@ def main():
     ang = steering.info["ackermann"]["bellcrank 25"] + 3.0
     info["sweep"] = steering_sweep(names, sweep_o, ang)
     print(f"  bellcranks and bridge turned by +-{ang:.1f} deg (25 deg of the inner wheel plus 3):", info["sweep"])
+    sw = carrier_swing(c, names["hub carrier End B right"], next(s for n, _, s in others if n == "rear wishbone End B right"))
+    print("  rear hub carrier turned on the outer hinge pin against the rear wishbone (+-25 deg, mm3 / mm, deg):", sw)
     drawing(parts, info, lock)
     print(f"  wrote {DRAWING}")
     if args.no_check:
