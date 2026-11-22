@@ -97,6 +97,14 @@
       ],
       "source": "design",
       "note": "Windows in the floor between the straps and the end stops (mass): distance to the side walls (inside), distance to the strap channels and the end stops, corner radius."
+    },
+    "edge_chamfer": {
+      "value": [
+        0.3,
+        120.0
+      ],
+      "source": "owner",
+      "note": "Chamfer on each sharp outer edge of the tray (owner, 2026-11-22: chamfers only, no radii, as the bellcranks, the steering bridge and the servo mount): size 0.3 x 45 deg; sharp: the faces meet at an angle of up to 120 deg. Script edge_treatment.py; the chamfers 0.8 at the tops of the strap slots stay as they are (not sharp)."
     }
   }
 }

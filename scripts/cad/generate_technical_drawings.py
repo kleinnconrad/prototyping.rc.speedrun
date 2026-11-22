@@ -500,7 +500,7 @@ def parts():
         dict(key="battery_tray", folder="cad/speedrun_parts/battery_tray", step="battery_tray_speedrun.step", stem="battery_tray_speedrun",
              title="Speedrun battery tray", number="BT", frame=(np.column_stack([(0, 1, 0), (-1, 0, 0), (0, 0, 1)]), sf["battery_tray"]),
              material="Nylon PA12 (MJF 3D print)", density=1.01, density_txt="PA12", quantity="1",
-             tol="process tolerance (MJF approx. ±0.3)", edges="as modelled", status="verified", section_gap=10,
+             tol="process tolerance (MJF approx. ±0.3)", edges="chamfer 0.3 (modelled)", status="verified", section_gap=10,
              frame_note=f"Drawing frame: origin O in the middle between the holes H11, H12, H22 and H23 of the chassis plate on its "
                         f"top face; x along the car (+x toward End A), y toward the left side of the car, z up. The STEP file is in "
                         f"the assembly position: O = ({sf['battery_tray'][0]:.2f}, {sf['battery_tray'][1]:.2f}, {sf['battery_tray'][2]:.2f}).",
