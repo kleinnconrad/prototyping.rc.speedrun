@@ -39,6 +39,7 @@ import cadquery as cq
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_bulkhead_lower import box, cyl_z, load_params  # noqa: E402
+import edge_treatment as ET  # noqa: E402
 
 PARAMS = "cad/speedrun_parts/battery_tray/battery_tray_parameters.json"
 PLATE_GEOM = "cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
@@ -129,7 +130,10 @@ def tray_solid(p):
     d, depth = p["screw_hole"]
     for hx, hy in g["hs"]:
         s = s.cut(cyl_z(d / 2, g["z0"] - 1, g["z0"] + depth, hx, hy))
-    return s.clean()
+    # chamfer on each sharp outer edge (owner, 2026-11-22: chamfers only)
+    ch, ang = p["edge_chamfer"]
+    s, tray_solid.edges = ET.treat(s.clean(), ch, None, (), ang)
+    return s
 
 
 def battery_solid(p):
@@ -314,6 +318,7 @@ def main():
     g = layout(p)
     print(f"tray: valid {tray.isValid()}, volume {tray.Volume() / 1000:.2f} cm3 ({tray.Volume() / 1000 * 1.01:.0f} g in PA12), "
           f"bounding box {[round(v, 2) for v in (tray.BoundingBox().xmin, tray.BoundingBox().xmax, tray.BoundingBox().ymin, tray.BoundingBox().ymax, tray.BoundingBox().zmin, tray.BoundingBox().zmax)]}")
+    print("edge treatment:", getattr(tray_solid, "edges", None))
     print(f"battery x {g['x_out']:.2f}..{g['x_in']:.2f}, y {g['ym'] - g['L'] / 2:.2f}..{g['ym'] + g['L'] / 2:.2f}, "
           f"z {g['zf']:.2f}..{g['zf'] + g['H']:.2f}; straps at y = {g['ys'][0]:.2f} and {g['ys'][1]:.2f}")
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
