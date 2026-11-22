@@ -944,10 +944,14 @@ def steering(p, cl, c, kb):
                                        box(xbc - 1.5, xbc + 1.5, hy - 1.6, hy + 1.6, zt0 - 1, zt1 + 1)))
     steering.mount = {"top plate": (zt0, zt1), "gap of the floating post": zs0 - PLATE_T,
                       "fixed post": (xa0, xa1, ya0, ya1), "floating post": (xb0, xb1, yfl0, yfb)}
+    # chamfers on the sharp outer edges of the 3 parts of the servo mount (owner, 2026-11-22: chamfers only)
+    plate_top, EDGE_REPORT["servo mount top plate"] = ET.treat(plate_top.clean(), e_ch, None, (), e_ang)
+    fixed, EDGE_REPORT["servo mount fixed post"] = ET.treat(fixed.clean(), e_ch, None, (), e_ang)
+    floating, EDGE_REPORT["servo mount floating post"] = ET.treat(floating.clean(), e_ch, None, (), e_ang)
     hstud = stud(horn_ball, (0, 1.0, 0), p["ball_offset"], 3.5)
     out += [("servo", "servo", servo.clean()), ("servo horn (aluminium clamp)", "steer", horn.clean()),
-            ("servo mount top plate", "steer", plate_top.clean()), ("servo mount fixed post", "steer", fixed.clean()),
-            ("servo mount floating post", "steer", floating.clean()), ("servo horn ball stud", "link", hstud)]
+            ("servo mount top plate", "steer", plate_top), ("servo mount fixed post", "steer", fixed),
+            ("servo mount floating post", "steer", floating), ("servo horn ball stud", "link", hstud)]
     ack = ackermann(P, S, c["front"]["J"], K, c["rear"]["O"][1])
     th = math.radians(ack["bellcrank 25"])
     travel = r_b * math.sin(th)
