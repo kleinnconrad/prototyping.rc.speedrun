@@ -88,14 +88,14 @@ Further own parts (own design, partly based on the T410R, not in the mass total)
 | Rear wishbones | 2 | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm added after the print) | `cad/generic_parts/wishbone` |
 | Inner hinge pins of the wishbones (3x42) | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/wishbone` |
 | Camber links: turnbuckle M3x37 with rod ends and ball studs | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/camber_link` |
-| Front C-hubs with 10 degrees caster (right and left part) | 2 | $\color{red}\times$ Completely unqualified; kingpin bores 5 mm with guide sleeves (owner), 3D print verification planned | `cad/generic_parts/front_corner` |
+| Front C-hubs with 10 degrees caster (right and left part) | 2 | $\color{red}\times$ Completely unqualified; kingpin bores 4.9 mm with brass guide sleeves 4.8 mm and washers M3 (owner), 3D print verification planned | `cad/generic_parts/front_corner` |
 | Front steering knuckles | 2 | $\color{green}\checkmark$ Verified (3D print of the owner) | `cad/generic_parts/front_corner` |
 | Rear hub carriers | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/rear_corner` |
 | Axles with joint cup, hex hubs 12 mm | 4 + 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/front_corner`, `cad/generic_parts/rear_corner` |
 | CVD drive shafts | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/cvd_drive_shafts` |
 | Bellcranks (symmetric, the same part on both sides) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/steering` |
 | Servo mount: top plate, fixed post, floating post; position of the servo and the horn | 1 set | $\color{green}\checkmark$ Verified (owner); the holes for the servo ears (positions assumed) are to be checked against the servo before printing | `cad/generic_parts/servo_mount` |
-| Steering bridge (beam with 2 towers on flanged bearings MF63ZZ) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/steering` |
+| Steering bridge (beam with 2 towers on brass guide sleeves and washers M3) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/steering` |
 | Steering posts (height 20.3 mm, shoulder for the bellcrank bearings) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/steering` |
 | Steering: steering links, servo link, servo horn | 1 set | $\color{red}\times$ Completely unqualified | `cad/generic_parts/steering` |
 | Sway bars with holders, ball ends and drop links | 2 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/sway_bars` |

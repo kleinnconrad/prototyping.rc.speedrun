@@ -252,8 +252,9 @@ def corners(p, lp):
 
 # ------------------------------------------------------------------ front corner
 def top_face(p):
-    """Local z (kingpin frame) of the top face of the upper arm of the C-hub (square to the kingpin axis); the top
-    guide sleeve (inserted from below) stands guide_sleeve_proud above it."""
+    """Local z (kingpin frame) of the top face of the upper arm of the C-hub (square to the kingpin axis): face of the
+    upper arm toward the boss (gap) plus its thickness; the top sleeve (on its washer on the boss) stands
+    guide_sleeve_proud above it."""
     kz1, gap, t_up = p["knuckle"][1], p["front_c_hub"][3], p["front_c_hub"][4]
     return kz1 + gap + t_up
 
@@ -266,8 +267,8 @@ def kingpin_y(p, O, outw):
 
 def front_camber_ball(p, side=1):
     """Centre of the outer ball of the front camber link (chassis coordinates): the camber ball stud is the top
-    kingpin (as the original, manual step 15: ball stud 4.8x9 through the flanged guide sleeve into the knuckle),
-    so the ball sits on the kingpin axis above the upper end of the sleeve. side: 1 right, -1 left."""
+    kingpin (as the original, manual step 15: ball stud 4.8x9 through the guide sleeve and the washer into the
+    knuckle), so the ball sits on the kingpin axis above the upper end of the sleeve. side: 1 right, -1 left."""
     ap = W.load_params(W.PARAMS)
     O = W.arm_point("front", 1, (ap["front_arm_length"], 0, 0), W.pin_lines())
     a = math.radians(p["caster"])                                         # front: top toward the middle (outw = +1)
@@ -308,13 +309,16 @@ def front_corner(p, d, c):
     zu = r_ring + 1.0                                                     # bottom of the upper arm: 1.0 above the ring
     rs = r_boss + 0.5                                                     # U-slot around the upper boss
     zf = top_face(p)                                                                      # top face of the upper arm
-    d_sl, d_sl_in, d_fl, t_fl, h_d, h_h = p["guide_sleeve"]
+    # kingpin sleeves from standard parts (owner, 2026-11-22): on each knuckle boss a washer M3 DIN 125-A (thrust face
+    # against the C-hub, in place of the flange of the Carten sleeve), then a plain brass spacer sleeve 4.8 x 3.2 x 4.0
+    # in the bore of the C-hub; the screw (bottom) and the ball stud (top) clamp sleeve and washer to the knuckle
+    d_sl, d_sl_in, l_sl, d_w, t_w, h_d, h_h, d_bore = p["guide_sleeve"]
     proud = p["guide_sleeve_proud"]                                                       # sleeves proud of the C-hub
-    r_sf = d_fl / 2 + 0.3                                                                 # counterbores of the feet
-    zst = zf + proud                                                                      # upper end of the top sleeve
-    l_sh = zst - (kz1 + t_fl)                                                             # shank of the sleeves
-    zl1 = kz0 - t_fl                                                                      # lower foot: zl1 .. kz0
-    zl0 = zl1 - l_sh                                                                      # lower end of the lower sleeve
+    r_b = d_bore / 2                                                                      # bores of the sleeves
+    zst = kz1 + t_w + l_sl                                                                # upper end of the top sleeve
+    zl1 = kz0 - t_w                                                                       # lower washer: zl1 .. kz0
+    zl0 = zl1 - l_sl                                                                      # lower end of the lower sleeve
+    assert abs(zf - (zst - proud)) < 1e-9 and abs(gap - t_w - 0.05) < 1e-9, "front_c_hub does not match the sleeves"
     # C-hub in 2 frames (owner: the caster lies between the bore of the outer hinge pin and the kingpin bores):
     # the lug on the outer hinge pin, the lower arm and the narrow back plate lie between the rails of the
     # wishbone (chassis coordinates, centred on the middle of the wishbone); the wide back plate (horizontal bottom
@@ -331,7 +335,7 @@ def front_corner(p, d, c):
                 box(bx0, bx1, yc - w_low / 2, yc + w_low / 2, O[2] - 6.0, z_w + 0.5),
                 K(box(bx0 - J[0], bx1 - J[0], -w_back / 2, w_back / 2, -20.0, zf)).intersect(
                     box(bx0 - 1.0, bx1 + 1.0, yc - 30.0, yc + 30.0, z_w, J[2] + 30.0)),
-                K(box(bx0 - J[0], r_sf + 1.0, -w_arm / 2, w_arm / 2, 0.0, zf)))      # wall 1.0 around the counterbore
+                K(box(bx0 - J[0], 4.5, -w_arm / 2, w_arm / 2, 0.0, zf)))             # upper arm 4.5 beyond the axis
     z_bot = zl0 + proud                                                                   # bottom face (local z)
     body = body.cut(K(box(-60.0, 60.0, -60.0, 60.0, -80.0, z_bot)))                       # bottom face: caster angle
     lug = p["front_c_hub_lug"] / 2                                                     # tube on the outer hinge pin
@@ -345,22 +349,18 @@ def front_corner(p, d, c):
     hub = fuse(hub, cyl_z(p["grub_screw_boss"][2] / 2, O[2] - zg, O[2] - 1.0, O[0], yc))
     hub = hub.cut(cyl_y(1.5, yc - 8, yc + 8, O[0], O[2]))                                  # outer hinge pin
     hub = hub.cut(cyl_x(r_pass, bx0 - 1, bx1 + 1, J[1], J[2]))                            # passage of the CVD
-    # bores 5.0 through both arms for the 2 flanged guide sleeves (owner; manual step 15), both inserted from the
-    # knuckle side (owner): the foot of each sleeve lies in a counterbore of the arm toward the boss of the knuckle
-    # (thrust face), the shank stands 0.1 proud of the top face (top sleeve, under the ball stud) and of the bottom
-    # face (lower sleeve, under the head of the screw M3x8), both faces square to the kingpin axis (the outer hinge pin lies 6.75 beside the
+    # bores 4.9 through both arms for the sleeves (4.8: they turn with the knuckle, 0.1 clearance), no counterbores:
+    # the washers lie in the gap of 0.55 between the boss and the arm (washer 0.5 + play 0.05) and slide on the arm
+    # (thrust face); each sleeve stands 0.1 proud of the top face (under the ball stud) and of the bottom face (under
+    # the head of the screw M3x8), both faces square to the kingpin axis (the outer hinge pin lies 6.75 beside the
     # kingpin axis: the bore and the head stay outside the tube on the pin)
-    hub = hub.cut(K(cyl_z(2.5, kz1 + gap - 1.0, zf + 1.0, 0, 0)))                          # bore 5.0, top
-    hub = hub.cut(K(cyl_z(2.5, zl0 - 1.0, kz0 - gap + 1.0, 0, 0)))                         # bore 5.0, bottom (through)
-    hub = hub.cut(K(cyl_z(r_sf, zl1 - 0.05, kz0 - gap + 1.0, 0, 0)))                       # counterbore, lower foot
-    hub = hub.cut(K(cyl_z(r_sf, kz1 + gap - 1.0, kz1 + t_fl + 0.05, 0, 0)))                 # counterbore, upper foot
+    hub = hub.cut(K(cyl_z(r_b, kz1 + gap - 1.0, zf + 1.0, 0, 0)))                          # bore, top
+    hub = hub.cut(K(cyl_z(r_b, zl0 - 1.0, kz0 - gap + 1.0, 0, 0)))                         # bore, bottom (through)
     hub = hub.cut(cyl_z(TAP / 2, O[2] - zg - 1, O[2], O[0], yc))                          # thread M3, grub screw
-    # edge treatment (owner): chamfers on the sharp outer edges, radii in the sharp inner corners; the counterbores of
-    # the guide sleeve feet (thrust faces) stay sharp, their open edges get the entry chamfer
+    # edge treatment (owner): chamfers on the sharp outer edges, radii in the sharp inner corners; the bores of the
+    # sleeves get the entry chamfer on both ends (the washer, Ø7.0, covers the chamfer on the side of the knuckle)
     e_ch, e_r, e_ang = p["edge_treatment"]
-    keep = [K(cyl_z(r_sf + 0.05, zl1 - 0.3, kz0 - gap - 0.05, 0, 0)),
-            K(cyl_z(r_sf + 0.05, kz1 + gap + 0.05, kz1 + t_fl + 0.3, 0, 0))]
-    hub, EDGE_REPORT["C-hub"] = ET.treat(hub, e_ch, e_r, keep, e_ang)
+    hub, EDGE_REPORT["C-hub"] = ET.treat(hub, e_ch, e_r, (), e_ang)
     # knuckle (kingpin frame) as the T410R knuckle (measured by the owner, manual step 15): ring for 2 bearings
     # 5x10x4 from the kingpin axis outward, pressed in from both ends against a lip; from the inner end a wider
     # bore around the joint cup up to the inner bearing; kingpin bosses above and below the inner end of the ring
@@ -392,11 +392,11 @@ def front_corner(p, d, c):
     for hx, hy in ((bx_, by_), tuple(h2)):
         knu = knu.cut(cyl_z(TAP / 2, a0 - 1, a1 + 1, hx, hy))                            # threads M3, ball stud
     # kingpins, threaded into the bosses (bores 2.7, thread formed by the screw, as the original): top: the ball stud
-    # 4.8x9 of the camber link (as the original, manual step 15) through the flanged guide sleeve, which it clamps to
-    # the boss (the ball sits on the kingpin axis); bottom: socket head screw M3x8 from below through the second
-    # flanged guide sleeve, which it clamps to the lower boss (the screw ends inside the boss, a longer screw reaches
-    # into the entry bore). Knuckle, sleeves and screws turn together in the bores 5.0 of the C-hub; threads modelled
-    # with the core diameter in the bores 2.7
+    # 4.8x9 of the camber link (as the original, manual step 15) through the guide sleeve and the washer, which it
+    # clamps to the boss (the ball sits on the kingpin axis); bottom: socket head screw M3x8 from below through the
+    # second sleeve and the washer, which it clamps to the lower boss (the screw ends inside the boss, a longer screw
+    # reaches into the entry bore). Knuckle, washers, sleeves and screws turn together in the bores 4.9 of the C-hub; threads
+    # modelled with the core diameter in the bores 2.7
     zt0 = zst                                                                            # face of the ball stud
     pins = cq.Compound.makeCompound([K(fuse(cyl_z(d_kp / 2 - 0.001, zl0, zl0 + 8.0, 0, 0),
                                             cyl_z(h_d / 2, zl0 - h_h, zl0, 0, 0))),               # screw M3x8, bottom
@@ -404,10 +404,11 @@ def front_corner(p, d, c):
                                             p["ball_offset"], 9.0))])                            # ball stud 4.8x9, top
     c["camber_ball"] = J + R @ np.array([0, 0, zt0 + p["ball_offset"]])
     sleeves = cq.Compound.makeCompound([
-        K(fuse(cyl_z(d_fl / 2, kz1, kz1 + t_fl, 0, 0), cyl_z(d_sl / 2, kz1 + t_fl - 0.01, zst, 0, 0)).cut(
-            cyl_z(d_sl_in / 2, kz1 - 1, zst + 1, 0, 0))),                                       # flanged, top (from below)
-        K(fuse(cyl_z(d_sl / 2, zl0, zl1, 0, 0), cyl_z(d_fl / 2, zl1, kz0, 0, 0)).cut(
-            cyl_z(d_sl_in / 2, zl0 - 1, kz0 + 1, 0, 0)))])                                     # flanged, bottom
+        K(cyl_z(d_sl / 2, kz1 + t_w, zst, 0, 0).cut(cyl_z(d_sl_in / 2, kz1, zst + 1, 0, 0))),          # top
+        K(cyl_z(d_sl / 2, zl0, zl1, 0, 0).cut(cyl_z(d_sl_in / 2, zl0 - 1, kz0, 0, 0)))])               # bottom
+    washers = cq.Compound.makeCompound([
+        K(cyl_z(d_w / 2, kz1, kz1 + t_w, 0, 0).cut(cyl_z(d_sl_in / 2, kz1 - 1, kz1 + 1, 0, 0))),       # top
+        K(cyl_z(d_w / 2, zl1, kz0, 0, 0).cut(cyl_z(d_sl_in / 2, zl1 - 1, kz0 + 1, 0, 0)))])            # bottom
     # walls to the bore of the outer hinge pin (in the plane of the axle: kingpin axis to hinge pin axis along x)
     dk = O[0] - J[0]
 
@@ -418,19 +419,20 @@ def front_corner(p, d, c):
                       for z in np.arange(z0, min(z1, kz0 - gap) + 1e-9, 0.02) for t in np.linspace(0, 2 * math.pi, 181)])
         q = q[q[:, 2] >= O[2]]
         return round(float(yc + w_low / 2 - q[:, 1].max()), 2), round(float(q[:, 1].min() - (yc - w_low / 2)), 2)
-    c["kingpin_layout"] = {"top face (local z)": zf, "upper end of the top sleeve": zst, "sleeve shank": round(l_sh, 3), "lower flange": (zl1, kz0), "lower end": zl0,
-                           "bore 5 to the tube on the hinge pin": round(dk - 2.5 - 3.6, 2),
+    c["kingpin_layout"] = {"top face (local z)": zf, "upper end of the top sleeve": zst, "sleeve length": l_sl,
+                           "lower washer": (zl1, kz0), "lower end": zl0,
+                           f"bore {d_bore:g} to the tube on the hinge pin": round(dk - r_b - 3.6, 2),
                            "screw head to the tube on the hinge pin": round(dk - h_d / 2 - 3.6, 2),
                            "screw end (local z)": zl0 + 8.0,
-                           "walls of the lower arm (front, rear)": {"bore 5.0": walls(2.5, zl0 - 1.0, kz0),
-                                                                    "counterbore": walls(r_sf, zl1 - 0.05, kz0)},
+                           "walls of the lower arm (front, rear)": {f"bore {d_bore:g}": walls(r_b, zl0 - 1.0, kz0)},
                            "bottom face (local z, square to the kingpin axis)": round(z_bot, 2),
                            "sleeve proud of the bottom face": round(z_bot - zl0, 2)}
     kb = J + R @ kb_l
     c["kb"] = kb
     hinge = cyl_y(1.5, yc - 13, yc + 13, O[0], O[2])
     parts = {"C-hub": ("upright", hub), "steering knuckle": ("upright", K(knu.clean())), "kingpins": ("axle", pins),
-             "guide sleeves": ("axle", sleeves), "outer hinge pin 3x26": ("axle", hinge)}
+             "guide sleeves": ("axle", sleeves), "kingpin washers": ("axle", washers),
+             "outer hinge pin 3x26": ("axle", hinge)}
     parts.update(axle_group(p, d, J, np.array([1.0, 0, 0]), (J[0] + xl0 - 4.0, J[0] + xl1), J[0] + xr1 + 0.5,
                             p["hex_hub"][1], shoulder=J[0] + xl0 - 4.1, cup_end=J[0] + xs0 - 0.2))    # bearings on the lip
     parts["ball stud of the steering arm"] = ("link", stud(kb, kd, p["ball_offset"], t_arm))            # on top
@@ -748,7 +750,10 @@ def steering(p, cl, c, kb):
     bz0, bz1, r_s, a_s, r_b = p["bellcrank"]
     hub_d, end_d, seat_d, lip_t, lip_d, hole_d, ch = p["bellcrank_shape"]
     zb0, zb1, wb, d_tw, d_acc, w_bb = p["bridge"]
-    br_D, br_B, br_Df, br_Bf, sh_t, sh_D = p["bridge_bearings"]
+    g_bar = p["bridge_gusset"]                                     # stabilizing triangles beside the boss of the ball
+    e_ch, _, e_ang = p["edge_treatment"]                           # chamfers of the bellcranks and the bridge (owner)
+    d_sl, d_in, l_sl, d_w, t_w, _, _, d_bore = p["guide_sleeve"]          # bridge joint: the sleeve and washers of the C-hub
+    j_play, l_scr = p["bridge_joint"]
     z_post = PLATE_T + h_post                                                                  # end of the journal
     assert abs(bz1 - z_post) < 1e-6 and abs(bz1 - bz0 - (5.0 + lip_t)) < 1e-6, "bearing stack on the post, journal flush"
     t_top = 6.0 - 0.5 - play                                     # full thread on top: screw M3x6 + washer 0.5 bottoms there
@@ -783,7 +788,10 @@ def steering(p, cl, c, kb):
                                         cq.Vector(0, 0, d_)))
         for q in (Sp, Bp):
             s = s.cut(cyl_z(hole_d / 2, bz0 - 1, bz1 + 1, q[0], q[1]))                     # through holes
-        return s.clean()
+        # chamfers on the sharp outer edges (owner, 2026-11-22: chamfers only); bearing seats and lip kept sharp
+        keep = [cyl_z(seat_d / 2 + 0.05, bz0 + 0.05, bz1 - 0.05, Pp[0], Pp[1])]
+        s, EDGE_REPORT["bellcrank"] = ET.treat(s.clean(), e_ch, None, keep, e_ang)
+        return s
     # post: hexagon, shank up to the shoulder (collar) under the inner ring of the lower bearing, journal flush with the
     # bearing stack; blind thread M3 on top with a full thread of t_top: the screw M3x6 with washer bottoms at the end of the
     # thread and cannot be screwed in fully, the washer stays play above the journal (free bellcrank)
@@ -826,45 +834,49 @@ def steering(p, cl, c, kb):
     horn_ball = np.array([xs, yh1 + p["ball_offset"], zs + hl])
     yball = horn_ball[1]
     # bridge behind the posts (owner: refined, PA12): beam across the car over the centre driveshaft with a tower at each
-    # end; 2 flanged bearings MF63ZZ per tower (flanges outside) on the bellcrank arm, shims 3x5x0.3 below and above the
-    # inner rings, screw M3x18 from above through the access bore, washer and lock nut M3 under the bellcrank arm; ball of
-    # the servo link in the middle of the rear face on a grub screw M3x8, the boss reaches back to the y of the horn ball
+    # end; joint on the bellcrank arm with generic parts as the kingpins of the C-hub (owner, 2026-11-22): washer M3 DIN
+    # 125-A on the arm, brass spacer sleeve in the bore of the tower, washer in the access bore, button head screw from
+    # above, washer and lock nut M3 under the bellcrank arm; the screw clamps washer, sleeve and washer to the arm, the
+    # tower turns on the sleeve and slides between the washers. Ball of the servo link in the middle of the rear face on
+    # a grub screw M3x8, the boss reaches back to the y of the horn ball
     yb = P[1] - r_b                                                                              # axis of the bridge
     db = (yb - wb / 2) - (yball + p["ball_offset"])                                              # depth of the boss
     assert db > 1.0, f"boss of the bridge too short ({db:.2f})"
-    zs_0 = bz1 + sh_t                                                                            # lower bearing (on the shim)
-    zt_0 = zs_0 + br_Bf                                                                          # bottom face of the towers
-    zt_1 = zs_0 + 2 * br_B - br_Bf                                                               # step to the access bore
-    z_st = zs_0 + 2 * br_B                                                                       # top of the bearing stack
+    zt_0 = bz1 + t_w                                                                             # bottom face of the towers
+    z_st = zt_0 + l_sl                                                                           # upper end of the sleeve
+    zt_1 = z_st - j_play                                                                         # floor of the access bore
+    zh_s = z_st + t_w                                                                            # under the screw head
     zbb = (zb0 + zb1) / 2
     bball = np.array([0.0, yball, zbb])
     L_v = float(np.linalg.norm(horn_ball - bball))
     BL, BR = pts[-1][2], pts[1][2]
     assert zb0 > zt_0 - 1e-6, "bar of the bridge below the towers"
+    assert zh_s + 1.65 < zb1 and d_acc > d_w + 0.5, "upper washer and screw head inside the access bore"
+    assert zh_s - l_scr <= bz0 - 0.5 - 4.0 - 0.5, "screw too short for the lock nut under the arm"
     bridge = box(BL[0], BR[0], yb - wb / 2, yb + wb / 2, zb0, zb1)
     for q in (BL, BR):
         bridge = bridge.fuse(cyl_z(d_tw / 2, zt_0, zb1, q[0], q[1]))
     bridge = bridge.fuse(box(-w_bb / 2, w_bb / 2, yb - wb / 2 - db, yb, zb0, zb1))               # boss of the ball
+    for sx in (1, -1):                       # stabilizing triangles (owner): corner of the bar face and the boss side
+        xa, xg, yr, ye = sx * w_bb / 2, sx * (w_bb / 2 + g_bar), yb - wb / 2, yb - wb / 2 - db
+        bridge = bridge.fuse(prism_z([(xa, ye), (xg, yr), (xg, yr + 0.5), (xa, yr + 0.5)], zb0, zb1))
     for q in (BL, BR):
-        bridge = bridge.cut(cyl_z(br_D / 2, zt_0 - 1, zt_1 + 0.01, q[0], q[1]))               # bearing seats from both faces
+        bridge = bridge.cut(cyl_z(d_bore / 2, zt_0 - 1, zt_1 + 0.01, q[0], q[1]))             # bore of the sleeve
         bridge = bridge.cut(cyl_z(d_acc / 2, zt_1, zb1 + 1, q[0], q[1]))                       # access bore for the screw
     bridge = bridge.cut(cyl_y(TAP / 2, yb - wb / 2 - db - 0.1, yb - wb / 2 - db + 5.5, 0.0, zbb))  # thread M3, grub screw
-    joint = []
-    for q in (BL, BR):
-        bore = cyl_z(1.5, bz1 - 1, z_st + 1, q[0], q[1])
-        joint += [fuse(cyl_z(br_Df / 2, zs_0, zt_0, q[0], q[1]), cyl_z(br_D / 2, zt_0 - 0.01, zs_0 + br_B, q[0], q[1])).cut(bore),
-                  fuse(cyl_z(br_D / 2, zs_0 + br_B, zt_1 + 0.01, q[0], q[1]), cyl_z(br_Df / 2, zt_1, z_st, q[0], q[1])).cut(bore)]
+    bridge, EDGE_REPORT["steering bridge"] = ET.treat(bridge.clean(), e_ch, None, (), e_ang)       # chamfers (owner)
+    joint = [cyl_z(d_sl / 2, zt_0, z_st, q[0], q[1]).cut(cyl_z(d_in / 2, zt_0 - 1, z_st + 1, q[0], q[1])) for q in (BL, BR)]
     hardware = []
     for q in (BL, BR):
-        hole = cyl_z(1.6, bz1 - 1, z_st + 1, q[0], q[1])
-        hardware += [cyl_z(sh_D / 2, bz1, zs_0, q[0], q[1]).cut(hole), cyl_z(sh_D / 2, z_st, z_st + sh_t, q[0], q[1]).cut(hole)]
-        zh_s = z_st + sh_t                                                                       # screw M3x18 from above
-        hardware.append(fuse(cyl_z(2.85, zh_s, zh_s + 1.65, q[0], q[1]), cyl_z(1.45, zh_s - 18.0, zh_s + 0.01, q[0], q[1])))
+        hole = cyl_z(d_in / 2, bz1 - 1, zh_s + 1, q[0], q[1])
+        hardware += [cyl_z(d_w / 2, bz1, zt_0, q[0], q[1]).cut(hole), cyl_z(d_w / 2, z_st, zh_s, q[0], q[1]).cut(hole)]
+        hardware.append(fuse(cyl_z(2.85, zh_s, zh_s + 1.65, q[0], q[1]),                          # button head screw
+                             cyl_z(1.45, zh_s - l_scr, zh_s + 0.01, q[0], q[1])))
         hardware.append(cyl_z(3.5, bz0 - 0.5, bz0, q[0], q[1]).cut(cyl_z(1.6, bz0 - 1, bz0 + 1, q[0], q[1])))  # washer 3.2x7x0.5
         hardware.append(hex_z(5.5, bz0 - 4.5, bz0 - 0.5, q[0], q[1]).cut(cyl_z(1.5, bz0 - 6, bz0, q[0], q[1])))  # lock nut M3
-    out += [("steering bridge", "steer", bridge.clean()),
-            ("bridge bearings MF63ZZ", "axle", cq.Compound.makeCompound(joint)),
-            ("bridge shims, screws M3x18, washers and lock nuts", "link", cq.Compound.makeCompound(hardware)),
+    out += [("steering bridge", "steer", bridge),
+            ("bridge guide sleeves", "axle", cq.Compound.makeCompound(joint)),
+            ("bridge washers, screws M3x16 and lock nuts", "link", cq.Compound.makeCompound(hardware)),
             ("ball stud of the bridge", "link", stud(bball, (0, -1.0, 0), p["ball_offset"], 5.0))]
     rods, tb_, gap_a = link(S, -up, K, -c["front"]["kd"], 9.0, cl)                          # ball on top, along the kingpin
     out += [("steering link rod ends right", "rodend", rods), ("steering link turnbuckle right", "link", tb_),
@@ -949,15 +961,15 @@ def steering(p, cl, c, kb):
 
 def steering_sweep(parts, others, angle):
     """Turns the right bellcrank with its ball stud and the rod end of the steering link about the post and
-    moves the bridge with its bearings, shims, screws and ball (parallelogram) by +-angle; returns the largest overlap with the other
+    moves the bridge with its sleeves, washers, screws and ball (parallelogram) by +-angle; returns the largest overlap with the other
     parts (bulkheads, cup joint, centre driveshaft, steering posts)."""
     st = steering.info
     P = np.array([21.7, 242.69, 0.0])
     S = st["S"]
     ring = cyl_between(3.5, S + np.array([0, 0, -3.0]), S + np.array([0, 0, 3.4]))
     turning = [parts["bellcrank right"], parts["bellcrank ball right"], parts["bellcrank ball screw M3x10 right"], ring]
-    moving = [parts["steering bridge"], parts["bridge bearings MF63ZZ"], parts["ball stud of the bridge"],
-              parts["bridge shims, screws M3x18, washers and lock nuts"]]
+    moving = [parts["steering bridge"], parts["bridge guide sleeves"], parts["ball stud of the bridge"],
+              parts["bridge washers, screws M3x16 and lock nuts"]]
     B = st["B"]
     res = {}
     for sg in (1, -1):
@@ -1172,7 +1184,7 @@ def drawing(parts, info, lock, path=DRAWING):
              "hub carrier (camber stud, grub screw), hex hubs (grub screw), steering posts (both ends), bridge (ball stud), "
              "servo mount (fixed post: H17/H21 from below; both posts: top plate from above, servo ears from the front), "
              "servo horn (clamp, ball stud), sway bar ball ends (grub screw M3x3). Bellcranks: plain through holes 3.2 (bridge "
-             "screw M3x18 with washer and lock nut below the arm, ball screw M3x10 from below)"]
+             "screw M3x16 through washer, brass sleeve and washer, washer and lock nut below the arm, ball screw M3x10 from below)"]
     fig.text(0.69, 0.555, "\n\n".join(notes), fontsize=8.3, va="top", wrap=True)
     labels = {"upright": "C-hubs, knuckles, hub carriers", "axle": "axles, hex hubs, pins, bearings",
               "cvd": "CVD drive shafts", "steer": "steering, servo mount, sway bar holders", "damper": "dampers",

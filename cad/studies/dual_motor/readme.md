@@ -94,7 +94,7 @@ Technical drawings of the 2 parts of the study for a later order (A3, first angl
 | `dual_motor_mount_study.step`, `.stl` | Dual motor mount in the part coordinates of the motor mount (x = 0 pinion axis, y = 0 middle of the plate of the mount, z = 0 bottom face of the mount) |
 | `chassis_plate_dual_motor_study.step`, `.stl` | Chassis plate (study) in the coordinates of the chassis plate |
 | `chassis_plate_dual_motor_study_geometry.json` | Geometry data of the chassis plate (study): outline, cutouts, holes, thickness and countersink parameters |
-| `dual_motor_study_assembly.step` | Assembly of the speedrun chassis with the chassis plate (study), the dual motor mount instead of the motor mount, the 2 motors, motor shafts and pinions (STEP AP214, one solid per part, 192 parts) |
+| `dual_motor_study_assembly.step` | Assembly of the speedrun chassis with the chassis plate (study), the dual motor mount instead of the motor mount, the 2 motors, motor shafts and pinions (STEP AP214, one solid per part, 197 parts) |
 | `dual_motor_study_assembly.png` | Complete build, top view of End B, spur gear with the 2 pinions, view from below |
 | `dual_motor_study_drawing.png` | Dual motor mount from the motor side, chassis plate (study) with the closed holes and the new hole, check results |
 | `dual_motor_study_electronics.png` | Electronics layout: overview, top view, close-up of the right side and the wiring diagram |

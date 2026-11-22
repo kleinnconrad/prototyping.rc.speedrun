@@ -22,7 +22,7 @@ from OCP.gp import gp_Ax2, gp_Pnt, gp_Dir  # noqa: E402
 from OCP.TopExp import TopExp_Explorer  # noqa: E402
 from OCP.TopAbs import TopAbs_EDGE, TopAbs_REVERSED  # noqa: E402
 from OCP.BRepTools import BRepTools_WireExplorer  # noqa: E402
-from OCP.BRepAdaptor import BRepAdaptor_Surface  # noqa: E402
+from OCP.BRepAdaptor import BRepAdaptor_Surface, BRepAdaptor_Curve  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mesh_views import load_stl, subdivide, draw_mesh, iso_basis  # noqa: E402
@@ -61,7 +61,14 @@ def sample_edge(e, step=0.15):
     else:
         n = int(min(200, max(8, e.Length() / step)))
         ts = np.linspace(0, 1, n)
-    return [(p.x, p.y) for p in (e.positionAt(t) for t in ts)]
+    try:
+        return [(p.x, p.y) for p in (e.positionAt(t) for t in ts)]
+    except Exception:
+        # the hidden line removal can return nearly degenerate edges on which the length parameterisation
+        # fails (Standard_ConstructionError): sample them by the curve parameter instead
+        c = BRepAdaptor_Curve(e.wrapped)
+        u0, u1 = c.FirstParameter(), c.LastParameter()
+        return [(p.X(), p.Y()) for p in (c.Value(u0 + (u1 - u0) * t) for t in ts)]
 
 
 def edges_of(compound):

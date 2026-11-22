@@ -12,10 +12,10 @@ countersinks, thickness) and only adds material to its outline:
     the top face plus CLEAR); front: turned about the kingpin axis over the free angles of the knuckle (45 deg with
     the steering arm toward the outside, 35 deg toward the middle), static and with droop up to DROOP; rear: static and
     with droop;
-  * the parts that move with the suspension (wishbones, C-hubs, knuckles, kingpins, guide sleeves, hub carriers,
-    spacers, hinge pins, axles, hex hubs, bearings, ball studs on the wishbones), turned about the inner hinge pin from
-    the static position to the droop DROOP at the wheel centre: where they come lower than Z_CLEAR above the top face
-    of the plate.
+  * the parts that move with the suspension (wishbones, C-hubs, knuckles, kingpins, guide sleeves, kingpin washers,
+    hub carriers, spacers, hinge pins, axles, hex hubs, bearings, ball studs on the wishbones), turned about the inner
+    hinge pin from the static position to the droop DROOP at the wheel centre: where they come lower than Z_CLEAR above
+    the top face of the plate.
 * Outline = largest outline minus the keep-out zones, inside corners closed with the radius R_INNER (end mill), then
   united with the current outline (the study never removes material of the current plate).
 
@@ -61,8 +61,9 @@ Z_CLEAR = 1.0            # moving parts lower than this above the top face of th
 R_INNER = 2.0            # radius of the inside corners of the outline (end mill 4 mm)
 STATIC_CLEAR = 1.0       # gap to parts that do not move and reach down to the height of the plate (front splitter)
 STEER = {"right": (-35.0, 45.0), "left": (-45.0, 35.0)}   # free angles of the knuckle about the kingpin axis
-MOVING = ("wishbone", "C-hub", "steering_knuckle", "kingpins", "guide_sleeves", "outer_hinge_pin", "axle_with_joint_cup",
-          "axle_pin", "hex_hub", "wheel_bearings", "hub_carrier", "spacers", "sway_ball_stud", "damper_ball_studs")
+MOVING = ("wishbone", "C-hub", "steering_knuckle", "kingpins", "guide_sleeves", "kingpin_washers", "outer_hinge_pin",
+          "axle_with_joint_cup", "axle_pin", "hex_hub", "wheel_bearings", "hub_carrier", "spacers", "sway_ball_stud",
+          "damper_ball_studs")
 DENSITY_6082 = 2.70
 CORNERS = [(e, s) for e in ("A", "B") for s in ("right", "left")]
 
