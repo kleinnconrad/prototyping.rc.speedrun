@@ -62,9 +62,9 @@ def steering_frames():
     from generate_bulkhead_lower import load_params
     p = load_params(G.PARAMS)
     tp, m4 = p["servo_mount"][:2]
-    bb_ = p["bridge_bearings"]
+    t_w = p["guide_sleeve"][4]                                               # washer of the bridge joint on the bellcrank arm
     return {"bellcrank": np.array([21.7, 242.69, p["bellcrank"][0]]), "post": np.array([8.0, 199.15, G.PLATE_T]),
-            "bridge": np.array([0.0, 242.69 - p["bellcrank"][4], p["bellcrank"][1] + bb_[4] + bb_[3]]),
+            "bridge": np.array([0.0, 242.69 - p["bellcrank"][4], p["bellcrank"][1] + t_w]),
             "steering_post": np.array([21.7, 242.69, G.PLATE_T]),
             "battery_tray": battery_tray_frame(),
             "plate": np.array([8.0, 199.15, G.PLATE_T + m4 - tp]), "p": p}
@@ -123,14 +123,14 @@ def parts():
     bt_rs = btx(btg["ys"][0])                                                # rear strap (frame x)
     bt_h12 = bty(btg["hs"][1][0])                                            # line of H12 and H22 (frame y)
     bt_si0, bt_si1 = bty(btg["x_in"] - 0.5), bty(btg["x_in"] - 0.5 + btg["sx"])   # inner slot (frame y)
-    bri, brb = sf["p"]["bridge"], sf["p"]["bridge_bearings"]
+    bri, gsl, brj = sf["p"]["bridge"], sf["p"]["guide_sleeve"], sf["p"]["bridge_joint"]
     pst = sf["p"]["post"]
     z_shoulder = pst[3] - (5.0 + bs[3])                                      # shoulder of the post above the chassis plate
     t_top = 6.0 - 0.5 - pst[5]                                               # full thread on top (stop of the screw M3x6)
     xb_ = 21.7                                                               # axes of the towers (posts H24/H25)
     zbo = sf["bridge"][2]                                                    # bottom face of the towers (frame z = 0)
     zb_lo, zb_hi, zb_ball = bri[0] - zbo, bri[1] - zbo, (bri[0] + bri[1]) / 2 - zbo
-    z_seat = 2 * brb[1] - 2 * brb[3]                                         # bearing seats (both bearings without flanges)
+    z_seat = gsl[2] - brj[0]                                                 # bore of the sleeve: sleeve length minus play
     y_horn_ball = 199.15 + sp[0] + sf["p"]["servo_horn"][3] + sf["p"]["ball_offset"]           # H21 + S1 + S5 + S8
     dboss = (242.69 - bc[4] - bri[2] / 2) - (y_horn_ball + sf["p"]["ball_offset"])             # depth of the ball boss
 
@@ -363,8 +363,9 @@ def parts():
                     f"Bearing seats Ø{bs[2]:.1f} for 2 bearings 5x8x2.5, pressed in from both faces against the lip ({bs[3]:g} thick, "
                     f"opening Ø{bs[4]:.1f}: contact on the outer rings only). Chamfer {bs[6]:g} x 45 deg at the entries. Check the fit "
                     "after printing (MJF approx. ±0.3); ream to Ø8.0 if the bearings do not fit.",
-                    f"Plain through holes Ø{bs[5]:.1f} at both ends (owner: no hex pockets). Bridge end: screw M3x18 from above "
-                    "through the bearings of the bridge, washer 3.2x7x0.5 and lock nut M3 (DIN 985) under the arm. Ball end: button "
+                    f"Plain through holes Ø{bs[5]:.1f} at both ends (owner: no hex pockets). Bridge end: button head screw M3x16 "
+                    "from above through washer, brass sleeve and washer of the bridge joint, washer 3.2x7x0.5 and lock nut M3 "
+                    "(DIN 985) under the arm. Ball end: button "
                     "head screw M3x10 (ISO 7380) from below that holds the ball with internal thread.",
                     "Outline: hull of the hub and the 2 ends (tangent flanks), full height. Print flat on the bottom face."]),
         dict(key="servo_mount_top_plate", folder="cad/generic_parts/servo_mount", step="servo_mount_top_plate.step",
@@ -432,14 +433,14 @@ def parts():
                         f"car, y toward End A, z up. The STEP file is in the assembly position: O = ({sf['bridge'][0]:.2f}, "
                         f"{sf['bridge'][1]:.2f}, {sf['bridge'][2]:.2f}).",
              max_hole_d=8.5, sheets=3,
-             hole_note=lambda h: (f"2 flanged bearings MF63ZZ (3x6x{brb[1]:g}) pressed in from both faces, flanges outside; screw M3x18 "
-                                  "from above through the access bore" if abs(h["dia"] - brb[0]) < 0.05 else
+             hole_note=lambda h: (f"brass spacer sleeve {gsl[0]:g} x {gsl[1]:g} x {gsl[2]:g} (turns in the bore), washers M3 "
+                                  f"DIN 125-A below and above; screw M3x{brj[1]:g} from above" if abs(h["dia"] - gsl[7]) < 0.05 else
                                   ("grub screw M3x8, ball of the servo link with internal thread" if abs(h["dia"] - 2.5) < 0.05 else None)),
              dims=[("T", (-xb_, 0, 0), (xb_, 0, 0), "h", "below", f"{2 * xb_:.2f} (axes of the towers)")],
              sections=[dict(label="B", point=(0, 0, 0), d=(0, -1, 0), x=(1, 0, 0), title="Section B-B (plane of the tower axes)",
                             axes=[((q, 0, -1.5), (q, 0, zb_hi + 1.5)) for q in (-xb_, xb_)],
-                            callouts=[((xb_ + brb[0] / 2, 0, z_seat / 2), f"Ø{brb[0]:.1f} through (bearing seats MF63ZZ from both faces)", (28, -12)),
-                                      ((xb_ + bri[4] / 2, 0, zb_hi - 2.0), f"Ø{bri[4]:.1f}, access bore for the screw", (23, 10)),
+                            callouts=[((xb_ + gsl[7] / 2, 0, z_seat / 2), f"Ø{gsl[7]:.1f} through (brass sleeve Ø{gsl[0]:g})", (28, -12)),
+                                      ((xb_ + bri[4] / 2, 0, zb_hi - 1.0), f"Ø{bri[4]:.1f}, access bore for the washer and the screw head", (23, 10)),
                                       ((8.0, 0, zb_lo), f"bar {bri[2]:g} x {zb_hi - zb_lo:.2f}, 1.0 above the centre driveshaft", (22, -10))],
                             dims=[((xb_, 0, 0), (xb_, 0, z_seat), "v", 0, f"{z_seat:.2f}"),
                                   ((xb_, 0, z_seat), (xb_, 0, zb_hi), "v", 0, f"{zb_hi - z_seat:.2f}")]),
@@ -451,10 +452,13 @@ def parts():
                                   ((0, bri[2] / 2, zb_lo), (0, bri[2] / 2, zb_hi), "v", -6, f"{zb_hi - zb_lo:.2f}"),
                                   ((0, -bri[2] / 2 - dboss, zb_lo), (0, -bri[2] / 2 - dboss, zb_ball), "v", 6, f"{zb_ball - zb_lo:.2f}")])],
              notes=["Flat bar over the centre driveshaft (1.0 above it) with round ends (towers). The towers turn on the rear arms "
-                    "of the bellcranks: 2 flanged bearings MF63ZZ per tower, shims 3x5x0.3 below and above the inner rings, screw "
-                    "M3x18 from above, washer 3.2x7x0.5 and lock nut M3 under the bellcrank arm.",
-                    f"Bearing seats Ø{brb[0]:.1f} through the lower part of the towers ({z_seat:.1f} long: the 2 bearings without their "
-                    "flanges); check the fit after printing (MJF approx. ±0.3).",
+                    f"of the bellcranks with generic parts as the kingpins of the C-hub (owner): washer M3 DIN 125-A ({gsl[1]:g} x "
+                    f"{gsl[3]:g} x {gsl[4]:g}) on the bellcrank arm, brass spacer sleeve Ø{gsl[0]:g} x Ø{gsl[1]:g} x {gsl[2]:g} in the "
+                    f"bore of the tower, washer M3 DIN 125-A in the access bore, button head screw M3x{brj[1]:g} from above, washer "
+                    "and lock nut M3 under the bellcrank arm. The screw clamps washer, sleeve and washer to the arm; the tower turns "
+                    f"on the sleeve and slides between the washers ({brj[0]:g} axial play).",
+                    f"Bore Ø{gsl[7]:.1f} through the lower part of the towers ({z_seat:.1f} long: sleeve {gsl[2]:g} minus the axial "
+                    f"play {brj[0]:g}); the sleeve turns in it. Ream if the sleeve is tight after printing (MJF approx. ±0.3).",
                     "Ball of the servo link in the middle of the rear face (toward End B): thread M3 for a grub screw M3x8, ball with "
                     "internal thread screwed onto it. The boss reaches back to the ball of the servo horn.",
                     "Print flat on the bottom face."]),
@@ -921,7 +925,8 @@ FOLDERS = {
                                       "../../readme.md#running-gear"),
     "cad/speedrun_parts/front_splitter": ("Speedrun front splitter: technical drawing", "../../readme.md#speedrun-front-splitter"),
     "cad/generic_parts/wishbone": ("Wishbones: technical drawings", "../../readme.md#wishbones"),
-    "cad/generic_parts/steering": ("Steering: technical drawing of the bellcrank", "../../readme.md#running-gear"),
+    "cad/generic_parts/steering": ("Steering: technical drawings of the bellcrank, the steering bridge and the steering post",
+                                  "../../readme.md#running-gear"),
     "cad/generic_parts/servo_mount": ("Servo mount: technical drawings", "../../readme.md#running-gear"),
     "cad/speedrun_parts/battery_tray": ("Speedrun battery tray: technical drawing", "../../readme.md#speedrun-battery-tray"),
 }
@@ -943,7 +948,9 @@ FOLDER_EXTRA = {
             "| Quantity per car | Part | Size | Note |",
             "|:---|:---|:---|:---|",
             "| **4** | **Brass spacer sleeve without thread** (German: Distanzhülse or Distanzrolle, Messing, for M3) "
-            "| **Ø4.8 mm outside, Ø3.2 mm inside, 4.0 mm long** | 2 per C-hub. Length 4.0 to 4.1 mm: the sleeve stands "
+            "| **Ø4.8 mm outside, Ø3.2 mm inside, 4.0 mm long** | 2 per C-hub (2 more of the same sleeve for the joints of the "
+            "steering bridge, see the [steering readme](../steering/readme.md#bridge-joint-sleeves-and-washers-to-buy)). "
+            "Length 4.0 to 4.1 mm: the sleeve stands "
             "0.1 mm proud of the C-hub; at 3.9 mm or less the screw head or the ball stud presses on the C-hub. A "
             "length of 4.0 mm was not found as a stock part in a web search (2026-11-22): RS PRO sells Ø4.8 x Ø3.2 mm "
             "in the lengths 6, 10, 20 and 25 mm (6 mm: RS 606-759); no listing was found for Conrad, Bauhaus or "
@@ -989,6 +996,54 @@ FOLDER_EXTRA = {
         "generate": ["", "The explanation picture of the kingpin is generated from the assembly STEP file (after "
                      "`scripts/cad/generate_speedrun_assembly.py`):", "", "```bash",
                      "python scripts/cad/generate_kingpin_stack_drawing.py", "```"],
+    },
+    "cad/generic_parts/steering": {
+        "sections": [("Bridge joint: sleeves and washers to buy", [
+            "Owner (2026-11-22): the steering bridge turns on the rear arms of the bellcranks with the same generic parts as "
+            "the kingpins of the C-hub ([front corner](../front_corner/readme.md#kingpin-of-the-c-hub-sleeves-and-washers-to-buy)) "
+            "instead of the flanged bearings MF63ZZ. The bellcranks keep their ball bearings 5x8x2.5 on the steering posts. "
+            "The geometry of the steering is unchanged: only the towers of the bridge get a bore Ø4.9 instead of the bearing "
+            "seats and reach 0.4 mm lower (onto the washer on the bellcrank arm).",
+            "",
+            "**Parts to buy for the 2 bridge joints (per car):**",
+            "",
+            "| Quantity per car | Part | Size | Note |",
+            "|:---|:---|:---|:---|",
+            "| **2** | **Brass spacer sleeve without thread** (German: Distanzhülse or Distanzrolle, Messing, for M3) "
+            "| **Ø4.8 mm outside, Ø3.2 mm inside, 4.0 mm long** | 1 per joint; the same sleeve as at the C-hub. Length 4.0 to "
+            "4.1 mm: at 3.9 mm or less the upper washer presses on the tower. 4.0 mm is not a stock length (web search, "
+            "2026-11-22): shorten a 6 mm sleeve (RS PRO, RS 606-759) as described for the C-hub. |",
+            "| **6** | **Washer M3 DIN 125-A (ISO 7089)** | **Ø3.2 mm inside, Ø7 mm outside, 0.5 mm thick** | 3 per joint: "
+            "on the bellcrank arm, in the access bore of the tower, under the bellcrank arm. Steel or stainless steel. |",
+            "| 2 | Button head screw M3x16 ISO 7380 | M3 x 16 mm | 1 per joint, from above (before: M3x18). |",
+            "| 2 | Lock nut M3 DIN 985 | M3 | 1 per joint, under the bellcrank arm (as before). |",
+            "",
+            "No longer needed: 4 flanged bearings MF63ZZ, 4 shims 3x5x0.3, 2 screws M3x18.",
+            "",
+            "![Joint of the steering bridge on the bellcrank arm: section with the brass spacer sleeve and the washers]"
+            "(bridge_joint_sleeves_and_washers.png)",
+            "",
+            "How it works:",
+            "* The screw M3x16 from above, with a washer and the lock nut under the arm, clamps washer, sleeve and washer to "
+            "the rear arm of the bellcrank.",
+            "* Radial bearing: the tower of the bridge turns on the sleeve Ø4.8 mm in its bore Ø4.9 mm. Axial bearing: the "
+            "tower slides between the lower washer (on the bellcrank arm) and the upper washer (in the access bore Ø8 mm), "
+            "with 0.1 mm axial play.",
+            "* The upper washer and the screw head lie in the access bore, below the top face of the bridge.",
+            "",
+            "Assembly (per joint):",
+            "1. Put a washer on the rear arm of the bellcrank, over the hole.",
+            "2. Set the tower of the bridge on the washer.",
+            "3. Insert the sleeve into the bore of the tower from above, onto the washer.",
+            "4. Put a washer into the access bore onto the sleeve and insert the screw M3x16 from above through washer, "
+            "sleeve, washer and the bellcrank arm.",
+            "5. Washer and lock nut under the arm, tighten. The bridge must turn freely on both bellcranks; if it does not, "
+            "check the length of the sleeves and ream the bore Ø4.9 mm."])],
+        "files": ["| `bridge_joint_sleeves_and_washers.png` | Explanation picture of the bridge joint: section with the sleeve "
+                  "and the washers to buy |"],
+        "generate": ["", "The explanation picture of the bridge joint is generated from the assembly STEP file (after "
+                     "`scripts/cad/generate_speedrun_assembly.py`):", "", "```bash",
+                     "python scripts/cad/generate_bridge_joint_drawing.py", "```"],
     },
 }
 

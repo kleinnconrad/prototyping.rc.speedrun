@@ -22,8 +22,8 @@ Outputs (chassis plate coordinates):
   drive line), section across the car at a strap
 
 Checks: overlap of the tray, the battery and the straps with all parts of the assembly
-(cad/assembly/speedrun_chassis_T410R.step); steering on the left side (bellcrank, bridge with its bearings and
-screws, servo link) turned and moved over the full angle of the bellcranks; smallest distances to the top brace, the
+(cad/assembly/speedrun_chassis_T410R.step); steering on the left side (bellcrank, bridge with its sleeves, washers
+and screws, servo link) turned and moved over the full angle of the bellcranks; smallest distances to the top brace, the
 servo mount, the steering and the drive line.
 
 Requires the packages cadquery and numpy.
@@ -191,7 +191,7 @@ def check(own):
     print(f"  overlap with the {len(asm)} parts of the assembly:", bad if bad else "none")
     names = dict(asm)
     for key in ("speedrun_top_brace", "running_gear_servo_mount_top_plate", "centre_driveshaft", "cup_joint_End_B",
-                "motor_mount", "running_gear_steering_bridge", "running_gear_bridge_shims,_screws_M3x18,_washers_and_lock_nuts",
+                "motor_mount", "running_gear_steering_bridge", "running_gear_bridge_washers,_screws_M3x16_and_lock_nuts",
                 "running_gear_servo_link_rod_ends", "running_gear_bellcrank_left"):
         if key in names:
             print(f"  distance to {key}: " + ", ".join(f"{on.split()[0]} {distance(o, names[key]):.2f}" for on, _, o in own))
@@ -206,7 +206,7 @@ def check(own):
     BL = np.array([-21.7, 242.69 - p["bellcrank"][4]])
     ring = G.sphere(5.0, info["bridge ball"])                                 # rod end of the servo link on the bridge
     turning = [parts["bellcrank left"], parts["bellcrank ball left"], parts["bellcrank ball screw M3x10 left"]]
-    moving = [parts["steering bridge"], parts["bridge bearings MF63ZZ"], parts["bridge shims, screws M3x18, washers and lock nuts"],
+    moving = [parts["steering bridge"], parts["bridge guide sleeves"], parts["bridge washers, screws M3x16 and lock nuts"],
               parts["ball stud of the bridge"], ring]
     worst, dmin = 0.0, 1e9
     for a in np.linspace(-ang, ang, 15):

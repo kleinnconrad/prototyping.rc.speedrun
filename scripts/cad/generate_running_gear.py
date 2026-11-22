@@ -750,7 +750,8 @@ def steering(p, cl, c, kb):
     bz0, bz1, r_s, a_s, r_b = p["bellcrank"]
     hub_d, end_d, seat_d, lip_t, lip_d, hole_d, ch = p["bellcrank_shape"]
     zb0, zb1, wb, d_tw, d_acc, w_bb = p["bridge"]
-    br_D, br_B, br_Df, br_Bf, sh_t, sh_D = p["bridge_bearings"]
+    d_sl, d_in, l_sl, d_w, t_w, _, _, d_bore = p["guide_sleeve"]          # bridge joint: the sleeve and washers of the C-hub
+    j_play, l_scr = p["bridge_joint"]
     z_post = PLATE_T + h_post                                                                  # end of the journal
     assert abs(bz1 - z_post) < 1e-6 and abs(bz1 - bz0 - (5.0 + lip_t)) < 1e-6, "bearing stack on the post, journal flush"
     t_top = 6.0 - 0.5 - play                                     # full thread on top: screw M3x6 + washer 0.5 bottoms there
@@ -828,45 +829,45 @@ def steering(p, cl, c, kb):
     horn_ball = np.array([xs, yh1 + p["ball_offset"], zs + hl])
     yball = horn_ball[1]
     # bridge behind the posts (owner: refined, PA12): beam across the car over the centre driveshaft with a tower at each
-    # end; 2 flanged bearings MF63ZZ per tower (flanges outside) on the bellcrank arm, shims 3x5x0.3 below and above the
-    # inner rings, screw M3x18 from above through the access bore, washer and lock nut M3 under the bellcrank arm; ball of
-    # the servo link in the middle of the rear face on a grub screw M3x8, the boss reaches back to the y of the horn ball
+    # end; joint on the bellcrank arm with generic parts as the kingpins of the C-hub (owner, 2026-11-22): washer M3 DIN
+    # 125-A on the arm, brass spacer sleeve in the bore of the tower, washer in the access bore, button head screw from
+    # above, washer and lock nut M3 under the bellcrank arm; the screw clamps washer, sleeve and washer to the arm, the
+    # tower turns on the sleeve and slides between the washers. Ball of the servo link in the middle of the rear face on
+    # a grub screw M3x8, the boss reaches back to the y of the horn ball
     yb = P[1] - r_b                                                                              # axis of the bridge
     db = (yb - wb / 2) - (yball + p["ball_offset"])                                              # depth of the boss
     assert db > 1.0, f"boss of the bridge too short ({db:.2f})"
-    zs_0 = bz1 + sh_t                                                                            # lower bearing (on the shim)
-    zt_0 = zs_0 + br_Bf                                                                          # bottom face of the towers
-    zt_1 = zs_0 + 2 * br_B - br_Bf                                                               # step to the access bore
-    z_st = zs_0 + 2 * br_B                                                                       # top of the bearing stack
+    zt_0 = bz1 + t_w                                                                             # bottom face of the towers
+    z_st = zt_0 + l_sl                                                                           # upper end of the sleeve
+    zt_1 = z_st - j_play                                                                         # floor of the access bore
+    zh_s = z_st + t_w                                                                            # under the screw head
     zbb = (zb0 + zb1) / 2
     bball = np.array([0.0, yball, zbb])
     L_v = float(np.linalg.norm(horn_ball - bball))
     BL, BR = pts[-1][2], pts[1][2]
     assert zb0 > zt_0 - 1e-6, "bar of the bridge below the towers"
+    assert zh_s + 1.65 < zb1 and d_acc > d_w + 0.5, "upper washer and screw head inside the access bore"
+    assert zh_s - l_scr <= bz0 - 0.5 - 4.0 - 0.5, "screw too short for the lock nut under the arm"
     bridge = box(BL[0], BR[0], yb - wb / 2, yb + wb / 2, zb0, zb1)
     for q in (BL, BR):
         bridge = bridge.fuse(cyl_z(d_tw / 2, zt_0, zb1, q[0], q[1]))
     bridge = bridge.fuse(box(-w_bb / 2, w_bb / 2, yb - wb / 2 - db, yb, zb0, zb1))               # boss of the ball
     for q in (BL, BR):
-        bridge = bridge.cut(cyl_z(br_D / 2, zt_0 - 1, zt_1 + 0.01, q[0], q[1]))               # bearing seats from both faces
+        bridge = bridge.cut(cyl_z(d_bore / 2, zt_0 - 1, zt_1 + 0.01, q[0], q[1]))             # bore of the sleeve
         bridge = bridge.cut(cyl_z(d_acc / 2, zt_1, zb1 + 1, q[0], q[1]))                       # access bore for the screw
     bridge = bridge.cut(cyl_y(TAP / 2, yb - wb / 2 - db - 0.1, yb - wb / 2 - db + 5.5, 0.0, zbb))  # thread M3, grub screw
-    joint = []
-    for q in (BL, BR):
-        bore = cyl_z(1.5, bz1 - 1, z_st + 1, q[0], q[1])
-        joint += [fuse(cyl_z(br_Df / 2, zs_0, zt_0, q[0], q[1]), cyl_z(br_D / 2, zt_0 - 0.01, zs_0 + br_B, q[0], q[1])).cut(bore),
-                  fuse(cyl_z(br_D / 2, zs_0 + br_B, zt_1 + 0.01, q[0], q[1]), cyl_z(br_Df / 2, zt_1, z_st, q[0], q[1])).cut(bore)]
+    joint = [cyl_z(d_sl / 2, zt_0, z_st, q[0], q[1]).cut(cyl_z(d_in / 2, zt_0 - 1, z_st + 1, q[0], q[1])) for q in (BL, BR)]
     hardware = []
     for q in (BL, BR):
-        hole = cyl_z(1.6, bz1 - 1, z_st + 1, q[0], q[1])
-        hardware += [cyl_z(sh_D / 2, bz1, zs_0, q[0], q[1]).cut(hole), cyl_z(sh_D / 2, z_st, z_st + sh_t, q[0], q[1]).cut(hole)]
-        zh_s = z_st + sh_t                                                                       # screw M3x18 from above
-        hardware.append(fuse(cyl_z(2.85, zh_s, zh_s + 1.65, q[0], q[1]), cyl_z(1.45, zh_s - 18.0, zh_s + 0.01, q[0], q[1])))
+        hole = cyl_z(d_in / 2, bz1 - 1, zh_s + 1, q[0], q[1])
+        hardware += [cyl_z(d_w / 2, bz1, zt_0, q[0], q[1]).cut(hole), cyl_z(d_w / 2, z_st, zh_s, q[0], q[1]).cut(hole)]
+        hardware.append(fuse(cyl_z(2.85, zh_s, zh_s + 1.65, q[0], q[1]),                          # button head screw
+                             cyl_z(1.45, zh_s - l_scr, zh_s + 0.01, q[0], q[1])))
         hardware.append(cyl_z(3.5, bz0 - 0.5, bz0, q[0], q[1]).cut(cyl_z(1.6, bz0 - 1, bz0 + 1, q[0], q[1])))  # washer 3.2x7x0.5
         hardware.append(hex_z(5.5, bz0 - 4.5, bz0 - 0.5, q[0], q[1]).cut(cyl_z(1.5, bz0 - 6, bz0, q[0], q[1])))  # lock nut M3
     out += [("steering bridge", "steer", bridge.clean()),
-            ("bridge bearings MF63ZZ", "axle", cq.Compound.makeCompound(joint)),
-            ("bridge shims, screws M3x18, washers and lock nuts", "link", cq.Compound.makeCompound(hardware)),
+            ("bridge guide sleeves", "axle", cq.Compound.makeCompound(joint)),
+            ("bridge washers, screws M3x16 and lock nuts", "link", cq.Compound.makeCompound(hardware)),
             ("ball stud of the bridge", "link", stud(bball, (0, -1.0, 0), p["ball_offset"], 5.0))]
     rods, tb_, gap_a = link(S, -up, K, -c["front"]["kd"], 9.0, cl)                          # ball on top, along the kingpin
     out += [("steering link rod ends right", "rodend", rods), ("steering link turnbuckle right", "link", tb_),
@@ -951,15 +952,15 @@ def steering(p, cl, c, kb):
 
 def steering_sweep(parts, others, angle):
     """Turns the right bellcrank with its ball stud and the rod end of the steering link about the post and
-    moves the bridge with its bearings, shims, screws and ball (parallelogram) by +-angle; returns the largest overlap with the other
+    moves the bridge with its sleeves, washers, screws and ball (parallelogram) by +-angle; returns the largest overlap with the other
     parts (bulkheads, cup joint, centre driveshaft, steering posts)."""
     st = steering.info
     P = np.array([21.7, 242.69, 0.0])
     S = st["S"]
     ring = cyl_between(3.5, S + np.array([0, 0, -3.0]), S + np.array([0, 0, 3.4]))
     turning = [parts["bellcrank right"], parts["bellcrank ball right"], parts["bellcrank ball screw M3x10 right"], ring]
-    moving = [parts["steering bridge"], parts["bridge bearings MF63ZZ"], parts["ball stud of the bridge"],
-              parts["bridge shims, screws M3x18, washers and lock nuts"]]
+    moving = [parts["steering bridge"], parts["bridge guide sleeves"], parts["ball stud of the bridge"],
+              parts["bridge washers, screws M3x16 and lock nuts"]]
     B = st["B"]
     res = {}
     for sg in (1, -1):
@@ -1174,7 +1175,7 @@ def drawing(parts, info, lock, path=DRAWING):
              "hub carrier (camber stud, grub screw), hex hubs (grub screw), steering posts (both ends), bridge (ball stud), "
              "servo mount (fixed post: H17/H21 from below; both posts: top plate from above, servo ears from the front), "
              "servo horn (clamp, ball stud), sway bar ball ends (grub screw M3x3). Bellcranks: plain through holes 3.2 (bridge "
-             "screw M3x18 with washer and lock nut below the arm, ball screw M3x10 from below)"]
+             "screw M3x16 through washer, brass sleeve and washer, washer and lock nut below the arm, ball screw M3x10 from below)"]
     fig.text(0.69, 0.555, "\n\n".join(notes), fontsize=8.3, va="top", wrap=True)
     labels = {"upright": "C-hubs, knuckles, hub carriers", "axle": "axles, hex hubs, pins, bearings",
               "cvd": "CVD drive shafts", "steer": "steering, servo mount, sway bar holders", "damper": "dampers",

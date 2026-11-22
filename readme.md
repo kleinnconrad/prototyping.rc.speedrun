@@ -95,7 +95,7 @@ Further own parts (own design, partly based on the T410R, not in the mass total)
 | CVD drive shafts | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/cvd_drive_shafts` |
 | Bellcranks (symmetric, the same part on both sides) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/steering` |
 | Servo mount: top plate, fixed post, floating post; position of the servo and the horn | 1 set | $\color{green}\checkmark$ Verified (owner); the holes for the servo ears (positions assumed) are to be checked against the servo before printing | `cad/generic_parts/servo_mount` |
-| Steering bridge (beam with 2 towers on flanged bearings MF63ZZ) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/steering` |
+| Steering bridge (beam with 2 towers on brass guide sleeves and washers M3) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/steering` |
 | Steering posts (height 20.3 mm, shoulder for the bellcrank bearings) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/steering` |
 | Steering: steering links, servo link, servo horn | 1 set | $\color{red}\times$ Completely unqualified | `cad/generic_parts/steering` |
 | Sway bars with holders, ball ends and drop links | 2 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/sway_bars` |
