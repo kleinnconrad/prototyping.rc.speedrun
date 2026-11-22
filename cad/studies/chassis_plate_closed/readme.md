@@ -21,7 +21,7 @@ The study keeps the speedrun chassis plate (holes, windows, countersinks, thickn
 | Zone | Model | Clearance |
 |:---|:---|:---|
 | Tyres | Cylinder Ø64 x 30 mm (width of setup sheet 4, as the tyre check of the front splitter), cut at the height of the plate up to 3.0 mm above its top face; front: turned about the kingpin axis over the free angles of the knuckle (45 degrees with the steering arm toward the outside, 35 degrees toward the middle); front and rear: static and with a droop of 2 and 4 mm; one zone per wheel, extended to the outside of the car (no plate beside the tyres) | 3.0 mm |
-| Moving parts | Wishbones, C-hubs, knuckles, kingpins, guide sleeves, hub carriers, spacers, hinge pins, axles, hex hubs, bearings, ball studs on the wishbones; turned about the inner hinge pin from the static position to a droop of 4 mm at the wheel centre (5 positions): each piece that comes lower than 1.0 mm above the top face of the plate | 3.0 mm |
+| Moving parts | Wishbones, C-hubs, knuckles, kingpins, guide sleeves, kingpin washers, hub carriers, spacers, hinge pins, axles, hex hubs, bearings, ball studs on the wishbones; turned about the inner hinge pin from the static position to a droop of 4 mm at the wheel centre (5 positions): each piece that comes lower than 1.0 mm above the top face of the plate | 3.0 mm |
 | Static parts | Parts that reach below the top face of the plate (front splitter): exact cross-section at the height of the plate | 1.0 mm |
 
 * The outline is the full width minus the keep-out zones, united with the current outline (the study never removes material of the current plate). The new inside corners have a radius of 2.0 mm (end mill 4 mm).

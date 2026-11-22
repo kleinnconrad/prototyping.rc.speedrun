@@ -155,30 +155,32 @@ def parts():
                     sections=[dict(label="B", point=(side * kx, 0, 0), d=(side, 0, 0), x=(0, side, 0), labels_right=side < 0,
                                    title="Section B-B (plane of the kingpin axis, seen from the wheel)",
                                    axes=[(J_ - kd * 17, J_ + kd * 16), (J_ - kn * 9, J_ + kn * 9)],
-                                   callouts=[(J_ + kd * 12.6 + kn * 2.5, "Ø5.0 H7 (2x), guide sleeves", off(32, 6)),
+                                   callouts=[(J_ + kd * 12.6 + kn * 2.45, "Ø4.9 (2x), brass sleeves 4.8 x 3.2 x 4.0", off(32, 6)),
                                              (J_ - kd * 16.5, f"kingpin axis, {rgp['caster']:g} deg to z (caster)", off(36, -2)),
-                                             (J_ - kd * 10.8 + kn * 3.5, "counterbore Ø7.0 x 0.55 (2x), feet of the sleeves",
+                                             (J_ - kd * 11.1 + kn * 3.5, "face toward the boss: washer M3 DIN 125-A, gap 0.55",
                                               off(18, 4)),
-                                             (J_ + kd * 15.05 + kn * 4.5, "top face square to the kingpin axis, sleeve 0.1 proud",
+                                             (J_ + kd * 14.95 + kn * 4.5, "top face square to the kingpin axis, sleeve 0.1 proud",
                                               off(16, 6)),
-                                             (J_ - kd * 15.15 + kn * 4.5, "bottom face square to the kingpin axis, sleeve 0.1 proud",
+                                             (J_ - kd * 14.95 + kn * 4.5, "bottom face square to the kingpin axis, sleeve 0.1 proud",
                                               off(12, -24)),
                                              (J_, "O' (axle, CVD joint)", off(44, -16))])],
                     notes=[f"{name.capitalize()} part. The C-hub has no plane of symmetry (caster, kingpin axis toward the middle "
                            f"of the car): the {other} part (CH-{other[0].upper()}) is its mirror image; the same part cannot "
                            f"be used on both sides.",
-                           f"Kingpin bores Ø5.0 for the flanged guide sleeves Ø4.95 (fit without pressing): Ø5.0 H7 (proposal). "
+                           f"Kingpin bores Ø4.9 for the brass spacer sleeves Ø4.8 x 3.2 x 4.0 (they turn with the knuckle; ream if "
+                           f"tight). "
                            f"Kingpin axis {rgp['caster']:g} deg to z (caster, top toward -y), x = {side * kx:.2f} from O; at the "
                            f"height of the axle ({rgp['wheel_r'] - rgp['ride_height'][0] - Oc[2]:.2f} above O) "
                            f"{rgp['kingpin_y']:.2f} toward -y from O.",
                            "Bore Ø3.0 for the outer hinge pin 3x26: Ø3.0 H7 (proposal). The pin is fixed with a grub screw M3x4 "
                            "from below in the boss Ø6.0 below the tube (thread M3 4.2 long, face 5.7 below the axis of the pin: "
                            "the screw lies fully in the thread with its tip on the pin).",
-                           "Both guide sleeves are inserted from the knuckle side (feet in the counterbores Ø7.0 x 0.55) and "
-                           "stand 0.1 proud of the top face and of the bottom face (both square to the kingpin axis), so the ball "
-                           "stud and the screw clamp only the sleeves and the knuckle moves freely (owner).",
-                           "Foot of the sleeves 1.0 as modelled (owner: approx. 0.6, to be measured); the counterbores and the "
-                           "faces follow from the measured sleeve."])
+                           "Standard parts (owner): on each knuckle boss a washer M3 DIN 125-A (3.2 x 7 x 0.5) in the gap of 0.55 "
+                           "between the boss and the arm, then the brass sleeve in the bore; the sleeves stand 0.1 proud of the "
+                           "top face and of the bottom face (both square to the kingpin axis), so the ball stud and the screw "
+                           "clamp sleeve and washer to the knuckle and the knuckle moves freely (owner).",
+                           "Sleeve and washer turn with the knuckle: the sleeve in the bore (radial), the washer on the face of "
+                           "the arm toward the boss (axial). No counterbores."])
     return [
         dict(key="chassis_plate", folder="cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10",
              step="chassis_plate_T410R_speedrun_wide_motor10.step", stem="chassis_plate_T410R_speedrun_wide_motor10",
