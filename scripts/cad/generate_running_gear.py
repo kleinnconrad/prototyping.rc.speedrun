@@ -750,6 +750,8 @@ def steering(p, cl, c, kb):
     bz0, bz1, r_s, a_s, r_b = p["bellcrank"]
     hub_d, end_d, seat_d, lip_t, lip_d, hole_d, ch = p["bellcrank_shape"]
     zb0, zb1, wb, d_tw, d_acc, w_bb = p["bridge"]
+    g_bar = p["bridge_gusset"]                                     # stabilizing triangles beside the boss of the ball
+    e_ch, _, e_ang = p["edge_treatment"]                           # chamfers of the bellcranks and the bridge (owner)
     d_sl, d_in, l_sl, d_w, t_w, _, _, d_bore = p["guide_sleeve"]          # bridge joint: the sleeve and washers of the C-hub
     j_play, l_scr = p["bridge_joint"]
     z_post = PLATE_T + h_post                                                                  # end of the journal
@@ -786,7 +788,10 @@ def steering(p, cl, c, kb):
                                         cq.Vector(0, 0, d_)))
         for q in (Sp, Bp):
             s = s.cut(cyl_z(hole_d / 2, bz0 - 1, bz1 + 1, q[0], q[1]))                     # through holes
-        return s.clean()
+        # chamfers on the sharp outer edges (owner, 2026-11-22: chamfers only); bearing seats and lip kept sharp
+        keep = [cyl_z(seat_d / 2 + 0.05, bz0 + 0.05, bz1 - 0.05, Pp[0], Pp[1])]
+        s, EDGE_REPORT["bellcrank"] = ET.treat(s.clean(), e_ch, None, keep, e_ang)
+        return s
     # post: hexagon, shank up to the shoulder (collar) under the inner ring of the lower bearing, journal flush with the
     # bearing stack; blind thread M3 on top with a full thread of t_top: the screw M3x6 with washer bottoms at the end of the
     # thread and cannot be screwed in fully, the washer stays play above the journal (free bellcrank)
@@ -852,10 +857,14 @@ def steering(p, cl, c, kb):
     for q in (BL, BR):
         bridge = bridge.fuse(cyl_z(d_tw / 2, zt_0, zb1, q[0], q[1]))
     bridge = bridge.fuse(box(-w_bb / 2, w_bb / 2, yb - wb / 2 - db, yb, zb0, zb1))               # boss of the ball
+    for sx in (1, -1):                       # stabilizing triangles (owner): corner of the bar face and the boss side
+        xa, xg, yr, ye = sx * w_bb / 2, sx * (w_bb / 2 + g_bar), yb - wb / 2, yb - wb / 2 - db
+        bridge = bridge.fuse(prism_z([(xa, ye), (xg, yr), (xg, yr + 0.5), (xa, yr + 0.5)], zb0, zb1))
     for q in (BL, BR):
         bridge = bridge.cut(cyl_z(d_bore / 2, zt_0 - 1, zt_1 + 0.01, q[0], q[1]))             # bore of the sleeve
         bridge = bridge.cut(cyl_z(d_acc / 2, zt_1, zb1 + 1, q[0], q[1]))                       # access bore for the screw
     bridge = bridge.cut(cyl_y(TAP / 2, yb - wb / 2 - db - 0.1, yb - wb / 2 - db + 5.5, 0.0, zbb))  # thread M3, grub screw
+    bridge, EDGE_REPORT["steering bridge"] = ET.treat(bridge.clean(), e_ch, None, (), e_ang)       # chamfers (owner)
     joint = [cyl_z(d_sl / 2, zt_0, z_st, q[0], q[1]).cut(cyl_z(d_in / 2, zt_0 - 1, z_st + 1, q[0], q[1])) for q in (BL, BR)]
     hardware = []
     for q in (BL, BR):
@@ -865,7 +874,7 @@ def steering(p, cl, c, kb):
                              cyl_z(1.45, zh_s - l_scr, zh_s + 0.01, q[0], q[1])))
         hardware.append(cyl_z(3.5, bz0 - 0.5, bz0, q[0], q[1]).cut(cyl_z(1.6, bz0 - 1, bz0 + 1, q[0], q[1])))  # washer 3.2x7x0.5
         hardware.append(hex_z(5.5, bz0 - 4.5, bz0 - 0.5, q[0], q[1]).cut(cyl_z(1.5, bz0 - 6, bz0, q[0], q[1])))  # lock nut M3
-    out += [("steering bridge", "steer", bridge.clean()),
+    out += [("steering bridge", "steer", bridge),
             ("bridge guide sleeves", "axle", cq.Compound.makeCompound(joint)),
             ("bridge washers, screws M3x16 and lock nuts", "link", cq.Compound.makeCompound(hardware)),
             ("ball stud of the bridge", "link", stud(bball, (0, -1.0, 0), p["ball_offset"], 5.0))]

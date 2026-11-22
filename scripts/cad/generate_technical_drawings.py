@@ -344,7 +344,7 @@ def parts():
         dict(key="bellcrank", folder="cad/generic_parts/steering", step="bellcrank.step", stem="bellcrank",
              title="Bellcrank (same part on both sides)", number="BC", frame=(np.column_stack([(0, 1, 0), (-1, 0, 0), (0, 0, 1)]), sf["bellcrank"]),
              material="Nylon PA12 (MJF 3D print)", density=1.01, density_txt="PA12", quantity="2 (same part on both sides)",
-             tol="process tolerance (MJF approx. ±0.3)", edges="as modelled", status="measures qualified, not printed",
+             tol="process tolerance (MJF approx. ±0.3)", edges="chamfer 0.3 (modelled)", status="measures qualified, not printed",
              frame_note=f"Drawing frame: origin O on the axis of the hub on the bottom face; x along the arms (in the car "
                         f"+x toward End A), z up. The STEP file is in the assembly position of the right bellcrank: O = "
                         f"({sf['bellcrank'][0]:.2f}, {sf['bellcrank'][1]:.2f}, {sf['bellcrank'][2]:.2f}).",
@@ -367,7 +367,9 @@ def parts():
                     "from above through washer, brass sleeve and washer of the bridge joint, washer 3.2x7x0.5 and lock nut M3 "
                     "(DIN 985) under the arm. Ball end: button "
                     "head screw M3x10 (ISO 7380) from below that holds the ball with internal thread.",
-                    "Outline: hull of the hub and the 2 ends (tangent flanks), full height. Print flat on the bottom face."]),
+                    "Outline: hull of the hub and the 2 ends (tangent flanks), full height. Print flat on the bottom face.",
+                    "Edges (owner): chamfer 0.3 x 45 deg on each sharp outer edge (modelled); the bearing seats and the lip stay "
+                    "sharp, the entries of the seats have their own chamfer."]),
         dict(key="servo_mount_top_plate", folder="cad/generic_parts/servo_mount", step="servo_mount_top_plate.step",
              stem="servo_mount_top_plate", title="Servo mount: top plate", number="SM-T", flat=True, edge_view=True,
              frame=(np.eye(3), sf["plate"]), material="To be defined (e.g. EN AW-7075-T6)", quantity="1", tol=GENERAL_CNC,
@@ -428,7 +430,7 @@ def parts():
         dict(key="steering_bridge", folder="cad/generic_parts/steering", step="steering_bridge.step", stem="steering_bridge",
              title="Steering bridge", number="SB", frame=(np.eye(3), sf["bridge"]),
              material="Nylon PA12 (MJF 3D print)", density=1.01, density_txt="PA12", quantity="1",
-             tol="process tolerance (MJF approx. ±0.3)", edges="as modelled", status="measures qualified, not printed",
+             tol="process tolerance (MJF approx. ±0.3)", edges="chamfer 0.3 (modelled)", status="measures qualified, not printed",
              frame_note=f"Drawing frame: origin O in the middle between the axes of the towers on their bottom face; x across the "
                         f"car, y toward End A, z up. The STEP file is in the assembly position: O = ({sf['bridge'][0]:.2f}, "
                         f"{sf['bridge'][1]:.2f}, {sf['bridge'][2]:.2f}).",
@@ -461,6 +463,9 @@ def parts():
                     f"play {brj[0]:g}); the sleeve turns in it. Ream if the sleeve is tight after printing (MJF approx. ±0.3).",
                     "Ball of the servo link in the middle of the rear face (toward End B): thread M3 for a grub screw M3x8, ball with "
                     "internal thread screwed onto it. The boss reaches back to the ball of the servo horn.",
+                    f"Stabilizing triangles (owner) on both sides of the boss of the ball: full height of the bar, legs "
+                    f"{sf['p']['bridge_gusset']:g} along the rear face of the bar and up to the end face of the boss.",
+                    "Edges (owner): chamfer 0.3 x 45 deg on each sharp outer edge (modelled), no radii.",
                     "Print flat on the bottom face."]),
         dict(key="steering_post", folder="cad/generic_parts/steering", step="steering_post.step", stem="steering_post",
              title="Steering post", number="SP", frame=(np.eye(3), sf["steering_post"]),
