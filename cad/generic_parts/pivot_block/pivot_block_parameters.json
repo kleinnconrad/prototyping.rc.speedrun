@@ -21,6 +21,7 @@
     "short_mount_spacing": {"value": 29.121, "source": "plate", "note": "Distance of the 2 mounting holes of the short blocks: mean of the holes H07/H08 (29.172), H26/H27 (29.108) and H32/H33 (29.084) of the speedrun chassis plate. Photo of the underside of a short block: approx. 29.2."},
     "long_shoulder_len": {"value": 15.0, "source": "photo", "note": "Long block: length of the shoulder from the end of the block to the step down to the bar."},
     "short_shoulder_len": {"value": 14.0, "source": "photo", "note": "Short block: length of the shoulder from the end of the block to the step down to the bar."},
-    "mount_hole_d": {"value": 2.5, "source": "assumption", "note": "Mounting holes for the M3 countersunk screws from below through the chassis plate: tap drill 2.5, through (the shoulders are 6.4 high, a screw M3x8 through the 2 mm plate reaches 6 mm into the block)."}
+    "mount_hole_d": {"value": 2.5, "source": "assumption", "note": "Mounting holes for the M3 countersunk screws from below through the chassis plate: tap drill 2.5, through (the shoulders are 6.4 high, a screw M3x8 through the 2 mm plate reaches 6 mm into the block)."},
+    "edge_chamfer": {"value": [0.3, 120.0], "source": "user", "note": "Chamfer on each sharp outer edge of the pivot blocks (owner, 2026-11-23: chamfers only, no radii, as the steering parts, the servo mount and the battery tray): size 0.3 x 45 deg; sharp: the faces meet at an angle of up to 120 deg. The entries of the hinge pin bores and of the mounting holes get the chamfer too. Script edge_treatment.py."}
   }
 }

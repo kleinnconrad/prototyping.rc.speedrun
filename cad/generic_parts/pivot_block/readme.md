@@ -54,4 +54,4 @@ The drawings are generated from the STEP files (from the root directory of the r
 python scripts/cad/generate_technical_drawings.py
 ```
 
-The option `--part` generates the drawing of one part (keys: `pivot_block_long`, `pivot_block_short`), the option `--date` sets the date in the title block.
+The option `--part` generates the drawings of the given parts (keys separated by commas: `pivot_block_long`, `pivot_block_short`), the option `--date` sets the date in the title block.

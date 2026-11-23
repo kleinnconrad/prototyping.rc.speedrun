@@ -23,6 +23,7 @@ from OCP.TopExp import TopExp_Explorer  # noqa: E402
 from OCP.TopAbs import TopAbs_EDGE, TopAbs_REVERSED  # noqa: E402
 from OCP.BRepTools import BRepTools_WireExplorer  # noqa: E402
 from OCP.BRepAdaptor import BRepAdaptor_Surface, BRepAdaptor_Curve  # noqa: E402
+from OCP.Geom import Geom_RectangularTrimmedSurface  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mesh_views import load_stl, subdivide, draw_mesh, iso_basis  # noqa: E402
@@ -90,7 +91,19 @@ def hlr(shape, view):
     algo.Update()
     algo.Hide()
     h = HLRBRep_HLRToShape(algo)
-    return edges_of(h.VCompound()) + edges_of(h.OutLineVCompound()), edges_of(h.Rg1LineVCompound())
+    return edges_of(h.VCompound()) + [q for q in edges_of(h.OutLineVCompound()) if not folded(q)], \
+        edges_of(h.Rg1LineVCompound())
+
+
+def folded(line, tol=1e-3):
+    """True for a silhouette that runs out and back on itself (closed, but encloses no area): the hidden line removal
+    returns such spurious outlines on some blended surfaces (for example a line 4.8 mm out of the C-hub in its top view)."""
+    q = np.asarray(line, float)
+    if len(q) < 3 or np.linalg.norm(q[0] - q[-1]) > tol:
+        return False
+    length = np.linalg.norm(np.diff(q, axis=0), axis=1).sum()
+    area = 0.5 * abs(np.dot(q[:-1, 0], q[1:, 1]) - np.dot(q[1:, 0], q[:-1, 1]))
+    return length > 10 * tol and area < 1e-3 * length ** 2
 
 
 def draw_view(ax, shape, view):
@@ -418,6 +431,8 @@ def find_holes(solid, max_d=6.5):
         if gt not in ("CYLINDER", "CONE"):
             continue
         g = f._geomAdaptor()
+        while isinstance(g, Geom_RectangularTrimmedSurface):              # solids built in memory (not read from STEP)
+            g = g.BasisSurface()
         prim = g.Cylinder() if gt == "CYLINDER" else g.Cone()
         ax = prim.Axis()
         d = _unit([ax.Direction().X(), ax.Direction().Y(), ax.Direction().Z()])
@@ -575,7 +590,8 @@ def hole_rows_generic(holes, names=None, use=None, thread_extra=1.0, centroid=(0
         for j, r in enumerate(grp, 1):
             r["id"] = f"{chr(65 + i)}{j}"
     rows.sort(key=lambda r: (r["id"][0], int("".join(c for c in r["id"][1:] if c.isdigit()) or 0), r["id"]))
-    table = [(r["id"], f"{r['P'][0]:+.2f}", f"{r['P'][1]:+.2f}", f"{r['P'][2]:+.2f}", r["dirtxt"], r["size"], r["depth"],
+    c2 = lambda v: f"{round(v, 2) + 0.0:+.2f}"                       # no "-0.00"
+    table = [(r["id"], c2(r['P'][0]), c2(r['P'][1]), c2(r['P'][2]), r["dirtxt"], r["size"], r["depth"],
               r["note"]) for r in rows]
     return table, rows
 

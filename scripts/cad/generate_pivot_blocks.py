@@ -35,6 +35,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_bulkhead_lower import box, bulkhead_lower, cyl_y, cyl_z, load_params  # noqa: E402
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y  # noqa: E402
+import edge_treatment as ET  # noqa: E402
 
 PARAMS = "cad/generic_parts/pivot_block/pivot_block_parameters.json"
 PLATE_GEOM = "cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10/chassis_plate_speedrun_wide_motor10_geometry.json"
@@ -44,6 +45,7 @@ OUT = "cad/generic_parts/pivot_block"
 DRAWING = "photos/cad_pivot_blocks_drawing.png"
 PLATE_T = 2.0
 # positions on the speedrun chassis plate: (name, kind, holes of the chassis plate, end of the car)
+EDGE_REPORT = {}                                            # edge treatment of the 2 kinds of blocks
 POSITIONS = [("End B, outer", "long", ("H02", "H01"), "rear"),
              ("End B, inner", "short", ("H08", "H07"), "rear"),
              ("End A, inner", "short", ("H26", "H27"), "front"),
@@ -69,7 +71,10 @@ def block_solid(p, kind):
         # blind bores of the hinge pin seats, open at y = +w/2
         s = s.cut(cyl_y(p["pin_bore_d"] / 2, w / 2 - p["pin_bore_depth"], w / 2 + 1, sx * c, p["pin_h"]))
         s = s.cut(cyl_z(p["mount_hole_d"] / 2, -1, p["height_max"] + 1, sx * mounts / 2, 0))
-    return s.clean()
+    # chamfer on each sharp outer edge (owner, 2026-11-23: chamfers only)
+    ch, ang = p["edge_chamfer"]
+    s, EDGE_REPORT[kind] = ET.treat(s.clean(), ch, None, (), ang)
+    return s
 
 
 def plate_holes():
@@ -205,6 +210,7 @@ def main():
         cq.exporters.export(cq.Workplane().add(s), stem + ".stl", tolerance=0.01, angularTolerance=0.1)
         print(f"{kind} block: wrote {stem}.step/.stl, solid valid: {valid}, size {bb.xlen:.2f} x {bb.ylen:.2f} x "
               f"{bb.zlen:.2f} mm, volume {vol / 1000:.2f} cm3")
+        print(f"  edge treatment {kind} block:", EDGE_REPORT.get(kind))
     drawing(DRAWING, p, solids)
     print(f"Wrote {DRAWING}")
 

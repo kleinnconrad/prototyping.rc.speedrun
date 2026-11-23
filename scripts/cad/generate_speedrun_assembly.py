@@ -11,7 +11,8 @@ T410R; they are not in the mass total):
   rear tower at End B
 * speedrun battery tray on H11, H12, H22 and H23 (scripts/cad/generate_battery_tray.py) with the
   battery Absima GreenHorn 3S 5000 (hardcase) and the 2 velcro straps (battery and straps: not in the
-  mass total)
+  mass total and not in the picture, owner: only the battery tray is part of the chassis; they stay in the
+  STEP file for the checks)
 * speedrun front splitter at End A (scripts/cad/generate_front_splitter.py): one part, the body
   post mount enlarged to the splitter, on H34 to H36; the body posts (stock parts) are not in the
   mass total
@@ -30,6 +31,7 @@ T410R; they are not in the mass total):
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
 * photos/cad_speedrun_chassis_assembly.png: 3D view, side view, top view, close-ups of both ends and of the drive line at End B
+  (picture only: without the battery and the straps, servo shaft lower; see picture_parts)
 
 The script checks all pairs of parts for interference and lists the volume and the mass of
 each part.
@@ -70,6 +72,11 @@ OUT_STEP = "cad/assembly/speedrun_chassis_T410R.step"
 OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = dict(PARTS)                       # colour scheme of the CAD pictures: blue and grey (palette.py)
 PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
+NOT_IN_PICTURE = {"battery", "strap"}      # in the STEP file (checks), not in the picture: not part of the chassis (owner)
+# servo output shaft in the picture (owner, 2026-11-23: in reality nearer the bottom of the servo): 7.0 lower than in the
+# model (6.0 above the lower face of the case, 13.0 below its top face; 10 would put the clamp of the horn into the
+# chassis plate). The model (STEP file, steering geometry) keeps the caliper value S3 of servo_position
+PICTURE_SERVO_DZ = -7.0
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
              "lower": ("Lower bulkhead (2 pieces)", {"PA12": 1.01, "7075": 2.81}),
@@ -154,7 +161,30 @@ def tess(shape, tol=0.05):
     return v[np.array(idx)]
 
 
+def picture_parts(parts):
+    """Parts of the picture: without the battery and the straps (owner: only the battery tray is part of the chassis)
+    and with the servo output shaft, the horn, its ball stud and the servo link PICTURE_SERVO_DZ lower (owner)."""
+    import generate_running_gear as G
+    p = G.load_params(G.PARAMS)
+    out = [q for q in parts if q[1] not in NOT_IN_PICTURE]
+    by = {n: s for n, _, s in out}
+    dz = PICTURE_SERVO_DZ
+    hl, _, _, hf = p["servo_horn"]
+    hb = np.asarray(G.steering.info["horn"], float)
+    xs, ycf, zs = hb[0], hb[1] - p["ball_offset"] - hf, hb[2] - hl                               # shaft, case front face
+    mv = lambda s: s.translate(cq.Vector(0, 0, dz))                                               # noqa: E731
+    rods, tbk, _ = G.link(hb + (0, 0, dz), np.array([0, -1.0, 0]), G.steering.info["bridge ball"], np.array([0, 1.0, 0]),
+                          9.0, G.load_params(G.CL.PARAMS))
+    spline = lambda z: cq.Solid.makeCylinder(2.95, 3.5, cq.Vector(xs, ycf - 0.1, z), cq.Vector(0, 1, 0))  # noqa: E731
+    repl = {"running gear servo": by["running gear servo"].cut(spline(zs).translate(cq.Vector(0, 0.1, 0))).fuse(spline(zs + dz)),
+            "running gear servo horn (aluminium clamp)": mv(by["running gear servo horn (aluminium clamp)"]),
+            "running gear servo horn ball stud": mv(by["running gear servo horn ball stud"]),
+            "running gear servo link rod ends": rods, "running gear servo link turnbuckle": tbk}
+    return [(n, k, repl.get(n, s)) for n, k, s in out]
+
+
 def image(parts, path):
+    parts = picture_parts(parts)
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
