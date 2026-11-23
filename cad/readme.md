@@ -88,7 +88,7 @@ The speedrun chassis combines the parts that are designed in this project for sp
 
 ![Speedrun chassis: complete build with the drive line, the wishbones and the running gear](../photos/cad_speedrun_chassis_assembly.png)
 
-The picture shows the battery tray without the battery and the straps (owner: only the battery tray is part of the chassis); the assembly STEP file contains them for the checks.
+The picture (owner, 2026-11-23) shows the battery tray without the battery and the straps (only the battery tray is part of the chassis), the screws that can be seen from above and from the ends (simplified hex socket screws: top brace and bulkheads, shock towers, cap of the motor mount, servo mount and the clamp screw of the servo horn) and the output shaft of the servo 7 mm lower than in the model (owner: in reality nearer the bottom of the servo). These changes are in the picture only: the assembly STEP file contains the battery and the straps for the checks, no screws except the modelled ones, and the servo with the caliper value S3 (15 mm above the chassis plate).
 
 ### Parts of the speedrun chassis
 | Part | Quantity | Directory | Status | Order | Material | Mass |

@@ -23,6 +23,7 @@ from OCP.TopExp import TopExp_Explorer  # noqa: E402
 from OCP.TopAbs import TopAbs_EDGE, TopAbs_REVERSED  # noqa: E402
 from OCP.BRepTools import BRepTools_WireExplorer  # noqa: E402
 from OCP.BRepAdaptor import BRepAdaptor_Surface, BRepAdaptor_Curve  # noqa: E402
+from OCP.Geom import Geom_RectangularTrimmedSurface  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mesh_views import load_stl, subdivide, draw_mesh, iso_basis  # noqa: E402
@@ -430,6 +431,8 @@ def find_holes(solid, max_d=6.5):
         if gt not in ("CYLINDER", "CONE"):
             continue
         g = f._geomAdaptor()
+        while isinstance(g, Geom_RectangularTrimmedSurface):              # solids built in memory (not read from STEP)
+            g = g.BasisSurface()
         prim = g.Cylinder() if gt == "CYLINDER" else g.Cone()
         ax = prim.Axis()
         d = _unit([ax.Direction().X(), ax.Direction().Y(), ax.Direction().Z()])
