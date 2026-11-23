@@ -587,7 +587,8 @@ def hole_rows_generic(holes, names=None, use=None, thread_extra=1.0, centroid=(0
         for j, r in enumerate(grp, 1):
             r["id"] = f"{chr(65 + i)}{j}"
     rows.sort(key=lambda r: (r["id"][0], int("".join(c for c in r["id"][1:] if c.isdigit()) or 0), r["id"]))
-    table = [(r["id"], f"{r['P'][0]:+.2f}", f"{r['P'][1]:+.2f}", f"{r['P'][2]:+.2f}", r["dirtxt"], r["size"], r["depth"],
+    c2 = lambda v: f"{round(v, 2) + 0.0:+.2f}"                       # no "-0.00"
+    table = [(r["id"], c2(r['P'][0]), c2(r['P'][1]), c2(r['P'][2]), r["dirtxt"], r["size"], r["depth"],
               r["note"]) for r in rows]
     return table, rows
 

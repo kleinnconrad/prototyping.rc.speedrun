@@ -1,10 +1,11 @@
-"""Technical drawings of the verified parts (green), the wishbones and the C-hub (the bulkheads: see
+"""Technical drawings of the verified parts (green), the wishbones, the C-hub and the rear hub carrier (the bulkheads: see
 generate_bulkhead_technical_drawings.py).
 
 The views and sections are projected from the STEP files with hidden line removal; the holes are read from the STEP
 files (cylinders and countersinks along any axis). The scale and the layout follow from the size of each part. The
 STEP file is the master geometry: dimensions that are not shown are taken from the model. Parts that are stored in the
-coordinates of the chassis plate (C-hub, steering knuckle, front splitter) are drawn in a local frame (see the notes).
+coordinates of the chassis plate (C-hub, steering knuckle, rear hub carrier, front splitter) are drawn in a local frame (see
+the notes).
 
 Each part gets 2 sheets A3 (landscape, first angle projection):
     sheet 1: views (3D parts: front view, top view, side view, isometric view; flat parts: view from above and an edge
@@ -52,7 +53,9 @@ def running_gear_frames():
     p = load_params(G.PARAMS)
     c = G.corners(p, load_params(G.LOWER))["front"]
     R, J = G.kingpin_frame(p, c)
-    return {"c_hub": (np.eye(3), np.asarray(c["O"], float), p), "knuckle": (np.asarray(R, float), np.asarray(J, float), p)}
+    cr = G.corners(p, load_params(G.LOWER))["rear"]
+    return {"c_hub": (np.eye(3), np.asarray(c["O"], float), p), "knuckle": (np.asarray(R, float), np.asarray(J, float), p),
+            "hub_carrier": (np.column_stack([cr["ex"], cr["ey"], [0, 0, 1.0]]), np.asarray(cr["O"], float), G.rear_carrier_layout(p))}
 
 
 def steering_frames():
@@ -106,6 +109,7 @@ def parts():
     rg = running_gear_frames()
     Rc, Oc, rgp = rg["c_hub"]
     Rk, Jk, _ = rg["knuckle"]
+    Rh, Oh, hl = rg["hub_carrier"]                                     # rear hub carrier: frame of the rear arm, layout
     ca, sa = np.cos(np.radians(rgp["caster"])), np.sin(np.radians(rgp["caster"]))
     kd = np.array([0.0, -sa, ca])                                      # kingpin axis (C-hub frame)
     kn = np.array([0.0, ca, sa])                                       # square to it in the y-z plane
@@ -278,6 +282,42 @@ def parts():
                     "Bearing seats Ø10 for 2 bearings 5x10x4, pressed in from both ends against the lip: Ø10 K7 (proposal; "
                     "original part 9.98).", "Kingpin bores Ø2.7 in the bosses: thread formed by the set screws M3 (as the "
                     "original part).", "Threads M3 in the steering arm for the ball stud of the steering link."]),
+        dict(key="hub_carrier", folder="cad/generic_parts/rear_corner", step="hub_carrier_end_b.step",
+             stem="hub_carrier_end_b", title="Rear hub carrier (same part on both sides)", number="HC", auto_angles=False,
+             frame=(Rh, Oh), material="To be defined (3D print verification planned)", quantity="2 (the same part on both sides)",
+             tol=GENERAL_CNC, edges=EDGES_TREATED, status="measures qualified, no 3D print verification",
+             frame_note=f"Drawing frame: frame of the rear wishbone, origin O on the axis of the outer hinge pin in the middle "
+                        f"of the tube on the pin, x along the axle (toward the wheel), y along the hinge pin, z up; the STEP file "
+                        f"is in the assembly position of the right side (toe of the wishbone {np.degrees(np.arctan2(Rh[1, 0], Rh[0, 0])):.2f} "
+                        f"deg): O = ({Oh[0]:.2f}, {Oh[1]:.3f}, {Oh[2]:.2f}).",
+             sections=[dict(label="B", point=(0, 0, 0), d=(0, -1, 0), x=(1, 0, 0),
+                            title="Section B-B (middle plane: axle, hinge pin, camber stud)",
+                            axes=[((hl["x0"] - 3, 0, hl["za"]), (hl["x1"] + 3, 0, hl["za"])),
+                                  ((hl["stud_x"], 0, hl["zt"] - 7.5), (hl["stud_x"], 0, hl["zt"] + 2)),
+                                  ((0, 0, -8.5), (0, 0, 3.0))],
+                            callouts=[((hl["x1"] - 2.0, 0, hl["za"] + 5.0), "Ø10 K7 (2x), bearings 5x10x4, flush with the ends",
+                                       (16, 16)),
+                                      ((hl["x0"] + 5.0, 0, hl["za"] - 4.0), "lip Ø8.0, 2.0 wide", (32, -22)),
+                                      ((hl["stud_x"] + 1.25, 0, hl["zt"] - 1.0), "thread M3 through (camber ball stud)",
+                                       (78, -2)),
+                                      ((1.1, 0, -1.1), "Ø3.1 (outer hinge pin 3x26)", (20, -6)),
+                                      ((1.25, 0, -4.5), "thread M3 (grub screw M3x4 on the pin)", (26, -14))])],
+             notes=["The hub carrier is symmetric to its middle plane (y = 0): the same part is used on both sides of the "
+                    "car (drawn: right side, End B).",
+                    "Bearing tube 10.0 long, outer end flush with the tube on the hinge pin: bearing seats Ø10 for 2 bearings "
+                    "5x10x4, flush with the ends of the tube, against the lip Ø8.0 (1.0 high, 2.0 wide): Ø10 K7 (proposal). "
+                    "Seats and lip are kept sharp (no edge treatment, the bearings sit flat).",
+                    f"Axle {hl['za']:.1f} above the axis of the hinge pin. Bore Ø3.1 for the metal outer hinge pin Ø3.0 (slightly "
+                    "larger, so that the pin does not stick); the pin sits between 2 spacers 3x7x3 in the outer lugs of the "
+                    "wishbone and is fixed with a grub screw M3x4 from below in the boss Ø6.0 (thread M3 4.2 long, face 5.7 "
+                    "below the axis of the pin: the screw lies fully in the thread with its tip on the pin).",
+                    f"Thread M3 through the top tab for the ball stud of the rear camber link: axis {hl['x1'] - hl['stud_x']:.1f} "
+                    "from the outer face of the bearing tube, on the middle plane.",
+                    "Gusset on the outer face of the web, from the top face at 60 deg down onto the bearing tube. Shape "
+                    "(owner, 2026-11-23): inner end of the top tab a half circle R4.6 seen from above, blend 2.0 x 2.0 "
+                    "between the column and the bearing tube on the side of the chassis.",
+                    "Movement on the wishbone: the camber link holds the top of the part, it turns on the outer hinge pin "
+                    "when the suspension moves; checked from -25 to +25 deg against the rear wishbone (no overlap)."]),
         dict(key="front_splitter", folder="cad/speedrun_parts/front_splitter", step="front_splitter_one_piece_end_a.step",
              stem="front_splitter_one_piece_end_a", title="Speedrun front splitter (one part)", number="FS",
              frame=(np.eye(3), np.array([0.0, 317.982, 0.0])), material="Nylon PA12 (MJF 3D print)", density=1.01, density_txt="PA12",
@@ -758,8 +798,8 @@ def draw_sheet1(cfg, solid, bb, rows, tb, n_sheets):
     if flat:                                               # windows and cutouts: label and size in the view
         for c in find_cutouts(solid, bb):
             draw_cutout(ax, views["T"], c, dims=not in_detail(cfg, c))
-    for k, V in views.items():                             # angles of the slanted straight edges
-        if k != "E":
+    for k, V in views.items():                             # angles of the slanted straight edges (unless given in the notes)
+        if k != "E" and cfg.get("auto_angles", True):
             TD.auto_angles(ax, solid, V)
     for r in rows:                                         # tilted holes: label in the view closest to their axis
         h = r["hole"]
@@ -935,6 +975,7 @@ FOLDERS = {
     "cad/generic_parts/motor_mount": ("Motor mount and cap: technical drawings", "../../readme.md#centre-driveshaft-and-drive-line"),
     "cad/generic_parts/front_corner": ("Front corner: technical drawings of the C-hubs and the steering knuckle",
                                       "../../readme.md#running-gear"),
+    "cad/generic_parts/rear_corner": ("Rear corner: technical drawing of the hub carrier", "../../readme.md#running-gear"),
     "cad/speedrun_parts/front_splitter": ("Speedrun front splitter: technical drawing", "../../readme.md#speedrun-front-splitter"),
     "cad/generic_parts/wishbone": ("Wishbones: technical drawings", "../../readme.md#wishbones"),
     "cad/generic_parts/steering": ("Steering: technical drawings of the bellcrank, the steering bridge and the steering post",
