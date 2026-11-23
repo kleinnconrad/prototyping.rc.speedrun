@@ -23,5 +23,16 @@
  "wishbone to running_gear_CVD_drive_shaft_End_A_right mm": 3.73,
  "hub to running_gear_CVD_drive_shaft_End_A_right mm": 2.07,
  "wishbone to chassis_plate mm": 0.6,
- "hub to chassis_plate mm": 19.04
+ "hub to chassis_plate mm": 19.04,
+ "free rotation of the hub about the lower ball, wishbone and servo held: number of free directions": 1,
+ "free rotation: axis (x, y, z)": [
+  0.987,
+  -0.155,
+  0.039
+ ],
+ "free rotation: movement of the contact patch per degree (x, y, z) mm": [
+  0.055,
+  0.351,
+  0.008
+ ]
 }

@@ -14,6 +14,9 @@ caster of 10 deg, the wheel position, the track and the Ackermann stay as they a
   verified wishbone is kept up to x = X_CUT (inner lugs, shock plate, sway bar ball, droop bosses).
 * Wheel: the solid tyre model (cylinder 64 x 30) contains the parts inside the rim, so the study uses an envelope: a
   ring from the free radius inside the rim (RIM_R, as the verified wishbone end uses now) to the tyre radius.
+Kinematic finding: with the camber link as the only upper link, a ball joint at the bottom leaves the hub free to turn
+about an axis along the wishbone through the ball (caster not held, see free_rotation). A lower ball joint needs an
+upper A-arm with 2 inner pivots in place of the camber link; this study does not solve it.
 Checks: hub, foot and ball stud to the wheel envelope (they steer together); new and verified wishbone to the wheel
 turned about the steering axis over the free angles; hub turned against the wishbone (steering) and tilted against it
 about the ball (suspension travel); distances to the CVD drive shaft, the axle and the chassis plate.
@@ -69,6 +72,9 @@ TYRE_IN, TYRE_W, TYRE_R = 67.5, 30.0, 32.0
 X_CUT = 57.0           # the verified wishbone is kept up to this x
 STEER = (-35.0, 45.0)  # free angles of the knuckle (right side)
 TILT = (-16.0, 16.0)   # tilt of the hub against the wishbone about the ball (suspension travel), checked
+# centres of the link balls (chassis coordinates, from the assembly): inner end of the steering link, ball of the
+# steering arm, inner end of the camber link
+S_BALL, K_BALL, T_BALL = (21.7, 257.69, 26.3), (60.65, 259.13, 24.01), (18.05, 289.16, 38.3)
 COL_STUD, TXT, ANN = (0.85, 0.45, 0.2), "#1f2933", "#c2410c"
 
 
@@ -155,7 +161,28 @@ def checks(geo, parts):
     for n in ("running_gear_CVD_drive_shaft_End_A_right", "chassis_plate"):
         out[f"wishbone to {n} mm"] = round(geo["arm"].distance(parts[n]), 2)
         out[f"hub to {n} mm"] = round(geo["hub"].distance(parts[n]), 2)
+    out.update(free_rotation(geo))
     return out
+
+
+def free_rotation(geo):
+    """Kinematics with the wishbone and the servo held: the hub can turn about the lower ball in 3 directions; the
+    camber link (upper ball on a sphere about its inner end) and the steering link (ball of the steering arm on a sphere
+    about its inner end) each block 1 direction. The remaining direction (null space of the 2 conditions) is a free
+    rotation of the hub; the current build (C-hub on the outer hinge pin, knuckle on the kingpins) has none."""
+    B, U = geo["B_low"], np.asarray(geo["B_top"], float)
+    T, S, K = (np.array(v, float) for v in (T_BALL, S_BALL, K_BALL))
+    u = lambda v: v / np.linalg.norm(v)
+    A = np.array([np.cross(U - B, u(U - T)), np.cross(K - B, u(K - S))])
+    sv = np.linalg.svd(A)
+    w = sv[2][-1] * np.sign(sv[2][-1][np.argmax(np.abs(sv[2][-1]))])
+    J = geo["J"]
+    patch = np.array([TYRE_IN + TYRE_W / 2, J[1], J[2] - TYRE_R])                 # contact patch of the tyre
+    d = np.cross(w, patch - B) * np.pi / 180.0
+    return {"free rotation of the hub about the lower ball, wishbone and servo held: number of free directions":
+            int(3 - np.sum(sv[1] > 1e-6 * sv[1][0])),
+            "free rotation: axis (x, y, z)": [round(float(v), 3) for v in w],
+            "free rotation: movement of the contact patch per degree (x, y, z) mm": [round(float(v), 3) for v in d]}
 
 
 # ------------------------------------------------------------------ sketch (3 views and notes)
@@ -169,7 +196,7 @@ def sketch(geo, chk, parts, path):
     removed = [parts[n] for n in ("running_gear_C-hub_End_A_right", "running_gear_outer_hinge_pin_3x26_End_A_right",
                                   "front_wishbone_End_A_right", "running_gear_guide_sleeves_End_A_right",
                                   "running_gear_kingpin_washers_End_A_right")]
-    S_ball, K_ball, T_ball = np.array([21.7, 257.69, 26.3]), np.array([60.65, 259.13, 24.01]), np.array([18.05, 289.16, 38.3])
+    S_ball, K_ball, T_ball = np.array(S_BALL), np.array(K_BALL), np.array(T_BALL)
     views = {"rear": TD.View((0, -1, 0), (1, 0, 0), (0, 0), (0, 0, 0), 1.0),
              "side": TD.View((1, 0, 0), (0, 1, 0), (0, 0), (0, 0, 0), 1.0),
              "top": TD.View((0, 0, 1), (1, 0, 0), (0, 0), (0, 0, 0), 1.0)}
@@ -265,6 +292,21 @@ def sketch(geo, chk, parts, path):
             "to be checked.",
             "Snap-in fit in MJF PA12, loads on the foot and the web, steering stops, CVD joint angle."]),
     ]
+    ax_k = fig.add_axes([0.44, 0.03, 0.29, 0.40])
+    ax_k.axis("off")
+    w = "(" + ", ".join(f"{v:g}" for v in chk["free rotation: axis (x, y, z)"]) + ")"
+    d = abs(chk["free rotation: movement of the contact patch per degree (x, y, z) mm"][1])
+    ax_k.text(0.0, 1.0, "Kinematic check (finding)", fontsize=11, fontweight="bold", color=ANN, va="top")
+    ax_k.text(0.0, 0.92, textwrap.fill(
+        "The camber link has a ball at each end and only holds the distance between them. With it as the only upper "
+        "link, the hub on the lower ball keeps 1 free rotation (wishbone and servo held): about an axis through the "
+        f"lower ball, nearly along the wishbone {w}. The contact patch moves {d:.2f} mm fore and aft per degree; "
+        "nothing holds the caster.", 62), fontsize=9, color=TXT, va="top")
+    ax_k.text(0.0, 0.66, textwrap.fill(
+        "The current build has no free rotation (C-hub on the outer hinge pin, knuckle on the kingpins). The Hobao "
+        "pivot ball cars (Hyper TT10, Hyper VTE) have an upper A-arm with 2 inner pivots and a second pivot ball. "
+        "A lower ball joint needs such an upper A-arm in place of the camber link; not solved in this study.", 62),
+        fontsize=9, color=TXT, va="top")
     y = 1.0
     for head, items in notes:
         txt.text(0.0, y, head, fontsize=10.5, fontweight="bold", color=TXT, va="top")

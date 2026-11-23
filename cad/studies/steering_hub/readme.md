@@ -2,9 +2,12 @@
 
 Owner (2026-11-23): the C-hub and the steering knuckle become one part (steering hub), mounted to the front wishbone with one screw, free to steer; the wishbone gets the matching shape. The owner chose option 2: a standard ball stud is screwed into a foot of the hub under the end of the wishbone, and its ball is pressed into the wishbone (nylon PA12, MJF) from below. The new parts must not touch the tyre. The study is not part of the build: the parts of the build and the assembly `cad/assembly/speedrun_chassis_T410R.step` are not changed.
 
+**Kinematic finding:** with the camber link as the only upper link, the lower ball joint leaves the hub free to turn about an axis along the wishbone (the caster is not held, see [kinematic check](#kinematic-check)). The design works only with an upper A-arm in place of the camber link; this study does not solve it.
+
 ## Table of contents
 * [Design](#design)
 * [Why ball joints](#why-ball-joints)
+* [Kinematic check](#kinematic-check)
 * [Lower ball joint and seat](#lower-ball-joint-and-seat)
 * [Wheel clearance](#wheel-clearance)
 * [Checks](#checks)
@@ -30,8 +33,15 @@ Owner (2026-11-23): the C-hub and the steering knuckle become one part (steering
 * Edges: not treated (concept).
 
 ## Why ball joints
-* A screw with a sleeve or a bearing is a pure pivot about the steering axis: the hub can steer but cannot tilt against the wishbone. With the camber link at the top the suspension locks: at 5 degrees of wishbone travel the camber link would have to be 2.7 mm shorter. A ball joint allows steering and the movement of the suspension; it is still one screw.
-* With 2 ball joints the caster follows from the positions of the 2 balls (lower ball ahead of the upper ball); lifting the whole wishbone at the front would not change it. Only the end of the wishbone is tilted by 10 degrees, so the seat lies along the steering axis: the hub steers about the axis of the ball stud, the ball only tilts with the suspension.
+* A screw with a sleeve or a bearing is a pure pivot about the steering axis: the hub can steer but cannot tilt against the wishbone. With the camber link at the top the suspension locks: at 5 degrees of wishbone travel the camber link would have to be 2.7 mm shorter. A ball joint allows steering and the movement of the suspension, but it also allows a third rotation, which the camber link does not hold (see [kinematic check](#kinematic-check)).
+* With 2 ball joints the caster follows from the positions of the 2 balls (lower ball ahead of the upper ball); lifting the whole wishbone at the front would not change it. Only the end of the wishbone is tilted by 10 degrees, so the seat lies along the steering axis: the hub steers about the axis of the ball stud, the ball only tilts with the suspension. This holds only if the upper ball is held fore and aft, which the camber link does not do.
+
+## Kinematic check
+* The hub on the lower ball can turn in 3 directions. With the wishbone and the servo held, the camber link and the steering link each block 1 direction: each link has a ball at both ends and only holds the distance between its 2 balls.
+* 1 direction remains free: a rotation about an axis through the lower ball, nearly along the wishbone (axis x, y, z = 0.987, −0.155, 0.039). Per degree the contact patch of the tyre moves 0.35 mm fore and aft. Braking forces and bumps turn the hub about this axis until it touches the wishbone; the caster is not held.
+* The current build has no free rotation: the C-hub turns only about the outer hinge pin, the knuckle only about the kingpins (2 rotations, 2 links).
+* The Hobao cars with pivot ball suspension (Hyper TT10, Hyper VTE) have an upper A-arm with 2 inner pivots and a second pivot ball instead of a camber link. The upper A-arm holds the upper ball fore and aft and therefore the caster.
+* Consequence: a lower ball joint (this study or the Hobao principle with the ball in the hub) needs an upper A-arm in place of the camber link, with 2 pivots on the front shock tower. The check is computed by `free_rotation` in the script.
 
 ## Lower ball joint and seat
 * **Load:** the road pushes the hub up, the spring pushes the wishbone down. With the foot under the end of the wishbone, the foot pushes the ball up into the closed top of the seat (pressure on solid material, wall 1.5 mm above the ball). The snap-in lip below the ball only holds the ball when the wheel hangs.
@@ -58,8 +68,10 @@ Results of `generate_steering_hub_study.py` (`steering_hub_study_results.json`):
 | Wishbone and hub to the CVD drive shaft | 3.73 mm and 2.07 mm |
 | Wishbone to the chassis plate | 0.60 mm (verified part of the wishbone) |
 | Lowest point of the foot | z = 1.3 mm (bottom face of the chassis plate z = 0, ride height 10 mm) |
+| Free rotation of the hub about the lower ball (wishbone and servo held) | 1 direction: axis (0.987, −0.155, 0.039), contact patch 0.35 mm fore and aft per degree (current build: none). The design does not hold the caster |
 
 ## Open points
+* **Upper link:** the camber link does not hold the caster with a lower ball joint (see [kinematic check](#kinematic-check)). An upper A-arm with 2 pivots on the front shock tower and a second ball joint is needed; not designed.
 * **Rim:** the wheel envelope is taken from the model. Measure the rim (inner diameter at the inner edge, depth from the inner edge to the hex) before a design.
 * **Kinematics:** the lower pivot point lies 6.75 mm further inward and 3.1 mm higher than the outer hinge pin (z = 9.74 instead of 6.6 mm): camber change, roll centre and bump steer to be checked and adjusted with the camber link.
 * **Snap-in fit:** test pieces in MJF PA12 before the wishbone; behaviour over time (play, wear).
