@@ -11,7 +11,8 @@ T410R; they are not in the mass total):
   rear tower at End B
 * speedrun battery tray on H11, H12, H22 and H23 (scripts/cad/generate_battery_tray.py) with the
   battery Absima GreenHorn 3S 5000 (hardcase) and the 2 velcro straps (battery and straps: not in the
-  mass total)
+  mass total and not in the picture, owner: only the battery tray is part of the chassis; they stay in the
+  STEP file for the checks)
 * speedrun front splitter at End A (scripts/cad/generate_front_splitter.py): one part, the body
   post mount enlarged to the splitter, on H34 to H36; the body posts (stock parts) are not in the
   mass total
@@ -70,6 +71,7 @@ OUT_STEP = "cad/assembly/speedrun_chassis_T410R.step"
 OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = dict(PARTS)                       # colour scheme of the CAD pictures: blue and grey (palette.py)
 PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
+NOT_IN_PICTURE = {"battery", "strap"}      # in the STEP file (checks), not in the picture: not part of the chassis (owner)
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
              "lower": ("Lower bulkhead (2 pieces)", {"PA12": 1.01, "7075": 2.81}),
@@ -155,6 +157,7 @@ def tess(shape, tol=0.05):
 
 
 def image(parts, path):
+    parts = [q for q in parts if q[1] not in NOT_IN_PICTURE]                 # only the battery tray (owner, 2026-11-23)
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
