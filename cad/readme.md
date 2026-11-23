@@ -139,7 +139,7 @@ Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{g
 ### Assembly file
 * `assembly/speedrun_chassis_T410R.step`: assembly of the 10 parts of the speedrun chassis (with the front splitter and the battery tray), the battery with its 2 straps and 182 further parts (pivot blocks, wishbones with hinge pins, camber links, centre driveshaft with cup joints, front and rear drive line with pinions, bearings and retaining pins, spur gear, motor mount with cap, the differential with its inner parts and the spool, 4 diff outdrives, and the running gear: C-hubs, knuckles with guide sleeves, kingpin washers and kingpin screws, hub carriers, axles, hex hubs, CVD drive shafts, steering, servo with the floating servo mount, dampers, sway bars with drop links; the 2 front body posts) in the coordinate system of the chassis plate (STEP AP214, one solid per part; the 3 shims behind each side gear are one solid).
 * The further own parts are not in the mass total (see [further own parts](#further-own-parts)).
-* The interference check of all pairs of parts gives 0 mm³, except 0.82 mm³ between the lower bulkhead at End B and the long pivot block (see [pivot blocks](#pivot-blocks)) and 4.47 mm³ between the lower bulkhead at End A and each front wishbone (the tube on the inner hinge pin reaches 0.14 mm into the side face, see [wishbones](#wishbones)).
+* The interference check of all pairs of parts gives 0 mm³, except 0.34 mm³ between the lower bulkhead at End B and the long pivot block (0.82 mm³ before the edge chamfer of the block) (see [pivot blocks](#pivot-blocks)) and 4.47 mm³ between the lower bulkhead at End A and each front wishbone (the tube on the inner hinge pin reaches 0.14 mm into the side face, see [wishbones](#wishbones)).
 * The assembly file and the image are generated with the script `generate_speedrun_assembly.py` (see [scripts](#scripts)) from the files of the parts.
 * Assembly drawing `assembly/speedrun_chassis_T410R_technical_drawing.pdf` (one sheet A3, 1:2, first angle projection, shown in [`assembly/readme.md`](assembly/readme.md)): side view, top view and view from End A, projected from the assembly file, with the main dimensions read from the model: overall length 419.4 mm (overhang 123.0 mm front, 38.8 mm rear), width of the chassis plate 200.0 mm (overall width), height 61.6 mm (rear shock tower), wheelbase 257.5 mm, track 177.7 mm front and 173.7 mm rear, axle heights 22.0 mm front and 21.7 mm rear, ride height 10.0 mm front and 10.3 mm rear (tyres Ø64 mm as phantom lines, not modelled), front splitter 187.0 mm wide, front kingpin axes 131.3 mm apart, caster 10.0 degrees, rear toe-in 2.3 degrees on each side. Generated with the script `generate_assembly_drawing.py` after the assembly.
 * The image shows an overall view, a side view, a top view and three close-ups:
@@ -473,7 +473,7 @@ Both bulkheads are made for CNC milling from 7075 on a 3-axis machine. The insid
 * The outer end face of the original part has small holes. Their function is unknown, so they are not modelled.
 * Upper bulkhead: see [upper bulkhead (new design)](#upper-bulkhead-new-design).
 * Front and rear: End A of the chassis plate is assumed to be the front (bumper holes H34 to H36), End B the rear (motor window).
-* Pivot block at End B, outer: the model of the long pivot block overlaps the outer chamfer of the lower bulkhead by 0.38 mm (see [open points of the pivot blocks](#pivot-blocks)).
+* Pivot block at End B, outer: the model of the long pivot block overlaps the outer chamfer of the lower bulkhead (0.34 mm³ with the edge chamfer of the block, before 0.82 mm³ and 0.38 mm deep; see [open points of the pivot blocks](#pivot-blocks)).
 
 ## Upper bulkhead (new design)
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -715,6 +715,7 @@ The drive line, the pivot blocks, the wishbones and the running gear are the own
 | Mounting holes | 2.5 mm (tap drill M3), through | Same | Assumption |
 
 * The radius of the lobes follows from the long block: (53.4 - 44.6) / 2 = 4.4 mm. The axis of the bores lies at 9.0 - 4.4 = 4.6 mm above the bottom face.
+* Edges (owner, 2026-11-23): chamfer 0.3 mm on each sharp outer edge, chamfers only (parameter `edge_chamfer`): per block 22 chamfers of 0.3 mm, 2 of 0.2 mm and 4 of 0.1 mm where the faces are narrow; no sharp edge left. The entries of the hinge pin bores and of the mounting holes are chamfered too.
 * Not modelled: the inserts in the bores and the small tabs on top of the shoulders.
 
 **Position and fit on the speedrun chassis**
@@ -723,13 +724,13 @@ Results of the checks of `generate_pivot_blocks.py`:
 
 | Position | Block | Holes of the chassis plate | Offset of the mounting holes | Lower bulkhead | Upper bulkhead |
 |:---|:---|:---|:---|:---|:---|
-| End B, outer | Long | H01/H02 | 0.00 mm | Overlap 0.82 mm³ (0.38 mm deep) | 9.18 mm clearance |
-| End B, inner | Short | H07/H08 | 0.03 mm | 2.13 mm clearance | 8.67 mm clearance |
-| End A, inner | Short | H26/H27 | 0.01 mm | 1.22 mm clearance | 8.67 mm clearance |
-| End A, outer | Short | H32/H33 | 0.02 mm | 0.90 mm clearance | 8.67 mm clearance |
+| End B, outer | Long | H01/H02 | 0.00 mm | Overlap 0.34 mm³ (before the edge chamfer of the block 0.82 mm³, 0.38 mm deep) | 9.18 mm clearance |
+| End B, inner | Short | H07/H08 | 0.03 mm | 2.37 mm clearance | 8.67 mm clearance |
+| End A, inner | Short | H26/H27 | 0.01 mm | 1.27 mm clearance | 8.67 mm clearance |
+| End A, outer | Short | H32/H33 | 0.02 mm | 0.95 mm clearance | 8.67 mm clearance |
 
 * Orientation: the blind bores open toward the bulkhead. The blocks at End B, inner and End A, outer are turned by 180 degrees compared with the other two.
-* The long block at End B lies closer to the bulkhead (16.5 mm from the centre of the bulkhead) than the short block at End A, outer (19.1 mm). Its shoulders (6.4 mm) reach 0.38 mm into the outer chamfer of the lower bulkhead, which starts at 6.0 mm above the chassis plate at the side of the block that faces the bulkhead (|x| from 11.7 to 17.0 mm).
+* The long block at End B lies closer to the bulkhead (16.5 mm from the centre of the bulkhead) than the short block at End A, outer (19.1 mm). Its shoulders (6.4 mm) reach into the outer chamfer of the lower bulkhead, which starts at 6.0 mm above the chassis plate at the side of the block that faces the bulkhead (|x| from 11.7 to 17.0 mm): 0.34 mm³ with the edge chamfer 0.3 mm of the block (before 0.82 mm³, 0.38 mm deep).
 * The test prints of the lower bulkhead were made with the previous shape. The outer chamfers came with the new shape after the second test print, so this point is not checked on the car.
 
 **Files of the pivot blocks**
@@ -980,9 +981,9 @@ All files are stored in the directory `/generic_parts/wishbone`. They are genera
   * Gusset (owner, 2026-11-21: stabilizing triangle without a step): on the outer face of the web, as wide as the web (9.2 mm), from the top face at 60 degrees down onto the bearing tube (4.4 mm high above the top of the tube); it braces the web against the pull of the camber link on the top tab (parameter `rear_carrier_gusset`).
   * Movement on the wishbone (check of the generator, owner: the wider bridge must not limit the suspension travel): the camber link holds the top of the hub carrier, so the carrier turns on the outer hinge pin relative to the wishbone when the suspension moves. Turned by -25 to +25 degrees (covers the compression to the chassis at the ride height of 15 mm): no overlap with the rear wishbone; smallest distance 2.82 mm up to 15 degrees (end face of the tube on the pin to the lug of the wishbone, the same before the widening) and 1.49 mm at -25 degrees (inner end of the bearing tube to the wishbone). The bridge and the upper part are not the closest features.
 
-**Edge treatment of the C-hubs, the rear hub carriers, the wishbones, the steering parts, the servo mount and the battery tray**
+**Edge treatment of the C-hubs, the rear hub carriers, the wishbones, the steering parts, the servo mount, the battery tray and the pivot blocks**
 
-Owner (2026-11-21): the C-hubs and the rear hub carriers (MJF print, nylon PA12) have a chamfer on each sharp outer edge and a radius in each sharp inner corner; the wishbones have chamfers only (owner; see [wishbones](#wishbones)); the bellcranks, the steering bridge, the 3 parts of the servo mount and the speedrun battery tray have chamfers only (owner, 2026-11-22). The steering knuckle is verified and stays as it is (owner): no edge treatment. Parameter `edge_treatment` in `running_gear_parameters.json`, script `edge_treatment.py` (called by `generate_running_gear.py`).
+Owner (2026-11-21): the C-hubs and the rear hub carriers (MJF print, nylon PA12) have a chamfer on each sharp outer edge and a radius in each sharp inner corner; the wishbones have chamfers only (owner; see [wishbones](#wishbones)); the bellcranks, the steering bridge, the 3 parts of the servo mount and the speedrun battery tray (owner, 2026-11-22) and the pivot blocks (owner, 2026-11-23) have chamfers only. The steering knuckle is verified and stays as it is (owner): no edge treatment. Parameter `edge_treatment` in `running_gear_parameters.json`, script `edge_treatment.py` (called by `generate_running_gear.py`).
 
 * Sizes: chamfer 0.3 x 45 degrees, radius 0.5 mm. Sharp: the faces meet at an angle of up to 120 degrees (as the edge chamfers of the bulkheads).
 * Kept sharp (owner): the bearing seats and the lip between the bearings (hub carrier and bellcrank; the bearing ring needs a sharp corner to sit flat). The open edge of each bore gets the entry chamfer; the kingpin bores of the C-hub have no counterbores (washers, see kingpins), the washer covers the entry chamfer.
@@ -1000,6 +1001,7 @@ Owner (2026-11-21): the C-hubs and the rear hub carriers (MJF print, nylon PA12)
 | Servo mount fixed post | None (chamfers only) | 46 | None |
 | Servo mount floating post | None (chamfers only) | 24 | None |
 | Speedrun battery tray (see [battery tray](#speedrun-battery-tray)) | None (chamfers only) | 167 (5 with 0.2 mm) | 1 edge of 0.7 mm at the rear end face (floor and end stop) |
+| Pivot block, long and short (see [pivot blocks](#pivot-blocks)) | None (chamfers only) | 28 each (2 with 0.2 mm, 4 with 0.1 mm) | None |
 
 * Changes of the shapes for the edge treatment (where two features were less than 0.8 mm apart, the radius and the chamfer do not fit side by side): C-hub lower arm 10.0 mm wide instead of 11.6 mm (with the tube on the pin of 12.0 mm) and 3.0 mm beyond the axis of the hinge pin, top of the tube on the hinge pin trimmed by the face toward the lower boss, upper arm 4.5 mm instead of 3.5 mm beyond the kingpin axis; hub carrier column 1.0 mm inside the outer end of the bearing tube (5.2 mm across), camber stud thread through the top tab. Details: see the front and the rear corner above.
 

@@ -221,7 +221,7 @@ def parts():
         dict(key="pivot_block_long", folder="cad/generic_parts/pivot_block", step="pivot_block_long_T410R.step",
              stem="pivot_block_long_T410R", title="Pivot block, long (End B, outer)", number="PB-L",
              dims=[("F", (-22.3, 0, 4.6), (22.3, 0, 4.6), "h", "below", None), ("T", (-15.91, 0, 0), (15.91, 0, 0), "h", "below", None)],
-             material="To be defined (e.g. 7075-T6)", quantity="1", tol=GENERAL_CNC, edges=EDGES_BREAK,
+             material="To be defined (e.g. 7075-T6)", quantity="1", tol=GENERAL_CNC, edges="chamfer 0.3 (modelled)",
              status="verified", sections=[dict(label="B", point=(0, 0, 0), d=(0, -1, 0), x=(1, 0, 0),
                                                   title="Section B-B (axes of the bores)",
                                                   callouts=[((-22.3, 0, 4.6 + 2.5), "Ø5.0, depth 4.7 (2x)", (-14, 12))])],
@@ -231,7 +231,7 @@ def parts():
              stem="pivot_block_short_T410R", title="Pivot block, short (End B inner, End A inner and outer)",
              dims=[("F", (-20.7, 0, 4.6), (20.7, 0, 4.6), "h", "below", None), ("T", (-14.56, 0, 0), (14.56, 0, 0), "h", "below", None)],
              number="PB-S", material="To be defined (e.g. 7075-T6)", quantity="3", tol=GENERAL_CNC,
-             edges=EDGES_BREAK, status="verified",
+             edges="chamfer 0.3 (modelled)", status="verified",
              sections=[dict(label="B", point=(0, 0, 0), d=(0, -1, 0), x=(1, 0, 0), title="Section B-B (axes of the bores)",
                             callouts=[((-20.7, 0, 4.6 + 2.5), "Ø5.0, depth 4.7 (2x)", (-14, 12))])],
              notes=["Bores Ø5.0 for the inserts of the hinge pin (verified with the 3D printed prototype); fit to be "
