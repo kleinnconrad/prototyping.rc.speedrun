@@ -180,7 +180,14 @@ def parts():
                            "top face and of the bottom face (both square to the kingpin axis), so the ball stud and the screw "
                            "clamp sleeve and washer to the knuckle and the knuckle moves freely (owner).",
                            "Sleeve and washer turn with the knuckle: the sleeve in the bore (radial), the washer on the face of "
-                           "the arm toward the boss (axial). No counterbores."])
+                           "the arm toward the boss (axial). No counterbores.",
+                           "Shape (owner, 2026-11-23): blends in the inner corners between the back plate and the arms "
+                           f"(upper {rgp['front_c_hub_rounds'][0]:g} x {rgp['front_c_hub_rounds'][1]:g}, lower "
+                           f"{rgp['front_c_hub_rounds'][2]:g} x {rgp['front_c_hub_rounds'][3]:g}, depth x height along the "
+                           f"kingpin axis), corners of the end of the upper arm R{rgp['front_c_hub_rounds'][4]:g}, top and "
+                           f"bottom edge on the side of the chassis R{rgp['front_c_hub_rounds'][5]:g} and "
+                           f"R{rgp['front_c_hub_rounds'][6]:g}, shoulders of the back plate above the rails of the wishbone "
+                           "at 45 deg."])
     return [
         dict(key="chassis_plate", folder="cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10",
              step="chassis_plate_T410R_speedrun_wide_motor10.step", stem="chassis_plate_T410R_speedrun_wide_motor10",

@@ -90,7 +90,19 @@ def hlr(shape, view):
     algo.Update()
     algo.Hide()
     h = HLRBRep_HLRToShape(algo)
-    return edges_of(h.VCompound()) + edges_of(h.OutLineVCompound()), edges_of(h.Rg1LineVCompound())
+    return edges_of(h.VCompound()) + [q for q in edges_of(h.OutLineVCompound()) if not folded(q)], \
+        edges_of(h.Rg1LineVCompound())
+
+
+def folded(line, tol=1e-3):
+    """True for a silhouette that runs out and back on itself (closed, but encloses no area): the hidden line removal
+    returns such spurious outlines on some blended surfaces (for example a line 4.8 mm out of the C-hub in its top view)."""
+    q = np.asarray(line, float)
+    if len(q) < 3 or np.linalg.norm(q[0] - q[-1]) > tol:
+        return False
+    length = np.linalg.norm(np.diff(q, axis=0), axis=1).sum()
+    area = 0.5 * abs(np.dot(q[:-1, 0], q[1:, 1]) - np.dot(q[1:, 0], q[:-1, 1]))
+    return length > 10 * tol and area < 1e-3 * length ** 2
 
 
 def draw_view(ax, shape, view):

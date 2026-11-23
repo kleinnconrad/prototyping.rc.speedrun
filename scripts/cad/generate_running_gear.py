@@ -50,6 +50,7 @@ DRAWING = "photos/cad_running_gear_drawing.png"
 PLATE_T = 2.0
 TAP = 2.5                                                    # tap drill M3
 AXIS_Z = PLATE_T + 17.2                                      # diff axes
+XA_END = 4.5                                                 # end of the upper arm of the C-hub beyond the kingpin axis
 EDGE_REPORT = {}                                             # edge treatment of the printed parts (name -> report)
 
 
@@ -335,7 +336,7 @@ def front_corner(p, d, c):
                 box(bx0, bx1, yc - w_low / 2, yc + w_low / 2, O[2] - 6.0, z_w + 0.5),
                 K(box(bx0 - J[0], bx1 - J[0], -w_back / 2, w_back / 2, -20.0, zf)).intersect(
                     box(bx0 - 1.0, bx1 + 1.0, yc - 30.0, yc + 30.0, z_w, J[2] + 30.0)),
-                K(box(bx0 - J[0], 4.5, -w_arm / 2, w_arm / 2, 0.0, zf)))             # upper arm 4.5 beyond the axis
+                K(box(bx0 - J[0], XA_END, -w_arm / 2, w_arm / 2, 0.0, zf)))          # upper arm 4.5 beyond the axis
     z_bot = zl0 + proud                                                                   # bottom face (local z)
     body = body.cut(K(box(-60.0, 60.0, -60.0, 60.0, -80.0, z_bot)))                       # bottom face: caster angle
     lug = p["front_c_hub_lug"] / 2                                                     # tube on the outer hinge pin
@@ -344,6 +345,37 @@ def front_corner(p, d, c):
     # toward the lower boss (up to approx. 0.2 at the inner end, the face is square to the kingpin axis): no sliver
     space = K(box(xb, 30, -30, 30, kz0 - gap, zu))
     hub = hub.cut(space)
+    # shape (owner, 2026-11-23, option B of the steering hub study: the C-hub and the knuckle stay, the C-hub less
+    # blocky and without sharp 90 degree corners): blends in the inner corners between the back plate and the arms on
+    # the side of the knuckle (quarter ellipses, depth along x by height along the kingpin axis; upper: ends 0.1
+    # outside the U-slot around the upper boss; lower: 0.5 from the washer 7.0 on the lower boss), corners of the end of
+    # the upper arm rounded (r_end), top and bottom edge on the side of the chassis rounded (r_tb, r_bb), shoulders of
+    # the wide back plate above the rails of the wishbone sloped at 45 degrees (the back plate narrows from w_back to
+    # w_low without a notch). Faces toward the knuckle, bores, tube and passage are unchanged
+    ax_t, az_t, ax_b, az_b, r_end, r_tb, r_bb = p["front_c_hub_rounds"]
+    wa, xo, zlo = min(w_arm, w_back) / 2, bx0 - J[0], kz0 - gap
+
+    def blend(x0, z0, dx, dz, y0, y1):
+        """Quarter-ellipse blend in the kingpin frame: corner (x0, z0), depth dx along x, height dz along z (signs give
+        the direction), from y0 to y1."""
+        cx, cz = x0 + dx, z0 + dz
+        q = box(min(x0, cx) - 0.01 * (dx < 0), max(x0, cx) + 0.01 * (dx < 0), y0, y1,
+                min(z0, cz) - 0.01 * (dz > 0), max(z0, cz) + 0.01 * (dz < 0))
+        ell = cq.Workplane("XZ", origin=(cx, y1 + 1, cz)).ellipse(abs(dx), abs(dz)).extrude(y1 - y0 + 2).val()
+        return q.cut(ell)
+    hub = fuse(hub, K(blend(xb, zu, ax_t, -az_t, -wa, wa)),
+               K(blend(xb, zlo, ax_b, az_b, -30, 30)).intersect(box(bx0, bx1 + 10, yc - w_low / 2, yc + w_low / 2, -10, 60)))
+    for sg_ in (-1, 1):                                                                   # corners of the arm end
+        yr = sg_ * (wa - r_end)
+        hub = hub.cut(K(box(XA_END - r_end, XA_END + 1, min(yr, sg_ * (wa + 1)), max(yr, sg_ * (wa + 1)), zu - 0.5, zf + 1)
+                        .cut(cyl_z(r_end, zu - 1, zf + 2, XA_END - r_end, yr))))
+    hub = hub.cut(K(box(xo - 1, xo + r_tb, -30, 30, zf - r_tb, zf + 1).cut(cyl_y(r_tb, -31, 31, xo + r_tb, zf - r_tb))))
+    hub = hub.cut(K(box(xo - 1, xo + r_bb, -40, 40, z_bot - 1, z_bot + r_bb)
+                    .cut(cyl_y(r_bb, -41, 41, xo + r_bb, z_bot + r_bb))))
+    for sg_ in (-1, 1):                                                                   # shoulders at 45 degrees
+        y_n = yc + sg_ * w_low / 2
+        quad = [(y_n, z_w - 1.0), (y_n + sg_ * 25, z_w - 1.0), (y_n + sg_ * 25, z_w + 25), (y_n, z_w)]
+        hub = hub.cut(cq.Workplane("YZ").workplane(offset=bx0 - 1).polyline(quad).close().extrude(bx1 - bx0 + 2).val())
     hub = hub.cut(K(fuse(cyl_z(rs, zu - 0.1, kz1 + gap, 0, 0), box(0, 30, -rs, rs, zu - 0.1, kz1 + gap))))  # U-slot
     zg = grub_boss_depth(p)                                                               # boss of the grub screw M3x4
     hub = fuse(hub, cyl_z(p["grub_screw_boss"][2] / 2, O[2] - zg, O[2] - 1.0, O[0], yc))
@@ -536,6 +568,18 @@ def rear_corner(p, d, c):
     xe = x1 - 1.0                                                # end inside the tube wall (below the tube surface)
     gus = [(xg - 0.5, za), (xg - 0.5, zg), (xg, zg), (xe, zg - (xe - xg) * math.tan(math.radians(g_ang))), (xe, za)]
     car = fuse(car, cq.Workplane("XZ").polyline(gus).close().extrude(hw, both=True).val())
+    # shape (owner, 2026-11-23, as the C-hub: less blocky, no sharp 90 degree corners; function unchanged): inner end of
+    # the top tab a half circle seen from above (about a point on the middle plane, as far inward as before), blend
+    # between the column and the underside of the bearing tube on the side of the chassis (quarter ellipse revolved
+    # about the axle: bx along the axle by bz down the column; the outer side keeps the 1.0 for the edge treatment)
+    bx_, bz_ = p["rear_carrier_rounds"]
+    xm = xs + hw
+    car = car.cut(box(xs - 1, xm, -hw - 1, hw + 1, za, zt + 1).cut(cyl_z(hw, za - 1, zt + 2, xm, 0)))
+    xa_, xb_ = -2.6 - bx_, -2.6
+    ring = cyl_x(rt + bz_, xa_, xb_ + 0.01, 0, za).cut(cyl_x(rt - 0.01, xa_ - 1, xb_ + 1, 0, za))
+    ell = (cq.Workplane("XY").moveTo(xa_, rt + bz_).ellipse(bx_, bz_).revolve(360, (0, 0, 0), (1, 0, 0)).val()
+           .translate(cq.Vector(0, 0, za)))
+    car = fuse(car, ring.cut(ell).intersect(box(xa_ - 1, xb_ + 0.01, -hw, hw, -10, za)))
     zg = grub_boss_depth(p)                                                               # boss of the grub screw M3x4
     car = fuse(car, cyl_z(p["grub_screw_boss"][2] / 2, -zg, -1.0, 0, 0))
     car = car.cut(cyl_y(pin_bore / 2, -6, 6, 0, 0))                                       # bore of the hinge pin

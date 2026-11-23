@@ -4,6 +4,8 @@ Owner (2026-11-23): the C-hub and the steering knuckle become one part (steering
 
 **Kinematic finding:** with the camber link as the only upper link, the lower ball joint leaves the hub free to turn about an axis along the wishbone (the caster is not held, see [kinematic check](#kinematic-check)). The design works only with an upper A-arm in place of the camber link; this study does not solve it.
 
+**Owner (2026-11-23):** the C-hub and the steering knuckle of the build stay (C-hub on the outer hinge pin, knuckle on the kingpins: the joint that a camber link needs); the C-hub of the build got a new shape without sharp 90 degree corners, function unchanged (see the running gear in [cad/readme.md](../../readme.md#running-gear)). Further work on a steering hub happens in this study only.
+
 ## Table of contents
 * [Design](#design)
 * [Why ball joints](#why-ball-joints)
