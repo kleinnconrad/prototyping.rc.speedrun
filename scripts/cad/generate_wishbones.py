@@ -108,6 +108,30 @@ def arm_solid(p, kind):
     for part in parts:
         s = part if s is None else s.fuse(part)
     s = s.intersect(box(-10, length + 20, -half, half, -20, 20))           # nothing beyond the inner lugs in y
+    # shape (owner, 2026-11-23, as the C-hub and the rear hub carrier: no sharp 90 degree corners, function
+    # unchanged): blends (quarter ellipses, bx along the arm by bz up / down) between the end faces of the shock plate
+    # and the top and bottom faces of rail A; rear arm: radius r_w (seen from above) in the inner corners between the
+    # outer cross bar and the side rails at the opening for the hub carrier (front arm: none, the shock plate forms one
+    # corner of the window and a hole of the sway ball stud lies 0.7 beside the other); front arm: outer corners of
+    # the thin loop beyond the outer lugs rounded (r_lo, seen from above)
+    bx, bz, r_w, r_lo = p["blends"]
+    for xe, sx_ in ((q0, -1), (q1, 1)):                                     # ends of the shock plate
+        for sz in (1, -1):                                                  # top and bottom of rail A
+            xa_, za_ = sorted((xe, xe + sx_ * bx)), sorted((sz * h, sz * (h + bz)))
+            ell = (cq.Workplane("XZ", origin=(xe + sx_ * bx, -yi + 1, sz * (h + bz))).ellipse(bx, bz)
+                   .extrude(yo - yi + 2).val())
+            s = s.fuse(box(xa_[0], xa_[1], -yo, -yi, za_[0], za_[1]).cut(ell))
+    for sy in ((1, -1) if kind == "rear" else ()):                          # inner corners of the opening
+        yr = sy * (yi - r_w)
+        s = s.fuse(box(c1 - 0.01, c1 + r_w, *sorted((sy * (yi + 0.01), yr)), -h, h)
+                   .cut(cyl_z(r_w, -h - 1, h + 1, c1 + r_w, yr)))
+    if kind == "front":                                                     # outer corners of the thin loop
+        l0, l1, ly, lh = p["front_loop"]
+        xo, zc = length + l1, p["outer_pin_z"]
+        for sy in (1, -1):
+            yr = sy * (ly - r_lo)
+            s = s.cut(box(xo - r_lo, xo + 1, *sorted((yr, sy * (ly + 1))), zc - lh, zc + lh)
+                      .cut(cyl_z(r_lo, zc - 2 * lh, zc + 2 * lh, xo - r_lo, yr)))
     # the side rails end at the outer lugs: no material in the gap between the outer lugs (the C-hub or the
     # hub carrier and the spacers sit there)
     s = s.cut(box(length - p["outer_lug_d"] / 2 - 0.3, length + p["outer_lug_d"] / 2 + 0.2, -gap / 2, gap / 2, -20, 20))
