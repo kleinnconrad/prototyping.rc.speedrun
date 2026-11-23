@@ -345,7 +345,7 @@ def front_corner(p, d, c):
     # toward the lower boss (up to approx. 0.2 at the inner end, the face is square to the kingpin axis): no sliver
     space = K(box(xb, 30, -30, 30, kz0 - gap, zu))
     hub = hub.cut(space)
-    # shape (owner, 2026-11-23, option B of the steering hub study: the C-hub and the knuckle stay, the C-hub less
+    # shape (owner, 2026-11-23, after a study of a one-piece steering hub: the C-hub and the knuckle stay, the C-hub less
     # blocky and without sharp 90 degree corners): blends in the inner corners between the back plate and the arms on
     # the side of the knuckle (quarter ellipses, depth along x by height along the kingpin axis; upper: ends 0.1
     # outside the U-slot around the upper boss; lower: 0.5 from the washer 7.0 on the lower boss), corners of the end of
