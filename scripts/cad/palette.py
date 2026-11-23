@@ -36,7 +36,6 @@ PARTS = {
     "servo": (0.2, 0.2, 0.22),
     "swaybar": (0.4, 0.5, 0.62),
     "bodypost": (0.62, 0.63, 0.66),
-    "screw": (0.07, 0.07, 0.08),          # hex socket screws (black oxide; picture of the assembly)
     # further groups of single pictures
     "gear": (0.5, 0.56, 0.66),            # ring gear, spur gear, pinions
     "bearing": (0.62, 0.64, 0.68),

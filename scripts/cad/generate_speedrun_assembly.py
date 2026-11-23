@@ -31,7 +31,7 @@ T410R; they are not in the mass total):
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
 * photos/cad_speedrun_chassis_assembly.png: 3D view, side view, top view, close-ups of both ends and of the drive line at End B
-  (picture only: without the battery and the straps, with the visible screws, servo shaft lower; see picture_parts)
+  (picture only: without the battery and the straps, servo shaft lower; see picture_parts)
 
 The script checks all pairs of parts for interference and lists the volume and the mass of
 each part.
@@ -71,12 +71,11 @@ UPPER = "cad/speedrun_parts/bulkhead/bulkhead_upper_parameters.json"
 OUT_STEP = "cad/assembly/speedrun_chassis_T410R.step"
 OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = dict(PARTS)                       # colour scheme of the CAD pictures: blue and grey (palette.py)
-COLORS.update(screw_brace=PARTS["screw"], screw_tower=PARTS["screw"])   # screws hidden with the top brace / the towers
 PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
 NOT_IN_PICTURE = {"battery", "strap"}      # in the STEP file (checks), not in the picture: not part of the chassis (owner)
 # servo output shaft in the picture (owner, 2026-11-23: in reality nearer the bottom of the servo): 7.0 lower than in the
-# model (6.0 above the lower face of the case, 13.0 below its top face; 10 would put the clamp screw of the horn into
-# the chassis plate). The model (STEP file, steering geometry) keeps the caliper value S3 of servo_position
+# model (6.0 above the lower face of the case, 13.0 below its top face; 10 would put the clamp of the horn into the
+# chassis plate). The model (STEP file, steering geometry) keeps the caliper value S3 of servo_position
 PICTURE_SERVO_DZ = -7.0
 # part key: (label, material options with density in g/cm3)
 MATERIALS = {"plate": ("Speedrun chassis plate (wide, longer motor window)", {"6082": 2.70, "carbon": 1.6}),
@@ -162,95 +161,26 @@ def tess(shape, tol=0.05):
     return v[np.array(idx)]
 
 
-def screw(kind, length, head, tip_dir):
-    """Simplified screw with a hexagon socket (picture only). kind: "button" (ISO 7380), "socket" (ISO 4762) or "grub"
-    (ISO 4026); head: centre of the bearing face under the head (grub screw: centre of the end with the socket);
-    tip_dir: direction from the head to the tip; length: length under the head."""
-    dk, k, s, t = {"button": (5.7, 1.65, 2.0, 1.0), "socket": (5.5, 3.0, 2.5, 1.5), "grub": (3.0, 0.0, 1.5, 1.2)}[kind]
-    sol = cq.Solid.makeCylinder(1.45 if kind != "grub" else 1.5, length, cq.Vector(0, 0, -length))
-    if kind == "button":
-        sol = sol.fuse(cq.Workplane().circle(dk / 2).extrude(k).edges(">Z").fillet(0.8).val())
-    elif kind == "socket":
-        sol = sol.fuse(cq.Workplane().circle(dk / 2).extrude(k).edges(">Z").chamfer(0.3).val())
-    sol = sol.cut(cq.Workplane().polygon(6, s / np.cos(np.radians(30))).extrude(t).val().translate(cq.Vector(0, 0, k - t)))
-    a, b = np.array([0, 0, -1.0]), np.asarray(tip_dir, float) / np.linalg.norm(tip_dir)
-    axis = np.cross(a, b)
-    if np.linalg.norm(axis) > 1e-9:
-        sol = sol.rotate(cq.Vector(0, 0, 0), cq.Vector(*axis), float(np.degrees(np.arccos(np.clip(a @ b, -1, 1)))))
-    elif a @ b < 0:
-        sol = sol.rotate(cq.Vector(0, 0, 0), cq.Vector(1, 0, 0), 180.0)
-    return sol.translate(cq.Vector(*head))
-
-
 def picture_parts(parts):
-    """Parts of the picture: without the battery and the straps (owner: only the battery tray is part of the chassis),
-    the servo output shaft with the horn and the servo link PICTURE_SERVO_DZ lower, and the screws that can be seen
-    from above and from the ends (simplified, hex socket; not in the STEP file): top brace on the upper bulkheads
-    (button head M3x8), upper bulkheads on the lower bulkheads (button head M3x8 on the outer side, M3x10 in the
-    counterbores on the pinion side), shock towers on the upper bulkheads (button head M3x8), cap of the motor mount
-    (socket head M3x18 through the top brace, set screw M3x3 in the notch), servo mount (button head M3x6: top plate on
-    the posts, servo ears with washers on the posts) and the clamp screw of the servo horn (socket head M3x8)."""
-    import technical_drawing as TD
+    """Parts of the picture: without the battery and the straps (owner: only the battery tray is part of the chassis)
+    and with the servo output shaft, the horn, its ball stud and the servo link PICTURE_SERVO_DZ lower (owner)."""
     import generate_running_gear as G
     p = G.load_params(G.PARAMS)
     out = [q for q in parts if q[1] not in NOT_IN_PICTURE]
     by = {n: s for n, _, s in out}
-    holes = lambda n: TD.find_holes(by[n], 6.5)                                                    # noqa: E731
-    ends = lambda h: (h["p"] + h["d"] * h["t0"], h["p"] + h["d"] * h["t1"])                       # noqa: E731
-    zb_top = by["speedrun top brace"].BoundingBox().zmax                                          # top face of the brace
-    new = []
-    for end in ("A", "B"):
-        tower = by["speedrun front shock tower End A" if end == "A" else "speedrun rear shock tower End B"]
-        tb = tower.BoundingBox()
-        for h in holes(f"upper bulkhead End {end}"):
-            a, b = ends(h)
-            if abs(h["d"][2]) > 0.99 and h["dia"] > 3.0:                                          # to the lower bulkhead
-                cb = [e for e in h.get("extras", []) if e["d"] > 6.0]
-                z = h["main"]["t1"] if cb else b[2]
-                new.append(("screw", screw("button", 10.0 if cb else 8.0, (a[0], a[1], z), (0, 0, -1))))
-            elif abs(h["d"][2]) > 0.99:                                                           # top brace screws
-                new.append(("screw_brace", screw("button", 8.0, (a[0], a[1], zb_top), (0, 0, -1))))
-            elif abs(h["d"][1]) > 0.99:                                                           # shock tower screws
-                out_y = tb.ymax if end == "A" else tb.ymin
-                new.append(("screw_tower", screw("button", 8.0, (a[0], out_y, a[2]), (0, -1 if end == "A" else 1, 0))))
-    for h in holes("cap of the motor mount"):
-        a, b = ends(h)
-        if h["dia"] > 3.0:
-            new.append(("screw_brace", screw("socket", 18.0, (a[0], a[1], zb_top), (0, 0, -1))))  # through the top brace
-        else:
-            new.append(("screw", screw("grub", 3.0, b, (0, 0, -1))))                              # set screw in the notch
-    zp = by["running gear servo mount top plate"].BoundingBox().zmax
-    ear_t = p["servo"][4]
-    for n in ("running gear servo mount fixed post", "running gear servo mount floating post"):
-        for h in holes(n):
-            a, b = ends(h)
-            if abs(h["d"][2]) > 0.99 and b[2] > zp - 3.0:                                         # top plate
-                new.append(("screw", screw("button", 6.0, (a[0], a[1], zp), (0, 0, -1))))
-            elif abs(h["d"][1]) > 0.99:                                                           # servo ears, washers
-                y_e = b[1] + ear_t
-                new.append(("screw", cq.Solid.makeCylinder(3.5, 0.5, cq.Vector(b[0], y_e, b[2]), cq.Vector(0, 1, 0)).cut(
-                    cq.Solid.makeCylinder(1.6, 0.5, cq.Vector(b[0], y_e, b[2]), cq.Vector(0, 1, 0)))))
-                new.append(("screw", screw("button", 6.0, (b[0], y_e + 0.5, b[2]), (0, -1, 0))))
-    # servo: output shaft, horn, ball stud and servo link lower (picture only)
     dz = PICTURE_SERVO_DZ
     hl, _, _, hf = p["servo_horn"]
     hb = np.asarray(G.steering.info["horn"], float)
     xs, ycf, zs = hb[0], hb[1] - p["ball_offset"] - hf, hb[2] - hl                               # shaft, case front face
     mv = lambda s: s.translate(cq.Vector(0, 0, dz))                                               # noqa: E731
-    horn = mv(by["running gear servo horn (aluminium clamp)"])
-    for h in TD.find_holes(horn, 6.5):
-        a, b = ends(h)
-        if abs(h["d"][0]) > 0.99:
-            new.append(("screw", screw("socket", 8.0, b, (-1, 0, 0))))                            # clamp screw
     rods, tbk, _ = G.link(hb + (0, 0, dz), np.array([0, -1.0, 0]), G.steering.info["bridge ball"], np.array([0, 1.0, 0]),
                           9.0, G.load_params(G.CL.PARAMS))
     spline = lambda z: cq.Solid.makeCylinder(2.95, 3.5, cq.Vector(xs, ycf - 0.1, z), cq.Vector(0, 1, 0))  # noqa: E731
     repl = {"running gear servo": by["running gear servo"].cut(spline(zs).translate(cq.Vector(0, 0.1, 0))).fuse(spline(zs + dz)),
-            "running gear servo horn (aluminium clamp)": horn,
+            "running gear servo horn (aluminium clamp)": mv(by["running gear servo horn (aluminium clamp)"]),
             "running gear servo horn ball stud": mv(by["running gear servo horn ball stud"]),
             "running gear servo link rod ends": rods, "running gear servo link turnbuckle": tbk}
-    out = [(n, k, repl.get(n, s)) for n, k, s in out]
-    return out + [(f"screw {i}", k, s) for i, (k, s) in enumerate(new)]
+    return [(n, k, repl.get(n, s)) for n, k, s in out]
 
 
 def image(parts, path):
@@ -303,7 +233,7 @@ def image(parts, path):
                  (-92, BULKHEAD_Y["rear"] - 32, -5, 184, 64, 90), (), -125, 22),
                 ("End B: drive line (spur gear, motor mount with cap, cup joint),\n"
                  "view from the middle of the car, top brace and shock tower not shown",
-                 (-38, -8, -5, 105, 110, 65), ("brace", "tower_front", "tower_rear", "screw_brace", "screw_tower"), 125, 28))
+                 (-38, -8, -5, 105, 110, 65), ("brace", "tower_front", "tower_rear"), 125, 28))
     for k, (title, (x0, y0, z0, dx, dy, dz), hidden, azim, elev) in enumerate(closeups):
         region = cq.Solid.makeBox(dx, dy, dz, cq.Vector(x0, y0, z0))
         tris_e, cols_e = [], []
