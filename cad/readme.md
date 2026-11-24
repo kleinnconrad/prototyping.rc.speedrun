@@ -4,6 +4,9 @@
 * [Overview](#overview)
 * [Speedrun chassis](#speedrun-chassis)
   * [Parts of the speedrun chassis](#parts-of-the-speedrun-chassis)
+    * [Speedrun parts](#speedrun-parts)
+    * [Generic parts](#generic-parts)
+    * [Purchased parts](#purchased-parts)
   * [Assembly file](#assembly-file)
 * [Speedrun chassis plate (wide) with longer motor window](#speedrun-chassis-plate-wide-with-longer-motor-window)
   * [Design of the speedrun chassis plate](#design-of-the-speedrun-chassis-plate)
@@ -58,7 +61,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/battery_tray`**: Speedrun battery tray for the 3S hardcase LiPo on the left side of the car (STEP, STL, parameter file, technical drawing).
 * **`/generic_parts`**: Drive line, pivot blocks, wishbones and running gear: own design of the owner, partly based on the T410R (see [further own parts](#further-own-parts)). Camber links: purchased parts, simplified model for the assembly. Purchased parts (owner, 2026-11-24): camber links, CVD drive shafts, diff outdrives and sway bars with holders, ball ends and drop links; they are modelled in memory for the assembly, its picture and the checks only, without part files (parameter file of the camber links: `generic_parts/camber_link_parameters.json`). The directory contains the parameter files of the running gear and the camber links, the measurement sheet of the parts and one subdirectory per group (overview in [`generic_parts/readme.md`](generic_parts/readme.md)):
   * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file).
-  * **`/driveshaft`**: Centre driveshaft with the fixed metal pins and the cup joints (STEP, STL, parameter file of all drive line parts).
+  * **`/driveshaft`**: Centre driveshaft with the fixed metal pins (STEP, STL, parameter file of all drive line parts); the cup joints are purchased (assembly only).
   * **`/rear_drive`**: Rear pinion shaft with flange, pinion 17T, spur gear 72T, bearing 5x10x4 and retaining pin (STEP, STL).
   * **`/front_drive`**: Front pinion shaft (STEP, STL).
   * **`/motor_mount`**: Motor mount for 540 motors and its cap (STEP, STL).
@@ -66,7 +69,7 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file).
   * **`/front_corner`**: C-hubs with caster, steering knuckles, axles and hex hubs at End A (STEP, STL).
   * **`/rear_corner`**: Hub carriers, axles and hex hubs at End B (STEP, STL), technical drawing of the hub carrier (PDF, PNG, readme).
-  * **`/steering`**: Steering posts, bellcranks, steering bridge, spacers and servo horn (STEP, STL).
+  * **`/steering`**: Steering posts, bellcranks and steering bridge (STEP, STL, technical drawings); the steering links, the servo link and the servo horn are purchased (assembly only).
   * **`/servo_mount`**: Floating servo mount (STEP, STL).
 * **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the further own parts (pivot blocks, drive line, wishbones and running gear) and the purchased camber links (STEP), and the assembly drawing with the views and the main dimensions (PDF, PNG, shown in [`assembly/readme.md`](assembly/readme.md)).
 * **`/studies`**: Design studies that are not part of the build, one subdirectory per study with its own readme:
@@ -87,6 +90,11 @@ The speedrun chassis combines the parts that are designed in this project for sp
 The picture (owner, 2026-11-23) shows the battery tray without the battery and the straps (only the battery tray is part of the chassis) and the output shaft of the servo 7 mm lower than in the model (owner: in reality nearer the bottom of the servo). These changes are in the picture only: the assembly STEP file contains the battery and the straps for the checks and the servo with the caliper value S3 (15 mm above the chassis plate).
 
 ### Parts of the speedrun chassis
+The parts are listed in three tables: the speedrun parts, the generic parts (own design, manufactured or potentially manufactured) and the purchased parts.
+
+#### Speedrun parts
+Parts designed for the speedrun chassis.
+
 | Part | Quantity | Directory | Status | Order | Material | Mass |
 |:---|---:|:---|:---|:---|:---|---:|
 | [Speedrun chassis plate (wide) with longer motor window](#speedrun-chassis-plate-wide-with-longer-motor-window) | 1 | `/speedrun_parts/chassis/chassis_plate_speedrun_wide_motor10` | $\color{green}\checkmark$ Verified | CNC part (aluminium 6082) | Aluminium 6082 or carbon | 217 g (6082), 128 g (carbon) |
@@ -96,40 +104,49 @@ The picture (owner, 2026-11-23) shows the battery tray without the battery and t
 | [Speedrun front shock tower](#speedrun-shock-towers) | 1 | `/speedrun_parts/shock_tower` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 4.4 g (carbon), 7.7 g (7075) |
 | [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/speedrun_parts/shock_tower` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
 | [Speedrun front splitter (one part: body post mount enlarged to the splitter)](#speedrun-front-splitter) | 1 | `/speedrun_parts/front_splitter` | $\color{green}\checkmark$ Verified (3D print of the owner; bosses of the screws 3 mm higher after the print) | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 38 g |
-| [Speedrun battery tray (LiPo Absima GreenHorn 3S 5000 hardcase)](#speedrun-battery-tray) | 1 | `/speedrun_parts/battery_tray` | $\color{green}\checkmark$ Verified (owner) | – | Nylon PA12 (MJF 3D print) | 24 g |
+| [Speedrun battery tray (LiPo Absima GreenHorn 3S 5000 hardcase)](#speedrun-battery-tray) | 1 | `/speedrun_parts/battery_tray` | $\color{green}\checkmark$ Verified (owner) | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 24 g |
 | **Total** | | | | | Chassis plate 6082, bulkheads, front splitter and battery tray PA12, top brace and shock towers carbon | **368 g** |
 
-Further own parts (own design of the owner, partly based on the T410R, not in the mass total):
+#### Generic parts
+Own design of the owner, partly based on the T410R; parts that are manufactured or may be manufactured (3D print, CNC). Not in the mass total.
 
 | Part | Quantity | Directory | Status |
 |:---|---:|:---|:---|
 | [Pivot blocks of the wishbones](#pivot-blocks) (long and short block) | 4 | `/generic_parts/pivot_block` | $\color{green}\checkmark$ Verified |
 | [Centre driveshaft with fixed metal pins](#centre-driveshaft-and-drive-line) | 1 | `/generic_parts/driveshaft` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Cup joints of the centre driveshaft](#centre-driveshaft-and-drive-line) | 2 | `/generic_parts/driveshaft` | $\color{red}\times$ Completely unqualified |
 | [Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin](#centre-driveshaft-and-drive-line) | 1 | `/generic_parts/rear_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Front pinion shaft with pinion 17T, bearings and retaining pin](#centre-driveshaft-and-drive-line) | 1 | `/generic_parts/front_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Motor mount with cap](#centre-driveshaft-and-drive-line) | 1 | `/generic_parts/motor_mount` | $\color{green}\checkmark$ Verified (test print; technically good; cosmetic changes after the print: smooth faces, round upper inner corner (R9), edge chamfers 0.3 mm on the motor mount) |
 | [Differential (End B) with ring gear 42T, inner gears and bearings](#differentials) | 1 | `/generic_parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Spool (End A) with ring gear 42T and bearings](#differentials) | 1 | `/generic_parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Diff outdrives (purchased)](#centre-driveshaft-and-drive-line) | 4 | Assembly only | $\color{red}\times$ Completely unqualified |
 | [Front wishbones](#wishbones) | 2 | `/generic_parts/wishbone` | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm and the blends of 2026-11-23 added after the print) |
 | [Rear wishbones](#wishbones) | 2 | `/generic_parts/wishbone` | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm and the blends of 2026-11-23 added after the print) |
-| [Inner hinge pins of the wishbones (3x42)](#wishbones) | 4 | `/generic_parts/wishbone` | $\color{red}\times$ Completely unqualified |
-| [Front C-hubs with 10 degrees caster (right and left part)](#running-gear) | 2 | `/generic_parts/front_corner` | $\color{red}\times$ Completely unqualified; kingpin bores 4.9 mm with brass guide sleeves 4.8 mm and washers M3 (owner), 3D print verification planned |
-| [Front steering knuckles](#running-gear) | 2 | `/generic_parts/front_corner` | $\color{green}\checkmark$ Verified (3D print of the owner) |
-| [Rear hub carriers](#running-gear) | 2 | `/generic_parts/rear_corner` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Front C-hubs with 10 degrees caster (right and left part)](#running-gear) | 2 | `/generic_parts/front_corner` | $\color{green}\checkmark$ Verified (3D print of the owner, fit checked); kingpin bores 4.9 mm with brass guide sleeves 4.8 mm and washers M3 (owner); MJF test print (nylon PA12) ordered for the test car |
+| [Front steering knuckles](#running-gear) | 2 | `/generic_parts/front_corner` | $\color{green}\checkmark$ Verified (3D print of the owner); MJF test print (nylon PA12) ordered for the test car |
+| [Rear hub carriers](#running-gear) | 2 | `/generic_parts/rear_corner` | $\color{green}\checkmark$ Verified (3D print of the owner, fit checked); MJF test print (nylon PA12) ordered for the test car |
 | [Axles with joint cup, hex hubs 12 mm](#running-gear) | 4 + 4 | `/generic_parts/front_corner`, `/generic_parts/rear_corner` | $\color{red}\times$ Completely unqualified |
-| [CVD drive shafts (purchased)](#running-gear) | 4 | Assembly only | $\color{red}\times$ Completely unqualified |
 | [Bellcranks (symmetric, the same part on both sides)](#running-gear) | 2 | `/generic_parts/steering` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification; technical drawing |
 | [Servo mount: top plate, fixed post, floating post; position of the servo and the horn](#running-gear) | 1 set | `/generic_parts/servo_mount` | $\color{green}\checkmark$ Verified (owner); the holes for the servo ears (positions assumed) are to be checked against the servo before printing; technical drawings |
 | [Steering bridge (beam with 2 towers on brass guide sleeves and washers M3)](#running-gear) | 1 | `/generic_parts/steering` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification; technical drawing |
 | [Steering posts (height 20.3 mm, shoulder for the bellcrank bearings)](#running-gear) | 2 | `/generic_parts/steering` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification; technical drawing |
-| [Steering: steering links, servo link, servo horn](#running-gear) | 1 set | `/generic_parts/steering` | $\color{red}\times$ Completely unqualified |
-| [Sway bars with holders, ball ends and drop links (purchased)](#running-gear) | 2 | Assembly only | $\color{red}\times$ Completely unqualified |
-| [Dampers (standard 1:10 on-road, purchased)](#running-gear) | 4 | Assembly only | $\color{red}\times$ Completely unqualified |
 
-Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. The parts marked red are first designs: they still need a lot of refinement (dimensions, strength, fit and function on the car) and are not ready for manufacturing.
+#### Purchased parts
+Parts that are purchased, not manufactured (owner, 2026-11-24). The assembly contains simplified models of them for the checks and the pictures; they have no part files and no status. Not in the mass total.
 
+| Part | Quantity | Model generated with |
+|:---|---:|:---|
+| [Cup joints of the centre driveshaft](#centre-driveshaft-and-drive-line) | 2 | `generate_driveshaft.py` |
+| [Diff outdrives](#centre-driveshaft-and-drive-line) | 4 | `generate_driveshaft.py` |
+| [Inner hinge pins of the wishbones (3x42)](#wishbones) | 4 | `generate_wishbones.py` |
+| [Camber links: turnbuckle M3x37 with rod ends and ball studs](#running-gear) | 4 | `generate_camber_links.py` |
+| [CVD drive shafts](#running-gear) | 4 | `generate_running_gear.py` |
+| [Steering: steering links, servo link, servo horn](#running-gear) | 1 set | `generate_running_gear.py` |
+| [Sway bars with holders, ball ends and drop links](#running-gear) | 2 | `generate_running_gear.py` |
+| [Dampers (standard 1:10 on-road)](#running-gear) | 4 | `generate_running_gear.py` |
+
+Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. Purchased parts (assembly only, no part files) have no status. The parts marked red are first designs: they still need a lot of refinement (dimensions, strength, fit and function on the car) and are not ready for manufacturing.
+
+* Test car (owner, 2026-11-24): the bulkheads, the shock towers, the C-hubs, the steering knuckles and the rear hub carriers are installed in a test car first. The chassis plate, the top brace and the front splitter go directly into the speedrun car. The C-hubs, the knuckles and the hub carriers are ordered as MJF 3D prints (nylon PA12) as test parts; their technical drawings give nylon PA12 (MJF) with the MJF process tolerance; the final material is defined after the test. The battery tray is ordered as MJF 3D print (nylon PA12).
 * The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³, nylon PA12 (MJF): 1.01 g/cm³). Screws, bearings and the other parts of the car are not included.
 * The bulkheads are the same parts at both ends. At End A, they are rotated by 180 degrees, so that both pinions point to the middle of the car.
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
@@ -655,7 +672,7 @@ Open points:
 ## Speedrun battery tray
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Speedrun battery tray for the LiPo Absima GreenHorn V2 3S 5000 mAh 50C hardcase (`specs/electronics/battery/spec_battery.yaml`) on the left side of the car, fixed with 4 countersunk screws M3x6 from below through H11, H12, H22 and H23 of the speedrun chassis plate (owner). 2 velcro straps 20 mm (owner) hold the battery from left to right. MJF 3D print in nylon PA12 (owner).
-* **Status:** $\color{green}\checkmark$ Verified by the owner (2026-11-20). The battery dimensions are taken from the manufacturer, the holes from the ordered chassis plate.
+* **Status:** $\color{green}\checkmark$ Verified by the owner (2026-11-20). The battery dimensions are taken from the manufacturer, the holes from the ordered chassis plate. Ordered as MJF 3D print in nylon PA12 (owner, 2026-11-24).
 
 ### Design of the speedrun battery tray
 ![Speedrun battery tray: tray alone, tray with the battery and the straps in the car beside the top brace and behind the steering, section across the car at a strap](../photos/cad_battery_tray_drawing.png)
@@ -689,7 +706,7 @@ Open points:
 * The battery (370 g) is not in the mass total of the speedrun parts.
 
 ## Further own parts
-The drive line, the pivot blocks, the wishbones and the running gear are the owner's own design. Some of them are based on parts of the Carten T410R (for example the interfaces: bearings, gears, screws), others deviate strongly from them (for example the C-hubs and the steering knuckles). The assembly of the speedrun chassis contains them, so that the space around the speedrun parts and the function of the build can be checked. The camber links are purchased parts; the assembly contains a simplified model of them (`/generic_parts/camber_link`, generated with `generate_camber_links.py`). Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified.
+The drive line, the pivot blocks, the wishbones and the running gear are the owner's own design. Some of them are based on parts of the Carten T410R (for example the interfaces: bearings, gears, screws), others deviate strongly from them (for example the C-hubs and the steering knuckles). The assembly of the speedrun chassis contains them, so that the space around the speedrun parts and the function of the build can be checked. The camber links are purchased parts; the assembly contains a simplified model of them (generated with `generate_camber_links.py`, no part files). The cup joints of the centre driveshaft, the diff outdrives, the inner hinge pins of the wishbones, the CVD drive shafts, the steering links, the servo link and the servo horn, the sway bars and the dampers are purchased as well (owner, 2026-11-24): in the assembly only, no part files. Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. Purchased parts (assembly only, no part files) have no status.
 
 ### Pivot blocks
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
@@ -749,7 +766,7 @@ All files are stored in the directory `/generic_parts/pivot_block`. They are gen
 ### Centre driveshaft and drive line
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Model of the centre driveshaft of the Carten T410R between the cup joints of the two pinion shafts. The shaft has a ball end at each end with a metal pin (2.0 x 7.6 mm), which is fixed on the shaft. The cup joints are pushed onto the pinion shafts and secured with a retaining pin 2.0 x 7.6 mm through a cross hole; an O-ring in a groove of the cup joint holds the pin. The pins run in the slots of the cup joints, so the shaft turns with the cup joints. In the centred position, each pin has 0.5 mm to the closed end of its slot, so the shaft can move a little back and forth. At End A, the cup joint sits on the front pinion shaft beside the bulkhead. At End B (motor), the rear pinion shaft runs from the pinion in the bulkhead through a flange with the spur gear and the bearing in the motor mount (manual steps 5, 10 and 12); the cup joint sits on its end beyond the motor mount. All these parts are modelled as CAD files (see [files](#centre-driveshaft-and-drive-line)).
-* **Status:** $\color{green}\checkmark$ Verified: motor mount with cap (test print of the owner: technically good; cosmetic changes after the print: smooth faces without the grooves, round upper inner corner (R9)). $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification: centre driveshaft, rear and front drive line (pinion shafts, pinions, spur gear, bearings, retaining pins; some dimensions from photos of the owner). $\color{red}\times$ Completely unqualified: cup joints and diff outdrives. The cup joints, the thickness of the motor mount and the spur gear (72T 48DP) are given by the owner, the positions of the motor mount and the spur gear are derived from the chassis plate, the outline of the motor mount and its cap follow the manual (steps 10 and 25). The thicknesses of the spur gear and the flange and the gaps are typical values (see [open points of the centre driveshaft](#centre-driveshaft-and-drive-line)).
+* **Status:** $\color{green}\checkmark$ Verified: motor mount with cap (test print of the owner: technically good; cosmetic changes after the print: smooth faces without the grooves, round upper inner corner (R9)). $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification: centre driveshaft, rear and front drive line (pinion shafts, pinions, spur gear, bearings, retaining pins; some dimensions from photos of the owner). Purchased (assembly only, no status): cup joints and diff outdrives (owner, 2026-11-24). The cup joints, the thickness of the motor mount and the spur gear (72T 48DP) are given by the owner, the positions of the motor mount and the spur gear are derived from the chassis plate, the outline of the motor mount and its cap follow the manual (steps 10 and 25). The thicknesses of the spur gear and the flange and the gaps are typical values (see [open points of the centre driveshaft](#centre-driveshaft-and-drive-line)).
 
 ![Centre driveshaft with the drive line and the motor mount](../photos/cad_driveshaft_drawing.png)
 
@@ -809,7 +826,6 @@ All files are stored in the directory `/generic_parts` and are generated with `g
 | File | Part coordinates and use |
 |:---|:---|
 | `driveshaft/driveshaft_T410R` | Centre driveshaft with the fixed metal pins, along y from 0 to 173.00 mm, axis at x = 0, z = 0, pins along x |
-| `driveshaft/cup_joint_T410R` | Cup joint (2 pieces): along y, back face at y = 0, open end at y = 18.3 mm, slots and cross hole of the retaining pin along x |
 | `rear_drive/rear_pinion_shaft_T410R` | Rear pinion shaft with flange: along y, y = 0 end face of the pinion housing of the bulkhead, from y = -11.65 mm (inside the bulkhead) to 23.55 mm, with the cross hole of the retaining pin |
 | `front_drive/front_pinion_shaft_T410R` | Front pinion shaft (End A), in the same coordinates as the rear pinion shaft: y = 0 end face of the pinion housing, y > 0 toward the cup joint; pinion, bearings and retaining pin as the files in `rear_drive` |
 | `rear_drive/retaining_pin_2x7.6` | Retaining pin of the cup joint (2.0 x 7.6 mm), in the coordinates of the rear pinion shaft |
@@ -859,7 +875,7 @@ All files are stored in the directory `/generic_parts/diff` and are generated wi
 
 ### Wishbones
 * **Description:** Lower wishbones (suspension arms) of the speedrun chassis (own design, partly based on the T410R) with the inner hinge pins 3 x 42 mm. The manual (step 7 and parts list "Arms (F/R)") and the photos of the owner show two different arms: 2 front arms and 2 rear arms. There is no left or right arm (owner): each arm is used on both sides of its axle, flipped so that the shock plate on rail A faces the outer end of the car.
-* **Status:** $\color{green}\checkmark$ Verified (front and rear wishbone, owner, after the change of the pin bores to Ø3.1 mm for the metal pins Ø3.0 mm; widened to Ø3.2 mm on 2026-11-20, see below). Optical design of the window changed on 2026-11-20 (web with 3 lightening holes instead of the X ribs, interfaces unchanged): a test print of the new shape is open; inner hinge pins: $\color{red}\times$ Completely unqualified. The front wishbone is 6.44 mm longer than measured (51.7 mm axis to axis): 4.44 mm for equal track front and rear with the kingpin of the C-hub 6.75 mm inside the outer hinge pin, then 2.0 mm more so that the front CVD drive shafts of the T410R fit (owner). The main dimensions are caliper measurements of the owner (measurement sheet). The positions of the shock plate and of the holes of the ball studs are estimates from the photos (see the measurement table below).
+* **Status:** $\color{green}\checkmark$ Verified (front and rear wishbone, owner, after the change of the pin bores to Ø3.1 mm for the metal pins Ø3.0 mm; widened to Ø3.2 mm on 2026-11-20, see below). Optical design of the window changed on 2026-11-20 (web with 3 lightening holes instead of the X ribs, interfaces unchanged): a test print of the new shape is open; inner hinge pins: purchased (owner, 2026-11-24), assembly only, no status. The front wishbone is 6.44 mm longer than measured (51.7 mm axis to axis): 4.44 mm for equal track front and rear with the kingpin of the C-hub 6.75 mm inside the outer hinge pin, then 2.0 mm more so that the front CVD drive shafts of the T410R fit (owner). The main dimensions are caliper measurements of the owner (measurement sheet). The positions of the shock plate and of the holes of the ball studs are estimates from the photos (see the measurement table below).
 
 ![Wishbones: plan views, views along the hinge pin and the letters of the measurements](../photos/cad_wishbones_drawing.png)
 
@@ -934,13 +950,12 @@ All files are stored in the directory `/generic_parts/wishbone`. They are genera
 |:---|:---|:---|
 | `wishbone_front_T410R.step`, `wishbone_rear_T410R.step` | STEP (AP214) | Solid models of the front arm and the rear arm |
 | `wishbone_front_T410R.stl`, `wishbone_rear_T410R.stl` | STL (binary) | Triangle meshes |
-| `hinge_pin_3x42.step`, `hinge_pin_3x42.stl` | STEP, STL | Inner hinge pin, along y, centred at y = 0 |
 | `wishbone_parameters.json` | JSON | All dimensions, each with its source, the letter of the measurement and a note |
 
 ### Running gear
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Wheel suspension (front C-hubs with steering knuckles, rear hub carriers), axles with hex hubs, CVD drive shafts, steering with the servo mount, dampers and sway bars of the speedrun chassis. Own design of the owner, partly based on the T410R: the steering, the floating servo mount and the sway bars follow the T410R (manual steps 10, 13, 14, 21, 22 and 23, photos of the owner), the other parts are designed for their function and deviate from the original parts. The dampers are standard 1:10 on-road dampers (purchased, simplified model).
-* **Status:** $\color{green}\checkmark$ Verified: steering knuckles (3D print of the owner; dimensions measured on the original part, still open on the measurement sheet: K11, K14, K16 and K19) and the servo mount (top plate, fixed post, floating post; owner, 2026-11-20; the holes for the servo ears are to be checked against the servo before printing). $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification: steering posts (height of the owner), bellcranks (symmetric design of the owner), the steering bridge (refined design of the owner) and the rear hub carriers (caliper values of the owner, 2026-11-20). All other parts: $\color{red}\times$ Completely unqualified: first design, not checked by the owner, no 3D print verification. The parts are designed from the measured parts (chassis plate, bulkheads, shock towers, wishbones, pivot blocks) and the setup sheet. They still need a lot of refinement (dimensions, strength, fit and function on the car) before manufacturing. Two values can be confirmed on the car (servo height, length of the drop links, see open points).
+* **Status:** $\color{green}\checkmark$ Verified: C-hubs and rear hub carriers (3D prints of the owner, fit checked, 2026-11-24; MJF test prints in nylon PA12 ordered for the test car), steering knuckles (3D print of the owner; dimensions measured on the original part, still open on the measurement sheet: K11, K14, K16 and K19) and the servo mount (top plate, fixed post, floating post; owner, 2026-11-20; the holes for the servo ears are to be checked against the servo before printing). $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification: steering posts (height of the owner), bellcranks (symmetric design of the owner) and the steering bridge (refined design of the owner). Purchased (assembly only, no status): steering links, servo link, servo horn, CVD drive shafts, sway bars, dampers. All other parts: $\color{red}\times$ Completely unqualified: first design, not checked by the owner, no 3D print verification. The parts are designed from the measured parts (chassis plate, bulkheads, shock towers, wishbones, pivot blocks) and the setup sheet. They still need a lot of refinement (dimensions, strength, fit and function on the car) before manufacturing. Two values can be confirmed on the car (servo height, length of the drop links, see open points).
 
 ![Running gear: front corner with the kingpin axis, front corner from the front, steering from above, rear corner, 3D views of the front corner, of the servo on the floating servo mount and of the front sway bar](../photos/cad_running_gear_drawing.png)
 
@@ -1071,7 +1086,7 @@ All files are stored in the directory `/generic_parts` and are generated with `g
 |:---|:---|:---|
 | `/front_corner` | `c_hub_end_a_right`, `c_hub_end_a_left`, `steering_knuckle_end_a`, `axle_with_joint_cup_end_a`, `hex_hub_12_end_a`, technical drawings of the C-hubs (right and left) and the steering knuckle (PDF, PNG, readme), `steering_knuckle_measurement_sheet.pdf` | Front C-hubs with caster (right and left part), steering knuckle (same part on both sides), axle and hex hub (End A); measurement sheet of the original knuckle (A4, 2 pages: views with the letters K1 to K21, table with the model values and the values measured by the owner) |
 | `/rear_corner` | `hub_carrier_end_b`, `axle_with_joint_cup_end_b`, `hex_hub_12_end_b`, technical drawing of the hub carrier (PDF, PNG, readme) | Rear hub carrier, axle and hex hub (End B) |
-| `/steering` | `steering_post`, `bellcrank`, `steering_bridge`, `servo_horn_aluminium_clamp`, technical drawings of the steering post, the bellcrank and the steering bridge (PDF, PNG, readme) | Steering and servo horn; the bellcrank is the same part on both sides |
+| `/steering` | `steering_post`, `bellcrank`, `steering_bridge`, technical drawings of the steering post, the bellcrank and the steering bridge (PDF, PNG, readme) | Steering; the bellcrank is the same part on both sides; servo horn purchased (assembly only) |
 | `/servo_mount` | `servo_mount_top_plate`, `servo_mount_fixed_post`, `servo_mount_floating_post`, technical drawings (PDF, PNG, readme) | Floating servo mount (top plate and 2 posts) |
 | `/generic_parts` | `running_gear_parameters.json` | All dimensions, each with its source and a note |
 
@@ -1080,8 +1095,8 @@ All files are stored in the directory `/generic_parts` and are generated with `g
 
 **Open points of the running gear**
 
-* 3D print verification of the C-hub, the hub carrier, the steering and the servo mount.
-* C-hub: 3D print verification with the brass guide sleeves 4.8 x 3.2 x 4.0 mm and the washers M3 DIN 125-A (owner, 2026-11-22: standard parts instead of the Carten flanged sleeves). A sleeve Ø4.8 x Ø3.2 mm with a length of 4.0 mm was not found as a stock part (web search, 2026-11-22: RS PRO in 6, 10, 20 and 25 mm; no listing found for Conrad, Bauhaus or Hornbach): a 6 mm sleeve is shortened to 4.0 to 4.1 mm. With another sleeve length the faces of the C-hub follow from the parameters `guide_sleeve` and `front_c_hub`.
+* 3D print verification of the steering (posts, bellcranks, bridge) and the servo mount.
+* C-hub: verified with a 3D print of the owner (fit checked, 2026-11-24), as the rear hub carrier; MJF test prints (nylon PA12) of the C-hubs, the steering knuckles and the rear hub carriers ordered for the test car. Kingpin with the brass guide sleeves 4.8 x 3.2 x 4.0 mm and the washers M3 DIN 125-A (owner, 2026-11-22: standard parts instead of the Carten flanged sleeves). A sleeve Ø4.8 x Ø3.2 mm with a length of 4.0 mm was not found as a stock part (web search, 2026-11-22: RS PRO in 6, 10, 20 and 25 mm; no listing found for Conrad, Bauhaus or Hornbach): a 6 mm sleeve is shortened to 4.0 to 4.1 mm. With another sleeve length the faces of the C-hub follow from the parameters `guide_sleeve` and `front_c_hub`.
 * Steering knuckle: open dimensions of the original part K11, K14, K16 and K19 (measurement sheet `running_gear/front_corner/steering_knuckle_measurement_sheet.pdf`).
 * Track: measured by the owner on the original car: 173.7 mm from the outer face to the outer face of the hex hubs, front and rear (2026-11-20). The model has 173.7 mm at the rear (x = ±86.85 mm) and 177.7 mm at the front (x = ±88.85 mm): the front is 2.0 mm per side too wide. The owner compared the C-hub, the steering knuckle and the front wishbone (51.7 mm) with the original parts. Not measured in the front chain: the width of the front hex hub (6.0 mm from the manual) and the gap of 0.5 mm between the knuckle ring and the hex hub; a front hex hub of approx. 4 mm explains the difference (open: caliper value of the owner).
 * Height of the rear hub carrier: the axle lies 15.1 mm above the hinge pin (owner: lower end of the bearing tube 11.4 mm above the outer lower end of the tube on the hinge pin; photo: approx. 17 mm). Not measured: the outer diameter of the bearing tube (14.6 mm from the photo) and the radius of the tube on the hinge pin (3.6 mm); both change the axle height. The rear wishbones are horizontal in the model, so the rear ride height is 10.3 mm instead of 15 mm (setup sheet 4).

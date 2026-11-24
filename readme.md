@@ -4,7 +4,7 @@ This project covers the system architecture and configuration of a 1:10 scale on
 
 The technical challenge primarily results from the chosen scale and the limited tire diameter of 64 millimeters. While vehicles from 1:8+ scale have strong physical advantages due to higher mass inertia, larger rolling circumferences, and a longer wheelbase, the 1:10 scale requires significantly higher rotor speeds. This leads to high mechanical stresses in the drivetrain. The low vehicle weight also requires precise aerodynamic and suspension tuning to ensure driving stability at high speeds.
 
-The repository also contains a CAD model of the complete 1:10 on-road car: speedrun-specific parts (chassis plate, bulkheads, top brace, shock towers, front splitter) and further parts of the owner's own design (drive line, wishbones, running gear). Some parts are based on the Carten T410R, others deviate from it (for example the C-hubs and the steering knuckles). The status of each CAD component (verified, measures qualified or completely unqualified) is listed in the status tables in the section [speedrun chassis design](#speedrun-chassis-design) and in the [CAD readme](cad/readme.md#parts-of-the-speedrun-chassis).
+The repository also contains a CAD model of the complete 1:10 on-road car: speedrun-specific parts (chassis plate, bulkheads, top brace, shock towers, front splitter) and further parts of the owner's own design (drive line, wishbones, running gear). Some parts are based on the Carten T410R, others deviate from it (for example the C-hubs and the steering knuckles). The status of each CAD component (verified, measures qualified or completely unqualified; purchased parts without status) is listed in the status tables in the section [speedrun chassis design](#speedrun-chassis-design) and in the [CAD readme](cad/readme.md#parts-of-the-speedrun-chassis).
 
 The artefacts of this repository are:
 * CAD model of the 1:10 on-road car with the speedrun-specific parts (chassis plate, bulkheads, top brace, shock towers, front splitter, drive line, wishbones, running gear and their assembly) and 3D print files in the `/cad` directory: STEP, STL and DXF files, parameter files and drawings, described in the [CAD readme](cad/readme.md)
@@ -36,13 +36,15 @@ The speedrun chassis is designed in this project for speeds over 130 km/h. It co
 * Laser cutting: the top brace (2 mm) and the shock towers (3 mm) are flat plates with plain holes, so that they can be laser cut from aluminium or another material of choice (for example carbon). The outline and the holes are taken from the DXF files. The edge and hole chamfers and the relief on the back face of the shock towers (clearance to the root radius of the wall of the upper bulkhead) are a second machining step.
 * Simple design: a further goal is a simplified design of the bulkheads, the shock towers and the top brace with flat faces, straight edges and radii.
 * Chassis plate: apart from the material, the speedrun chassis plate is designed to match the ZooRacing Hellcat body (190 mm). It also gives more space for further developments: a battery with 4S or 6S instead of 3S, a dual motor setup and the custom [telemetry system](#follow-up-project-telemetry-system).
-* Further own parts: the drive line (centre driveshaft, cup joints, pinion shafts, differential, spool, motor mount), the pivot blocks, the wishbones, the camber links and the running gear (C-hubs with 10 degrees caster, steering knuckles, rear hub carriers, axles, hex hubs, CVD drive shafts, steering, servo mount, dampers, sway bars) complete the build; their files are in `cad/generic_parts`, the files of the speedrun parts in `cad/speedrun_parts`. They are the owner's own design; some are based on parts of the T410R, others deviate strongly from them. Standard parts (bearings, screws, pins, rod ends, ball studs, dampers, servo) are purchased.
+* Further own parts (generic parts): the drive line (centre driveshaft, pinion shafts, differential, spool, motor mount), the pivot blocks, the wishbones and the running gear (C-hubs with 10 degrees caster, steering knuckles, rear hub carriers, axles, hex hubs, steering posts, bellcranks, steering bridge, servo mount) complete the build; their files are in `cad/generic_parts`, the files of the speedrun parts in `cad/speedrun_parts`. They are the owner's own design; some are based on parts of the T410R, others deviate strongly from them. Purchased parts (cup joints, diff outdrives, inner hinge pins, camber links, CVD drive shafts, steering links, servo link, servo horn, sway bars, dampers) are simplified models in the assembly only. Standard parts (bearings, screws, pins, rod ends, ball studs, servo) are purchased as well.
 
 ![Speedrun chassis: complete build with the drive line, the wishbones and the running gear](photos/cad_speedrun_chassis_assembly.png)
 
 [![Speedrun chassis: assembly drawing with the views and the main dimensions](cad/assembly/speedrun_chassis_T410R_technical_drawing_sheet_1.png)](cad/assembly/speedrun_chassis_T410R_technical_drawing.pdf)
 
 The assembly drawing (one sheet A3, scale 1:2, [PDF](cad/assembly/speedrun_chassis_T410R_technical_drawing.pdf)) shows the parts of the assembly picture in the side view, the top view and the view from End A, with the main dimensions read from the assembly STEP file.
+
+**Speedrun parts** (designed for the speedrun chassis):
 
 | Part | Quantity | Status | Order | Mass |
 |:---|---:|:---|:---|---:|
@@ -53,40 +55,46 @@ The assembly drawing (one sheet A3, scale 1:2, [PDF](cad/assembly/speedrun_chass
 | Speedrun front shock tower | 1 | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | 4.4 g (carbon) |
 | Speedrun rear shock tower | 1 | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | 7.6 g (carbon) |
 | Speedrun front splitter (one part: body post mount enlarged to the splitter) | 1 | $\color{green}\checkmark$ Verified | MJF 3D print (nylon PA12) | 38 g (PA12) |
-| Speedrun battery tray (LiPo Absima GreenHorn 3S 5000 hardcase) | 1 | $\color{green}\checkmark$ Verified | – | 24 g (PA12) |
+| Speedrun battery tray (LiPo Absima GreenHorn 3S 5000 hardcase) | 1 | $\color{green}\checkmark$ Verified | MJF 3D print (nylon PA12) | 24 g (PA12) |
 | **Total** | | | | **368 g** |
 
-Further own parts (own design, partly based on the T410R, not in the mass total):
+**Generic parts** (own design, partly based on the T410R; manufactured or potentially manufactured; not in the mass total):
 
 | Part | Quantity | Status | Directory |
 |:---|---:|:---|:---|
 | Pivot blocks of the wishbones (long and short block) | 4 | $\color{green}\checkmark$ Verified | `cad/generic_parts/pivot_block` |
 | Centre driveshaft with fixed metal pins | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/driveshaft` |
-| Cup joints of the centre driveshaft | 2 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/driveshaft` |
 | Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/rear_drive` |
 | Front pinion shaft with pinion 17T, bearings and retaining pin | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/front_drive` |
 | Motor mount with cap | 1 | $\color{green}\checkmark$ Verified (test print; technically good; cosmetic changes after the print: smooth faces, round upper inner corner (R9), edge chamfers 0.3 mm on the motor mount) | `cad/generic_parts/motor_mount` |
 | Differential (End B) with ring gear 42T, inner gears and bearings | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/diff` |
 | Spool (End A) with ring gear 42T and bearings | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/diff` |
-| Diff outdrives (purchased) | 4 | $\color{red}\times$ Completely unqualified | Assembly only |
 | Front wishbones | 2 | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm added after the print) | `cad/generic_parts/wishbone` |
 | Rear wishbones | 2 | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm added after the print) | `cad/generic_parts/wishbone` |
-| Inner hinge pins of the wishbones (3x42) | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/wishbone` |
-| Camber links: turnbuckle M3x37 with rod ends and ball studs (purchased) | 4 | $\color{red}\times$ Completely unqualified | Assembly only |
-| Front C-hubs with 10 degrees caster (right and left part) | 2 | $\color{red}\times$ Completely unqualified; kingpin bores 4.9 mm with brass guide sleeves 4.8 mm and washers M3 (owner), 3D print verification planned | `cad/generic_parts/front_corner` |
-| Front steering knuckles | 2 | $\color{green}\checkmark$ Verified (3D print of the owner) | `cad/generic_parts/front_corner` |
-| Rear hub carriers | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/rear_corner` |
+| Front C-hubs with 10 degrees caster (right and left part) | 2 | $\color{green}\checkmark$ Verified (3D print of the owner, fit checked); kingpin bores 4.9 mm with brass guide sleeves 4.8 mm and washers M3 (owner); MJF test print (nylon PA12) ordered for the test car | `cad/generic_parts/front_corner` |
+| Front steering knuckles | 2 | $\color{green}\checkmark$ Verified (3D print of the owner); MJF test print (nylon PA12) ordered for the test car | `cad/generic_parts/front_corner` |
+| Rear hub carriers | 2 | $\color{green}\checkmark$ Verified (3D print of the owner, fit checked); MJF test print (nylon PA12) ordered for the test car | `cad/generic_parts/rear_corner` |
 | Axles with joint cup, hex hubs 12 mm | 4 + 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/front_corner`, `cad/generic_parts/rear_corner` |
-| CVD drive shafts (purchased) | 4 | $\color{red}\times$ Completely unqualified | Assembly only |
 | Bellcranks (symmetric, the same part on both sides) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/steering` |
 | Servo mount: top plate, fixed post, floating post; position of the servo and the horn | 1 set | $\color{green}\checkmark$ Verified (owner); the holes for the servo ears (positions assumed) are to be checked against the servo before printing | `cad/generic_parts/servo_mount` |
 | Steering bridge (beam with 2 towers on brass guide sleeves and washers M3) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/steering` |
 | Steering posts (height 20.3 mm, shoulder for the bellcrank bearings) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/steering` |
-| Steering: steering links, servo link, servo horn | 1 set | $\color{red}\times$ Completely unqualified | `cad/generic_parts/steering` |
-| Sway bars with holders, ball ends and drop links (purchased) | 2 | $\color{red}\times$ Completely unqualified | Assembly only |
-| Dampers (standard 1:10 on-road, purchased) | 4 | $\color{red}\times$ Completely unqualified | Assembly only |
 
-* Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. All parts of the speedrun design are verified except the battery tray (new design, battery dimensions from the manufacturer). The front splitter (one part) is verified with a 3D print of the owner; after the print the bosses of the 3 screws are 3 mm higher. Of the further own parts, the pivot blocks, the motor mount, the steering knuckles and the wishbones (with the pin bores Ø3.1 mm for the pins Ø3.0 mm) are verified (the motor mount with cosmetic changes after the print: smooth faces, round upper inner corner); the centre driveshaft, the drive lines (pinion shafts, pinions, spur gear) and the differentials are qualified by measurements (caliper and photos of the owner); the running gear and the other parts are not qualified. The parts marked red are first designs: they still need a lot of refinement (dimensions, strength, fit and function on the car) and are not ready for manufacturing. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#design-of-the-lower-bulkhead)). The original shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the original towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
+**Purchased parts** (not manufactured; simplified models in the assembly only, no part files, no status; not in the mass total):
+
+| Part | Quantity | CAD model |
+|:---|---:|:---|
+| Cup joints of the centre driveshaft | 2 | Assembly only (simplified) |
+| Diff outdrives | 4 | Assembly only (simplified) |
+| Inner hinge pins of the wishbones (3x42) | 4 | Assembly only (simplified) |
+| Camber links: turnbuckle M3x37 with rod ends and ball studs | 4 | Assembly only (simplified) |
+| CVD drive shafts | 4 | Assembly only (simplified) |
+| Steering: steering links, servo link, servo horn | 1 set | Assembly only (simplified) |
+| Sway bars with holders, ball ends and drop links | 2 | Assembly only (simplified) |
+| Dampers (standard 1:10 on-road) | 4 | Assembly only (simplified) |
+
+* Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. Purchased parts (assembly only, no part files) have no status. All parts of the speedrun design are verified (the battery tray by the owner, battery dimensions from the manufacturer). The front splitter (one part) is verified with a 3D print of the owner; after the print the bosses of the 3 screws are 3 mm higher. Of the further own parts, the pivot blocks, the motor mount, the wishbones (with the pin bores Ø3.1 mm for the pins Ø3.0 mm), the C-hubs, the steering knuckles, the rear hub carriers and the servo mount are verified (the motor mount with cosmetic changes after the print: smooth faces, round upper inner corner; the C-hubs and the rear hub carriers: 3D prints of the owner, fit checked); the centre driveshaft, the drive lines (pinion shafts, pinions, spur gear), the differentials, the steering posts, the bellcranks and the steering bridge are qualified by measurements (caliper and photos of the owner); the axles and the hex hubs are not qualified. Purchased parts (cup joints of the centre driveshaft, diff outdrives, inner hinge pins of the wishbones, camber links, CVD drive shafts, steering links, servo link and servo horn, sway bars, dampers) are in the assembly only and have no status. The parts marked red are first designs: they still need a lot of refinement (dimensions, strength, fit and function on the car) and are not ready for manufacturing. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#design-of-the-lower-bulkhead)). The original shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the original towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
+* Test car (owner, 2026-11-24): the bulkheads, the shock towers, the C-hubs, the steering knuckles and the rear hub carriers are installed in a test car first. The chassis plate, the top brace and the front splitter go directly into the speedrun car. The C-hubs, the knuckles and the hub carriers are ordered as MJF 3D prints (nylon PA12) as test parts; their final material is defined after the test. The battery tray is ordered as MJF 3D print (nylon PA12).
 * Colours: blue and grey shades only (colour scheme of all CAD pictures, `scripts/cad/palette.py`), no legend. The design of the differential: [CAD readme](cad/readme.md#differentials). The bottom row shows close-ups of End A and End B from the outer end and of the drive line at End B (spur gear, motor mount with cap, cup joint) from the middle of the car, without the top brace and the shock tower. The design of the running gear (caster, steering, Ackermann): [CAD readme](cad/readme.md#running-gear).
 * The assembly is available as a STEP file (`cad/assembly/speedrun_chassis_T410R.step`).
 

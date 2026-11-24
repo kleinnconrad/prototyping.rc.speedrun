@@ -6,7 +6,7 @@ them, so that the space beside the bulkheads can be checked.
 
 * front arm: 2 pieces, End A, left and right (the same part, turned by 180 degrees about z)
 * rear arm: 2 pieces, End B, left and right (the same part, turned by 180 degrees about z)
-* inner hinge pin 3x42: 4 pieces, between the pivot blocks
+* inner hinge pin 3x42: 4 pieces, between the pivot blocks (purchased, owner 2026-11-24: assembly only, no files)
 
 The manual has no dimensions. The values come from the manual (screws and pins), from the
 other parts of the model (pivot blocks, bulkheads), from photos of the owner or are assumptions;
@@ -20,7 +20,7 @@ hinge pin (y = 0 middle of the arm), z = 0 axis of the inner hinge pin.
 Usage (from the root directory of the repository):
     python scripts/cad/generate_wishbones.py
 
-The script writes the STEP and STL files of both arms and of the hinge pin and the drawing
+The script writes the STEP and STL files of both arms (not of the purchased hinge pin) and the drawing
 photos/cad_wishbones_drawing.png. It checks the placed arms against the pivot blocks, the
 bulkheads, the chassis plate and the diff outdrives, and the ends of the hinge pins against the
 bores of the pivot blocks.
@@ -398,7 +398,7 @@ def main():
     parser.parse_args()
     p, pp = load_params(PARAMS), load_params(PIVOT)
     solids = {k: arm_solid(p, k) for k in KINDS}
-    files = [(f"wishbone_{k}_T410R", solids[k]) for k in KINDS] + [("hinge_pin_3x42", pin_solid(p))]
+    files = [(f"wishbone_{k}_T410R", solids[k]) for k in KINDS]          # hinge pin 3x42: purchased, no file
     for k, rep in EDGE_REPORT.items():
         print(f"edge chamfers {k} arm:", {key: rep[key] for key in rep if key != "deficit of the orders tried"})
     for stem, s in files:

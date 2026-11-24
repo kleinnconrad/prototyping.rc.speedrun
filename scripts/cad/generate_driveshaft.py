@@ -16,15 +16,15 @@ the motor mount (holes H09/H10 of the chassis plate) and the spur gear (slot of 
 below the pinion axis). Cup joints: measurements of the owner. The other dimensions are typical
 values (cad/generic_parts/driveshaft/driveshaft_parameters.json). The shaft, the cup
 joints, the drive lines, the motor mount with its cap, the differential and the spool are the owner's
-own design, partly based on the T410R; the diff outdrives are purchased (simplified model for the
+own design, partly based on the T410R; the cup joints and the diff outdrives are purchased (simplified model for the
 assembly).
 
 Usage (from the root directory of the repository):
     python scripts/cad/generate_driveshaft.py
 
 The script writes the STEP and STL files of the parts (cad/generic_parts/driveshaft, rear_drive, front_drive,
-motor_mount and diff) and the drawing photos/cad_driveshaft_drawing.png, and checks the play and the fit. The diff
-outdrives are purchased parts (owner, 2026-11-24): in the assembly only, no part files.
+motor_mount and diff) and the drawing photos/cad_driveshaft_drawing.png, and checks the play and the fit. The cup
+joints and the diff outdrives are purchased parts (owner, 2026-11-24): in the assembly only, no part files.
 
 Requires the packages cadquery and matplotlib.
 """
@@ -738,7 +738,7 @@ def drawing(path, p, lay, items):
              f"in the slot of the chassis plate, motor mount {p['mount_t']:g} mm (owner) for 540 motors on the holes "
              "H09/H10. Thicknesses of the spur gear and the flange, outline of the motor mount and the gaps: typical "
              "values; teeth of the spur gear simplified.\nDashed: slots of the cup joints (across the section). CAD files of the "
-             "parts: cad/generic_parts (driveshaft, rear_drive, motor_mount); diff outdrives purchased (assembly only).",
+             "parts: cad/generic_parts (driveshaft, rear_drive, motor_mount); cup joints and diff outdrives purchased (assembly only).",
              fontsize=8, va="bottom")
     fig.savefig(path, dpi=110)
     plt.close(fig)
@@ -927,7 +927,6 @@ def main():
     z, yb = lay["z"], lay["mount"][1] - p["mount_lip"][0] - p["mount_bearing"][2]
     exports = [   # (directory, file name, solid in part coordinates)
         ("driveshaft", "driveshaft_T410R", shaft_solid(p, lay["length"])),
-        ("driveshaft", "cup_joint_T410R", cup_solid(p)),
         ("rear_drive", "rear_pinion_shaft_T410R",
          parts["rear pinion shaft with flange"].translate(cq.Vector(0, -lay["housing"][0], -z))),
         ("rear_drive", "retaining_pin_2x7.6",
