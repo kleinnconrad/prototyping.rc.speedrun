@@ -15,16 +15,16 @@ Derived from the models of this project: the pinion axis, the end faces of the p
 the motor mount (holes H09/H10 of the chassis plate) and the spur gear (slot of the chassis plate
 below the pinion axis). Cup joints: measurements of the owner. The other dimensions are typical
 values (cad/generic_parts/driveshaft/driveshaft_parameters.json). The shaft, the cup
-joints, the drive lines, the motor mount with its cap, the differential, the spool and the diff
-outdrives are the owner's own design, partly based on the T410R; the script writes the STEP and
-STL files of all these parts.
+joints, the drive lines, the motor mount with its cap, the differential and the spool are the owner's
+own design, partly based on the T410R; the diff outdrives are purchased (simplified model for the
+assembly).
 
 Usage (from the root directory of the repository):
     python scripts/cad/generate_driveshaft.py
 
-The script writes the STEP and STL files of all parts (cad/generic_parts/driveshaft, rear_drive,
-motor_mount and diff_outdrive) and the drawing photos/cad_driveshaft_drawing.png, and checks the
-play and the fit.
+The script writes the STEP and STL files of the parts (cad/generic_parts/driveshaft, rear_drive, front_drive,
+motor_mount and diff) and the drawing photos/cad_driveshaft_drawing.png, and checks the play and the fit. The diff
+outdrives are purchased parts (owner, 2026-11-24): in the assembly only, no part files.
 
 Requires the packages cadquery and matplotlib.
 """
@@ -40,6 +40,7 @@ import cadquery as cq
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_bulkhead_lower import box, bulkhead_lower, cyl_x, cyl_y, cyl_z, load_params  # noqa: E402
 import palette as P  # noqa: E402
+import edge_treatment as ET  # noqa: E402
 from generate_bulkhead_upper import bulkhead_upper  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y, GEOM as BRACE_GEOM, brace_offset, brace_solid  # noqa: E402
 
@@ -52,6 +53,7 @@ DRAWING = "photos/cad_driveshaft_drawing.png"
 ASSEMBLY_DRAWING = "photos/cad_drive_line_assembly.png"
 PLATE_T = 2.0
 INCH = 25.4
+EDGE_REPORT = {}                                    # edge chamfers of the motor mount (report of edge_treatment)
 
 
 def layout(p, lp):
@@ -483,27 +485,41 @@ def motor_mount_solid(p, lay):
             wp = wp.threePointArc(q[1], q[2])
         else:
             wp = wp.spline(q[1:], includeCurrent=True)
-    s = wp.close().extrude(m1 - m0).val().translate(cq.Vector(0, m1, 0))          # XZ: extrusion toward -y
+    raw = wp.close().extrude(m1 - m0).val().translate(cq.Vector(0, m1, 0))        # XZ: extrusion toward -y
     rb, (lw, ld) = p["mount_notch_d"] / 2, p["mount_lip"]
-    s = s.cut(cyl_y(rb, m0 - 1, m1 - lw, 0, z)).cut(box(-rb, rb, m0 - 1, m1 - lw, z, zl + 1))   # U notch, bearing
-    s = s.cut(cyl_y(ld / 2, m1 - lw - 1, m1 + 1, 0, z)).cut(box(-ld / 2, ld / 2, m1 - lw - 1, m1 + 1, z, zl + 1))  # lip
+    dz, up, lo = p["motor_screw_slots"]
+    ws, wm = p["motor_screw_slot_w"], p["motor_shaft_slot_w"]
+    rt, dep = p["tap_d"] / 2, p["mount_tap_depth"]
 
     def long_hole(x0, x1, zc, w):
         """Long hole through the plate: centres of the end radii at x0 and x1, width w."""
         h = cq.Workplane("XZ").center((x0 + x1) / 2, zc).slot2D(x1 - x0 + w, w).extrude(p["mount_t"] / 2 + 1, both=True)
         return h.val().translate(cq.Vector(0, p["mount_y"], 0))
-    dz, up, lo = p["motor_screw_slots"]
-    ws, wm = p["motor_screw_slot_w"], p["motor_shaft_slot_w"]
-    holes = [(*p["motor_slot_x"], z, wm / 2), (*up, z + dz, ws / 2), (*lo, z - dz, ws / 2)]
-    for hx0, hx1, hz, hr in holes:
-        s = s.cut(long_hole(hx0, hx1, hz, 2 * hr))
-    # threads M3 (tap drill): screws from below through the chassis plate (H09, H10) and screws M3x18 of the cap
-    rt, dep = p["tap_d"] / 2, p["mount_tap_depth"]
-    for x, y in p["mount_bottom_screws"]:
-        s = s.cut(cyl_z(rt, PLATE_T - 1, PLATE_T + dep, x, y))
-    for x, y in p["cap_screws"]:
-        s = s.cut(cyl_z(rt, zl - dep, zl + 1, x, y))
-    return s.clean()
+
+    def features(s):
+        """Bearing seat (U notch with the lip), long holes of the motor shaft and the motor screws, threads M3 (tap
+        drill): screws from below through the chassis plate (H09, H10) and screws M3x18 of the cap."""
+        s = s.cut(cyl_y(rb, m0 - 1, m1 - lw, 0, z)).cut(box(-rb, rb, m0 - 1, m1 - lw, z, zl + 1))   # U notch, bearing
+        s = s.cut(cyl_y(ld / 2, m1 - lw - 1, m1 + 1, 0, z)).cut(box(-ld / 2, ld / 2, m1 - lw - 1, m1 + 1, z, zl + 1))  # lip
+        for hx0, hx1, hz, hr in [(*p["motor_slot_x"], z, wm / 2), (*up, z + dz, ws / 2), (*lo, z - dz, ws / 2)]:
+            s = s.cut(long_hole(hx0, hx1, hz, 2 * hr))
+        for x, y in p["mount_bottom_screws"]:
+            s = s.cut(cyl_z(rt, PLATE_T - 1, PLATE_T + dep, x, y))
+        for x, y in p["cap_screws"]:
+            s = s.cut(cyl_z(rt, zl - dep, zl + 1, x, y))
+        return s.clean()
+    # edge chamfers (owner, 2026-11-24): chamfer on each sharp outer edge, no radii; the bottom face (contact face to
+    # the chassis plate, with the entries of the threads from below) and its edges stay sharp. The edges of the outline
+    # on both faces form one tangent chain (the kernel chamfers it as a whole): chamfered in one step before the
+    # features, the edges of the notch, the lip and the holes after them (edge_treatment). The kernel carries chamfers
+    # along tangent edges into the bottom face, so the strip of the unchamfered part along the bottom face (chamfer
+    # height) is restored at the end
+    ch, ang = p["mount_edge_chamfer"]
+    s = raw.chamfer(ch, None, [e for e in raw.Edges() if min(abs(e.Center().y - m0), abs(e.Center().y - m1)) < 1e-6])
+    keep = [box(-200, 200, -200, 600, PLATE_T - 0.05, PLATE_T + 0.05)]                    # bottom face: sharp
+    s, EDGE_REPORT["motor mount"] = ET.treat(features(s), ch, None, keep, ang)
+    s = s.fuse(features(raw).intersect(box(-200, 200, m0 - 1, m1 + 1, PLATE_T - 1, PLATE_T + ch + 0.001))).clean()
+    return s
 
 
 def motor_mount_cap_solid(p, lay):
@@ -721,8 +737,8 @@ def drawing(path, p, lay, items):
              f"{p['cup_slot_len']:g} mm (owner).\nSpur gear {p['spur_teeth']:g}T {p['spur_dp']:g}DP ({lay['spur_od']:.1f} mm) "
              f"in the slot of the chassis plate, motor mount {p['mount_t']:g} mm (owner) for 540 motors on the holes "
              "H09/H10. Thicknesses of the spur gear and the flange, outline of the motor mount and the gaps: typical "
-             "values; teeth of the spur gear simplified.\nDashed: slots of the cup joints (across the section). CAD files of all "
-             "parts: cad/generic_parts (driveshaft, rear_drive, motor_mount, diff_outdrive).",
+             "values; teeth of the spur gear simplified.\nDashed: slots of the cup joints (across the section). CAD files of the "
+             "parts: cad/generic_parts (driveshaft, rear_drive, motor_mount); diff outdrives purchased (assembly only).",
              fontsize=8, va="bottom")
     fig.savefig(path, dpi=110)
     plt.close(fig)
@@ -924,7 +940,6 @@ def main():
         ("motor_mount", "motor_mount_T410R", parts["motor mount"].translate(cq.Vector(0, -p["mount_y"], -PLATE_T))),
         ("motor_mount", "motor_mount_cap_T410R",
          parts["cap of the motor mount"].translate(cq.Vector(0, -p["mount_y"], -PLATE_T))),
-        ("diff_outdrive", "diff_outdrive_T410R", outdrive_solid(p)),
         ("diff", "diff_case_T410R", diff_solids(p, lp)["case"]),
         ("diff", "ring_gear_42T_T410R", diff_solids(p, lp)["ring"]),
         ("diff", "side_gear_14T_T410R", diff_solids(p, lp)["inner"]["_side_gear"]),

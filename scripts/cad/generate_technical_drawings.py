@@ -249,7 +249,7 @@ def parts():
                     "confirmed with the inserts.", "Threads M3 for the countersunk screws from below through the chassis plate."]),
         dict(key="motor_mount", folder="cad/generic_parts/motor_mount", step="motor_mount_T410R.step", stem="motor_mount_T410R",
              title="Motor mount", number="MM", material="EN AW-7075-T6", density=2.81, density_txt="7075", quantity="1", tol=GENERAL_CNC,
-             edges=EDGES_BREAK, status="verified (test print)",
+             edges="chamfer 0.3 (modelled), bottom face sharp", status="verified (test print)",
              view_callouts=[("F", (0.0, 0.0, 17.2 - 5.3), "U-notch 10.6 (bearing 5x10x4)", (2, 46.2)),
                             ("F", (23.8, 0.0, 17.2 + 6.5), "long hole 13.0 (motor shaft)", (16, 31.0)),
                             ("F", (25.0, 0.0, 28.4 + 1.6), "long holes 3.2 (motor screws)", (44, 10.5))],
@@ -257,7 +257,10 @@ def parts():
                     "original part); lip 1.0 wide (opening Ø8.0) on the side toward End A. The set screw M3x3 in the cap "
                     "(part MM-C) presses on the outer ring of the bearing.",
                     "Threads M3 from below for the screws through the holes H09 and H10 of the chassis plate; threads M3 "
-                    "from above for the 2 screws M3x18 through the top brace and the cap."]),
+                    "from above for the 2 screws M3x18 through the top brace and the cap.",
+                    "Edges (owner, 2026-11-24): chamfer 0.3 x 45 deg on each sharp outer edge (outline, notch, lip, long "
+                    "holes, thread entries from above); the bottom face (contact face to the chassis plate) and its edges "
+                    "stay sharp."]),
         dict(key="motor_mount_cap", folder="cad/generic_parts/motor_mount", step="motor_mount_cap_T410R.step",
              stem="motor_mount_cap_T410R", title="Cap of the motor mount", number="MM-C", material="EN AW-7075-T6",
              density=2.81, density_txt="7075", quantity="1", tol=GENERAL_CNC, edges=EDGES_BREAK, status="verified (test print)",

@@ -12,21 +12,9 @@ The artefacts of this repository are:
 * Vehicle setup configurations in the `/setup_sheets` directory
 * CAD model of the 1:10 on-road car with the speedrun-specific parts (chassis plate, bulkheads, top brace, shock towers, front splitter, drive line, wishbones, running gear and their assembly) and 3D print files in the `/cad` directory: STEP, STL and DXF files, parameter files and drawings, described in the [CAD readme](cad/readme.md)
 
-<table>
-  <tbody>
-    <tr>
-      <td colspan="2"><img src="photos/rc_car.jpg" alt="RC car with clear body" width="100%"></td>
-    </tr>
-  </tbody>
-  <tbody>
-    <tr>
-      <td width="37%"><img src="photos/rc_car_chassis_front_view.jpg" alt="RC car chassis without body, front view" width="100%"></td>
-      <td width="63%"><img src="photos/rc_car_chassis_top_view_battery.jpg" alt="RC car chassis without body, top view" width="100%"></td>
-    </tr>
-  </tbody>
-</table>
+<img src="photos/rc_car.jpg" alt="RC car with clear body" width="420">
 
-The photos show the car with the parts of the manufacturers (Carten T410R kit and purchased components), not the own parts of the CAD model.
+The photo shows the car with the parts of the manufacturers (Carten T410R kit and purchased components), not the own parts of the CAD model.
 
 ## Table of contents
 * [Latest setup drawing](#latest-setup-drawing)
@@ -80,25 +68,25 @@ Further own parts (own design, partly based on the T410R, not in the mass total)
 | Cup joints of the centre driveshaft | 2 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/driveshaft` |
 | Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/rear_drive` |
 | Front pinion shaft with pinion 17T, bearings and retaining pin | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/front_drive` |
-| Motor mount with cap | 1 | $\color{green}\checkmark$ Verified (test print; technically good; cosmetic changes after the print: smooth faces, round upper inner corner (R9)) | `cad/generic_parts/motor_mount` |
+| Motor mount with cap | 1 | $\color{green}\checkmark$ Verified (test print; technically good; cosmetic changes after the print: smooth faces, round upper inner corner (R9), edge chamfers 0.3 mm on the motor mount) | `cad/generic_parts/motor_mount` |
 | Differential (End B) with ring gear 42T, inner gears and bearings | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/diff` |
 | Spool (End A) with ring gear 42T and bearings | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/diff` |
-| Diff outdrives | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/diff_outdrive` |
+| Diff outdrives (purchased) | 4 | $\color{red}\times$ Completely unqualified | Assembly only |
 | Front wishbones | 2 | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm added after the print) | `cad/generic_parts/wishbone` |
 | Rear wishbones | 2 | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm added after the print) | `cad/generic_parts/wishbone` |
 | Inner hinge pins of the wishbones (3x42) | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/wishbone` |
-| Camber links: turnbuckle M3x37 with rod ends and ball studs | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/camber_link` |
+| Camber links: turnbuckle M3x37 with rod ends and ball studs (purchased) | 4 | $\color{red}\times$ Completely unqualified | Assembly only |
 | Front C-hubs with 10 degrees caster (right and left part) | 2 | $\color{red}\times$ Completely unqualified; kingpin bores 4.9 mm with brass guide sleeves 4.8 mm and washers M3 (owner), 3D print verification planned | `cad/generic_parts/front_corner` |
 | Front steering knuckles | 2 | $\color{green}\checkmark$ Verified (3D print of the owner) | `cad/generic_parts/front_corner` |
 | Rear hub carriers | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/rear_corner` |
 | Axles with joint cup, hex hubs 12 mm | 4 + 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/front_corner`, `cad/generic_parts/rear_corner` |
-| CVD drive shafts | 4 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/cvd_drive_shafts` |
+| CVD drive shafts (purchased) | 4 | $\color{red}\times$ Completely unqualified | Assembly only |
 | Bellcranks (symmetric, the same part on both sides) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/steering` |
 | Servo mount: top plate, fixed post, floating post; position of the servo and the horn | 1 set | $\color{green}\checkmark$ Verified (owner); the holes for the servo ears (positions assumed) are to be checked against the servo before printing | `cad/generic_parts/servo_mount` |
 | Steering bridge (beam with 2 towers on brass guide sleeves and washers M3) | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/steering` |
 | Steering posts (height 20.3 mm, shoulder for the bellcrank bearings) | 2 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/steering` |
 | Steering: steering links, servo link, servo horn | 1 set | $\color{red}\times$ Completely unqualified | `cad/generic_parts/steering` |
-| Sway bars with holders, ball ends and drop links | 2 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/sway_bars` |
+| Sway bars with holders, ball ends and drop links (purchased) | 2 | $\color{red}\times$ Completely unqualified | Assembly only |
 | Dampers (standard 1:10 on-road, purchased) | 4 | $\color{red}\times$ Completely unqualified | Assembly only |
 
 * Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. All parts of the speedrun design are verified except the battery tray (new design, battery dimensions from the manufacturer). The front splitter (one part) is verified with a 3D print of the owner; after the print the bosses of the 3 screws are 3 mm higher. Of the further own parts, the pivot blocks, the motor mount, the steering knuckles and the wishbones (with the pin bores Ø3.1 mm for the pins Ø3.0 mm) are verified (the motor mount with cosmetic changes after the print: smooth faces, round upper inner corner); the centre driveshaft, the drive lines (pinion shafts, pinions, spur gear) and the differentials are qualified by measurements (caliper and photos of the owner); the running gear and the other parts are not qualified. The parts marked red are first designs: they still need a lot of refinement (dimensions, strength, fit and function on the car) and are not ready for manufacturing. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#design-of-the-lower-bulkhead)). The original shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the original towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
@@ -112,17 +100,15 @@ Further own parts (own design, partly based on the T410R, not in the mass total)
   * **`/bulkhead`**: Lower and upper bulkhead (STEP, STL, test print files, parameter files, measurement sheets)
   * **`/shock_tower`**: Front and rear shock tower for the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file)
   * **`/front_splitter`**: Speedrun front splitter at End A, one part: the body post mount enlarged to the splitter (STEP, STL, test print STL, parameter file, measurement sheet)
-  * **`/parts`**: Drive line, pivot blocks, wishbones and camber links (own design, partly based on the T410R)
+  * **`/parts`**: Drive line, pivot blocks and wishbones (own design, partly based on the T410R)
     * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file)
     * **`/driveshaft`**: Centre driveshaft with the fixed metal pins and the cup joints (STEP, STL, parameter file)
     * **`/rear_drive`**: Rear pinion shaft, pinion, spur gear 72T, bearing and retaining pin (STEP, STL)
     * **`/front_drive`**: Front pinion shaft (STEP, STL)
     * **`/motor_mount`**: Motor mount for 540 motors and its cap (STEP, STL)
     * **`/diff`**: Differential (case, ring gear 42T, inner gears, shims, bearing) and spool (STEP, STL)
-    * **`/diff_outdrive`**: Diff outdrive (STEP, STL)
     * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file)
-    * **`/camber_link`**: Camber links: turnbuckle, rod end, ball stud (STEP, STL, parameter file)
-  * **`/running_gear`**: parameter file of the running gear and one folder per group (STEP, STL): `/front_corner` (C-hubs, steering knuckles, axles and hex hubs at End A), `/rear_corner` (hub carriers, axles and hex hubs at End B), `/cvd_drive_shafts`, `/steering`, `/servo_mount`, `/sway_bars`
+  * **`/running_gear`**: parameter file of the running gear and one folder per group (STEP, STL): `/front_corner` (C-hubs, steering knuckles, axles and hex hubs at End A), `/rear_corner` (hub carriers, axles and hex hubs at End B), `/steering`, `/servo_mount`; parameter file of the camber links (purchased parts: camber links, CVD drive shafts, diff outdrives and sway bars are in the assembly only, no part files)
   * **`/chassis`**: Chassis plate, wide speedrun chassis plate, top brace and speedrun top brace with one subdirectory per part (STEP, STL, DXF, OpenSCAD, 1:1 templates, test print files)
 * **`/docs`**: Static web dashboard for visualizing the latest setup configurations
 * **`/photos`**: Central directory for all image files

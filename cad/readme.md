@@ -56,22 +56,18 @@ This directory contains CAD data and 3D print files for the RC car **Carten T410
   * **`/shock_tower`**: New design of the front and the rear shock tower that match the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, hole table).
   * **`/front_splitter`**: Speedrun front splitter at End A, one part: the body post mount enlarged to the splitter (STEP, STL, test print STL, parameter file, measurement sheet).
   * **`/battery_tray`**: Speedrun battery tray for the 3S hardcase LiPo on the left side of the car (STEP, STL, parameter file, technical drawing).
-* **`/generic_parts`**: Drive line, pivot blocks, wishbones and running gear: own design of the owner, partly based on the T410R (see [further own parts](#further-own-parts)). Camber links: purchased parts, simplified model for the assembly. The directory contains the parameter file of the running gear, the measurement sheet of the parts and one subdirectory per group (overview in [`generic_parts/readme.md`](generic_parts/readme.md)):
+* **`/generic_parts`**: Drive line, pivot blocks, wishbones and running gear: own design of the owner, partly based on the T410R (see [further own parts](#further-own-parts)). Camber links: purchased parts, simplified model for the assembly. Purchased parts (owner, 2026-11-24): camber links, CVD drive shafts, diff outdrives and sway bars with holders, ball ends and drop links; they are modelled in memory for the assembly, its picture and the checks only, without part files (parameter file of the camber links: `generic_parts/camber_link_parameters.json`). The directory contains the parameter files of the running gear and the camber links, the measurement sheet of the parts and one subdirectory per group (overview in [`generic_parts/readme.md`](generic_parts/readme.md)):
   * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file).
   * **`/driveshaft`**: Centre driveshaft with the fixed metal pins and the cup joints (STEP, STL, parameter file of all drive line parts).
   * **`/rear_drive`**: Rear pinion shaft with flange, pinion 17T, spur gear 72T, bearing 5x10x4 and retaining pin (STEP, STL).
   * **`/front_drive`**: Front pinion shaft (STEP, STL).
   * **`/motor_mount`**: Motor mount for 540 motors and its cap (STEP, STL).
   * **`/diff`**: Differential case, ring gear 42T and bearing (STEP, STL).
-  * **`/diff_outdrive`**: Diff outdrive (STEP, STL).
   * **`/wishbone`**: Front and rear wishbones and the inner hinge pin (STEP, STL, parameter file).
-  * **`/camber_link`**: Camber links (purchased parts), simplified model for the assembly: turnbuckle, rod end, ball stud, assembled front and rear link (STEP, STL, parameter file).
   * **`/front_corner`**: C-hubs with caster, steering knuckles, axles and hex hubs at End A (STEP, STL).
   * **`/rear_corner`**: Hub carriers, axles and hex hubs at End B (STEP, STL), technical drawing of the hub carrier (PDF, PNG, readme).
-  * **`/cvd_drive_shafts`**: CVD drive shafts (STEP, STL).
   * **`/steering`**: Steering posts, bellcranks, steering bridge, spacers and servo horn (STEP, STL).
   * **`/servo_mount`**: Floating servo mount (STEP, STL).
-  * **`/sway_bars`**: Sway bars with drop links (STEP, STL).
 * **`/assembly`**: Assembly of the speedrun chassis: chassis plate, bulkheads, top brace and shock towers, completed with the further own parts (pivot blocks, drive line, wishbones and running gear) and the purchased camber links (STEP), and the assembly drawing with the views and the main dimensions (PDF, PNG, shown in [`assembly/readme.md`](assembly/readme.md)).
 * **`/studies`**: Design studies that are not part of the build, one subdirectory per study with its own readme:
   * **`/dual_motor`**: Dual motor mount for 2 motors on the spur gear and a chassis plate with a second motor window on the left side (STEP, STL, geometry data, pictures, script).
@@ -112,10 +108,10 @@ Further own parts (own design of the owner, partly based on the T410R, not in th
 | [Cup joints of the centre driveshaft](#centre-driveshaft-and-drive-line) | 2 | `/generic_parts/driveshaft` | $\color{red}\times$ Completely unqualified |
 | [Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin](#centre-driveshaft-and-drive-line) | 1 | `/generic_parts/rear_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Front pinion shaft with pinion 17T, bearings and retaining pin](#centre-driveshaft-and-drive-line) | 1 | `/generic_parts/front_drive` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Motor mount with cap](#centre-driveshaft-and-drive-line) | 1 | `/generic_parts/motor_mount` | $\color{green}\checkmark$ Verified (test print; technically good; cosmetic changes after the print: smooth faces, round upper inner corner (R9)) |
+| [Motor mount with cap](#centre-driveshaft-and-drive-line) | 1 | `/generic_parts/motor_mount` | $\color{green}\checkmark$ Verified (test print; technically good; cosmetic changes after the print: smooth faces, round upper inner corner (R9), edge chamfers 0.3 mm on the motor mount) |
 | [Differential (End B) with ring gear 42T, inner gears and bearings](#differentials) | 1 | `/generic_parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Spool (End A) with ring gear 42T and bearings](#differentials) | 1 | `/generic_parts/diff` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
-| [Diff outdrives](#centre-driveshaft-and-drive-line) | 4 | `/generic_parts/diff_outdrive` | $\color{red}\times$ Completely unqualified |
+| [Diff outdrives (purchased)](#centre-driveshaft-and-drive-line) | 4 | Assembly only | $\color{red}\times$ Completely unqualified |
 | [Front wishbones](#wishbones) | 2 | `/generic_parts/wishbone` | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm and the blends of 2026-11-23 added after the print) |
 | [Rear wishbones](#wishbones) | 2 | `/generic_parts/wishbone` | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm and the blends of 2026-11-23 added after the print) |
 | [Inner hinge pins of the wishbones (3x42)](#wishbones) | 4 | `/generic_parts/wishbone` | $\color{red}\times$ Completely unqualified |
@@ -123,13 +119,13 @@ Further own parts (own design of the owner, partly based on the T410R, not in th
 | [Front steering knuckles](#running-gear) | 2 | `/generic_parts/front_corner` | $\color{green}\checkmark$ Verified (3D print of the owner) |
 | [Rear hub carriers](#running-gear) | 2 | `/generic_parts/rear_corner` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
 | [Axles with joint cup, hex hubs 12 mm](#running-gear) | 4 + 4 | `/generic_parts/front_corner`, `/generic_parts/rear_corner` | $\color{red}\times$ Completely unqualified |
-| [CVD drive shafts](#running-gear) | 4 | `/generic_parts/cvd_drive_shafts` | $\color{red}\times$ Completely unqualified |
+| [CVD drive shafts (purchased)](#running-gear) | 4 | Assembly only | $\color{red}\times$ Completely unqualified |
 | [Bellcranks (symmetric, the same part on both sides)](#running-gear) | 2 | `/generic_parts/steering` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification; technical drawing |
 | [Servo mount: top plate, fixed post, floating post; position of the servo and the horn](#running-gear) | 1 set | `/generic_parts/servo_mount` | $\color{green}\checkmark$ Verified (owner); the holes for the servo ears (positions assumed) are to be checked against the servo before printing; technical drawings |
 | [Steering bridge (beam with 2 towers on brass guide sleeves and washers M3)](#running-gear) | 1 | `/generic_parts/steering` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification; technical drawing |
 | [Steering posts (height 20.3 mm, shoulder for the bellcrank bearings)](#running-gear) | 2 | `/generic_parts/steering` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification; technical drawing |
 | [Steering: steering links, servo link, servo horn](#running-gear) | 1 set | `/generic_parts/steering` | $\color{red}\times$ Completely unqualified |
-| [Sway bars with holders, ball ends and drop links](#running-gear) | 2 | `/generic_parts/sway_bars` | $\color{red}\times$ Completely unqualified |
+| [Sway bars with holders, ball ends and drop links (purchased)](#running-gear) | 2 | Assembly only | $\color{red}\times$ Completely unqualified |
 | [Dampers (standard 1:10 on-road, purchased)](#running-gear) | 4 | Assembly only | $\color{red}\times$ Completely unqualified |
 
 Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. The parts marked red are first designs: they still need a lot of refinement (dimensions, strength, fit and function on the car) and are not ready for manufacturing.
@@ -802,7 +798,7 @@ Results of `generate_driveshaft.py`:
 **Open points of the centre driveshaft**
 
 * Not measured: thickness of the spur gear (4.0 mm), dimensions of the rear pinion shaft from the photos (flange 21.7 x 2.5 mm, spigot 9.3 mm, shoulder 6.7 mm, flats 4.2 mm across) and of the pinion (length 4.1 mm from the side photo), the gaps between the motor mount or the pinion housing and the cup joints (0.5 mm), depths of the bores of the cup joints, opening of the lip of the bearing seat (8.0 mm), outline of the tall part of the motor mount (height, long holes) and of the cap (width, notch).
-* Motor mount: verified with a test print (owner); technically good. Cosmetic changes after the print (owner): smooth faces without the grooves, round upper inner corner (R9) instead of the step. The measured height of the low part (MM3: 23.2 mm, photo of the owner: 23.25 mm) does not fit the stack: with the cap (10.2 mm) below the top brace (34.6 mm above the bottom face of the chassis plate), the low part is 22.4 mm high in the model; the bearing seat is kept as it is (owner). The depth of the U notch (MM2: 10.3 mm) fits within 0.2 mm. Open: MM5 (does the set screw of the cap touch the bearing).
+* Motor mount: verified with a test print (owner); technically good. Cosmetic changes after the print (owner): smooth faces without the grooves, round upper inner corner (R9) instead of the step; edge chamfers (owner, 2026-11-24, parameter `mount_edge_chamfer`): chamfer 0.3 mm x 45 degrees on each sharp outer edge (outline, notch, lip, long holes, thread entries from above), no radii; the bottom face (contact face to the chassis plate, with the entries of the threads from below) and its edges stay sharp. The edges of the outline form one tangent chain on each face and are chamfered in one step; the kernel carries chamfers along tangent edges into the bottom face, so the unchamfered strip along the bottom face (0.3 mm high) is restored at the end (contact face 285.4 mm² as before). The measured height of the low part (MM3: 23.2 mm, photo of the owner: 23.25 mm) does not fit the stack: with the cap (10.2 mm) below the top brace (34.6 mm above the bottom face of the chassis plate), the low part is 22.4 mm high in the model; the bearing seat is kept as it is (owner). The depth of the U notch (MM2: 10.3 mm) fits within 0.2 mm. Open: MM5 (does the set screw of the cap touch the bearing).
 * Length of the shaft: checked with a ruler (173.0 mm over the ball ends); the model uses this length.
 * Spur gear: the specifications (`spec_spur_gear.yaml`, `spec_gearing.yaml`) and the setup sheet list a 68T spur gear; the model uses the standard 72T 48DP spur gear of the owner.
 
@@ -822,7 +818,6 @@ All files are stored in the directory `/generic_parts` and are generated with `g
 | `rear_drive/bearing_5x10x4` | Bearing in the motor mount: along y from y = 0 to 4.0 mm |
 | `motor_mount/motor_mount_T410R` | Motor mount: x = 0 pinion axis, y = 0 middle of the plate, z = 0 bottom face (on the chassis plate) |
 | `motor_mount/motor_mount_cap_T410R` | Cap of the motor mount, in the coordinates of the motor mount |
-| `diff_outdrive/diff_outdrive_T410R` | Diff outdrive (4 pieces): along +x, back face at x = 0, open end at x = 10.0 mm, slots along z |
 | `driveshaft/driveshaft_parameters.json` | All dimensions of these parts, each with its source and a note (JSON) |
 
 ### Differentials
@@ -1007,6 +1002,7 @@ Owner (2026-11-21): the C-hubs and the rear hub carriers (MJF print, nylon PA12)
 | Servo mount floating post | None (chamfers only) | 24 | None |
 | Speedrun battery tray (see [battery tray](#speedrun-battery-tray)) | None (chamfers only) | 167 (5 with 0.2 mm) | 1 edge of 0.7 mm at the rear end face (floor and end stop) |
 | Pivot block, long and short (see [pivot blocks](#pivot-blocks)) | None (chamfers only) | 28 each (2 with 0.2 mm, 4 with 0.1 mm) | None |
+| Motor mount (bottom face to the chassis plate kept sharp) | None (chamfers only) | Outline of both faces in one step, then 37 (2 with 0.1 mm) | None |
 
 * Changes of the shapes for the edge treatment (where two features were less than 0.8 mm apart, the radius and the chamfer do not fit side by side): C-hub lower arm 10.0 mm wide instead of 11.6 mm (with the tube on the pin of 12.0 mm) and 3.0 mm beyond the axis of the hinge pin, top of the tube on the hinge pin trimmed by the face toward the lower boss, upper arm 4.5 mm instead of 3.5 mm beyond the kingpin axis; hub carrier column 1.0 mm inside the outer end of the bearing tube (5.2 mm across), camber stud thread through the top tab. Details: see the front and the rear corner above.
 
@@ -1075,10 +1071,8 @@ All files are stored in the directory `/generic_parts` and are generated with `g
 |:---|:---|:---|
 | `/front_corner` | `c_hub_end_a_right`, `c_hub_end_a_left`, `steering_knuckle_end_a`, `axle_with_joint_cup_end_a`, `hex_hub_12_end_a`, technical drawings of the C-hubs (right and left) and the steering knuckle (PDF, PNG, readme), `steering_knuckle_measurement_sheet.pdf` | Front C-hubs with caster (right and left part), steering knuckle (same part on both sides), axle and hex hub (End A); measurement sheet of the original knuckle (A4, 2 pages: views with the letters K1 to K21, table with the model values and the values measured by the owner) |
 | `/rear_corner` | `hub_carrier_end_b`, `axle_with_joint_cup_end_b`, `hex_hub_12_end_b`, technical drawing of the hub carrier (PDF, PNG, readme) | Rear hub carrier, axle and hex hub (End B) |
-| `/cvd_drive_shafts` | `cvd_drive_shaft_end_a`, `cvd_drive_shaft_end_b` | CVD drive shafts |
 | `/steering` | `steering_post`, `bellcrank`, `steering_bridge`, `servo_horn_aluminium_clamp`, technical drawings of the steering post, the bellcrank and the steering bridge (PDF, PNG, readme) | Steering and servo horn; the bellcrank is the same part on both sides |
 | `/servo_mount` | `servo_mount_top_plate`, `servo_mount_fixed_post`, `servo_mount_floating_post`, technical drawings (PDF, PNG, readme) | Floating servo mount (top plate and 2 posts) |
-| `/sway_bars` | `sway_bar_end_a`, `sway_bar_end_b`, `sway_bar_holder_end_a`, `sway_bar_holder_end_b`, `sway_bar_ball_end_end_a`, `sway_bar_ball_end_end_b` | Sway bars, holders and ball ends |
 | `/generic_parts` | `running_gear_parameters.json` | All dimensions, each with its source and a note |
 
 * Purchased parts (bearings, brass sleeves and washers of the kingpins and of the bridge joints, shims, pins, screws, lock nuts, rod ends, turnbuckles, set screws of the drop links, ball studs, dampers, servo) are in the assembly only.
@@ -1118,7 +1112,7 @@ The directory `scripts/cad` contains the Python scripts that generate the CAD fi
 | `generate_driveshaft.py` | Parameter file of the driveshaft, parameter files of the bulkheads, STEP file of the speedrun chassis plate | STEP and STL files of the centre driveshaft, cup joint, rear pinion shaft, spur gear, bearing, motor mount with cap and diff outdrive, drawings `photos/cad_driveshaft_drawing.png`, `photos/cad_differential_drawing.png` and the assembly pictures of the rear and the front drive `photos/cad_drive_line_assembly.png`, checks of the play and of the fit | cadquery, matplotlib |
 | `generate_wishbones.py` | Parameter file of the wishbones, parameter files of the pivot blocks and the bulkheads, geometry data and STEP file of the speedrun chassis plate | STEP and STL files of the front and rear wishbones and of the inner hinge pin, drawing `photos/cad_wishbones_drawing.png` with the letters of the measurements, checks of the clearance to the pivot blocks, the bulkheads and the chassis plate and of the play of the hinge pins | cadquery, matplotlib |
 | `generate_measurement_sheets.py` | Parameter files of the wishbones and of the driveshaft | Measurement sheet `parts/parts_measurement_sheet.pdf` of the further own parts that are not measured yet (wishbones, bearing seat of the motor mount) | cadquery, matplotlib |
-| `generate_camber_links.py` | Parameter file of the camber links, parameter files of the shock towers and the bulkheads, wishbones | STEP and STL files of the camber links (turnbuckle, rod end, ball stud, assembled links), drawing `photos/cad_camber_links_drawing.png`, checks of the clearance to the shock towers, the bulkheads and the wishbones | cadquery, matplotlib |
+| `generate_camber_links.py` | Parameter file of the camber links (`generic_parts/camber_link_parameters.json`), parameter files of the shock towers and the bulkheads, wishbones | Model of the camber links in memory for the assembly (purchased parts, no part files), drawing `photos/cad_camber_links_drawing.png`, checks of the clearance to the shock towers, the bulkheads and the wishbones | cadquery, matplotlib |
 | `generate_running_gear.py` | Parameter file of the running gear, parameter files of the driveshaft, the bulkheads, the shock towers and the camber links, wishbones | STEP and STL files of the own parts of the running gear (C-hubs and rear hub carriers with the edge treatment of `edge_treatment.py`), drawing `photos/cad_running_gear_drawing.png`, free steering angle, Ackermann, overlap check of all parts against each other and against the assembly (option `--no-check`) | cadquery, matplotlib |
 | `edge_treatment.py` | Solid of a part, sizes, zones kept sharp | Chamfers on the sharp outer edges and radii in the sharp inner corners (several variants, the best one is kept; each kernel operation in a child process with a time limit; results cached in the temporary directory), report of the edges | cadquery |
 | `generate_knuckle_measurement_sheet.py` | Parameter file of the running gear (knuckle of the front corner) | Measurement sheet `running_gear/front_corner/steering_knuckle_measurement_sheet.pdf` of the original steering knuckle (views of the model with the letters K1 to K21, table with the model values and the measured values) | cadquery, matplotlib |

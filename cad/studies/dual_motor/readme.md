@@ -66,7 +66,7 @@ One battery and one ESC per motor; both ESCs get the same throttle signal. Pictu
 * Not modelled: body (190 mm wide), battery straps, switches of the ESCs, antenna.
 
 ## Open points
-* Battery: on the car the battery lies on the left side (photo `photos/rc_car_chassis_top_view_battery.jpg`, holes H11 to H23). The left motor takes this place. The [electronics layout](#electronics-layout) shows one battery 3S shorty on each outer side, on edge; a fit check with the body and the battery straps is open.
+* Battery: on the car the battery lies on the left side (photo of the owner, holes H11 to H23). The left motor takes this place. The [electronics layout](#electronics-layout) shows one battery 3S shorty on each outer side, on edge; a fit check with the body and the battery straps is open.
 * Electronics layout: the gap of 3.9 mm between the motor and the ESC leaves little room for the motor wires and their connectors; height of the batteries on edge (48.8 mm) under the body.
 * The motor axes are fixed by the spur gear (x = ±24.60 to 33.85 mm). The left motor window can therefore not be moved clear of the holes H11, H12, H14 and H15.
 * Electronics: 2 ESCs (or one ESC for 2 motors) with the same throttle signal; synchronisation of 2 sensorless motors on one spur gear.

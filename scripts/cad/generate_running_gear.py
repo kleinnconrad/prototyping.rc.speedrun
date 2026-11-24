@@ -1077,32 +1077,32 @@ def check(parts, others):
 KIND_COLORS = {k: P.rgb(k) for k in ("upright", "axle", "cvd", "steer", "damper", "spring", "servo", "swaybar",
                                      "rodend", "link", "arm", "plate")}
 KIND_COLORS["bulkhead"] = P.rgb("lower")                  # colour scheme of the CAD pictures (palette.py)
-MADE = {"upright", "cvd", "steer", "swaybar"}                  # own parts to manufacture (files)
-MADE_NAMES = ("axle with joint cup", "hex hub 12", "sway bar ball end")
+MADE = {"upright", "steer"}                                     # own parts to manufacture (files)
+MADE_NAMES = ("axle with joint cup", "hex hub 12")
+PURCHASED = ("sway bar", "CVD drive shaft")    # purchased (owner, 2026-11-24): in the assembly only, no files
 HANDED = ("C-hub",)              # parts without a plane of symmetry (caster): a left and a right part (mirror images)
 
 
 FOLDERS = {"front_corner": ("c_hub_end_a_right", "c_hub_end_a_left", "steering_knuckle_end_a", "axle_with_joint_cup_end_a",
                             "hex_hub_12_end_a"),
            "rear_corner": ("hub_carrier_end_b", "axle_with_joint_cup_end_b", "hex_hub_12_end_b"),
-           "cvd_drive_shafts": ("cvd_drive_shaft_end_a", "cvd_drive_shaft_end_b"),
            "steering": ("steering_post", "bellcrank", "steering_bridge",
                         "servo_horn_aluminium_clamp"),
-           "servo_mount": ("servo_mount_top_plate", "servo_mount_fixed_post", "servo_mount_floating_post"),
-           "sway_bars": ("sway_bar_end_a", "sway_bar_end_b", "sway_bar_holder_end_a", "sway_bar_holder_end_b",
-                         "sway_bar_ball_end_end_a", "sway_bar_ball_end_end_b")}
+           "servo_mount": ("servo_mount_top_plate", "servo_mount_fixed_post", "servo_mount_floating_post")}
 
 
 def write_files(parts):
     """STEP and STL of the own parts of the right side (assembly position, chassis plate coordinates), one folder per
     group of parts (FOLDERS). The other parts are the same on both sides; the handed parts (HANDED: no plane of
-    symmetry) get a file for the right and one for the left side (mirror image)."""
+    symmetry) get a file for the right and one for the left side (mirror image). Purchased parts (PURCHASED: sway bars
+    with holders and ball ends, CVD drive shafts) are in the assembly only."""
     import re
     folder = {stem: name for name, stems_ in FOLDERS.items() for stem in stems_}
     stems = []
     for name, kind, s in parts:
         handed = name.startswith(HANDED)
-        if (kind not in MADE and not name.startswith(MADE_NAMES)) or (name.endswith(" left") and not handed):
+        if (kind not in MADE and not name.startswith(MADE_NAMES)) or (name.endswith(" left") and not handed) \
+                or name.startswith(PURCHASED):
             continue
         side = name.rsplit(" ", 1)[1] if name.endswith((" right", " left")) else ""
         base = name[:-len(side) - 1] if side else name
