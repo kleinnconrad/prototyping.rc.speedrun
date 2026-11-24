@@ -12,14 +12,9 @@ The artefacts of this repository are:
 * Vehicle setup configurations in the `/setup_sheets` directory
 * CAD model of the 1:10 on-road car with the speedrun-specific parts (chassis plate, bulkheads, top brace, shock towers, front splitter, drive line, wishbones, running gear and their assembly) and 3D print files in the `/cad` directory: STEP, STL and DXF files, parameter files and drawings, described in the [CAD readme](cad/readme.md)
 
-<table>
-  <tr>
-    <td><img src="photos/rc_car.jpg" alt="RC car with clear body" width="420"></td>
-    <td><img src="photos/rc_car_chassis_top_view_battery.jpg" alt="RC car chassis without body, top view" width="316"></td>
-  </tr>
-</table>
+<img src="photos/rc_car.jpg" alt="RC car with clear body" width="420">
 
-The photos show the car with the parts of the manufacturers (Carten T410R kit and purchased components), not the own parts of the CAD model.
+The photo shows the car with the parts of the manufacturers (Carten T410R kit and purchased components), not the own parts of the CAD model.
 
 ## Table of contents
 * [Latest setup drawing](#latest-setup-drawing)
