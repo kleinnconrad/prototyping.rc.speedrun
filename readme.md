@@ -73,7 +73,7 @@ Further own parts (own design, partly based on the T410R, not in the mass total)
 | Cup joints of the centre driveshaft | 2 | $\color{red}\times$ Completely unqualified | `cad/generic_parts/driveshaft` |
 | Rear pinion shaft with pinion 17T, spur gear 72T, bearings and retaining pin | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/rear_drive` |
 | Front pinion shaft with pinion 17T, bearings and retaining pin | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/front_drive` |
-| Motor mount with cap | 1 | $\color{green}\checkmark$ Verified (test print; technically good; cosmetic changes after the print: smooth faces, round upper inner corner (R9)) | `cad/generic_parts/motor_mount` |
+| Motor mount with cap | 1 | $\color{green}\checkmark$ Verified (test print; technically good; cosmetic changes after the print: smooth faces, round upper inner corner (R9), edge chamfers 0.3 mm on the motor mount) | `cad/generic_parts/motor_mount` |
 | Differential (End B) with ring gear 42T, inner gears and bearings | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/diff` |
 | Spool (End A) with ring gear 42T and bearings | 1 | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification | `cad/generic_parts/diff` |
 | Diff outdrives (purchased) | 4 | $\color{red}\times$ Completely unqualified | Assembly only |
