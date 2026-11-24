@@ -16,9 +16,9 @@ rod ends follow from them.
 Usage (from the root directory of the repository):
     python scripts/cad/generate_camber_links.py
 
-The script writes the STEP and STL files of the rod end, the turnbuckle, the ball stud and the two
-assembled links, and checks the placed links against the shock towers, the bulkheads and the
-wishbones.
+The camber links are purchased parts (owner, 2026-11-24): the script builds the simplified model in memory for the
+assembly (links_in_plate) and the checks, writes no part files, draws photos/cad_camber_links_drawing.png and
+checks the placed links against the shock towers, the bulkheads and the wishbones.
 
 Requires the package cadquery.
 """
@@ -34,8 +34,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generate_bulkhead_lower import box, cyl_x, cyl_y, cyl_z, load_params  # noqa: E402
 from generate_top_brace_speedrun import BULKHEAD_Y  # noqa: E402
 
-PARAMS = "cad/generic_parts/camber_link/camber_link_parameters.json"
-OUT = "cad/generic_parts/camber_link"
+PARAMS = "cad/generic_parts/camber_link_parameters.json"
 LOWER = "cad/speedrun_parts/bulkhead/bulkhead_lower_parameters.json"
 UPPER = "cad/speedrun_parts/bulkhead/bulkhead_upper_parameters.json"
 PLATE_T = 2.0
@@ -264,23 +263,11 @@ def main():
     parser = argparse.ArgumentParser(description="Generate the camber links of the speedrun chassis.")
     parser.parse_args()
     p = load_params(PARAMS)
-    os.makedirs(OUT, exist_ok=True)
-    files = []
-    g = gaps(p)
+    g = gaps(p)                                        # purchased parts: model in memory only, no part files (owner)
     for name, gap in (("front", g["front"]), ("rear", g["rear"])):
         inner, outer, tb, L = link_parts(p, gap)
-        files.append((f"camber_link_{name}_T410R", cq.Compound.makeCompound([inner, outer, tb]), L))
-    files += [("rod_end", rod_end(p, "y", -1), None),
-              ("turnbuckle_M3x37", link_parts(p, g["rear"])[2].translate(
-                  cq.Vector(-link_parts(p, g["rear"])[3] / 2, 0, 0)), None),
-              ("ball_stud", ball_stud(p, (0, -1, 0), p["ball"][1] + 4.0), None)]
-    for stem, s, L in files:
-        bb = s.BoundingBox()
-        cq.exporters.export(cq.Workplane().add(s), f"{OUT}/{stem}.step")
-        cq.exporters.export(cq.Workplane().add(s), f"{OUT}/{stem}.stl", tolerance=0.01, angularTolerance=0.1)
-        extra = f", ball centres {L:.1f} mm apart" if L else ""
-        print(f"{stem}: wrote {OUT}/{stem}.step/.stl, valid: {s.isValid()}, size {bb.xlen:.2f} x {bb.ylen:.2f} x "
-              f"{bb.zlen:.2f} mm{extra}")
+        s = cq.Compound.makeCompound([inner, outer, tb])
+        print(f"camber link {name}: valid: {s.isValid()}, gap between the rod ends {gap:.1f} mm, ball centres {L:.1f} mm apart")
 
     drawing(p)
     print(f"Wrote {DRAWING}")

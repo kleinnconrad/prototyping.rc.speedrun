@@ -15,16 +15,16 @@ Derived from the models of this project: the pinion axis, the end faces of the p
 the motor mount (holes H09/H10 of the chassis plate) and the spur gear (slot of the chassis plate
 below the pinion axis). Cup joints: measurements of the owner. The other dimensions are typical
 values (cad/generic_parts/driveshaft/driveshaft_parameters.json). The shaft, the cup
-joints, the drive lines, the motor mount with its cap, the differential, the spool and the diff
-outdrives are the owner's own design, partly based on the T410R; the script writes the STEP and
-STL files of all these parts.
+joints, the drive lines, the motor mount with its cap, the differential and the spool are the owner's
+own design, partly based on the T410R; the diff outdrives are purchased (simplified model for the
+assembly).
 
 Usage (from the root directory of the repository):
     python scripts/cad/generate_driveshaft.py
 
-The script writes the STEP and STL files of all parts (cad/generic_parts/driveshaft, rear_drive,
-motor_mount and diff_outdrive) and the drawing photos/cad_driveshaft_drawing.png, and checks the
-play and the fit.
+The script writes the STEP and STL files of the parts (cad/generic_parts/driveshaft, rear_drive, front_drive,
+motor_mount and diff) and the drawing photos/cad_driveshaft_drawing.png, and checks the play and the fit. The diff
+outdrives are purchased parts (owner, 2026-11-24): in the assembly only, no part files.
 
 Requires the packages cadquery and matplotlib.
 """
@@ -721,8 +721,8 @@ def drawing(path, p, lay, items):
              f"{p['cup_slot_len']:g} mm (owner).\nSpur gear {p['spur_teeth']:g}T {p['spur_dp']:g}DP ({lay['spur_od']:.1f} mm) "
              f"in the slot of the chassis plate, motor mount {p['mount_t']:g} mm (owner) for 540 motors on the holes "
              "H09/H10. Thicknesses of the spur gear and the flange, outline of the motor mount and the gaps: typical "
-             "values; teeth of the spur gear simplified.\nDashed: slots of the cup joints (across the section). CAD files of all "
-             "parts: cad/generic_parts (driveshaft, rear_drive, motor_mount, diff_outdrive).",
+             "values; teeth of the spur gear simplified.\nDashed: slots of the cup joints (across the section). CAD files of the "
+             "parts: cad/generic_parts (driveshaft, rear_drive, motor_mount); diff outdrives purchased (assembly only).",
              fontsize=8, va="bottom")
     fig.savefig(path, dpi=110)
     plt.close(fig)
@@ -924,7 +924,6 @@ def main():
         ("motor_mount", "motor_mount_T410R", parts["motor mount"].translate(cq.Vector(0, -p["mount_y"], -PLATE_T))),
         ("motor_mount", "motor_mount_cap_T410R",
          parts["cap of the motor mount"].translate(cq.Vector(0, -p["mount_y"], -PLATE_T))),
-        ("diff_outdrive", "diff_outdrive_T410R", outdrive_solid(p)),
         ("diff", "diff_case_T410R", diff_solids(p, lp)["case"]),
         ("diff", "ring_gear_42T_T410R", diff_solids(p, lp)["ring"]),
         ("diff", "side_gear_14T_T410R", diff_solids(p, lp)["inner"]["_side_gear"]),
