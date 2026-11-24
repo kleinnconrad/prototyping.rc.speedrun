@@ -31,7 +31,8 @@ T410R; they are not in the mass total):
 Outputs:
 * cad/assembly/speedrun_chassis_T410R.step: assembly (STEP AP214, one solid per part)
 * photos/cad_speedrun_chassis_assembly.png: 3D view, side view, top view, close-ups of both ends and of the drive line at End B
-  (picture only: without the battery and the straps, servo shaft lower; see picture_parts)
+  (picture only: without the battery and the straps, servo shaft lower; see picture_parts, also used by
+  generate_assembly_drawing.py)
 
 The script checks all pairs of parts for interference and lists the volume and the mass of
 each part.
@@ -72,7 +73,10 @@ OUT_STEP = "cad/assembly/speedrun_chassis_T410R.step"
 OUT_PNG = "photos/cad_speedrun_chassis_assembly.png"
 COLORS = dict(PARTS)                       # colour scheme of the CAD pictures: blue and grey (palette.py)
 PICTURE_ONLY = set()                       # keys of parts shown in the picture only (not in the STEP file)
-NOT_IN_PICTURE = {"battery", "strap"}      # in the STEP file (checks), not in the picture: not part of the chassis (owner)
+# parts in the STEP file (checks), not in the picture and not in the assembly drawing: not part of the chassis (owner);
+# beginnings of the part names (generate_battery_tray.car_parts_in_plate), so that the assembly drawing can use them
+# with the parts read from the STEP file
+NOT_IN_PICTURE = ("battery Absima", "velcro straps")
 # servo output shaft in the picture (owner, 2026-11-23: in reality nearer the bottom of the servo): 7.0 lower than in the
 # model (6.0 above the lower face of the case, 13.0 below its top face; 10 would put the clamp of the horn into the
 # chassis plate). The model (STEP file, steering geometry) keeps the caliper value S3 of servo_position
@@ -162,11 +166,14 @@ def tess(shape, tol=0.05):
 
 
 def picture_parts(parts):
-    """Parts of the picture: without the battery and the straps (owner: only the battery tray is part of the chassis)
-    and with the servo output shaft, the horn, its ball stud and the servo link PICTURE_SERVO_DZ lower (owner)."""
+    """Parts of the picture and of the assembly drawing, list of (name, key, solid) as from build() (the key is not
+    used): without the battery and the straps (owner: only the battery tray is part of the chassis) and with the servo
+    output shaft, the horn, its ball stud and the servo link PICTURE_SERVO_DZ lower (owner)."""
     import generate_running_gear as G
     p = G.load_params(G.PARAMS)
-    out = [q for q in parts if q[1] not in NOT_IN_PICTURE]
+    if not hasattr(G.steering, "info"):
+        G.build(p)                                    # positions of the steering (parts read from the STEP file)
+    out = [q for q in parts if not q[0].startswith(NOT_IN_PICTURE)]
     by = {n: s for n, _, s in out}
     dz = PICTURE_SERVO_DZ
     hl, _, _, hf = p["servo_horn"]

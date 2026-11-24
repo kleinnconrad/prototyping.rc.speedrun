@@ -9,7 +9,7 @@
 
 ## Overview
 * Assembly drawing of the speedrun chassis with the further own parts: views and main dimensions, one sheet A3, first angle projection, scale 1:2.
-* The views are projected from the assembly STEP file (194 parts, hidden line removal). All dimensions are read from the model.
+* The views are projected from the assembly STEP file (hidden line removal). They show the 192 parts of the assembly picture (`photos/cad_speedrun_chassis_assembly.png`): without the battery and the velcro straps (not part of the chassis), with the servo output shaft, the horn and the servo link 7.0 mm lower than in the STEP file. All dimensions are read from the model.
 * Views: side view from the left side of the car (End A left), top view below it, view from End A (front) right of it.
 * The wheels are not modelled. The side view shows the tyres as phantom lines and the ground, from which the ride height is measured. Heights are measured from the bottom face of the chassis plate (z = 0).
 * Description of the assembly, parts and status: [CAD readme](../readme.md#speedrun-chassis).
