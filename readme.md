@@ -7,7 +7,7 @@ The technical challenge primarily results from the chosen scale and the limited 
 The repository also contains a CAD model of the complete 1:10 on-road car: speedrun-specific parts (chassis plate, bulkheads, top brace, shock towers, front splitter) and further parts of the owner's own design (drive line, wishbones, running gear). Some parts are based on the Carten T410R, others deviate from it (for example the C-hubs and the steering knuckles). The status of each CAD component (verified, measures qualified or completely unqualified; purchased parts without status) is listed in the status tables in the section [speedrun chassis design](#speedrun-chassis-design) and in the [CAD readme](cad/readme.md#parts-of-the-speedrun-chassis).
 
 The artefacts of this repository are:
-* CAD model of the 1:10 on-road car with the speedrun-specific parts (chassis plate, bulkheads, top brace, shock towers, front splitter, drive line, wishbones, running gear and their assembly) and 3D print files in the `/cad` directory: STEP, STL and DXF files, parameter files and drawings, described in the [CAD readme](cad/readme.md)
+* CAD model of the 1:10 speedrun car in the `/cad` directory: STEP, STL and DXF files, parameter files and drawings, described in the [CAD readme](cad/readme.md)
 * Vehicle setup configurations in the `/setup_sheets` directory
 * Architecture decision records (ADRs) in the `/architecture` directory
 * System specification in the `specs/full_spec.yaml` file
