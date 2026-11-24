@@ -158,7 +158,7 @@ def parts():
                     step=f"c_hub_end_a_{name}.step", stem=f"c_hub_end_a_{name}",
                     title=f"Front C-hub, {name}", number="CH-R" if side > 0 else "CH-L", frame=(Rc, O_),
                     **TEST_MATERIAL, quantity="1",
-                    edges=EDGES_TREATED, status="not verified; MJF test print ordered",
+                    edges=EDGES_TREATED, status="verified; MJF test print ordered",
                     frame_note=f"Drawing frame: origin O on the axis of the outer hinge pin in the middle of the lug, axes as "
                                f"in the chassis plate coordinates (x across the car, y along the car, z up); the STEP file is "
                                f"in the assembly position: O = ({O_[0]:.2f}, {O_[1]:.3f}, {O_[2]:.2f}).",
@@ -295,7 +295,7 @@ def parts():
         dict(key="hub_carrier", folder="cad/generic_parts/rear_corner", step="hub_carrier_end_b.step",
              stem="hub_carrier_end_b", title="Rear hub carrier (same part on both sides)", number="HC", auto_angles=False,
              frame=(Rh, Oh), **TEST_MATERIAL, quantity="2 (the same part on both sides)",
-             edges=EDGES_TREATED, status="measures qualified; MJF test print ordered",
+             edges=EDGES_TREATED, status="verified; MJF test print ordered",
              frame_note=f"Drawing frame: frame of the rear wishbone, origin O on the axis of the outer hinge pin in the middle "
                         f"of the tube on the pin, x along the axle (toward the wheel), y along the hinge pin, z up; the STEP file "
                         f"is in the assembly position of the right side (toe of the wishbone {np.degrees(np.arctan2(Rh[1, 0], Rh[0, 0])):.2f} "

@@ -1079,15 +1079,16 @@ KIND_COLORS = {k: P.rgb(k) for k in ("upright", "axle", "cvd", "steer", "damper"
 KIND_COLORS["bulkhead"] = P.rgb("lower")                  # colour scheme of the CAD pictures (palette.py)
 MADE = {"upright", "steer"}                                     # own parts to manufacture (files)
 MADE_NAMES = ("axle with joint cup", "hex hub 12")
-PURCHASED = ("sway bar", "CVD drive shaft")    # purchased (owner, 2026-11-24): in the assembly only, no files
+# purchased (owner, 2026-11-24): in the assembly only, no files; the steering links and the servo link (rod ends and
+# turnbuckles) are no own parts either
+PURCHASED = ("sway bar", "CVD drive shaft", "servo horn")
 HANDED = ("C-hub",)              # parts without a plane of symmetry (caster): a left and a right part (mirror images)
 
 
 FOLDERS = {"front_corner": ("c_hub_end_a_right", "c_hub_end_a_left", "steering_knuckle_end_a", "axle_with_joint_cup_end_a",
                             "hex_hub_12_end_a"),
            "rear_corner": ("hub_carrier_end_b", "axle_with_joint_cup_end_b", "hex_hub_12_end_b"),
-           "steering": ("steering_post", "bellcrank", "steering_bridge",
-                        "servo_horn_aluminium_clamp"),
+           "steering": ("steering_post", "bellcrank", "steering_bridge"),
            "servo_mount": ("servo_mount_top_plate", "servo_mount_fixed_post", "servo_mount_floating_post")}
 
 
@@ -1095,7 +1096,7 @@ def write_files(parts):
     """STEP and STL of the own parts of the right side (assembly position, chassis plate coordinates), one folder per
     group of parts (FOLDERS). The other parts are the same on both sides; the handed parts (HANDED: no plane of
     symmetry) get a file for the right and one for the left side (mirror image). Purchased parts (PURCHASED: sway bars
-    with holders and ball ends, CVD drive shafts) are in the assembly only."""
+    with holders and ball ends, CVD drive shafts, servo horn) are in the assembly only."""
     import re
     folder = {stem: name for name, stems_ in FOLDERS.items() for stem in stems_}
     stems = []
