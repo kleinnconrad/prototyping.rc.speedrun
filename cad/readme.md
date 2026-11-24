@@ -96,7 +96,7 @@ The picture (owner, 2026-11-23) shows the battery tray without the battery and t
 | [Speedrun front shock tower](#speedrun-shock-towers) | 1 | `/speedrun_parts/shock_tower` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 4.4 g (carbon), 7.7 g (7075) |
 | [Speedrun rear shock tower](#speedrun-shock-towers) | 1 | `/speedrun_parts/shock_tower` | $\color{green}\checkmark$ Verified | Carbon plate (2D milling) | Carbon or 7075 | 7.6 g (carbon), 13.4 g (7075) |
 | [Speedrun front splitter (one part: body post mount enlarged to the splitter)](#speedrun-front-splitter) | 1 | `/speedrun_parts/front_splitter` | $\color{green}\checkmark$ Verified (3D print of the owner; bosses of the screws 3 mm higher after the print) | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 38 g |
-| [Speedrun battery tray (LiPo Absima GreenHorn 3S 5000 hardcase)](#speedrun-battery-tray) | 1 | `/speedrun_parts/battery_tray` | $\color{green}\checkmark$ Verified (owner) | – | Nylon PA12 (MJF 3D print) | 24 g |
+| [Speedrun battery tray (LiPo Absima GreenHorn 3S 5000 hardcase)](#speedrun-battery-tray) | 1 | `/speedrun_parts/battery_tray` | $\color{green}\checkmark$ Verified (owner) | MJF 3D print (nylon PA12) | Nylon PA12 (MJF 3D print) | 24 g |
 | **Total** | | | | | Chassis plate 6082, bulkheads, front splitter and battery tray PA12, top brace and shock towers carbon | **368 g** |
 
 Further own parts (own design of the owner, partly based on the T410R, not in the mass total):
@@ -115,9 +115,9 @@ Further own parts (own design of the owner, partly based on the T410R, not in th
 | [Front wishbones](#wishbones) | 2 | `/generic_parts/wishbone` | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm and the blends of 2026-11-23 added after the print) |
 | [Rear wishbones](#wishbones) | 2 | `/generic_parts/wishbone` | $\color{green}\checkmark$ Verified (edge chamfers 0.3 mm and the blends of 2026-11-23 added after the print) |
 | [Inner hinge pins of the wishbones (3x42)](#wishbones) | 4 | `/generic_parts/wishbone` | $\color{red}\times$ Completely unqualified |
-| [Front C-hubs with 10 degrees caster (right and left part)](#running-gear) | 2 | `/generic_parts/front_corner` | $\color{red}\times$ Completely unqualified; kingpin bores 4.9 mm with brass guide sleeves 4.8 mm and washers M3 (owner), 3D print verification planned |
-| [Front steering knuckles](#running-gear) | 2 | `/generic_parts/front_corner` | $\color{green}\checkmark$ Verified (3D print of the owner) |
-| [Rear hub carriers](#running-gear) | 2 | `/generic_parts/rear_corner` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification |
+| [Front C-hubs with 10 degrees caster (right and left part)](#running-gear) | 2 | `/generic_parts/front_corner` | $\color{red}\times$ Completely unqualified; kingpin bores 4.9 mm with brass guide sleeves 4.8 mm and washers M3 (owner); MJF test print (nylon PA12) ordered for the test car |
+| [Front steering knuckles](#running-gear) | 2 | `/generic_parts/front_corner` | $\color{green}\checkmark$ Verified (3D print of the owner); MJF test print (nylon PA12) ordered for the test car |
+| [Rear hub carriers](#running-gear) | 2 | `/generic_parts/rear_corner` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification; MJF test print (nylon PA12) ordered for the test car |
 | [Axles with joint cup, hex hubs 12 mm](#running-gear) | 4 + 4 | `/generic_parts/front_corner`, `/generic_parts/rear_corner` | $\color{red}\times$ Completely unqualified |
 | [CVD drive shafts (purchased)](#running-gear) | 4 | Assembly only | $\color{red}\times$ Completely unqualified |
 | [Bellcranks (symmetric, the same part on both sides)](#running-gear) | 2 | `/generic_parts/steering` | $\color{gold}\blacktriangle$ Measures qualified, no 3D print verification; technical drawing |
@@ -130,6 +130,7 @@ Further own parts (own design of the owner, partly based on the T410R, not in th
 
 Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. The parts marked red are first designs: they still need a lot of refinement (dimensions, strength, fit and function on the car) and are not ready for manufacturing.
 
+* Test car (owner, 2026-11-24): the bulkheads, the shock towers, the battery tray, the C-hubs, the steering knuckles and the rear hub carriers are installed in a test car first. The battery tray, the C-hubs, the steering knuckles and the rear hub carriers are ordered as MJF 3D prints (nylon PA12). The C-hubs, the knuckles and the hub carriers are test parts: their technical drawings give nylon PA12 (MJF) with the MJF process tolerance; the final material is defined after the test.
 * The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³, nylon PA12 (MJF): 1.01 g/cm³). Screws, bearings and the other parts of the car are not included.
 * The bulkheads are the same parts at both ends. At End A, they are rotated by 180 degrees, so that both pinions point to the middle of the car.
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
@@ -655,7 +656,7 @@ Open points:
 ## Speedrun battery tray
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Speedrun battery tray for the LiPo Absima GreenHorn V2 3S 5000 mAh 50C hardcase (`specs/electronics/battery/spec_battery.yaml`) on the left side of the car, fixed with 4 countersunk screws M3x6 from below through H11, H12, H22 and H23 of the speedrun chassis plate (owner). 2 velcro straps 20 mm (owner) hold the battery from left to right. MJF 3D print in nylon PA12 (owner).
-* **Status:** $\color{green}\checkmark$ Verified by the owner (2026-11-20). The battery dimensions are taken from the manufacturer, the holes from the ordered chassis plate.
+* **Status:** $\color{green}\checkmark$ Verified by the owner (2026-11-20). The battery dimensions are taken from the manufacturer, the holes from the ordered chassis plate. Ordered as MJF 3D print in nylon PA12 (owner, 2026-11-24), installed in the test car first.
 
 ### Design of the speedrun battery tray
 ![Speedrun battery tray: tray alone, tray with the battery and the straps in the car beside the top brace and behind the steering, section across the car at a strap](../photos/cad_battery_tray_drawing.png)
@@ -1081,7 +1082,7 @@ All files are stored in the directory `/generic_parts` and are generated with `g
 **Open points of the running gear**
 
 * 3D print verification of the C-hub, the hub carrier, the steering and the servo mount.
-* C-hub: 3D print verification with the brass guide sleeves 4.8 x 3.2 x 4.0 mm and the washers M3 DIN 125-A (owner, 2026-11-22: standard parts instead of the Carten flanged sleeves). A sleeve Ø4.8 x Ø3.2 mm with a length of 4.0 mm was not found as a stock part (web search, 2026-11-22: RS PRO in 6, 10, 20 and 25 mm; no listing found for Conrad, Bauhaus or Hornbach): a 6 mm sleeve is shortened to 4.0 to 4.1 mm. With another sleeve length the faces of the C-hub follow from the parameters `guide_sleeve` and `front_c_hub`.
+* C-hub: MJF test print (nylon PA12) ordered for the test car (owner, 2026-11-24), also the steering knuckles and the rear hub carriers. Verification with the brass guide sleeves 4.8 x 3.2 x 4.0 mm and the washers M3 DIN 125-A (owner, 2026-11-22: standard parts instead of the Carten flanged sleeves). A sleeve Ø4.8 x Ø3.2 mm with a length of 4.0 mm was not found as a stock part (web search, 2026-11-22: RS PRO in 6, 10, 20 and 25 mm; no listing found for Conrad, Bauhaus or Hornbach): a 6 mm sleeve is shortened to 4.0 to 4.1 mm. With another sleeve length the faces of the C-hub follow from the parameters `guide_sleeve` and `front_c_hub`.
 * Steering knuckle: open dimensions of the original part K11, K14, K16 and K19 (measurement sheet `running_gear/front_corner/steering_knuckle_measurement_sheet.pdf`).
 * Track: measured by the owner on the original car: 173.7 mm from the outer face to the outer face of the hex hubs, front and rear (2026-11-20). The model has 173.7 mm at the rear (x = ±86.85 mm) and 177.7 mm at the front (x = ±88.85 mm): the front is 2.0 mm per side too wide. The owner compared the C-hub, the steering knuckle and the front wishbone (51.7 mm) with the original parts. Not measured in the front chain: the width of the front hex hub (6.0 mm from the manual) and the gap of 0.5 mm between the knuckle ring and the hex hub; a front hex hub of approx. 4 mm explains the difference (open: caliper value of the owner).
 * Height of the rear hub carrier: the axle lies 15.1 mm above the hinge pin (owner: lower end of the bearing tube 11.4 mm above the outer lower end of the tube on the hinge pin; photo: approx. 17 mm). Not measured: the outer diameter of the bearing tube (14.6 mm from the photo) and the radius of the tube on the hinge pin (3.6 mm); both change the axle height. The rear wishbones are horizontal in the model, so the rear ride height is 10.3 mm instead of 15 mm (setup sheet 4).

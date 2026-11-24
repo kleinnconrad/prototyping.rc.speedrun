@@ -103,6 +103,12 @@ def chassis_names(path="cad/speedrun_parts/chassis/chassis_plate_speedrun_wide_m
 GENERAL_CNC = "ISO 2768-mK"
 EDGES_BREAK = "break 0.1 to 0.2"
 EDGES_TREATED = "chamfer 0.3, radius 0.5 (modelled)"     # edge treatment of the C-hubs (printed)
+MJF_TOL = "process tolerance (MJF approx. ±0.3)"
+# C-hubs, steering knuckles and rear hub carriers: MJF 3D prints in PA12 ordered as test parts for a test car (owner,
+# 2026-11-24)
+TEST_MATERIAL = dict(material="Nylon PA12 (MJF 3D print, test part)", density=1.01, density_txt="PA12", tol=MJF_TOL,
+                     material_note="Test part for the test car (owner, 2026-11-24); the final material is defined after "
+                                   "the test.")
 
 
 def parts():
@@ -151,8 +157,8 @@ def parts():
         return dict(key="c_hub" if side > 0 else "c_hub_left", folder="cad/generic_parts/front_corner",
                     step=f"c_hub_end_a_{name}.step", stem=f"c_hub_end_a_{name}",
                     title=f"Front C-hub, {name}", number="CH-R" if side > 0 else "CH-L", frame=(Rc, O_),
-                    material="To be defined (3D print verification planned)", quantity="1", tol=GENERAL_CNC,
-                    edges=EDGES_TREATED, status="not verified",
+                    **TEST_MATERIAL, quantity="1",
+                    edges=EDGES_TREATED, status="not verified; MJF test print ordered",
                     frame_note=f"Drawing frame: origin O on the axis of the outer hinge pin in the middle of the lug, axes as "
                                f"in the chassis plate coordinates (x across the car, y along the car, z up); the STEP file is "
                                f"in the assembly position: O = ({O_[0]:.2f}, {O_[1]:.3f}, {O_[2]:.2f}).",
@@ -178,7 +184,8 @@ def parts():
                            f"{rgp['kingpin_y']:.2f} toward -y from O.",
                            "Bore Ø3.0 for the outer hinge pin 3x26: Ø3.0 H7 (proposal). The pin is fixed with a grub screw M3x4 "
                            "from below in the boss Ø6.0 below the tube (thread M3 4.2 long, face 5.7 below the axis of the pin: "
-                           "the screw lies fully in the thread with its tip on the pin).",
+                           "the screw lies fully in the thread with its tip on the pin). MJF test part: ream to Ø3.0 if the "
+                           "pin does not slide in.",
                            "Standard parts (owner): on each knuckle boss a washer M3 DIN 125-A (3.2 x 7 x 0.5) in the gap of 0.55 "
                            "between the boss and the arm, then the brass sleeve in the bore; the sleeves stand 0.1 proud of the "
                            "top face and of the bottom face (both square to the kingpin axis), so the ball stud and the screw "
@@ -271,8 +278,8 @@ def parts():
         c_hub(-1),
         dict(key="steering_knuckle", folder="cad/generic_parts/front_corner", step="steering_knuckle_end_a.step",
              stem="steering_knuckle_end_a", title="Front steering knuckle (same part on both sides)", number="SK",
-             frame=(Rk, Jk), material="To be defined (original part: plastic)", quantity="2 (the left one turned upside down)",
-             tol=GENERAL_CNC, edges=EDGES_BREAK, status="verified (3D print)",
+             frame=(Rk, Jk), **TEST_MATERIAL, quantity="2 (the left one turned upside down)",
+             edges=EDGES_BREAK, status="verified; MJF test print ordered",
              frame_note=f"Drawing frame: kingpin frame, origin O in the centre of the outer CVD joint (kingpin axis at the "
                         f"height of the axle), x along the axle (toward the wheel), z along the kingpin axis; the STEP file is "
                         f"in the assembly position (caster {rgp['caster']:g} deg): O = ({Jk[0]:.2f}, {Jk[1]:.3f}, {Jk[2]:.2f}).",
@@ -287,8 +294,8 @@ def parts():
                     "original part).", "Threads M3 in the steering arm for the ball stud of the steering link."]),
         dict(key="hub_carrier", folder="cad/generic_parts/rear_corner", step="hub_carrier_end_b.step",
              stem="hub_carrier_end_b", title="Rear hub carrier (same part on both sides)", number="HC", auto_angles=False,
-             frame=(Rh, Oh), material="To be defined (3D print verification planned)", quantity="2 (the same part on both sides)",
-             tol=GENERAL_CNC, edges=EDGES_TREATED, status="measures qualified, no 3D print verification",
+             frame=(Rh, Oh), **TEST_MATERIAL, quantity="2 (the same part on both sides)",
+             edges=EDGES_TREATED, status="measures qualified; MJF test print ordered",
              frame_note=f"Drawing frame: frame of the rear wishbone, origin O on the axis of the outer hinge pin in the middle "
                         f"of the tube on the pin, x along the axle (toward the wheel), y along the hinge pin, z up; the STEP file "
                         f"is in the assembly position of the right side (toe of the wishbone {np.degrees(np.arctan2(Rh[1, 0], Rh[0, 0])):.2f} "
@@ -550,7 +557,7 @@ def parts():
         dict(key="battery_tray", folder="cad/speedrun_parts/battery_tray", step="battery_tray_speedrun.step", stem="battery_tray_speedrun",
              title="Speedrun battery tray", number="BT", frame=(np.column_stack([(0, 1, 0), (-1, 0, 0), (0, 0, 1)]), sf["battery_tray"]),
              material="Nylon PA12 (MJF 3D print)", density=1.01, density_txt="PA12", quantity="1",
-             tol="process tolerance (MJF approx. ±0.3)", edges="chamfer 0.3 (modelled)", status="verified", section_gap=10,
+             tol=MJF_TOL, edges="chamfer 0.3 (modelled)", status="verified; ordered as MJF print (PA12)", section_gap=10,
              frame_note=f"Drawing frame: origin O in the middle between the holes H11, H12, H22 and H23 of the chassis plate on its "
                         f"top face; x along the car (+x toward End A), y toward the left side of the car, z up. The STEP file is in "
                         f"the assembly position: O = ({sf['battery_tray'][0]:.2f}, {sf['battery_tray'][1]:.2f}, {sf['battery_tray'][2]:.2f}).",
@@ -647,7 +654,8 @@ def note_lines(cfg, has_threads):
     lines = ["The STEP file is the master geometry. Dimensions that are not shown are taken from the model."]
     if cfg.get("frame_note"):
         lines.append(cfg["frame_note"])
-    lines.append(f"Material: {cfg['material']}. General tolerances: {cfg['tol']}.")
+    lines.append(f"Material: {cfg['material']}." + (f" {cfg['material_note']}" if cfg.get("material_note") else "") +
+                 f" General tolerances: {cfg['tol']}.")
     if has_threads:
         lines.append("Threads ISO metric, tolerance 6H. The model shows the tap drill; thread depth as in the hole table "
                      "(drill depth minus 1.0 for blind holes).")
