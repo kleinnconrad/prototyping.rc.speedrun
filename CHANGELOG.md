@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0](https://github.com/kleinnconrad/prototyping.rc.speedrun/compare/v1.7.0...v2.0.0) (2026-11-24)
+
+
+### Features
+
+* CAD model of the complete 1:10 on-road car with the speedrun chassis ([4d04898](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/4d04898053fd01937c7a66d2c9988697138e9669))
+
 ## [1.7.0](https://github.com/kleinnconrad/prototyping.rc.speedrun/compare/v1.6.0...v1.7.0) (2026-11-14)
 
 
