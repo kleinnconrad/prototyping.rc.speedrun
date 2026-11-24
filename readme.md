@@ -4,15 +4,15 @@ This project covers the system architecture and configuration of a 1:10 scale on
 
 The technical challenge primarily results from the chosen scale and the limited tire diameter of 64 millimeters. While vehicles from 1:8+ scale have strong physical advantages due to higher mass inertia, larger rolling circumferences, and a longer wheelbase, the 1:10 scale requires significantly higher rotor speeds. This leads to high mechanical stresses in the drivetrain. The low vehicle weight also requires precise aerodynamic and suspension tuning to ensure driving stability at high speeds.
 
-The repository also contains a CAD model of the complete 1:10 on-road car: speedrun-specific parts (chassis plate, bulkheads, top brace, shock towers, front splitter) and further parts of the owner's own design (drive line, wishbones, running gear). Some parts are based on the Carten T410R, others deviate strongly from it (for example the C-hubs and the steering knuckles). The status of each CAD component (verified, measures qualified or completely unqualified; purchased parts without status) is listed in the status tables in the section [speedrun chassis design](#speedrun-chassis-design) and in the [CAD readme](cad/readme.md#parts-of-the-speedrun-chassis).
+The repository also contains a CAD model of the complete 1:10 on-road car: speedrun-specific parts (chassis plate, bulkheads, top brace, shock towers, front splitter) and further parts of the owner's own design (drive line, wishbones, running gear). Some parts are based on the Carten T410R, others deviate from it (for example the C-hubs and the steering knuckles). The status of each CAD component (verified, measures qualified or completely unqualified; purchased parts without status) is listed in the status tables in the section [speedrun chassis design](#speedrun-chassis-design) and in the [CAD readme](cad/readme.md#parts-of-the-speedrun-chassis).
 
 The artefacts of this repository are:
+* CAD model of the 1:10 on-road car with the speedrun-specific parts (chassis plate, bulkheads, top brace, shock towers, front splitter, drive line, wishbones, running gear and their assembly) and 3D print files in the `/cad` directory: STEP, STL and DXF files, parameter files and drawings, described in the [CAD readme](cad/readme.md)
+* Vehicle setup configurations in the `/setup_sheets` directory
 * Architecture decision records (ADRs) in the `/architecture` directory
 * System specification in the `specs/full_spec.yaml` file
-* Vehicle setup configurations in the `/setup_sheets` directory
-* CAD model of the 1:10 on-road car with the speedrun-specific parts (chassis plate, bulkheads, top brace, shock towers, front splitter, drive line, wishbones, running gear and their assembly) and 3D print files in the `/cad` directory: STEP, STL and DXF files, parameter files and drawings, described in the [CAD readme](cad/readme.md)
 
-<img src="photos/rc_car.jpg" alt="RC car with clear body" width="420">
+<img src="photos/rc_car.jpg" alt="RC car with clear body" width="720">
 
 The photo shows the car with the parts of the manufacturers (Carten T410R kit and purchased components), not the own parts of the CAD model.
 
