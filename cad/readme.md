@@ -130,7 +130,7 @@ Further own parts (own design of the owner, partly based on the T410R, not in th
 
 Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. The parts marked red are first designs: they still need a lot of refinement (dimensions, strength, fit and function on the car) and are not ready for manufacturing.
 
-* Test car (owner, 2026-11-24): the bulkheads, the shock towers, the battery tray, the C-hubs, the steering knuckles and the rear hub carriers are installed in a test car first. The battery tray, the C-hubs, the steering knuckles and the rear hub carriers are ordered as MJF 3D prints (nylon PA12). The C-hubs, the knuckles and the hub carriers are test parts: their technical drawings give nylon PA12 (MJF) with the MJF process tolerance; the final material is defined after the test.
+* Test car (owner, 2026-11-24): the bulkheads, the shock towers, the C-hubs, the steering knuckles and the rear hub carriers are installed in a test car first. The chassis plate, the top brace and the front splitter go directly into the speedrun car. The C-hubs, the knuckles and the hub carriers are ordered as MJF 3D prints (nylon PA12) as test parts; their technical drawings give nylon PA12 (MJF) with the MJF process tolerance; the final material is defined after the test. The battery tray is ordered as MJF 3D print (nylon PA12).
 * The masses are calculated from the volumes of the solid models (6082: 2.70 g/cm³, 7075: 2.81 g/cm³, carbon: 1.6 g/cm³, nylon PA12 (MJF): 1.01 g/cm³). Screws, bearings and the other parts of the car are not included.
 * The bulkheads are the same parts at both ends. At End A, they are rotated by 180 degrees, so that both pinions point to the middle of the car.
 * The end of the top brace with the obround is at End B (motor window, spur gear). End A is assumed to be the front (see [open points of the lower bulkhead](#open-points-of-the-lower-bulkhead)).
@@ -656,7 +656,7 @@ Open points:
 ## Speedrun battery tray
 * **Author:** [@kleinnconrad](https://github.com/kleinnconrad)
 * **Description:** Speedrun battery tray for the LiPo Absima GreenHorn V2 3S 5000 mAh 50C hardcase (`specs/electronics/battery/spec_battery.yaml`) on the left side of the car, fixed with 4 countersunk screws M3x6 from below through H11, H12, H22 and H23 of the speedrun chassis plate (owner). 2 velcro straps 20 mm (owner) hold the battery from left to right. MJF 3D print in nylon PA12 (owner).
-* **Status:** $\color{green}\checkmark$ Verified by the owner (2026-11-20). The battery dimensions are taken from the manufacturer, the holes from the ordered chassis plate. Ordered as MJF 3D print in nylon PA12 (owner, 2026-11-24), installed in the test car first.
+* **Status:** $\color{green}\checkmark$ Verified by the owner (2026-11-20). The battery dimensions are taken from the manufacturer, the holes from the ordered chassis plate. Ordered as MJF 3D print in nylon PA12 (owner, 2026-11-24).
 
 ### Design of the speedrun battery tray
 ![Speedrun battery tray: tray alone, tray with the battery and the straps in the car beside the top brace and behind the steering, section across the car at a strap](../photos/cad_battery_tray_drawing.png)
