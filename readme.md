@@ -42,7 +42,7 @@ The speedrun chassis is designed in this project for speeds over 130 km/h. It co
 
 [![Speedrun chassis: assembly drawing with the views and the main dimensions](cad/assembly/speedrun_chassis_T410R_technical_drawing_sheet_1.png)](cad/assembly/speedrun_chassis_T410R_technical_drawing.pdf)
 
-The assembly drawing (one sheet A3, scale 1:2, [PDF](cad/assembly/speedrun_chassis_T410R_technical_drawing.pdf)) shows the side view, the top view and the view from End A with the main dimensions read from the assembly STEP file.
+The assembly drawing (one sheet A3, scale 1:2, [PDF](cad/assembly/speedrun_chassis_T410R_technical_drawing.pdf)) shows the parts of the assembly picture in the side view, the top view and the view from End A, with the main dimensions read from the assembly STEP file.
 
 | Part | Quantity | Status | Order | Mass |
 |:---|---:|:---|:---|---:|

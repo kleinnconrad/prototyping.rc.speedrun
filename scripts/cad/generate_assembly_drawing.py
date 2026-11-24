@@ -1,6 +1,9 @@
 """Assembly drawing of the speedrun chassis: views and main dimensions (one sheet A3, first angle projection, 1:2).
 
-The views are projected from the assembly STEP file with hidden line removal. All dimensions are read from the model:
+The views are projected from the assembly STEP file with hidden line removal. They show the parts of the assembly picture
+(generate_speedrun_assembly.picture_parts): without the battery and the velcro straps, with the servo output shaft, the
+horn, its ball stud and the servo link PICTURE_SERVO_DZ lower than in the STEP file. All dimensions are read from the
+model:
 * overall length, width and height: extreme points of all parts
 * track: outer face to outer face of the hex hubs (planar face of the hex hub square to the axle axis)
 * wheelbase: between the axle axes at the outer faces of the hex hubs
@@ -38,6 +41,7 @@ from OCP.GeomAbs import GeomAbs_Cylinder, GeomAbs_Plane
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import technical_drawing as TD  # noqa: E402
+import generate_speedrun_assembly as A  # noqa: E402
 from technical_drawing import View, text, linear, centre_line, centre_mark, view_label  # noqa: E402
 
 FOLDER = "cad/assembly"
@@ -83,6 +87,13 @@ def read_named_solids(path):
     for i in range(1, labels.Length() + 1):
         walk(labels.Value(i))
     return out
+
+
+def picture_parts(parts):
+    """Parts of the STEP file as in the assembly picture (list of (name, shape), names with underscores as in the STEP
+    file): without the battery and the straps, servo output shaft, horn and servo link lower (owner)."""
+    named = [(n.replace("_", " "), None, s) for n, s in parts]
+    return [(n.replace(" ", "_"), s) for n, _, s in A.picture_parts(named)]
 
 
 def bbox(shape):
@@ -230,7 +241,7 @@ def title_rows(v, n_parts, date):
             "subtitle": f"Assembly drawing: views and main dimensions. {STEM}.step (master geometry), {FOLDER}",
             "grid": [
                 [("Drawn", TD.AUTHOR), ("Date", date), ("Drawing number", f"RC-SR-{NUMBER}, revision A")],
-                [("Drawing type", "Assembly, main dimensions"), ("Parts", f"{n_parts} (assembly STEP file)"),
+                [("Drawing type", "Assembly, main dimensions"), ("Parts", f"{n_parts} (as in the assembly picture)"),
                  ("Scale", "1:2 (A3)")],
                 [("Materials", "see the part drawings"), ("Tolerances", "see the part drawings"), ("Units", "mm")],
                 [("Heights from", "bottom face of the chassis plate"),
@@ -266,8 +277,10 @@ def note_lines(v, n_parts):
                  f"the measured track: {dev}. The change of the model is an open point (CAD readme, running gear).")
     zmin = v["lo"][2]
     lines = [
-        f"The views are projected from the assembly STEP file ({n_parts} parts, hidden line removal). The STEP file is "
-        "the master geometry: dimensions that are not shown are taken from the model and from the drawings of the parts.",
+        f"The views are projected from the assembly STEP file (hidden line removal) and show the {n_parts} parts of the "
+        "assembly picture: without the battery and the velcro straps (not part of the chassis), servo output shaft, horn "
+        f"and servo link {-A.PICTURE_SERVO_DZ:.1f} lower than in the STEP file. The STEP file is the master geometry: "
+        "dimensions that are not shown are taken from the model and from the drawings of the parts.",
         "Heights from the bottom face of the chassis plate (z = 0)." +
         (f" The {', '.join(v['ext']['zmin'])} reaches {-zmin:.1f} below it." if zmin < -0.05 else ""),
         f"The wheels are not modelled. Side view: tyres Ø{2 * r:.0f} as phantom lines on the wheel centre planes "
@@ -440,8 +453,10 @@ def write_readme(v, n_parts):
              "* [Generating the drawing](#generating-the-drawing)", "", "## Overview",
              "* Assembly drawing of the speedrun chassis with the further own parts: views and main dimensions, one sheet "
              "A3, first angle projection, scale 1:2.",
-             f"* The views are projected from the assembly STEP file ({n_parts} parts, hidden line removal). All dimensions "
-             "are read from the model.",
+             "* The views are projected from the assembly STEP file (hidden line removal). They show the "
+             f"{n_parts} parts of the assembly picture (`photos/cad_speedrun_chassis_assembly.png`): without the battery "
+             "and the velcro straps (not part of the chassis), with the servo output shaft, the horn and the servo link "
+             f"{-A.PICTURE_SERVO_DZ:.1f} mm lower than in the STEP file. All dimensions are read from the model.",
              "* Views: side view from the left side of the car (End A left), top view below it, view from End A (front) "
              "right of it.",
              "* The wheels are not modelled. The side view shows the tyres as phantom lines and the ground, from which the "
@@ -472,7 +487,7 @@ def main():
     parser = argparse.ArgumentParser(description="Assembly drawing of the speedrun chassis (views and main dimensions).")
     parser.add_argument("--date", default=datetime.date.today().isoformat())
     args = parser.parse_args()
-    parts = read_named_solids(STEP)
+    parts = picture_parts(read_named_solids(STEP))
     v = model_values(parts)
     print(f"{len(parts)} parts; length {v['length']:.2f}, width {v['width']:.2f}, height {v['height']:.2f} "
           f"(lowest point z = {v['lo'][2]:.2f}); wheelbase {v['wheelbase']:.2f}; track front {v['track']['A']:.2f}, "
