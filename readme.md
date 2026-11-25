@@ -12,9 +12,9 @@ The artefacts of this repository are:
 * Architecture decision records (ADRs) in the `/architecture` directory
 * System specification in the `specs/full_spec.yaml` file
 
-<img src="photos/rc_car.jpg" alt="RC car with clear body" width="720">
+<img src="photos/rc_car_speedrun_chassis_plate_top_view.jpg" alt="Top view of the car without the body, with the custom chassis plate and the custom top brace" width="480">
 
-The photo shows the car with the parts of the manufacturers (Carten T410R kit and purchased components), not the own parts of the CAD model.
+The photo shows the car without the body in the version with the custom chassis plate and the custom top brace (speedrun chassis plate and speedrun top brace, see [speedrun chassis design](#speedrun-chassis-design)). Apart from these two parts, the car has the parts of the manufacturers (Carten T410R kit and purchased components). The custom front splitter will be mounted soon.
 
 ## Table of contents
 * [Speedrun chassis design](#speedrun-chassis-design)
