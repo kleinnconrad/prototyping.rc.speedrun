@@ -1,6 +1,6 @@
 # 1:10 onroad RC car for speeds over 130 km/h
 
-This project covers the system architecture and configuration of a 1:10 scale on-road touring car with the design goal of a consistently repeatable top speed of over 130 km/h without risking the car to be damaged or destroyed. The focus is on maximizing drive power while ensuring reliability and cost efficiency.
+This hobby project covers the system architecture and configuration of a 1:10 scale on-road touring car with the design goal of a consistently repeatable top speed of over 130 km/h without risking the car to be damaged or destroyed. The focus is on maximizing drive power while ensuring reliability and cost efficiency.
 
 The technical challenge primarily results from the chosen scale and the limited tire diameter of 64 millimeters. While vehicles from 1:8+ scale have strong physical advantages due to higher mass inertia, larger rolling circumferences, and a longer wheelbase, the 1:10 scale requires significantly higher rotor speeds. This leads to high mechanical stresses in the drivetrain. The low vehicle weight also requires precise aerodynamic and suspension tuning to ensure driving stability at high speeds.
 
@@ -19,16 +19,16 @@ The photo shows the car with the parts of the manufacturers (Carten T410R kit an
 ## Table of contents
 * [Speedrun chassis design](#speedrun-chassis-design)
 * [Latest setup drawing](#latest-setup-drawing)
-* [Repository structure](#repository-structure)
 * [Artefacts (ADR, specs, setup sheets)](#artefacts-adr-specs-setup-sheets)
-* [Calculation models for drivetrain design](#calculation-models-for-drivetrain-design)
 * [Learnings & modifications](#learnings--modifications)
+* [Calculation models for drivetrain design](#calculation-models-for-drivetrain-design)
+* [Repository structure](#repository-structure)
 * [Repository automation](#repository-automation)
 * [Follow-up project: Telemetry system](#follow-up-project-telemetry-system)
 * [Copyright](#copyright)
 
 ## Speedrun chassis design
-The speedrun chassis is designed in this project for speeds over 130 km/h. It consists of a wide aluminium chassis plate that matches the body, new bulkheads (gear boxes), designed for CNC manufacturing from 7075 and made as MJF 3D prints from nylon PA12, a new top brace, new front and rear shock towers, a front splitter (one part: the body post mount enlarged to the splitter) in place of the front foam bumper and a battery tray for the 3S hardcase LiPo. The drive line, the wishbones with the pivot blocks, the camber links and the running gear are the owner's own design. Some of them are based on parts of the Carten T410R, others deviate from them (for example the C-hubs and the steering knuckles).
+The speedrun chassis is designed in this project for speeds over 130 km/h. It consists of a wide aluminium chassis plate that matches the body, new bulkheads (gear boxes), designed for CNC manufacturing from 7075 and made as MJF 3D prints from nylon PA12, a new top brace, new front and rear shock towers, a front splitter (one part: the body post mount enlarged to the splitter) in place of the front foam bumper and a battery tray for the 3S hardcase LiPo. The drive line, the wishbones with the pivot blocks, the camber links and the running gear are the owner's own design. Some of them are based on parts of the Carten T410R, others deviate from them.
 
 **Motivation for the speedrun parts:**
 * Aluminium: the parts are designed so that they can be made from aluminium. The aluminium parts increase the stability of the car.
@@ -41,8 +41,6 @@ The speedrun chassis is designed in this project for speeds over 130 km/h. It co
 ![Speedrun chassis: complete build with the drive line, the wishbones and the running gear](photos/cad_speedrun_chassis_assembly.png)
 
 [![Speedrun chassis: assembly drawing with the views and the main dimensions](cad/assembly/speedrun_chassis_T410R_technical_drawing_sheet_1.png)](cad/assembly/speedrun_chassis_T410R_technical_drawing.pdf)
-
-The assembly drawing (one sheet A3, scale 1:2, [PDF](cad/assembly/speedrun_chassis_T410R_technical_drawing.pdf)) shows the parts of the assembly picture in the side view, the top view and the view from End A, with the main dimensions read from the assembly STEP file.
 
 **Speedrun parts** (designed for the speedrun chassis):
 
@@ -93,59 +91,13 @@ The assembly drawing (one sheet A3, scale 1:2, [PDF](cad/assembly/speedrun_chass
 | Sway bars with holders, ball ends and drop links | 2 | Assembly only (simplified) |
 | Dampers (standard 1:10 on-road) | 4 | Assembly only (simplified) |
 
-* Status: $\color{green}\checkmark$ verified (test print or on the car), $\color{gold}\blacktriangle$ measures qualified, no 3D print verification, $\color{red}\times$ completely unqualified. Purchased parts (assembly only, no part files) have no status. All parts of the speedrun design are verified (the battery tray by the owner, battery dimensions from the manufacturer). The front splitter (one part) is verified with a 3D print of the owner; after the print the bosses of the 3 screws are 3 mm higher. Of the further own parts, the pivot blocks, the motor mount, the wishbones (with the pin bores Ø3.1 mm for the pins Ø3.0 mm), the C-hubs, the steering knuckles, the rear hub carriers and the servo mount are verified (the motor mount with cosmetic changes after the print: smooth faces, round upper inner corner; the C-hubs and the rear hub carriers: 3D prints of the owner, fit checked); the centre driveshaft, the drive lines (pinion shafts, pinions, spur gear), the differentials, the steering posts, the bellcranks and the steering bridge are qualified by measurements (caliper and photos of the owner); the axles and the hex hubs are not qualified. Purchased parts (cup joints of the centre driveshaft, diff outdrives, inner hinge pins of the wishbones, camber links, CVD drive shafts, steering links, servo link and servo horn, sway bars, dampers) are in the assembly only and have no status. The parts marked red are first designs: they still need a lot of refinement (dimensions, strength, fit and function on the car) and are not ready for manufacturing. The bulkheads have radii and edge chamfers on the outer side for CNC milling; the inside of the parts is the verified geometry (see [edges of the outer shape](cad/readme.md#design-of-the-lower-bulkhead)). The original shock tower plates do not fit the speedrun upper bulkhead; the [speedrun shock towers](cad/readme.md#speedrun-shock-towers) are designed for it. All holes of the towers are at the positions of the original towers; the shock tower wall of the upper bulkhead is narrowed so that the rod ends of the camber links have space beside it. The status of each part, the open points and all files are described in the [CAD readme](cad/readme.md#speedrun-chassis).
 * Test car (owner, 2026-11-24): the bulkheads, the shock towers, the C-hubs, the steering knuckles and the rear hub carriers are installed in a test car first. The chassis plate, the top brace and the front splitter go directly into the speedrun car. The C-hubs, the knuckles and the hub carriers are ordered as MJF 3D prints (nylon PA12) as test parts; their final material is defined after the test. The battery tray is ordered as MJF 3D print (nylon PA12).
-* Colours: blue and grey shades only (colour scheme of all CAD pictures, `scripts/cad/palette.py`), no legend. The design of the differential: [CAD readme](cad/readme.md#differentials). The bottom row shows close-ups of End A and End B from the outer end and of the drive line at End B (spur gear, motor mount with cap, cup joint) from the middle of the car, without the top brace and the shock tower. The design of the running gear (caster, steering, Ackermann): [CAD readme](cad/readme.md#running-gear).
 * The assembly is available as a STEP file (`cad/assembly/speedrun_chassis_T410R.step`).
 
 ## Latest setup drawing
-The technical drawing shows the configuration of the latest setup sheet in a side view, a plan view and views of the front and rear axle. It also contains all setup parameters, values derived from them and the changes between the setup sheet versions. Values in orange are taken from the setup sheet, the chassis dimensions from the Carten T410R specification. Component positions are schematic.
-
 The drawing is generated by `scripts/generate_setup_drawing.py` and is updated automatically when a new setup sheet is pushed to the main branch. The setup dashboard on GitHub Pages shows the same drawing in a dark variant.
 
 ![Technical drawing of the latest Carten T410R setup](photos/latest_setup_drawing.svg)
-
-## Repository structure
-* **`/architecture`**: Architecture decision records (ADRs) of the basic system designs (YAML) and their readme
-* **`/cad`**: CAD model of the car and 3D print files, described in the [CAD readme](cad/readme.md)
-  * **`/speedrun_parts`**: Parts designed for the speedrun chassis
-    * **`/chassis`**: Speedrun chassis plate (wide, with the longer motor window) and speedrun top brace with one subdirectory per part, the T410R chassis plate and top brace as source data, test print files (STEP, STL, DXF, OpenSCAD, PDF templates, geometry data, hole tables, technical drawings)
-    * **`/bulkhead`**: Lower and upper bulkhead (STEP, STL, test print files, parameter files, measurement sheets, technical drawings)
-    * **`/shock_tower`**: Front and rear shock tower for the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, technical drawings)
-    * **`/front_splitter`**: Front splitter at End A, one part: the body post mount enlarged to the splitter (STEP, STL, test print STL, parameter file, measurement sheet, technical drawing)
-    * **`/battery_tray`**: Battery tray for the 3S hardcase LiPo (STEP, STL, parameter file, technical drawing)
-  * **`/generic_parts`**: Own parts for manufacturing (own design, partly based on the T410R); parameter files of the running gear and of the camber links, measurement sheet of the wishbones and the motor mount
-    * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file, technical drawings)
-    * **`/driveshaft`**: Centre driveshaft with the fixed metal pins (STEP, STL, parameter file of the drive line)
-    * **`/rear_drive`**: Rear pinion shaft, pinion 17T, spur gear 72T, bearing and retaining pin (STEP, STL)
-    * **`/front_drive`**: Front pinion shaft (STEP, STL)
-    * **`/motor_mount`**: Motor mount for 540 motors and its cap (STEP, STL, technical drawings)
-    * **`/diff`**: Differential (case, ring gear 42T, inner gears, shims, bearing) and spool (STEP, STL)
-    * **`/wishbone`**: Front and rear wishbones (STEP, STL, parameter file, technical drawings)
-    * **`/front_corner`**: C-hubs, steering knuckles, axles and hex hubs at End A (STEP, STL, technical drawings, measurement sheet of the steering knuckle)
-    * **`/rear_corner`**: Rear hub carriers, axles and hex hubs at End B (STEP, STL, technical drawing of the hub carrier)
-    * **`/steering`**: Steering posts, bellcranks and steering bridge (STEP, STL, technical drawings)
-    * **`/servo_mount`**: Floating servo mount: top plate, fixed post, floating post (STEP, STL, technical drawings)
-  * **`/assembly`**: Assembly of the speedrun chassis (STEP) and the assembly drawing (PDF, PNG)
-  * **`/studies`**: Design studies that are not part of the build, one subdirectory per study: dual motor, rear fork carrier, closed chassis plate
-  * **`/3d_print_fdm`**: STL files of FDM printed parts for the car and a maintenance stand
-  * Purchased parts (cup joints, diff outdrives, inner hinge pins, camber links, CVD drive shafts, steering links, servo link, servo horn, sway bars, dampers) are simplified models in the assembly only and have no part files.
-* **`/docs`**: Static web dashboard for visualizing the latest setup configuration (GitHub Pages)
-* **`/photos`**: Central directory for all image files
-* **`/project`**: General project information, speedrun cookbook and session summary
-  * **`/costs`**: Cost tracking
-  * **`/follow_up_projects`**: Documentation of related follow-up projects
-* **`/scripts`**: Automation scripts (ADR readme, setup drawing, dashboard data, merged specification)
-  * **`/cad`**: CAD scripts (parts, assembly, checks, technical drawings, measurement sheets, print templates, DXF generation)
-  * **`/calc`**: Calculation scripts
-  * **`/plots`**: Plot scripts
-* **`/setup_sheets`**: Vehicle setup configurations
-* **`/specs`**: Specifications of the vehicle components and the merged specification `full_spec.yaml`
-  * **`/electronics`**: Selection and specification of electronic components such as motors, electronic speed controllers, and batteries
-  * **`/mechanics`**: Chassis design and specification of physical components
-* **`/testing`**: Test results and performance measurement data
-  * **`/error_list`**: Error logs and their resolutions
-  * **`/tests`**: Logs and data of the test drives, speedrun sessions, RPM test and smoke test
 
 ## Artefacts (ADR, specs, setup sheets)
 The documentation of architecture decisions (ADRs), the specifications of all mechanical and electronic components, and the vehicle setup configurations are consistently maintained as structured YAML files (`.yml` or `.yaml`). The formal hierarchical structure of these artefacts is standardized as follows:
@@ -197,11 +149,6 @@ classDiagram
     setup *-- setup_meta : meta
     setup *-- setup_properties : properties
 ```
-
-## Calculation models for drivetrain design
-To avoid thermal or mechanical overload of the electronic components, custom-developed calculation models are used:
-* **Gearing calculator (`scripts/calc/gearing_calc.py`)**: Simulates the mechanical wheel load for the motor based on tire diameter and target speed, depending on available motor pinions. Setups are categorized into load zones for the defined drive system.
-* **Limit calculator (`scripts/calc/max_speed.py`)**: Calculates the achievable top speed considering specific motor data, battery voltage, and defined thermal tolerance limits based on physical hardware specifications.
 
 ## Learnings & modifications
 This section documents the findings from previous tests & speedruns in 1:10 scale as well as the resulting modifications to the vehicle. Each area can be expanded.
@@ -286,6 +233,53 @@ This section documents the findings from previous tests & speedruns in 1:10 scal
 
 [badge-learning]: https://img.shields.io/badge/learning-0e8a16?style=flat-square
 [badge-modification]: https://img.shields.io/badge/modification-b60205?style=flat-square
+
+## Calculation models for drivetrain design
+To avoid thermal or mechanical overload of the electronic components, custom-developed calculation models are used:
+* **Gearing calculator (`scripts/calc/gearing_calc.py`)**: Simulates the mechanical wheel load for the motor based on tire diameter and target speed, depending on available motor pinions. Setups are categorized into load zones for the defined drive system.
+* **Limit calculator (`scripts/calc/max_speed.py`)**: Calculates the achievable top speed considering specific motor data, battery voltage, and defined thermal tolerance limits based on physical hardware specifications.
+
+## Repository structure
+* **`/architecture`**: Architecture decision records (ADRs) of the basic system designs (YAML) and their readme
+* **`/cad`**: CAD model of the car and 3D print files, described in the [CAD readme](cad/readme.md)
+  * **`/speedrun_parts`**: Parts designed for the speedrun chassis
+    * **`/chassis`**: Speedrun chassis plate (wide, with the longer motor window) and speedrun top brace with one subdirectory per part, the T410R chassis plate and top brace as source data, test print files (STEP, STL, DXF, OpenSCAD, PDF templates, geometry data, hole tables, technical drawings)
+    * **`/bulkhead`**: Lower and upper bulkhead (STEP, STL, test print files, parameter files, measurement sheets, technical drawings)
+    * **`/shock_tower`**: Front and rear shock tower for the speedrun upper bulkhead (STEP, STL, DXF, PDF templates, geometry data, parameter file, technical drawings)
+    * **`/front_splitter`**: Front splitter at End A, one part: the body post mount enlarged to the splitter (STEP, STL, test print STL, parameter file, measurement sheet, technical drawing)
+    * **`/battery_tray`**: Battery tray for the 3S hardcase LiPo (STEP, STL, parameter file, technical drawing)
+  * **`/generic_parts`**: Own parts for manufacturing (own design, partly based on the T410R); parameter files of the running gear and of the camber links, measurement sheet of the wishbones and the motor mount
+    * **`/pivot_block`**: Pivot blocks of the wishbones (STEP, STL, parameter file, technical drawings)
+    * **`/driveshaft`**: Centre driveshaft with the fixed metal pins (STEP, STL, parameter file of the drive line)
+    * **`/rear_drive`**: Rear pinion shaft, pinion 17T, spur gear 72T, bearing and retaining pin (STEP, STL)
+    * **`/front_drive`**: Front pinion shaft (STEP, STL)
+    * **`/motor_mount`**: Motor mount for 540 motors and its cap (STEP, STL, technical drawings)
+    * **`/diff`**: Differential (case, ring gear 42T, inner gears, shims, bearing) and spool (STEP, STL)
+    * **`/wishbone`**: Front and rear wishbones (STEP, STL, parameter file, technical drawings)
+    * **`/front_corner`**: C-hubs, steering knuckles, axles and hex hubs at End A (STEP, STL, technical drawings, measurement sheet of the steering knuckle)
+    * **`/rear_corner`**: Rear hub carriers, axles and hex hubs at End B (STEP, STL, technical drawing of the hub carrier)
+    * **`/steering`**: Steering posts, bellcranks and steering bridge (STEP, STL, technical drawings)
+    * **`/servo_mount`**: Floating servo mount: top plate, fixed post, floating post (STEP, STL, technical drawings)
+  * **`/assembly`**: Assembly of the speedrun chassis (STEP) and the assembly drawing (PDF, PNG)
+  * **`/studies`**: Design studies that are not part of the build, one subdirectory per study: dual motor, rear fork carrier, closed chassis plate
+  * **`/3d_print_fdm`**: STL files of FDM printed parts for the car and a maintenance stand
+  * Purchased parts (cup joints, diff outdrives, inner hinge pins, camber links, CVD drive shafts, steering links, servo link, servo horn, sway bars, dampers) are simplified models in the assembly only and have no part files.
+* **`/docs`**: Static web dashboard for visualizing the latest setup configuration (GitHub Pages)
+* **`/photos`**: Central directory for all image files
+* **`/project`**: General project information, speedrun cookbook and session summary
+  * **`/costs`**: Cost tracking
+  * **`/follow_up_projects`**: Documentation of related follow-up projects
+* **`/scripts`**: Automation scripts (ADR readme, setup drawing, dashboard data, merged specification)
+  * **`/cad`**: CAD scripts (parts, assembly, checks, technical drawings, measurement sheets, print templates, DXF generation)
+  * **`/calc`**: Calculation scripts
+  * **`/plots`**: Plot scripts
+* **`/setup_sheets`**: Vehicle setup configurations
+* **`/specs`**: Specifications of the vehicle components and the merged specification `full_spec.yaml`
+  * **`/electronics`**: Selection and specification of electronic components such as motors, electronic speed controllers, and batteries
+  * **`/mechanics`**: Chassis design and specification of physical components
+* **`/testing`**: Test results and performance measurement data
+  * **`/error_list`**: Error logs and their resolutions
+  * **`/tests`**: Logs and data of the test drives, speedrun sessions, RPM test and smoke test
 
 ## Repository automation
 Maintaining the specifications, architecture decisions and setup sheets formatted as YAML files triggers automated processes:
