@@ -157,10 +157,10 @@ This section documents the findings from previous tests & speedruns in 1:10 scal
 |:---|---:|---:|
 | Driving operation & environment | 4 | 0 |
 | Suspension & geometry | 2 | 5 |
-| Drivetrain | 3 | 3 |
+| Drivetrain | 3 | 4 |
 | Electronics & control | 5 | 0 |
 | Chassis & assembly | 5 | 2 |
-| **Total** | **19** | **10** |
+| **Total** | **19** | **11** |
 
 <details>
 <summary><b>Driving operation & environment</b></summary>
@@ -200,6 +200,7 @@ This section documents the findings from previous tests & speedruns in 1:10 scal
 | ![learning][badge-learning] | Differential (rear) | Making the rear differential stiffer is not necessary. The front spool is sufficient. |
 | ![learning][badge-learning] | Thermal management | Problems with ESC and motor temperature have not occurred yet. The problem is apparently overrated. |
 | ![modification][badge-modification] | Motor cooling | The motor cooling was removed. The motor does not heat up significantly during speedruns and drives the final drive ratio of 3.91 without problems. A fan is mounted for visual reasons only and is not required for cooling. |
+| ![modification][badge-modification] | Centre driveshaft | An O-ring was inserted into the front cup joint of the centre driveshaft. It shortens and dampens the longitudinal play of the shaft. This is intended to mitigate the oscillation (whipping) of the centre driveshaft at high rpm (see [error log](testing/error_list/error_log.md), no. 10). |
 
 </details>
 
