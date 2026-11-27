@@ -41,6 +41,7 @@ properties:
     max_current_a: 250
     motor_type: 3660
     motor_kv: 3700
+    motor_timing_deg: 11.25
     esc_a: 120
     esc_punch_level: 1
     bec_voltage_v: 6.0
