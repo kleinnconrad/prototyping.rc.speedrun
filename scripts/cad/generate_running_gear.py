@@ -715,7 +715,8 @@ def build(p=None):
                                "rise of the leg (deg)": round(math.degrees(math.asin(u[2])), 1)}
         for sx in (1, -1):
             hx, hy = loc(sx * lp["swaybar_hole_x"], lp["swaybar_hole_y"])
-            y0, y1 = sorted((loc(0, -33.0)[1], loc(0, -26.0)[1]))
+            # holder from 4.3 outside to 2.7 inside the screw hole of the tab (y in the coordinates of the bulkhead)
+            y0, y1 = sorted((loc(0, lp["swaybar_hole_y"] - 4.3)[1], loc(0, lp["swaybar_hole_y"] + 2.7)[1]))
             hold = box(hx - 3.2, hx + 3.2, y0, y1, AXIS_Z, AXIS_Z + 4.0)
             hold = hold.cut(cyl_z(1.6, AXIS_Z - 1, AXIS_Z + 5, hx, hy)).cut(cyl_x(bar_d / 2 + 0.05, hx - 4, hx + 4, yb, z_bar))
             out.append((f"sway bar holder {label} {'right' if sx > 0 else 'left'}", "steer", hold.clean()))

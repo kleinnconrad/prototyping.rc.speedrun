@@ -318,7 +318,7 @@ ROWS = [
      "24.8 / 5.0", "- / 5.0"),
     (23, "A", "Sway bar holes: spacing", "as no. 1", "16.2", "16.2"),
     (24, "A", "Sway bar hole to the outer top boss hole, along (y)", "inside jaws, far edges, minus diameters",
-     "7.4", "7.4"),
+     "9.4", "7.4"),  # model: tabs 2.0 further toward the outer end (owner, 2026-11-27)
     (25, "B", "Sway bar tabs: thickness", "outside jaws", "4.35", "4.35"),
     (26, "B", "Floor below the ring gear deepening", "-", "open 6.85 x 5", "open (test print)"),
     (27, "A", "Diff: outer diameter of the ring gear", "outside jaws on the diff", "max. 31.9", "31.93"),

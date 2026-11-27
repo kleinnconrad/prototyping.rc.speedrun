@@ -18,12 +18,12 @@
 ## Main dimensions
 | Dimension | Value | Reference |
 |:---|:---|:---|
-| Overall length | 419.4 mm | Sway bar holder (End B) to front splitter (End A) |
+| Overall length | 421.4 mm | Sway bar holder (End B) to front splitter (End A) |
 | Overall width, width of the chassis plate | 200.0 mm | Chassis plate |
 | Overall height | 61.6 mm | Bottom face of the chassis plate to the top of the rear shock tower |
 | Wheelbase | 257.5 mm | Axle axes at the outer faces of the hex hubs |
 | Front overhang | 123.0 mm | Front axle axis to the front splitter |
-| Rear overhang | 38.8 mm | Rear axle axis to the sway bar holder |
+| Rear overhang | 40.8 mm | Rear axle axis to the sway bar holder |
 | Track front (End A) | 177.7 mm | Outer face to outer face of the hex hubs |
 | Track rear (End B) | 173.7 mm | Outer face to outer face of the hex hubs |
 | Axle height front | 22.0 mm | From the bottom face of the chassis plate |

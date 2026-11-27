@@ -16,7 +16,8 @@ part follows the original mount of the T410R (photos and measurements of the own
   beside the mount and narrower toward the tips (variant C of the design suggestions, owner), clear of the front tyres
   at full steering lock.
 * Fixing: countersunk screws M3x6 from below through H34, H35 and H36 into bosses with blind tapped holes (not
-  visible from above). The bosses are 3.0 mm higher after the 3D print of the owner (one_piece).
+  visible from above). The bosses are 3.0 mm higher after the 3D print of the owner and 1.0 mm higher again on
+  request of the owner (2026-11-27; one_piece).
 
 All values with their source: cad/speedrun_parts/front_splitter/front_splitter_parameters.json. The measurement sheet lists the
 measured values of the owner and the open points (scripts/cad/generate_front_splitter_measurement_sheet.py).

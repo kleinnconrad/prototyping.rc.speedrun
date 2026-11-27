@@ -60,7 +60,7 @@
     "top_hole_d": {"value": 2.5, "source": "design", "note": "Tap drill for M3. Original part: 3.1 (pinion side), 2.7 (outer side)."},
     "top_hole_depth": {"value": 7.0, "source": "design", "note": "Drill depth from the top of the bosses."},
     "swaybar_hole_x": {"value": 8.1, "source": "caliper", "note": "No. 23: spacing 16.2 (18.8 - 2.6). M3 screws (user)."},
-    "swaybar_hole_y": {"value": -28.7, "source": "derived", "note": "No. 24: 7.4 from the outer top boss holes. Bottom view photo: -28.6."},
+    "swaybar_hole_y": {"value": -30.7, "source": "owner", "note": "Owner (2026-11-27): the tabs with the sway bar holes are 2.0 further toward the outer end of the car, so that the stock sway bars work. Before: -28.7 (no. 24: 7.4 from the outer top boss holes; bottom view photo: -28.6)."},
     "swaybar_tab_r": {"value": 2.8, "source": "photo", "note": "Outer radius of the tabs around the sway bar holes."},
     "swaybar_tab_t": {"value": 4.35, "source": "caliper", "note": "No. 25: thickness of the tabs. The top face of the tabs is the parting face (side view photo, to be confirmed)."},
     "swaybar_hole_d": {"value": 2.5, "source": "design", "note": "Tap drill for M3. Original part: 2.6."},
