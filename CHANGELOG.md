@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.1.0](https://github.com/kleinnconrad/prototyping.rc.speedrun/compare/v2.0.0...v2.1.0) (2026-11-28)
+
+
+### Features
+
+* motor timing 11.25 degrees in the setup sheet ([62924bf](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/62924bf64f7c8165baf82d4d5496a75810f53203))
+
+
+### Bug Fixes
+
+* sway bar tabs 2 mm further out, front splitter bosses 1 mm higher ([e10ec52](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/e10ec52cdb11532b387cb07bed6816d735a2524f))
+* sway bar tabs 2 mm further out, front splitter bosses 1 mm higher ([bb17439](https://github.com/kleinnconrad/prototyping.rc.speedrun/commit/bb17439564469fb5b9376a99fedcc669da82484b))
+
 ## [2.0.0](https://github.com/kleinnconrad/prototyping.rc.speedrun/compare/v1.7.0...v2.0.0) (2026-11-24)
 
 
