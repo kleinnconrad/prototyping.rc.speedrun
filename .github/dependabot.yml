@@ -1,0 +1,19 @@
+# Dependabot version updates
+# The workflows in .github/workflows are the only dependency manifests of the repository:
+# Dependabot checks the versions of the GitHub Actions used there once a week and opens one
+# pull request with all available updates. The commit messages use the prefix "chore(deps)",
+# so release-please does not create a release for these updates.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      github-actions:
+        patterns:
+          - "*"

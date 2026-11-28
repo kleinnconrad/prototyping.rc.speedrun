@@ -289,6 +289,8 @@ Maintaining the specifications, architecture decisions and setup sheets formatte
 * **Setup dashboard**: The setup dashboard on GitHub Pages shows the dark variant of the setup drawing. The latest setup sheet is also published there as data file (`docs/latest_setup.json`).
 * **Setup drawing**: The latest setup sheet is converted to the technical drawing `photos/latest_setup_drawing.svg`, which is shown in this readme, and to a dark variant `docs/latest_setup_drawing.svg` for the setup dashboard.
 
+Dependabot (`.github/dependabot.yml`) checks the versions of the GitHub Actions used by these workflows once a week and opens one pull request with all available updates (commit prefix `chore(deps)`, no release).
+
 The bill of materials (`project/costs`) is maintained manually.
 
 ## Follow-up project: Telemetry system
