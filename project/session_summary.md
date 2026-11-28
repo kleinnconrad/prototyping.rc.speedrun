@@ -163,6 +163,7 @@ for f in subprocess.run(["git", "diff", "--name-only", "--diff-filter=M"], captu
   * Checks: running gear 0 overlaps; assembly only the 3 known interferences (0.34, 4.47, 4.47 mm³), mass total 368 g; camber links 0; front splitter no overlap, tyre clearance 12.81 mm; battery tray no overlap, left steering 2.35 mm; studies 0 mm³ (dual motor, electronics, rear fork carrier, closed chassis plate). Assembly drawing: overall length 421.4 mm, rear overhang 40.8 mm (before 419.4 and 38.8).
   * The explanation picture `kingpin_sleeves_and_washers.png` was regenerated with the assembly: it showed the C-hub before the new shape of 2026-11-23.
   * Open: the lower bulkheads and the front splitter are ordered as MJF prints (2026-11-24); whether the order still contains the previous geometry is to be checked by the owner.
+* **New photo of the car** (owner, 2026-11-28): `photos/rc_car_speedrun_chassis_plate_top_view.jpg` is deleted; the root readme shows `photos/rc_car_speedrun_parts_top_view.jpg` (top view without the body, front at the top; 1200 x 1598 px, shown 480 px wide, metadata of the camera removed, including the GPS position). The text below the photo is unchanged (custom chassis plate, top brace and front splitter; battery tray soon). The deleted photos remain in the git history.
 
 ## Current geometry (key values)
 | Value | Model |
